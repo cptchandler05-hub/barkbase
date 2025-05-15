@@ -1,0 +1,84 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 3.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 21.8s (7443 modules)
+(node:3085) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ GET / 200 in 22596ms
+ ✓ Compiled in 2.8s (3625 modules)
+ HEAD / 200 in 95ms
+ GET / 200 in 23ms
+ HEAD / 200 in 26ms
+ GET / 200 in 41ms
+ HEAD / 200 in 22ms
+ ○ Compiling /raffle ...
+ ✓ Compiled /raffle in 9.2s (7754 modules)
+ ⨯ app/raffle/page.tsx (97:12) @ Wallet
+ ⨯ ReferenceError: Wallet is not defined
+    at RafflePage (./app/raffle/page.tsx:172:111)
+digest: "4158781166"
+   95 |         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
+   96 |         <div className="hidden sm:block">
+>  97 |           <Wallet>
+      |            ^
+   98 |             <ConnectWallet />
+   99 |           </Wallet>
+  100 |         </div>
+ GET /raffle 500 in 10359ms
+ ⨯ app/raffle/page.tsx (97:12) @ Wallet
+ ⨯ ReferenceError: Wallet is not defined
+    at RafflePage (./app/raffle/page.tsx:172:111)
+digest: "4158781166"
+   95 |         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
+   96 |         <div className="hidden sm:block">
+>  97 |           <Wallet>
+      |            ^
+   98 |             <ConnectWallet />
+   99 |           </Wallet>
+  100 |         </div>
+ GET /raffle 500 in 53ms
+ ⨯ app/raffle/page.tsx (97:12) @ Wallet
+ ⨯ ReferenceError: Wallet is not defined
+    at RafflePage (./app/raffle/page.tsx:172:111)
+digest: "4158781166"
+   95 |         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
+   96 |         <div className="hidden sm:block">
+>  97 |           <Wallet>
+      |            ^
+   98 |             <ConnectWallet />
+   99 |           </Wallet>
+  100 |         </div>
+ HEAD /raffle 500 in 25ms
+ ⨯ app/raffle/page.tsx (97:12) @ Wallet
+ ⨯ ReferenceError: Wallet is not defined
+    at RafflePage (./app/raffle/page.tsx:172:111)
+digest: "4158781166"
+   95 |         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
+   96 |         <div className="hidden sm:block">
+>  97 |           <Wallet>
+      |            ^
+   98 |             <ConnectWallet />
+   99 |           </Wallet>
+  100 |         </div>
+ GET /raffle 500 in 27ms
+ ⨯ app/raffle/page.tsx (97:12) @ Wallet
+ ⨯ ReferenceError: Wallet is not defined
+    at RafflePage (./app/raffle/page.tsx:172:111)
+digest: "4158781166"
+   95 |         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
+   96 |         <div className="hidden sm:block">
+>  97 |           <Wallet>
+      |            ^
+   98 |             <ConnectWallet />
+   99 |           </Wallet>
+  100 |         </div>
+ HEAD /raffle 500 in 27ms
