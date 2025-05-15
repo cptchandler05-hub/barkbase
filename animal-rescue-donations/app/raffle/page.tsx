@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ConnectWallet, Wallet } from "@coinbase/onchainkit/wallet";
+import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdownDisconnect } from "@coinbase/onchainkit/wallet";
+import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainkit/identity";
 import { getParticipants, getPotTotal, enterRaffle, getTimeLeft as getTimeLeftFromContract } from "@/lib/raffle";
 import { useAccount, useConfig } from "wagmi";
 import { useSearchParams } from "next/navigation";
@@ -94,7 +95,26 @@ export default function RafflePage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
         <div className="hidden sm:block">
-          <ConnectWallet />
+          <Wallet>
+            <ConnectWallet>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-6 w-6" />
+                <Name />
+              </div>
+            </ConnectWallet>
+            <WalletDropdown>
+              <Identity className="px-4 pt-3 pb-2">
+                <Avatar />
+                <Name />
+                <Address />
+                <EthBalance />
+              </Identity>
+              <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
+                Wallet
+              </WalletDropdownLink>
+              <WalletDropdownDisconnect />
+            </WalletDropdown>
+          </Wallet>
         </div>
       </div>
       <p className="text-lg mb-2">Enter for a chance to win — and support dog rescues!</p>
