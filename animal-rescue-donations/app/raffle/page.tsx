@@ -94,9 +94,7 @@ export default function RafflePage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
         <div className="hidden sm:block">
-          <Wallet>
-            <ConnectWallet />
-          </Wallet>
+          <ConnectWallet />
         </div>
       </div>
       <p className="text-lg mb-2">Enter for a chance to win — and support dog rescues!</p>
