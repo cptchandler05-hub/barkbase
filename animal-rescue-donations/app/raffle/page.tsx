@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ConnectWallet, Wallet } from "@coinbase/onchainkit/wallet";
+import { ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { getParticipants, getPotTotal, enterRaffle, getTimeLeft as getTimeLeftFromContract } from "@/lib/raffle";
-import { useAccount } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import { useSearchParams } from "next/navigation";
 
 export default function RafflePage() {

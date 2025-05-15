@@ -21,16 +21,24 @@ export async function getRaffleContract() {
 }
 
 export async function enterRaffle(referrer: string = ethers.ZeroAddress) {
-  const contract = await getRaffleContract();
-  const entryFee = await contract.ENTRY_FEE();
-  const signer = await contract.signer;
-  const entrantAddress = await signer.getAddress();
+  try {
+    const contract = await getRaffleContract();
+    const entryFee = await contract.ENTRY_FEE();
+    const provider = await contract.runner?.provider;
+    if (!provider) throw new Error("No provider available");
+    
+    const signer = await provider.getSigner();
+    if (!signer) throw new Error("No signer available");
+    
+    const entrantAddress = await signer.getAddress();
+    const referralAddress = referrer.toLowerCase() === entrantAddress.toLowerCase() ? ethers.ZeroAddress : referrer;
 
-  // Prevent self-referral
-  const referralAddress = referrer.toLowerCase() === entrantAddress.toLowerCase() ? ethers.ZeroAddress : referrer;
-
-  const tx = await contract.enter(referralAddress, { value: entryFee });
-  return tx.hash;
+    const tx = await contract.enter(referralAddress, { value: entryFee });
+    return tx.hash;
+  } catch (error) {
+    console.error("Enter raffle error:", error);
+    throw error;
+  }
 }
 
 export async function getPotTotal(): Promise<string> {
