@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ConnectWallet } from "@coinbase/onchainkit/wallet";
+import { ConnectWallet, Wallet } from "@coinbase/onchainkit/wallet";
 import { getParticipants, getPotTotal, enterRaffle, getTimeLeft as getTimeLeftFromContract } from "@/lib/raffle";
 import { useAccount } from "wagmi";
 import { useSearchParams } from "next/navigation";
@@ -94,7 +94,9 @@ export default function RafflePage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">🐾 50/50 Rescue Raffle</h1>
         <div className="hidden sm:block">
-          <ConnectWallet />
+          <Wallet>
+            <ConnectWallet />
+          </Wallet>
         </div>
       </div>
       <p className="text-lg mb-2">Enter for a chance to win — and support dog rescues!</p>
@@ -109,7 +111,9 @@ export default function RafflePage() {
           <div className="mt-6">
             {!isConnected ? (
               <div className="sm:hidden">
-                <ConnectWallet />
+                <Wallet>
+                  <ConnectWallet />
+                </Wallet>
               </div>
             ) : (
               <button
