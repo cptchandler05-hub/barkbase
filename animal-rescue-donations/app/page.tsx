@@ -68,61 +68,35 @@ export default function Page() {
       alert('Please enter a valid amount.');
       return;
     }
-    const valueInWei = (parsedAmount * 1e18).toString();
+
     try {
       setLoading(true);
       const ethereum = (window as any).ethereum;
       if (!ethereum) {
-        alert('No Ethereum provider found. Please connect your wallet.');
+        alert('No Ethereum provider found. Please install a wallet.');
         return;
       }
+
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       if (!accounts || accounts.length === 0) {
         alert('Please connect your wallet.');
         return;
       }
-      const currentChain = await ethereum.request({ method: 'eth_chainId' });
-      if (currentChain !== '0x2105') {
-        try {
-          await ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x2105' }],
-          });
-        } catch (switchError: any) {
-          if (switchError.code === 4902) {
-            await ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId: '0x2105',
-                  chainName: 'Base Mainnet',
-                  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
-                  rpcUrls: ['https://mainnet.base.org'],
-                  blockExplorerUrls: ['https://basescan.org'],
-                },
-              ],
-            });
-          } else {
-            alert('Please switch to Base Mainnet in your wallet.');
-            return;
-          }
-        }
-      }
-      await ethereum.request({
+
+      const valueInWei = (parsedAmount * 1e18).toString();
+      const tx = await ethereum.request({
         method: 'eth_sendTransaction',
-        params: [
-          {
-            from: accounts[0],
-            to: DONATION_ADDRESS,
-            value: '0x' + BigInt(valueInWei).toString(16),
-          },
-        ],
+        params: [{
+          to: DONATION_ADDRESS,
+          from: accounts[0],
+          value: '0x' + valueInWei.toString(16),
+        }],
       });
-      alert('Thank you for your donation!');
-      setAmount('');
+
+      alert('Thank you for your donation! Transaction: ' + tx);
     } catch (error) {
-      console.error('Transaction error:', error);
-      alert('Transaction failed. Please check your wallet and try again.');
+      console.error('Donation error:', error);
+      alert('Failed to process donation. Please try again.');
     } finally {
       setLoading(false);
     }

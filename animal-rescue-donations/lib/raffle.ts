@@ -5,14 +5,19 @@ export const RAFFLE_CONTRACT_ADDRESS = '0x8cEc98ccdFa0c04D1a4B79340bda69C1c041b1
 
 // Safe wrapper: only call after wallet is connected
 export async function getRaffleContract() {
-  if (typeof window === 'undefined') throw new Error('Window undefined');
-  const { ethereum } = window as any;
-  if (!ethereum) throw new Error('No wallet found');
+  try {
+    if (typeof window === 'undefined') throw new Error('Window undefined');
+    const { ethereum } = window as any;
+    if (!ethereum) throw new Error('No wallet found');
 
-  const provider = new ethers.BrowserProvider(ethereum);
-  const signer = await provider.getSigner();
-
-  return new ethers.Contract(RAFFLE_CONTRACT_ADDRESS, ABI, signer);
+    const provider = new ethers.BrowserProvider(ethereum);
+    const signer = await provider.getSigner();
+    
+    return new ethers.Contract(RAFFLE_CONTRACT_ADDRESS, ABI, signer);
+  } catch (error) {
+    console.error('Failed to get contract:', error);
+    throw error;
+  }
 }
 
 export async function enterRaffle(referrer: string = ethers.ZeroAddress) {
