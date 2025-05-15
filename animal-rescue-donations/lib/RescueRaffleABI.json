@@ -47,7 +47,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_referrer",
+        "name": "referrer",
         "type": "address"
       }
     ],

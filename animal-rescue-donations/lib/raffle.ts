@@ -33,7 +33,8 @@ export async function getPotTotal(): Promise<string> {
     const contract = await getRaffleContract();
     const pot = await contract.getPotTotal();
     return ethers.formatEther(pot);
-  } catch {
+  } catch (error) {
+    console.error('Error getting pot total:', error);
     return '0';
   }
 }
@@ -41,8 +42,10 @@ export async function getPotTotal(): Promise<string> {
 export async function getParticipants(): Promise<string[]> {
   try {
     const contract = await getRaffleContract();
-    return await contract.getEntries();
-  } catch {
+    const entries = await contract.getEntries();
+    return Array.isArray(entries) ? entries : [];
+  } catch (error) {
+    console.error('Error getting participants:', error);
     return [];
   }
 }
@@ -52,7 +55,8 @@ export async function getTimeLeft(): Promise<number> {
     const contract = await getRaffleContract();
     const time = await contract.timeLeft();
     return Number(time);
-  } catch {
+  } catch (error) {
+    console.error('Error getting time left:', error);
     return 0;
   }
 }
