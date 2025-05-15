@@ -1,3 +1,4 @@
+
 'use client';
 
 import { base } from 'wagmi/chains';
@@ -6,6 +7,7 @@ import { WagmiProvider, http, createConfig } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { coinbaseWallet, injected } from 'wagmi/connectors';
 import type { ReactNode } from 'react';
+import './globals.css';
 
 const config = createConfig({
   chains: [base],
@@ -14,14 +16,14 @@ const config = createConfig({
     coinbaseWallet({ appName: 'BarkBase' }),
   ],
   transports: {
-    [base.id]: http(), // 👈 Base transport setup (required in v2)
+    [base.id]: http(),
   },
   ssr: true,
 });
 
 const queryClient = new QueryClient();
 
-export function Providers({ children }: { children: ReactNode }) {
+function Providers({ children }: { children: ReactNode }) {
   return (
     <OnchainKitProvider
       apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
@@ -33,5 +35,19 @@ export function Providers({ children }: { children: ReactNode }) {
         </QueryClientProvider>
       </WagmiProvider>
     </OnchainKitProvider>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }
