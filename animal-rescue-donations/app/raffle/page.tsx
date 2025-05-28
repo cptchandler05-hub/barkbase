@@ -294,7 +294,7 @@ export default function RafflePage() {
               {winners.map((winner, i) => (
                 <li key={i} className="text-blue-800 flex justify-between">
                   <span>
-                    🏆 Round {winners.length - i} — {winner.address}
+                    🏆 Round {winners.length - i} — {winner.address.length > 10 ? `${winner.address.slice(0, 6)}...${winner.address.slice(-4)}` : winner.address}
                   </span>
                   <span>
                     {parseFloat(winner.amount?.toString() || '0').toFixed(3)} ETH
