@@ -10,7 +10,7 @@ import { Facebook, SendHorizontal } from "lucide-react";
 import { X } from "lucide-react";
 
 import { getWinners } from "@/lib/getWinners";
-import BarkrBackflip from "@/components/BarkrBackFlip";
+import BarkrBackflip from "@/app/components/BarkrBackFlip";
 
 
 export default function RafflePage() {
@@ -38,7 +38,7 @@ export default function RafflePage() {
 
     fetchWinners();
   }, []);
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -127,9 +127,9 @@ export default function RafflePage() {
   };
 
 
-  
+
   return (
- 
+
     <div className="relative min-h-screen">
       <div className="mt-4 flex justify-end z-[1000] relative">
 
@@ -356,11 +356,11 @@ export default function RafflePage() {
 
         <BarkrBackflip trigger={playBackflip} />
 
-      
+
       </div> 
       </div>
 
-      
+
       <footer className="text-sm text-center text-gray-500 mt-12">
       © {new Date().getFullYear()} BarkBase | Powered by Base | Built with ❤️ by Toad Gang
 
@@ -368,11 +368,3 @@ export default function RafflePage() {
           </div>
         );
       }
-
-
-
-
-
-  
-
-

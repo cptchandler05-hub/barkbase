@@ -21,7 +21,7 @@ import {
   EthBalance,
 } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
-import ThankYouToast from "@/components/ThankYouToast";
+import ThankYouToast from "@/app/components/ThankYouToast";
 
 
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
