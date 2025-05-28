@@ -32,8 +32,14 @@ export default function RafflePage() {
   const referrer = searchParams.get("ref");
   useEffect(() => {
     async function fetchWinners() {
-      const data = await getWinners();
-      setWinners(data);
+      try {
+        const data = await getWinners();
+        console.log("Fetched winners data:", data); // Debug log
+        setWinners(data || []);
+      } catch (error) {
+        console.error("Error fetching winners:", error);
+        setWinners([]);
+      }
     }
 
     fetchWinners();
@@ -281,9 +287,9 @@ export default function RafflePage() {
           </>
         )}
 
-        {winners.length > 0 && (
-          <div className="mt-10 text-left text-sm bg-white bg-opacity-60 p-4 rounded-xl border border-blue-200">
-            <h3 className="text-blue-900 text-2xl text-center font-semibold mb-2">🏅 Past Winners</h3>
+        <div className="mt-10 text-left text-sm bg-white bg-opacity-60 p-4 rounded-xl border border-blue-200">
+          <h3 className="text-blue-900 text-2xl text-center font-semibold mb-2">🏅 Past Winners</h3>
+          {winners.length > 0 ? (
             <ul className="space-y-1 max-h-40 overflow-y-auto pr-2">
               {winners.map((winner, i) => (
                 <li key={i} className="text-blue-800 flex justify-between">
@@ -291,13 +297,15 @@ export default function RafflePage() {
                     🏆 Round {winners.length - i} — {winner.address}
                   </span>
                   <span>
-                    {parseFloat(winner.amount).toFixed(3)} ETH
+                    {parseFloat(winner.amount?.toString() || '0').toFixed(3)} ETH
                   </span>
                 </li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p className="text-center text-gray-600">No winners yet. Be the first! 🎉</p>
+          )}
+        </div>
 
 
         {showPaws && (

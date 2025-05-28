@@ -6,15 +6,27 @@ const supabase = createClient(
 );
 
 export async function getWinners() {
-  const { data, error } = await supabase
-    .from("winners")
-    .select("*")
-    .order("timestamp", { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from("winners")
+      .select("*")
+      .order("timestamp", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching winners:", error);
+    if (error) {
+      console.error("Error fetching winners:", error);
+      return [];
+    }
+
+    console.log("Raw Supabase data:", data); // Debug log
+    
+    // Ensure data is in the expected format
+    return data?.map(winner => ({
+      address: winner.address,
+      amount: winner.amount?.toString() || '0',
+      timestamp: winner.timestamp
+    })) || [];
+  } catch (error) {
+    console.error("Exception in getWinners:", error);
     return [];
   }
-
-  return data;
 }
