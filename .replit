@@ -25,3 +25,15 @@ externalPort = 3001
 [[ports]]
 localPort = 3002
 externalPort = 3002
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 42313041
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd animal-rescue-donations && npm run dev"
