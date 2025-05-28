@@ -10,7 +10,7 @@ import { Facebook, SendHorizontal } from "lucide-react";
 import { X } from "lucide-react";
 
 import { getWinners } from "@/lib/getWinners";
-import BarkrBackflip from "@/app/components/BarkrBackFlip";
+import BarkrBackflip from "@/components/BarkrBackFlip";
 
 
 export default function RafflePage() {
@@ -25,7 +25,7 @@ export default function RafflePage() {
   const [showRules, setShowRules] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [raffleEnded, setRaffleEnded] = useState(false);
-  const [winners, setWinners] = useState<{ address: string; amount: string }[]>([]);  
+  const [winners, setWinners<{ address: string; amount: string }[]>([]);  
   const [playBackflip, setPlayBackflip] = useState(false);  
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const searchParams = useSearchParams();
