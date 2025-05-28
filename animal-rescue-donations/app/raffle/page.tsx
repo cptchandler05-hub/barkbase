@@ -271,7 +271,7 @@ export default function RafflePage() {
             </div>
             <button
               onClick={() => setShowRules(true)}
-              className="mt-2 text-sm underline text-blue-700 hover:text-blue-900"
+              className="mt-2 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 hover:text-blue-900 px-3 py-1 rounded-full border border-blue-300 transition-colors shadow-sm"
             >
               📜 Raffle Rules
             </button>
