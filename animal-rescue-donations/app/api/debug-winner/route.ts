@@ -9,8 +9,8 @@ const contract = new ethers.Contract(RAFFLE_CONTRACT_ADDRESS, ABI, provider);
 
 export async function GET() {
   try {
-    const lastWinner = await contract.getLastWinner();
-    const lastPrize = await contract.getLastPrize();
+    const lastWinner = await contract.lastWinner();
+    const lastPrize = await contract.lastPrize();
     
     return NextResponse.json({
       lastWinner,
