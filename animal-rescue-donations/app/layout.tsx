@@ -1,6 +1,7 @@
 
 'use client';
 
+import '@coinbase/onchainkit/styles.css';
 import { base } from 'wagmi/chains';
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { WagmiProvider, http, createConfig } from 'wagmi';

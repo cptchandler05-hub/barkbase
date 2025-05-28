@@ -1,0 +1,40 @@
+// app/api/raffle/draw/route.ts
+import { NextResponse } from 'next/server';
+import { ethers } from 'ethers';
+import ABI from '@/lib/RescueRaffleABI.json';
+
+import { logWinner } from "@/lib/logWinner";
+
+const RAFFLE_CONTRACT_ADDRESS = '0x0CB71aa79AbEb15798e3291863C10Bc59A444a56'; // Replace if needed
+const provider = new ethers.JsonRpcProvider('https://sepolia.base.org');
+const wallet = new ethers.Wallet(process.env.DRAW_PRIVATE_KEY!, provider);
+const contract = new ethers.Contract(RAFFLE_CONTRACT_ADDRESS, ABI, wallet);
+
+export async function GET() {
+  try {
+    const timeLeft: bigint = await contract.timeLeft();
+    if (timeLeft > 0n) {
+      return NextResponse.json({ status: 'raffle-still-running', timeLeft: Number(timeLeft) });
+    }
+
+    const entries: string[] = await contract.getEntries();
+
+    const tx = await contract.drawWinner(); // Always call drawWinner
+    const receipt = await tx.wait();
+
+    const winner = await contract.getLastWinner();
+    const potBalance = await provider.getBalance(RAFFLE_CONTRACT_ADDRESS);
+    const prize = parseFloat(ethers.formatEther(potBalance)) / 2;
+    await logWinner(winner, prize);
+
+    
+    if (entries.length === 0) {
+      return NextResponse.json({ status: 'no-entries-draw-executed', txHash: tx.hash });
+    }
+
+    return NextResponse.json({ status: 'winner-drawn', txHash: tx.hash });
+  } catch (err) {
+    console.error('Draw error:', err);
+    return NextResponse.json({ status: 'error', message: (err as Error).message });
+  }
+}

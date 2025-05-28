@@ -12,7 +12,7 @@
 }
 
 .ck-dropdown {
-  @apply bg-white shadow-lg rounded-lg border border-gray-200;
+  @apply z-[100] bg-white shadow-lg rounded-lg border border-gray-200;
 }
 
 .ck-dropdown__item {
