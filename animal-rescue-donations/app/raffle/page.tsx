@@ -10,7 +10,7 @@ import { Facebook, SendHorizontal } from "lucide-react";
 import { X } from "lucide-react";
 
 import { getWinners } from "@/lib/getWinners";
-import BarkrBackflip from "@/components/BarkrBackflip";
+import BarkrBackflip from "@/components/BarkrBackFlip";
 
 
 export default function RafflePage() {
@@ -286,13 +286,12 @@ export default function RafflePage() {
             <h3 className="text-blue-900 text-2xl text-center font-semibold mb-2">🏅 Past Winners</h3>
             <ul className="space-y-1 max-h-40 overflow-y-auto pr-2">
               {winners.map((winner, i) => (
-                <li key={winner.id || i} className="text-blue-800 flex justify-between">
+                <li key={i} className="text-blue-800 flex justify-between">
                   <span>
-                    🏆 Round {winners.length - i} — {winner.address.slice(0, 6)}...{winner.address.slice(-4)}
+                    🏆 Round {winners.length - i} — {winner.address}
                   </span>
                   <span>
-                    {parseFloat(winner.amount).toFixed(3)} ETH •{" "}
-                    {new Date(winner.timestamp).toLocaleDateString()}
+                    {parseFloat(winner.amount).toFixed(3)} ETH
                   </span>
                 </li>
               ))}
