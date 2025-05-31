@@ -93,8 +93,9 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     };
 
     console.log('📡 Fetching /api/petfinder/search with payload:', query);
-    
-    const searchRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/petfinder/search`, {
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
+    const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(query),
@@ -143,3 +144,4 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     return NextResponse.json({ error: 'Failed to generate message' }, { status: 500 });
   }
 }
+`
