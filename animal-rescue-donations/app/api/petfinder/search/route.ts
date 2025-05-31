@@ -38,8 +38,27 @@ function scoreVisibility(dog: any): number {
   return Math.round(score * 10) / 10; // round to 1 decimal
 }
 
+export async function GET(req: NextRequest) {
+  return handleSearch(req);
+}
+
 export async function POST(req: NextRequest) {
-  const { location, breed, size, age, gender } = await req.json();
+  return handleSearch(req);
+}
+
+async function handleSearch(req: NextRequest) {
+  let location, breed, size, age, gender;
+  
+  if (req.method === 'POST') {
+    ({ location, breed, size, age, gender } = await req.json());
+  } else {
+    const url = new URL(req.url);
+    location = url.searchParams.get('location');
+    breed = url.searchParams.get('breed');
+    size = url.searchParams.get('size');
+    age = url.searchParams.get('age');
+    gender = url.searchParams.get('gender');
+  }
 
   try {
     console.log('🔑 Attempting to get Petfinder access token...');

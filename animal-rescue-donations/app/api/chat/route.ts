@@ -131,16 +131,16 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
 
       barkrReply = `I dug up some overlooked gems just for you 🐾\n\n${topMatches}\n\nLet me know if you want to see more—or if none of these feel right, I can sniff around again! 🐶`;
     } else {
-      barkrReply = `I gave it a good sniff, but couldn’t find any matches this time. Doesn’t mean they’re not out there! Want to try a different area or breed? 🐕`;
+      barkrReply = `I gave it a good sniff, but couldn't find any matches this time. Doesn't mean they're not out there! Want to try a different search? 🐕`;
     }
 
     return NextResponse.json({
       role: 'assistant',
-      content: barkrReply,
+      content: barkrReply
     });
 
   } catch (error) {
-    console.error('API error:', error);
+    console.error('Chat API error:', error);
     return NextResponse.json({ error: 'Failed to generate message' }, { status: 500 });
   }
 }
