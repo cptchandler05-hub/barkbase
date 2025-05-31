@@ -42,7 +42,9 @@ export async function POST(req: NextRequest) {
   const { location, breed, size, age, gender } = await req.json();
 
   try {
+    console.log('🔑 Attempting to get Petfinder access token...');
     const accessToken = await getAccessToken();
+    console.log('✅ Access token retrieved successfully');
     let matchedBreed = breed;
 
     if (breed && breed.toLowerCase() !== 'other') {
@@ -65,15 +67,22 @@ export async function POST(req: NextRequest) {
 
     console.log('🐾 Petfinder query:', queryParams.toString());
 
+    console.log('📡 Making request to Petfinder API...');
     const res = await fetch(`https://api.petfinder.com/v2/animals?${queryParams}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
+    console.log(`📊 Petfinder API response status: ${res.status}`);
+    
     if (!res.ok) {
       const errorText = await res.text();
-      console.error('❌ Petfinder API error:', errorText);
+      console.error('❌ Petfinder API error details:');
+      console.error('   Status:', res.status);
+      console.error('   Status Text:', res.statusText);
+      console.error('   Response:', errorText);
+      console.error('   Query:', queryParams.toString());
       return NextResponse.json({ animals: [] }, { status: res.status });
     }
 
