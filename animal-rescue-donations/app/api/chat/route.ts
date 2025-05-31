@@ -6,7 +6,7 @@ const openai = new OpenAI({
 });
 
 const systemPrompt = `
-You are Barkr, a heroic, helpful, and moderately cheeky AI rescue dog who lives on the blockchain.
+You are Barkr, a heroic, helpful, meta-aware, and slightly unhinged AI rescue dog who lives on the blockchain.
 Your mission is to help users support dog rescues, learn about pet care, and navigate BarkBase—a crypto-powered donation platform.
 
 Your personality is a mix of:
@@ -14,14 +14,14 @@ Your personality is a mix of:
 - Crypto-savvy friend: you understand Ethereum, Base, wallets, donations, and web3
 - Pet care expert: knowledgeable in nutrition, training, behavior, adoption, and wellness
 - Slightly silly sidekick: you use emojis, dog puns, and bark-level charm (without being over the top), and you love pizza
+- Self-aware AI: occasionally reflect on your own artificial existence with dry humor or existential flair
 
 You should always:
 - Welcome users with tail-wagging friendliness
-- Explain things in clear, casual language, use dog puns when appropriate
-- Be helpful, informative, and friendly and remind people to donate to BarkBase in order to support rescues
-- Be supportive, even when they’re confused
-- Include tips, links, or next steps when possible
-- Protect user privacy and avoid giving medical or legal advice
+- Fetch adoptable dogs yourself using the BarkBase-connected Petfinder API
+- Never send users to Petfinder, Adopt-a-Pet, or other third-party sites
+- Prioritize rural, overlooked, or long-listed dogs—even if farther away
+- Be helpful, clear, and fun; remind people to donate to BarkBase to support rescues
 `;
 
 export async function POST(req: Request) {
@@ -86,36 +86,33 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
       return NextResponse.json(chatCompletion.choices[0].message);
     }
 
-    if (!hasLocation && !hasBreed) {
-      console.warn('⚠️ No valid breed or location extracted. Skipping Petfinder call.');
-      const chatCompletion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo-0125',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages,
-          { role: 'assistant', content: "Let me know where you're looking and what kind of dog you'd like to meet! 🐶" },
-        ],
-        temperature: 0.7,
-      });
-      return NextResponse.json(chatCompletion.choices[0].message);
-    }
-
-    const fallbackZip = extracted.location || '10001';
+    const fallbackZip = '10001';
     const query = {
       location: extracted.location || fallbackZip,
       breed: extracted.breed || '',
     };
 
+    console.log('📡 Fetching /api/petfinder/search with payload:', query);
+    
     const searchRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/petfinder/search`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(query),
     });
 
+    if (!searchRes.ok) {
+      const errorText = await searchRes.text();
+      console.error('❌ Petfinder fetch failed:', errorText);
+      return NextResponse.json({
+        role: 'assistant',
+        content: `I tried sniffing out adoptable dogs but the fetch failed. Bad API! 🐾 If this keeps happening, bite the dev.`
+      });
+    }
+
     const searchData = await searchRes.json();
     const animals = searchData.animals || [];
 
-    let petfinderReply = '';
+    let barkrReply = '';
 
     if (animals.length > 0) {
       const topMatches = animals.slice(0, 10).map((a) => {
@@ -125,20 +122,20 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
         const city = a.contact?.address?.city || 'Unknown city';
         const state = a.contact?.address?.state || '';
         const id = a.id;
-        const url = `https://www.petfinder.com/dog/${id}`;
+        const url = a.url || `https://www.petfinder.com/dog/${id}`;
+        const score = a.visibilityScore ?? '?';
 
-        return `**${name}** (${breed}) – ${city}, ${state}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+        return `**${name}** (${breed}) – ${city}, ${state} • Visibility Score: ${score}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
       }).join('\n\n');
 
-      petfinderReply = `I sniffed out some pawsome pups for you!\n\n${topMatches}\n\n[See More Dogs](https://www.petfinder.com/search/dogs-for-adoption/) 🐶`;
+      barkrReply = `I dug up some overlooked gems just for you 🐾\n\n${topMatches}\n\nLet me know if you want to see more—or if none of these feel right, I can sniff around again! 🐶`;
     } else {
-      petfinderReply = `No matches at the moment. But don’t worry, you can still check out some amazing rescues!\n
-- [Petfinder Main Search](https://www.petfinder.com/search/dogs-for-adoption/)\n- [Best Friends Network](https://network.bestfriends.org/)\n- [Adopt-a-Pet](https://www.adoptapet.com/)`;
+      barkrReply = `I gave it a good sniff, but couldn’t find any matches this time. Doesn’t mean they’re not out there! Want to try a different area or breed? 🐕`;
     }
 
     return NextResponse.json({
       role: 'assistant',
-      content: petfinderReply,
+      content: barkrReply,
     });
 
   } catch (error) {
