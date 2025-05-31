@@ -144,4 +144,3 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     return NextResponse.json({ error: 'Failed to generate message' }, { status: 500 });
   }
 }
-`
