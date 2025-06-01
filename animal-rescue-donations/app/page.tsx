@@ -40,11 +40,11 @@ export default function Page() {
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (lastMessageRef.current) {
+    // Only auto-scroll if there are more than 1 message (to avoid scrolling on initial load)
+    if (messages.length > 1 && lastMessageRef.current) {
       requestAnimationFrame(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
       });
@@ -327,12 +327,11 @@ export default function Page() {
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
                   <div
                     ref={chatContainerRef}
-                    className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-1 max-h-[24rem] w-full"
+                    className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-2 flex-1 min-h-0"
                     style={{
                       wordBreak: "break-word",
                       overflowWrap: "break-word",
                       whiteSpace: "pre-wrap",
-                      maxWidth: "100%",
                       overflowX: "hidden",
                     }}
                   >
@@ -341,14 +340,13 @@ export default function Page() {
                     {messages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`p-2 rounded w-full font-sans text-sm leading-relaxed ${
+                        className={`p-3 rounded-lg font-sans text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
                         style={{
                           wordBreak: "break-word",
                           overflowWrap: "break-word",
                           whiteSpace: "pre-wrap",
-                          maxWidth: "100%",
                           overflowX: "hidden",
                         }}
                       >
@@ -374,7 +372,7 @@ export default function Page() {
                               />
                             ),
                             p: ({ node, ...props }) => (
-                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed break-words whitespace-pre-wrap">
+                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed" style={{ wordBreak: "break-word", overflowWrap: "break-word", whiteSpace: "pre-wrap" }}>
                                 {props.children}
                               </p>
                             ),
