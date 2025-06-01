@@ -341,16 +341,16 @@ export default function Page() {
                       <div
                         key={i}
                         ref={i === messages.length - 1 && msg.role === "assistant" ? lastMessageRef : null}
-                        className={`p-3 rounded-lg font-sans text-sm leading-relaxed ${
+                        className={`p-3 rounded-lg text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
                         style={{
                           wordBreak: "break-word",
-                          overflowWrap: "anywhere",
-                          whiteSpace: "pre-wrap",
+                          overflowWrap: "break-word",
+                          whiteSpace: "normal",
                           overflowX: "hidden",
                           maxWidth: "100%",
-                          hyphens: "auto",
+                          fontFamily: "'Comic Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
                         }}
                       >
                         <ReactMarkdown
@@ -375,15 +375,41 @@ export default function Page() {
                               />
                             ),
                             p: ({ node, ...props }) => (
-                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed" style={{ 
-                                wordBreak: "break-word", 
-                                overflowWrap: "anywhere", 
-                                whiteSpace: "pre-wrap",
-                                maxWidth: "100%",
-                                hyphens: "auto"
-                              }}>
+                              <p 
+                                className="mb-2 text-sm text-gray-800 leading-relaxed" 
+                                style={{ 
+                                  wordBreak: "break-word", 
+                                  overflowWrap: "break-word", 
+                                  whiteSpace: "normal",
+                                  maxWidth: "100%",
+                                  fontFamily: "'Comic Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+                                }}
+                              >
                                 {props.children}
                               </p>
+                            ),
+                            code: ({ node, ...props }) => (
+                              <code 
+                                {...props}
+                                style={{
+                                  fontFamily: "'Comic Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+                                  wordBreak: "break-word",
+                                  overflowWrap: "break-word",
+                                  whiteSpace: "normal",
+                                }}
+                              />
+                            ),
+                            pre: ({ node, ...props }) => (
+                              <pre 
+                                {...props}
+                                style={{
+                                  fontFamily: "'Comic Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+                                  wordBreak: "break-word",
+                                  overflowWrap: "break-word",
+                                  whiteSpace: "pre-wrap",
+                                  maxWidth: "100%",
+                                }}
+                              />
                             ),
                           }}
                         >
