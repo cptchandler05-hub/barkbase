@@ -47,18 +47,33 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleSearch(req: NextRequest) {
+
   let location, breed, size, age, gender;
-  
+
   if (req.method === 'POST') {
-    ({ location, breed, size, age, gender } = await req.json());
+    const body = await req.json();
+    console.log('📦 Incoming request body:', body);
+    location = body.location?.trim();
+    breed = body.breed;
+    size = body.size;
+    age = body.age;
+    gender = body.gender;
   } else {
     const url = new URL(req.url);
-    location = url.searchParams.get('location');
+    location = url.searchParams.get('location')?.trim();
     breed = url.searchParams.get('breed');
     size = url.searchParams.get('size');
     age = url.searchParams.get('age');
     gender = url.searchParams.get('gender');
   }
+
+  const fallbackLocation = "New York, NY";
+
+  if (!location || location.trim() === "") {
+    console.warn(`⚠️ No location provided. Falling back to default: ${fallbackLocation}`);
+    location = fallbackLocation;
+  }
+
 
   try {
     console.log('🔑 Attempting to get Petfinder access token...');
@@ -77,12 +92,14 @@ async function handleSearch(req: NextRequest) {
       status: 'adoptable',
       sort: 'distance',
       limit: '20',
-      ...(location ? { location, distance: '100' } : {}),
+      location,
+      distance: '100',
       ...(matchedBreed ? { breed: matchedBreed } : {}),
       ...(size ? { size } : {}),
       ...(age ? { age } : {}),
       ...(gender ? { gender } : {}),
     });
+
 
     console.log('🐾 Petfinder query:', queryParams.toString());
 
@@ -107,10 +124,12 @@ async function handleSearch(req: NextRequest) {
 
     const data = await res.json();
 
-    const animalsWithScores = data.animals?.map((dog: any) => ({
+    const animalsWithScores = (data.animals || [])
+    .filter(animal => animal.type?.toLowerCase() === 'dog')
+    .map((dog: any) => ({
       ...dog,
       visibilityScore: scoreVisibility(dog),
-    })) || [];
+    }));
 
     console.log(`🐶 Found ${animalsWithScores.length} dogs from Petfinder`);
     return NextResponse.json({ animals: animalsWithScores });

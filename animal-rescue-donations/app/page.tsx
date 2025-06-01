@@ -39,14 +39,18 @@ export default function Page() {
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+    if (lastMessageRef.current) {
+      requestAnimationFrame(() => {
+        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+      });
     }
   }, [messages]);
+
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -323,16 +327,31 @@ export default function Page() {
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
                   <div
                     ref={chatContainerRef}
-                    className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-1"
+                    className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-1 max-h-[24rem] w-full"
+                    style={{
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "pre-wrap",
+                      maxWidth: "100%",
+                      overflowX: "hidden",
+                    }}
                   >
+
+
                     {messages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`p-2 rounded whitespace-pre-wrap ${msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"}`}
+                        className={`p-2 rounded w-full font-sans text-sm leading-relaxed ${
+                          msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
+                        }`}
+                        style={{
+                          wordBreak: "break-word",
+                          overflowWrap: "break-word",
+                          whiteSpace: "pre-wrap",
+                          maxWidth: "100%",
+                          overflowX: "hidden",
+                        }}
                       >
-                        <strong>
-                          {msg.role === "assistant" ? "Barkr:" : "You:"}
-                        </strong>{" "}
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
                           rehypePlugins={[rehypeRaw]}
@@ -347,13 +366,28 @@ export default function Page() {
                                 {props.children}
                               </a>
                             ),
+                            img: ({ node, ...props }) => (
+                              <img
+                                {...props}
+                                className="max-w-full rounded-lg my-2"
+                                alt={props.alt || "Image"}
+                              />
+                            ),
+                            p: ({ node, ...props }) => (
+                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed break-words whitespace-pre-wrap">
+                                {props.children}
+                              </p>
+                            ),
                           }}
                         >
-                          {msg.content}
+                          {`**${msg.role === "assistant" ? "Barkr" : "You"}:** ${msg.content}`}
                         </ReactMarkdown>
+
                       </div>
+
                     ))}
-                    <div ref={chatContainerRef} />
+                    <div ref={lastMessageRef} />
+                    
                   </div>
 
                   <div className="mt-2 flex">

@@ -26,8 +26,11 @@ externalPort = 3001
 localPort = 3002
 externalPort = 3002
 
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
 [workflows]
-runButton = "Run"
 
 [[workflows.workflow]]
 name = "Run"

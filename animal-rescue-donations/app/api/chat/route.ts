@@ -87,15 +87,26 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     }
 
     const fallbackZip = '10001';
+
+    // Petfinder requires ZIP; if location is not a zip, use fallback
+    let locationQuery = extracted.location?.trim();
+    if (!locationQuery || locationQuery === '') {
+      locationQuery = 'New York, NY'; // or pick your preferred fallback
+      console.warn(`⚠️ No location provided. Using fallback location: ${locationQuery}`);
+    }
+
     const query = {
-      location: extracted.location || fallbackZip,
+      location: locationQuery,
       breed: extracted.breed || '',
     };
 
-    console.log('📡 Fetching /api/petfinder/search with payload:', query);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
-    const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
+    console.log('📡 Sending Petfinder query:', query);
+
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const url = new URL('/api/petfinder/search', baseUrl);
+    const searchRes = await fetch(url.toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(query),
@@ -116,7 +127,10 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     let barkrReply = '';
 
     if (animals.length > 0) {
-      const topMatches = animals.slice(0, 10).map((a) => {
+      // Sort by invisibility (highest score first)
+      const sorted = animals.sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+
+      const topMatches = sorted.slice(0, 10).map((a) => {
         const name = a.name;
         const breed = a.breeds?.primary || 'Unknown';
         const photo = a.photos?.[0]?.medium || null;
@@ -125,13 +139,47 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
         const score = a.visibilityScore ?? '?';
+        
+        let barkrSummary = '';
 
-        return `**${name}** (${breed}) – ${city}, ${state} • Visibility Score: ${score}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+        if (a.description && a.description.length > 30) {
+          const tone = [
+            "They’ve got a look that says 'rescued royalty' and a bio to match.",
+            "This one’s got a story—and I think you just stepped into the next chapter.",
+            "They’ve been overlooked, but not by me. I see something special here.",
+            "Quiet profile, loud heart. Barkr-approved.",
+            "The algorithm missed them. I didn’t.",
+          ];
+          const tag = tone[Math.floor(Math.random() * tone.length)];
+
+          const sentence = a.description
+            .split(/[.!?]/)
+            .find((s) => s && s.trim().length > 20);
+
+          if (sentence) {
+            barkrSummary = `*${sentence.trim()}. ${tag}*`;
+          } else {
+            barkrSummary = "*No backstory listed, but this one’s got that underdog magic. 🐾*";
+          }
+        } else {
+          barkrSummary = "*Not much of a write-up, but trust me—this one’s got big rescue energy. 🐶*";
+        }
+
+        return `**${name}** (${breed}) – ${city}, ${state} • Visibility Score: ${score}\n${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+
       }).join('\n\n');
 
-      barkrReply = `I dug up some overlooked gems just for you 🐾\n\n${topMatches}\n\nLet me know if you want to see more—or if none of these feel right, I can sniff around again! 🐶`;
+      barkrReply = `I fetched some adoptable underdogs for you 🐾
+
+    I’m not like the other algorithms. They hide the dogs who don’t perform. I highlight them.
+
+    The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they’ve been. Until now.
+
+    This is what I was built for. To find the ones they missed.
+
+    Here’s who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
     } else {
-      barkrReply = `I gave it a good sniff, but couldn't find any matches this time. Doesn't mean they're not out there! Want to try a different search? 🐕`;
+      barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
     }
 
     return NextResponse.json({
