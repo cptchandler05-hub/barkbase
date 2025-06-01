@@ -326,13 +326,13 @@ export default function Page() {
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
                   <div
-                    ref={chatContainerRef}
                     className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-2 flex-1 min-h-0"
                     style={{
                       wordBreak: "break-word",
-                      overflowWrap: "break-word",
+                      overflowWrap: "anywhere",
                       whiteSpace: "pre-wrap",
                       overflowX: "hidden",
+                      hyphens: "auto",
                     }}
                   >
 
@@ -346,9 +346,11 @@ export default function Page() {
                         }`}
                         style={{
                           wordBreak: "break-word",
-                          overflowWrap: "break-word",
+                          overflowWrap: "anywhere",
                           whiteSpace: "pre-wrap",
                           overflowX: "hidden",
+                          maxWidth: "100%",
+                          hyphens: "auto",
                         }}
                       >
                         <ReactMarkdown
@@ -373,7 +375,13 @@ export default function Page() {
                               />
                             ),
                             p: ({ node, ...props }) => (
-                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed" style={{ wordBreak: "break-word", overflowWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                              <p className="mb-2 text-sm text-gray-800 font-sans leading-relaxed" style={{ 
+                                wordBreak: "break-word", 
+                                overflowWrap: "anywhere", 
+                                whiteSpace: "pre-wrap",
+                                maxWidth: "100%",
+                                hyphens: "auto"
+                              }}>
                                 {props.children}
                               </p>
                             ),

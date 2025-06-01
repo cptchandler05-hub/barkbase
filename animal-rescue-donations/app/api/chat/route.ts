@@ -139,7 +139,7 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
         const score = a.visibilityScore ?? '?';
-        
+
         let barkrSummary = '';
 
         if (a.description && a.description.length > 30) {
@@ -165,7 +165,9 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
           barkrSummary = "*Not much of a write-up, but trust me—this one’s got big rescue energy. 🐶*";
         }
 
-        return `**${name}** (${breed}) – ${city}, ${state} • Visibility Score: ${score}\n${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+        return `**${name}** (${breed}) – ${city}, ${state}
+**Visibility Score:** ${score}
+${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
 
       }).join('\n\n');
 
