@@ -169,7 +169,7 @@ export default function Page() {
     });
   };
 
-  
+
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
       <div className="max-w-7xl mx-auto px-6 py-6">
@@ -211,7 +211,7 @@ export default function Page() {
               </WalletDropdown>
             </Wallet>
           </div>
-        
+
         </header>
         <a
           href="/raffle"
@@ -385,7 +385,7 @@ export default function Page() {
                       </div>
 
                     ))}
-                    
+
                   </div>
 
                   <div className="mt-2 flex">
