@@ -340,6 +340,7 @@ export default function Page() {
                     {messages.map((msg, i) => (
                       <div
                         key={i}
+                        ref={i === messages.length - 1 && msg.role === "assistant" ? lastMessageRef : null}
                         className={`p-3 rounded-lg font-sans text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
@@ -384,7 +385,6 @@ export default function Page() {
                       </div>
 
                     ))}
-                    <div ref={lastMessageRef} />
                     
                   </div>
 
