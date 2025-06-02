@@ -327,6 +327,7 @@ export default function Page() {
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
                   <div
                     className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-2 flex-1 min-h-0"
+                    aria-live="polite"
                     style={{
                       wordBreak: "break-word",
                       overflowWrap: "anywhere",
