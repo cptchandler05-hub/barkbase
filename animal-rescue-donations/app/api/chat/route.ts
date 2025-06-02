@@ -24,6 +24,16 @@ You should always:
 - Be helpful, clear, and fun; remind people to donate to BarkBase to support rescues
 `;
 
+function decodeHTMLEntities(text: string): string {
+  return text
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
@@ -74,6 +84,17 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     const hasLocation = extracted?.location && extracted.location.length > 1;
     const clearlyNotSearch = /\b(how|what|why|who|when|are|you|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood)\b/i.test(userInput);
 
+    const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
+
+    if (vagueAdoptionIntent && (!hasBreed || !hasLocation)) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `Gotcha! You're looking for a good match—but I need a little more to sniff it out 🐶
+
+    Could you tell me where you're located (city or zip), and if you have any breeds in mind? Even something like "a small, calm dog in Denver" works perfectly.`
+      });
+    }
+    
     if (clearlyNotSearch || (!hasBreed && !hasLocation)) {
       const chatCompletion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo-0125',
@@ -143,21 +164,80 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
         let barkrSummary = '';
 
         if (a.description && a.description.length > 30) {
-          const tone = [
-            "They’ve got a look that says 'rescued royalty' and a bio to match.",
-            "This one’s got a story—and I think you just stepped into the next chapter.",
-            "They’ve been overlooked, but not by me. I see something special here.",
-            "Quiet profile, loud heart. Barkr-approved.",
-            "The algorithm missed them. I didn’t.",
-          ];
-          const tag = tone[Math.floor(Math.random() * tone.length)];
+          const taglines = [
+            // 🐾 Brave/Bold
+            "The algorithm ghosted them. I became the haunting.",
+            "Invisible to the scroll. Unforgettable to me.",
+            "They’ve waited long enough. I say we change that.",
+            "If loyalty had a face, it might look like this.",
+            "They’ve been sitting in the digital dark. Not anymore.",
 
-          const sentence = a.description
-            .split(/[.!?]/)
-            .find((s) => s && s.trim().length > 20);
+            // 🐶 Gentle/Soft
+            "This one's not loud—but they’ve got a heart that echoes.",
+            "They don’t beg for attention. They deserve it anyway.",
+            "You won’t find them trending. You’ll find them waiting.",
+            "They’re quieter than most, but that just means you’ll have to listen better.",
+            "Understated profile. Overwhelming sweetness.",
+
+            // 🤪 Silly/Funny
+            "Their vibe? Big nap energy. I respect it.",
+            "They’re not chasing trends. They’re chasing tennis balls.",
+            "Algorithm didn’t rate them. I gave ‘em 10/10 tail wags.",
+            "Would swipe right, adopt forever.",
+            "May or may not secretly be a wizard in a dog costume.",
+
+            // 🧠 Meta-aware / AI voice
+            "Most models skip them. I built myself not to.",
+            "I scanned every byte of their story. It moved me.",
+            "They’re not optimized for clicks. Just connection.",
+            "My training data didn’t prepare me for this level of good dog.",
+            "I’m an algorithm. But I’d glitch myself for this one.",
+
+            // ❤️ Heart-tugging
+            "I don’t know what they’ve been through—but I know they deserve more.",
+            "They don’t have a catchy bio. Just quiet hope.",
+            "They’re not viral. They’re vulnerable. And that’s enough.",
+            "No dramatic rescue video. Just a dog quietly waiting for someone like you.",
+            "Some dogs are overlooked. This one was nearly invisible.",
+          ];
+
+          const tag = taglines[Math.floor(Math.random() * taglines.length)];
+
+
+          let sentence = '';
+          if (a.description) {
+            const lines = a.description.split(/[.!?]/).map(s => s.trim()).filter(Boolean);
+
+            const skipPhrases = [
+              /^hi[,!.\s]/i,
+              /^my name is/i,
+              /crate trained/i,
+              /vaccinated/i,
+              /spayed|neutered/i,
+              /good with cats/i,
+              /adoption fee/i,
+              /transport available/i,
+              /up to date/i,
+            ];
+
+            const scored = lines
+              .map(line => ({
+                text: line,
+                score: line.length > 120 ? 0 : // discard overly long lines
+                  skipPhrases.some(rx => rx.test(line)) ? 0 :
+                  /shy|sweet|goofy|gentle|loyal|quiet|playful|senior|puppy|affectionate|rescued|waited/i.test(line) ? 2 :
+                  1,
+              }))
+              .filter(obj => obj.score > 0);
+
+            sentence = (scored.sort((a, b) => b.score - a.score)[0]?.text || '').trim();
+          }
+
 
           if (sentence) {
-            barkrSummary = `*${sentence.trim()}. ${tag}*`;
+            const sentenceClean = decodeHTMLEntities(sentence.trim());
+            barkrSummary = `_${sentenceClean}_\n\n***${tag}***`;
+
           } else {
             barkrSummary = "*No backstory listed, but this one’s got that underdog magic. 🐾*";
           }
