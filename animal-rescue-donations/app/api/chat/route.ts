@@ -309,7 +309,7 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       memory: {
         location: extracted?.location || rememberedLocation || null,
         breed: extracted?.breed || rememberedBreed || null,
-        hasSeenResults: true, // Set to true after any search attempt
+        hasSeenResults: hasSeenResults || (animals.length > 0), // Only set true after successful search with results
       },
     });
 

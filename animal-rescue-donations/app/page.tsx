@@ -56,13 +56,13 @@ export default function Page() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only scroll when user has interacted, there's a new message, and it's not the initial load
+    // Only scroll when user has interacted and there are actual new messages beyond the initial one
     if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     }
-  }, [messages, hasUserInteracted]);
+  }, [messages.length, hasUserInteracted]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
