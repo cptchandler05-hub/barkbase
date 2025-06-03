@@ -72,9 +72,12 @@ export async function POST(req: Request) {
 Return only JSON. Do not include comments or explanations. Use this format:
 { "breed": "Breed", "location": "City, State" }
 
-Omit any field you cannot confidently identify. Do not include extra text. The output must be valid JSON only.`,
+For location, look for cities, states, zip codes, or regions mentioned in the text. Only return a location if one is clearly mentioned.
+For breed, look for specific dog breeds mentioned. Only return a breed if one is clearly mentioned.
+If you cannot confidently identify a field, omit it entirely from the JSON.
+Do not use "Unknown" as a value. Simply omit the field.`,
         },
-        { role: 'user', content: recentContext },
+        { role: 'user', content: userInput },
       ],
       temperature: 0,
     });
@@ -133,11 +136,11 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
 
     const fallbackZip = '10001';
 
-    // Petfinder requires ZIP; if location is not a zip, use fallback
-    let locationQuery = extracted.location?.trim();
-    if (!locationQuery || locationQuery === '') {
-      locationQuery = 'New York, NY'; // or pick your preferred fallback
-      console.warn(`⚠️ No location provided. Using fallback location: ${locationQuery}`);
+    // Use extracted location, fallback to remembered location, then to default
+    let locationQuery = extracted.location?.trim() || rememberedLocation?.trim();
+    if (!locationQuery || locationQuery === '' || locationQuery.toLowerCase() === 'unknown') {
+      locationQuery = 'New York, NY';
+      console.warn(`⚠️ No valid location found. Using fallback location: ${locationQuery}`);
     }
 
     const query = {
