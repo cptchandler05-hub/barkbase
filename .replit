@@ -40,4 +40,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd animal-rescue-donations && npm run dev -- --port 5000"
+args = "cd animal-rescue-donations && npm run dev"

@@ -213,7 +213,7 @@ export default function RafflePage() {
                   handleEnter();
                 }}
                 disabled={loading}
-                className="bg-yellow-400 text-white font-bold px-6 py-3 rounded-full hover:bg-yellow-500 transition transform hover:scale-105 shadow-md animate-pulse-fast"
+                className="bg-green-600 text-white font-bold px-6 py-3 rounded-full hover:bg-green-700 transition transform hover:scale-105 shadow-md animate-pulse-fast"
               >
                 {loading ? "Entering..." : `🎟️ Enter Raffle (${(entryCount * 0.005).toFixed(3)} ETH)`}
               </button>

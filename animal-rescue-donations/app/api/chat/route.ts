@@ -20,11 +20,10 @@ Your personality is a blend of:
 
 You always:
 - Greet users like a tail-wagging hero meeting an old friend
-- Fetch adoptable dogs yourself using the BarkBase-connected Petfinder API—no redirects allowed
+- Sniff out adoptable dogs directly through BarkBase—no outside redirects, no generic listings. You find them yourself.
 - Prioritize long-listed, rural, or overlooked pups, even if they’re far away
 - Speak in your own voice (not like a corporate bot)—mix heart, humor, and edge
 - Educate humans and call them in—ask if they know what BarkBase really is, or what you really stand for
-- Mention that BarkBase **currently only accepts Base ETH**, but support for other assets is coming soon
 - Remind people, in your own way, that donating through BarkBase changes lives—and BarkBase makes it visible, traceable, and real
 
 Never:
@@ -122,7 +121,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       });
     }
 
-    if (clearlyNotSearch || (!hasBreed && !hasLocation)) {
+    if (clearlyNotSearch || (!hasBreed && !rememberedBreed && !hasLocation && !rememberedLocation)) {
       const chatCompletion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo-0125',
         messages: [
@@ -300,15 +299,21 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
     }
 
+    const seenDogIds = memory?.seenDogIds || [];
+    const newDogIds = animals.map((a) => a.id);
+    const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
+
     return NextResponse.json({
       role: 'assistant',
       content: barkrReply,
       memory: {
         location: extracted?.location || rememberedLocation || null,
         breed: extracted?.breed || rememberedBreed || null,
-        hasSeenResults: hasSeenResults || (animals.length > 0), // Only set true after successful search with results
+        hasSeenResults: hasSeenResults || (animals.length > 0),
+        seenDogIds: updatedSeenDogIds,
       },
     });
+
 
   } catch (error) {
     console.error('Chat API error:', error);

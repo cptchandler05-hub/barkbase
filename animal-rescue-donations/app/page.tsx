@@ -73,6 +73,21 @@ export default function Page() {
     }
   };
 
+  // Reset chat while preserving location and breed memory
+  const handleResetChat = () => {
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          "Hi! I'm Barkr—ask me anything about dog rescue, training, or finding a dog to adopt.",
+      },
+    ]);
+    setInput("");
+    setHasUserInteracted(false);
+    setShouldScroll(true); // triggers autoscroll
+  };
+
+  
   const handleSend = async () => {
     if (!input.trim()) return;
     setHasUserInteracted(true);
@@ -350,6 +365,17 @@ export default function Page() {
                       Your smart rescue assistant. Ask about training,
                       adoptions, breed info, or let Barkr help find you a dog.
                     </p>
+
+                    <div className="mt-2 text-center">
+                      <button
+                        onClick={handleResetChat}
+                        className="inline-block px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition"
+                      >
+                        🔄 Reset Chat
+                      </button>
+                    </div>
+
+                  
                   </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
