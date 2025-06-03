@@ -47,9 +47,11 @@ function decodeHTMLEntities(text: string): string {
 export async function POST(req: Request) {
   try {
     const { messages, memory } = await req.json();
-    let rememberedLocation = memory?.location || null;
-    let rememberedBreed = memory?.breed || null;
-    let hasSeenResults = memory?.hasSeenResults || false;
+    const lastUserMessage = messages[messages.length - 1]?.content || '';
+
+    const rememberedLocation = memory?.location;
+    const rememberedBreed = memory?.breed;
+    const hasSeenResults = memory?.hasSeenResults || false;
 
     const userInput = messages[messages.length - 1].content;
 
@@ -273,17 +275,29 @@ ${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})
 
       }).join('\n\n');
 
-      barkrReply = hasSeenResults
-        ? `Here's who I dug up next 🐶💙\n\n${topMatches}\n\nWant me to sniff around again? Just say the word.`
-        : `I fetched some adoptable underdogs for you 🐾
+      if (!hasSeenResults && topMatches.length > 0) {
+        barkrReply = `I fetched some adoptable underdogs for you 🐾
 
 I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
 
-The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
+The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
 
 This is what I was built for. To find the ones they missed.
 
 Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+      } else if (topMatches.length > 0) {
+        barkrReply = `Here are some adoptable pups I found:\n\n${topMatches}\n\nWant me to search for more? 🐾`;
+      } else {
+        barkrReply = `I fetched some adoptable underdogs for you 🐾
+
+I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
+
+The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
+
+This is what I was built for. To find the ones they missed.
+
+Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+      }
 
     } else {
       barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
