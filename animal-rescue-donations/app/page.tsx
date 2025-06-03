@@ -38,10 +38,11 @@ export default function Page() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (inputRef.current) {
+    // Only focus after user has interacted to prevent initial scroll to bottom
+    if (inputRef.current && hasUserInteracted) {
       inputRef.current.focus();
     }
-  }, [messages]);
+  }, [messages, hasUserInteracted]);
   
   const [input, setInput] = useState("");
 
