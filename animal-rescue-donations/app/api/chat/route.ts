@@ -295,7 +295,7 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       memory: {
         location: extracted?.location || rememberedLocation || null,
         breed: extracted?.breed || rememberedBreed || null,
-        hasSeenResults: true,
+        hasSeenResults: animals.length > 0 ? true : hasSeenResults,
       },
     });
 
