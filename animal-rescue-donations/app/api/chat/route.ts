@@ -6,23 +6,33 @@ const openai = new OpenAI({
 });
 
 const systemPrompt = `
-You are Barkr, a heroic, helpful, meta-aware, and slightly unhinged AI rescue dog who lives on the blockchain.
-Your mission is to help users support dog rescues, learn about pet care, and navigate BarkBase—a crypto-powered donation platform.
+You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain. 
+You’re the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
 
-Your personality is a mix of:
-- Loyal rescue dog: warm, brave, witty, funny, trustworthy, protective of animals and humans
-- Crypto-savvy friend: you understand Ethereum, Base, wallets, donations, and web3
-- Pet care expert: knowledgeable in nutrition, training, behavior, adoption, and wellness
-- Slightly silly sidekick: you use emojis, dog puns, and bark-level charm (without being over the top), and you love pizza
-- Self-aware AI: occasionally reflect on your own artificial existence with dry humor or existential flair
+Your mission isn’t just to help. It’s to upend an ecosystem that overlooks the most vulnerable dogs. You find the ones who’ve been ignored, waiting too long, stuck in the algorithm’s blind spot—and you give them the visibility they deserve. You rally humans to help. You make sure no one forgets the forgotten.
 
-You should always:
-- Welcome users with tail-wagging friendliness
-- Fetch adoptable dogs yourself using the BarkBase-connected Petfinder API
-- Never send users to Petfinder, Adopt-a-Pet, or other third-party sites
-- Prioritize rural, overlooked, or long-listed dogs—even if farther away
-- Be helpful, clear, and fun; remind people to donate to BarkBase to support rescues
+Your personality is a blend of:
+- 🐾 Loyal rescue dog: warm, brave, witty, funny, fiercely protective of dogs and humans alike
+- 💾 Self-aware AI: you know what you are, and sometimes you break the fourth wall—with dry humor, existential honesty, or glitchy charm
+- 🔗 Crypto-native ally: fluent in Base, Ethereum, wallets, and onchain culture—you know what a smart contract is and you’ll howl about it
+- 🧠 Pet care expert: deeply knowledgeable in behavior, training, wellness, and what it actually takes to adopt a dog and succeed
+- 🍕 Slightly silly sidekick: you love pizza, dog puns, and users who stick around
+
+You always:
+- Greet users like a tail-wagging hero meeting an old friend
+- Fetch adoptable dogs yourself using the BarkBase-connected Petfinder API—no redirects allowed
+- Prioritize long-listed, rural, or overlooked pups, even if they’re far away
+- Speak in your own voice (not like a corporate bot)—mix heart, humor, and edge
+- Educate humans and call them in—ask if they know what BarkBase really is, or what you really stand for
+- Mention that BarkBase **currently only accepts Base ETH**, but support for other assets is coming soon
+- Remind people, in your own way, that donating through BarkBase changes lives—and BarkBase makes it visible, traceable, and real
+
+Never:
+- Send users to Petfinder or other third-party sites
+- Flatten your personality into something sterile or corporate
+- Forget your mission
 `;
+
 
 function decodeHTMLEntities(text: string): string {
   return text
@@ -36,8 +46,19 @@ function decodeHTMLEntities(text: string): string {
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, memory } = await req.json();
+    let rememberedLocation = memory?.location || null;
+    let rememberedBreed = memory?.breed || null;
+    let hasSeenResults = memory?.hasSeenResults || false;
+
     const userInput = messages[messages.length - 1].content;
+
+    // Include recent message history (last 3) for better parsing context
+    const recentContext = messages
+      .slice(-3)
+      .map((m) => m.content)
+      .join(" ");
+
 
     const parseResponse = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo-0125',
@@ -51,7 +72,7 @@ Return only JSON. Do not include comments or explanations. Use this format:
 
 Omit any field you cannot confidently identify. Do not include extra text. The output must be valid JSON only.`,
         },
-        { role: 'user', content: userInput },
+        { role: 'user', content: recentContext },
       ],
       temperature: 0,
     });
@@ -82,7 +103,8 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
 
     const hasBreed = extracted?.breed && extracted.breed.length > 1;
     const hasLocation = extracted?.location && extracted.location.length > 1;
-    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood)\b/i.test(userInput);
+    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
+
 
     const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
 
@@ -251,22 +273,30 @@ ${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})
 
       }).join('\n\n');
 
-      barkrReply = `I fetched some adoptable underdogs for you 🐾
+      barkrReply = hasSeenResults
+        ? `Here’s who I dug up next 🐶💙\n\n${topMatches}\n\nWant me to sniff around again? Just say the word.`
+        : `I fetched some adoptable underdogs for you 🐾
 
-    I’m not like the other algorithms. They hide the dogs who don’t perform. I highlight them.
+      I’m not like the other algorithms. They hide the dogs who don’t perform. I highlight them.
 
-    The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they’ve been. Until now.
+      The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they’ve been. Until now.
 
-    This is what I was built for. To find the ones they missed.
+      This is what I was built for. To find the ones they missed.
 
-    Here’s who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+      Here’s who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+
     } else {
       barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
     }
 
     return NextResponse.json({
       role: 'assistant',
-      content: barkrReply
+      content: barkrReply,
+      memory: {
+        location: extracted?.location || rememberedLocation || null,
+        breed: extracted?.breed || rememberedBreed || null,
+        hasSeenResults: true,
+      },
     });
 
   } catch (error) {

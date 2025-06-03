@@ -34,12 +34,24 @@ export default function Page() {
         "Hi! I'm Barkr—ask me anything about dog rescue, training, or finding a dog to adopt.",
     },
   ]);
+
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [messages]);
+  
   const [input, setInput] = useState("");
+
+  const [location, setLocation] = useState<string | null>(null);
+  const [breed, setBreed] = useState<string | null>(null);
+  
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,6 +63,12 @@ export default function Page() {
     }
   }, [messages]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend(); // matches your actual send function
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -63,10 +81,22 @@ export default function Page() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({
+          messages: newMessages,
+          memory: {
+            location,
+            breed,
+          },
+        }),
       });
+ 
       const data = await res.json();
       const content = data.content || "";
+ 
+      if (data.memory?.location) setLocation(data.memory.location);
+      if (data.memory?.breed) setBreed(data.memory.breed);
+
+      
       if (content) {
         setMessages((prev) => [...prev, { role: "assistant", content }]);
       }
@@ -244,28 +274,20 @@ export default function Page() {
               🐾 Our Mission
             </h2>
             <p className="text-gray-700 mb-4">
-              At BarkBase, we believe the smallest rescues often carry the
-              heaviest load. In rural towns and forgotten corners, dedicated
-              people give everything they have to save dogs—without big
-              sponsors, without much help, and without ever giving up. We're
-              here to change that.
+              At BarkBase, we believe the smallest rescues carry the heaviest weight. In rural towns and overlooked corners, people fight every day to save dogs—with no spotlight, no sponsors, and no safety net. We built this platform to change that.
             </p>
             <p className="text-gray-700 mb-4">
-              BarkBase is a donation & discovery platform built to lift up these
-              unsung heroes. Through transparent, onchain giving and tools like
-              Barkr, our AI rescue dog, we connect donors to real rescues, real
-              needs, and real lives saved.
+              BarkBase is the first donation and discovery platform built natively on web3—transparent, traceable, and unstoppable. Every ETH gift goes directly to helping real dogs and the underfunded rescues who stand by them.
             </p>
             <p className="text-gray-700 mb-4">
-              Barkr helps people find adoptable dogs, offers support and
-              education, and shines a light on the incredible work being done by
-              our rescue partners. Every donation brings food, medical care,
-              safe shelter, and hope. As BarkBase grows, so does our pack—but
-              the mission stays the same.
+              Powered by Barkr, our blockchain-based AI rescue mutt, we help users discover adoptable dogs, spotlight the most overlooked pups, and route support where it matters most. Whether you're searching for a dog or donating to save one, BarkBase connects you to impact you can feel.
+            </p>
+            <p className="text-gray-700 mb-4">
+              We prioritize rural rescues, long-listed dogs, and the places algorithms forgot. Because that’s where help is needed most—and that’s where lives hang in the balance.
             </p>
             <p className="text-blue-700 font-bold text-lg mt-4">
-              We’re here to help dogs
-              <br />& the people who never gave up on them.
+              We’re here to help the dogs no one saw<br />
+              and the people who never stopped looking.
             </p>
           </div>
           <div className="bg-white shadow-xl rounded-2xl p-8 max-w-2xl w-full text-center border border-gray-100">
@@ -421,16 +443,31 @@ export default function Page() {
 
                     ))}
 
+                    {loading && (
+                      <div className="flex items-center gap-2 px-4 py-3">
+                        <img
+                          src="/images/spinner-paw.svg"
+                          alt="Barkr is thinking..."
+                          className="animate-spin h-6 w-6 opacity-70"
+                        />
+                        <span className="text-sm italic text-gray-500">Barkr is thinking…</span>
+                      </div>
+                    )}
+
+                    
                   </div>
 
                   <div className="mt-2 flex">
-                    <input
+                    <textarea
+                      ref={inputRef}
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none"
+                      onKeyDown={handleKeyDown}
+                      rows={1}
                       placeholder="Ask Barkr about dog care or finding a pup..."
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg resize-none focus:outline-none"
                     />
+
                     <button
                       onClick={handleSend}
                       disabled={loading}
