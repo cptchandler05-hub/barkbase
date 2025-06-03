@@ -56,8 +56,8 @@ export default function Page() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only scroll when user has sent a message (not on initial load)
-    if (hasUserInteracted && lastMessageRef.current) {
+    // Only scroll when user has sent a message AND we have more than just the initial message
+    if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
