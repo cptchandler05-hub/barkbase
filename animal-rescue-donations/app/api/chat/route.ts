@@ -51,6 +51,7 @@ export async function POST(req: Request) {
     const rememberedLocation = memory?.location;
     const rememberedBreed = memory?.breed;
     const hasSeenResults = memory?.hasSeenResults || false;
+    const seenDogIds = memory?.seenDogIds || [];
 
     const userInput = messages[messages.length - 1].content;
 
@@ -173,7 +174,10 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     }
 
     const searchData = await searchRes.json();
-    const animals = searchData.animals || [];
+    const allAnimals = searchData.animals || [];
+    
+    // Filter out previously seen dogs
+    const animals = allAnimals.filter(animal => !seenDogIds.includes(animal.id));
 
     let barkrReply = '';
 
@@ -281,7 +285,7 @@ ${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})
 
       }).join('\n\n');
 
-      if (!hasSeenResults && topMatches.length > 0) {
+      if (!hasSeenResults) {
         barkrReply = `I fetched some adoptable underdogs for you 🐾
 
 I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
@@ -292,11 +296,15 @@ This is what I was built for. To find the ones they missed.
 
 Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
       } else {
-        barkrReply = `Here are some adoptable pups I found:\n\n${topMatches}\n\nWant me to search for more? 🐾`;
+        barkrReply = `Here are some more adoptable pups I found:\n\n${topMatches}\n\nWant me to keep searching? 🐾`;
       }
 
     } else {
-      barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
+      if (allAnimals.length > 0 && animals.length === 0) {
+        barkrReply = `I've already shown you all the pups I could find in that area! Want me to try searching in a different location or for different breeds? 🐾`;
+      } else {
+        barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
+      }
     }
 
     const seenDogIds = memory?.seenDogIds || [];
