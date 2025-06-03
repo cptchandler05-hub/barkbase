@@ -55,15 +55,21 @@ export default function Page() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    // Only auto-scroll if user has interacted (sent a message) and there's a last message to scroll to
-    if (hasUserInteracted && lastMessageRef.current) {
+    // Mark initial load as complete after first render
+    setIsInitialLoad(false);
+  }, []);
+
+  useEffect(() => {
+    // Only auto-scroll if user has interacted AND it's not the initial load
+    if (hasUserInteracted && !isInitialLoad && lastMessageRef.current && messages.length > 1) {
       requestAnimationFrame(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     }
-  }, [messages, hasUserInteracted]);
+  }, [messages, hasUserInteracted, isInitialLoad]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
