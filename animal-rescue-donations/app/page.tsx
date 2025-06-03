@@ -57,14 +57,14 @@ export default function Page() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only scroll when explicitly told to do so
-    if (shouldScroll && lastMessageRef.current) {
+    // Only scroll when explicitly told to do so AND user has interacted
+    if (shouldScroll && hasUserInteracted && lastMessageRef.current) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         setShouldScroll(false); // Reset the flag
       }, 100);
     }
-  }, [shouldScroll]);
+  }, [shouldScroll, hasUserInteracted]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -369,7 +369,7 @@ export default function Page() {
                     {messages.map((msg, i) => (
                       <div
                         key={i}
-                        ref={i === messages.length - 1 && hasUserInteracted ? lastMessageRef : null}
+                        ref={i === messages.length - 1 && hasUserInteracted && messages.length > 1 ? lastMessageRef : null}
                         className={`p-3 rounded-lg text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
