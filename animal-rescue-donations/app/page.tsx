@@ -36,6 +36,7 @@ export default function Page() {
   ]);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   useEffect(() => {
     // Only focus after user has interacted to prevent initial scroll to bottom
@@ -52,8 +53,6 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
-
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
