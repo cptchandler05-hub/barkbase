@@ -56,7 +56,7 @@ export default function Page() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only scroll when user has interacted and there's a new message
+    // Only scroll when user has interacted, there's a new message, and it's not the initial load
     if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
