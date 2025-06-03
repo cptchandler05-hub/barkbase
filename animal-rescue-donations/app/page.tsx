@@ -54,14 +54,16 @@ export default function Page() {
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+
   useEffect(() => {
-    // Only auto-scroll if there are more than 1 message (to avoid scrolling on initial load)
-    if (messages.length > 1 && lastMessageRef.current) {
+    // Only auto-scroll if user has interacted (sent a message) and there's a last message to scroll to
+    if (hasUserInteracted && lastMessageRef.current) {
       requestAnimationFrame(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     }
-  }, [messages]);
+  }, [messages, hasUserInteracted]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -72,6 +74,7 @@ export default function Page() {
 
   const handleSend = async () => {
     if (!input.trim()) return;
+    setHasUserInteracted(true);
     const newMessages = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
     setInput("");
