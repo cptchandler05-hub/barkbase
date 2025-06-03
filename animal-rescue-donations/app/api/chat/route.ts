@@ -151,11 +151,9 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     console.log('📡 Sending Petfinder query:', query);
 
-    // Try relative URL first, fallback to absolute if needed
-    const petfinderUrl = '/api/petfinder/search';
-    console.log('🔗 Fetching from:', petfinderUrl);
-
-    const searchRes = await fetch(petfinderUrl, {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
+    const url = new URL('/api/petfinder/search', baseUrl);
+    const searchRes = await fetch(url.toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(query),
@@ -166,7 +164,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       console.error('❌ Petfinder fetch failed:', {
         status: searchRes.status,
         statusText: searchRes.statusText,
-        url: petfinderUrl,
+        url: url.toString(),
         response: errorText.substring(0, 500) // Log first 500 chars
       });
       return NextResponse.json({
