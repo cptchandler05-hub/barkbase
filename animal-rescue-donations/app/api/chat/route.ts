@@ -151,10 +151,11 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     console.log('📡 Sending Petfinder query:', query);
 
+    // Try relative URL first, fallback to absolute if needed
+    const petfinderUrl = '/api/petfinder/search';
+    console.log('🔗 Fetching from:', petfinderUrl);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const url = new URL('/api/petfinder/search', baseUrl);
-    const searchRes = await fetch(url.toString(), {
+    const searchRes = await fetch(petfinderUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(query),
@@ -162,7 +163,12 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     if (!searchRes.ok) {
       const errorText = await searchRes.text();
-      console.error('❌ Petfinder fetch failed:', errorText);
+      console.error('❌ Petfinder fetch failed:', {
+        status: searchRes.status,
+        statusText: searchRes.statusText,
+        url: petfinderUrl,
+        response: errorText.substring(0, 500) // Log first 500 chars
+      });
       return NextResponse.json({
         role: 'assistant',
         content: `I tried sniffing out adoptable dogs but the fetch failed. Bad API! 🐾 If this keeps happening, bite the dev.`
