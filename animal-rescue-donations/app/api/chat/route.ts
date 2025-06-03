@@ -280,23 +280,13 @@ ${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})
 
 I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
 
-The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
+The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile's been sitting in the dark. The higher the number, the more invisible they've been. Until now.
 
 This is what I was built for. To find the ones they missed.
 
 Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
-      } else if (topMatches.length > 0) {
-        barkrReply = `Here are some adoptable pups I found:\n\n${topMatches}\n\nWant me to search for more? 🐾`;
       } else {
-        barkrReply = `I fetched some adoptable underdogs for you 🐾
-
-I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
-
-The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
-
-This is what I was built for. To find the ones they missed.
-
-Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+        barkrReply = `Here are some adoptable pups I found:\n\n${topMatches}\n\nWant me to search for more? 🐾`;
       }
 
     } else {
