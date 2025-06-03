@@ -53,16 +53,18 @@ export default function Page() {
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only scroll when user has sent a message AND we have more than just the initial message
-    if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
+    // Only scroll when explicitly told to do so
+    if (shouldScroll && lastMessageRef.current) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        setShouldScroll(false); // Reset the flag
       }, 100);
     }
-  }, [messages.length, hasUserInteracted]);
+  }, [shouldScroll]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -78,6 +80,7 @@ export default function Page() {
     setMessages(newMessages);
     setInput("");
     setLoading(true);
+    setShouldScroll(true); // Trigger scroll after user sends message
 
     try {
       const res = await fetch("/api/chat", {
@@ -101,6 +104,7 @@ export default function Page() {
       
       if (content) {
         setMessages((prev) => [...prev, { role: "assistant", content }]);
+        setShouldScroll(true); // Trigger scroll after assistant responds
       }
     } catch (error) {
       console.error("API error:", error);
