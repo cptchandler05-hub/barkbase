@@ -151,7 +151,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     console.log('📡 Sending Petfinder query:', query);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const url = new URL('/api/petfinder/search', baseUrl);
     const searchRes = await fetch(url.toString(), {
       method: 'POST',
