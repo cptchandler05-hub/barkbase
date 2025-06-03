@@ -307,7 +307,6 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       }
     }
 
-    const seenDogIds = memory?.seenDogIds || [];
     const newDogIds = animals.map((a) => a.id);
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
 
