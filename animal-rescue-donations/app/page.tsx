@@ -52,17 +52,7 @@ export default function Page() {
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
-  const lastMessageRef = useRef<HTMLDivElement>(null);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
-
-  useEffect(() => {
-    // Only scroll when user has interacted and there's a new message
-    if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
-      setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-  }, [messages, hasUserInteracted]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -365,7 +355,6 @@ export default function Page() {
                     {messages.map((msg, i) => (
                       <div
                         key={i}
-                        ref={i === messages.length - 1 ? lastMessageRef : null}
                         className={`p-3 rounded-lg text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
