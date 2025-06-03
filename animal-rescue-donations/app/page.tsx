@@ -52,19 +52,21 @@ export default function Page() {
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
 
-  const lastMessageRef = useRef<HTMLDivElement>(null);
-
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
+  const scrollToBottom = () => {
+    if (messagesEndRef.current && hasUserInteracted) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
-    // Only auto-scroll after user sends a message (not on initial load or bot responses)
-    if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
+    // Only scroll when user has interacted and we have a bot response
+    if (hasUserInteracted && messages.length > 1) {
       const lastMessage = messages[messages.length - 1];
-      // Only scroll for user messages, not assistant responses
-      if (lastMessage.role === 'user') {
-        setTimeout(() => {
-          lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+      if (lastMessage.role === 'assistant') {
+        setTimeout(scrollToBottom, 100);
       }
     }
   }, [messages, hasUserInteracted]);
@@ -370,7 +372,6 @@ export default function Page() {
                     {messages.map((msg, i) => (
                       <div
                         key={i}
-                        ref={i === messages.length - 1 ? lastMessageRef : null}
                         className={`p-3 rounded-lg text-sm leading-relaxed ${
                           msg.role === "assistant" ? "bg-blue-50" : "bg-gray-100"
                         }`}
@@ -460,8 +461,7 @@ export default function Page() {
                         <span className="text-sm italic text-gray-500">Barkr is thinking…</span>
                       </div>
                     )}
-
-                    
+                    <div ref={messagesEndRef} />
                   </div>
 
                   <div className="mt-2 flex">
