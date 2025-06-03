@@ -57,12 +57,15 @@ export default function Page() {
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
   useEffect(() => {
-    // Only auto-scroll if user has interacted and there's a ref to scroll to
-    if (hasUserInteracted && lastMessageRef.current) {
-      // Add a small delay to ensure DOM is updated
-      setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
+    // Only auto-scroll after user sends a message (not on initial load or bot responses)
+    if (hasUserInteracted && lastMessageRef.current && messages.length > 1) {
+      const lastMessage = messages[messages.length - 1];
+      // Only scroll for user messages, not assistant responses
+      if (lastMessage.role === 'user') {
+        setTimeout(() => {
+          lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
     }
   }, [messages, hasUserInteracted]);
 

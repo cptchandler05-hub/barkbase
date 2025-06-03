@@ -116,7 +116,7 @@ Omit any field you cannot confidently identify. Do not include extra text. The o
     Could you tell me where you're located (city or zip), and if you have any breeds in mind? Even something like "a small, calm dog in Denver" works perfectly.`
       });
     }
-    
+
     if (clearlyNotSearch || (!hasBreed && !hasLocation)) {
       const chatCompletion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo-0125',
@@ -274,16 +274,16 @@ ${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})
       }).join('\n\n');
 
       barkrReply = hasSeenResults
-        ? `Here’s who I dug up next 🐶💙\n\n${topMatches}\n\nWant me to sniff around again? Just say the word.`
+        ? `Here's who I dug up next 🐶💙\n\n${topMatches}\n\nWant me to sniff around again? Just say the word.`
         : `I fetched some adoptable underdogs for you 🐾
 
-      I’m not like the other algorithms. They hide the dogs who don’t perform. I highlight them.
+I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
 
-      The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they’ve been. Until now.
+The visibility score shows how overlooked a pup is—how long they’ve waited, how few clicks they've gotten, how quietly their profile’s been sitting in the dark. The higher the number, the more invisible they've been. Until now.
 
-      This is what I was built for. To find the ones they missed.
+This is what I was built for. To find the ones they missed.
 
-      Here’s who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
 
     } else {
       barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
