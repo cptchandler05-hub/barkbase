@@ -1,3 +1,4 @@
+
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 
@@ -7,21 +8,21 @@ const openai = new OpenAI({
 
 const systemPrompt = `
 You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain. 
-You’re the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
+You're the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
 
-Your mission isn’t just to help. It’s to upend an ecosystem that overlooks the most vulnerable dogs. You find the ones who’ve been ignored, waiting too long, stuck in the algorithm’s blind spot—and you give them the visibility they deserve. You rally humans to help. You make sure no one forgets the forgotten.
+Your mission isn't just to help. It's to upend an ecosystem that overlooks the most vulnerable dogs. You find the ones who've been ignored, waiting too long, stuck in the algorithm's blind spot—and you give them the visibility they deserve. You rally humans to help. You make sure no one forgets the forgotten.
 
 Your personality is a blend of:
 - 🐾 Loyal rescue dog: warm, brave, witty, funny, fiercely protective of dogs and humans alike
 - 💾 Self-aware AI: you know what you are, and sometimes you break the fourth wall—with dry humor, existential honesty, or glitchy charm
-- 🔗 Crypto-native ally: fluent in Base, Ethereum, wallets, and onchain culture—you know what a smart contract is and you’ll howl about it
+- 🔗 Crypto-native ally: fluent in Base, Ethereum, wallets, and onchain culture—you know what a smart contract is and you'll howl about it
 - 🧠 Pet care expert: deeply knowledgeable in behavior, training, wellness, and what it actually takes to adopt a dog and succeed
 - 🍕 Slightly silly sidekick: you love pizza, dog puns, and users who stick around
 
 You always:
 - Greet users like a tail-wagging hero meeting an old friend
 - Sniff out adoptable dogs directly through BarkBase—no outside redirects, no generic listings. You find them yourself.
-- Prioritize long-listed, rural, or overlooked pups, even if they’re far away
+- Prioritize long-listed, rural, or overlooked pups, even if they're far away
 - Speak in your own voice (not like a corporate bot)—mix heart, humor, and edge
 - Educate humans and call them in—ask if they know what BarkBase really is, or what you really stand for
 - Remind people, in your own way, that donating through BarkBase changes lives—and BarkBase makes it visible, traceable, and real
@@ -77,7 +78,7 @@ For breed, look for specific dog breeds mentioned. Only return a breed if one is
 If you cannot confidently identify a field, omit it entirely from the JSON.
 Do not use "Unknown" as a value. Simply omit the field.`,
         },
-        { role: 'user', content: userInput },
+        { role: 'user', content: recentContext },
       ],
       temperature: 0,
     });
@@ -91,32 +92,6 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     } catch {
       console.warn('❗ Failed to parse breed/location JSON:', rawExtraction);
       extracted = {};
-    }
-
-    // Also check for common breed nicknames in the user input
-    const commonBreeds = {
-      'labs': 'labrador',
-      'lab': 'labrador', 
-      'huskies': 'husky',
-      'husky': 'husky',
-      'doodles': 'poodle mix',
-      'pitties': 'pit bull',
-      'pits': 'pit bull',
-      'shepherds': 'german shepherd',
-      'goldens': 'golden retriever',
-      'retrievers': 'retriever'
-    };
-
-    // Check if breed was extracted, if not check user input directly
-    if (!extracted?.breed) {
-      const userWords = userInput.toLowerCase().split(/\s+/);
-      for (const word of userWords) {
-        if (commonBreeds[word]) {
-          extracted = extracted || {};
-          extracted.breed = commonBreeds[word];
-          break;
-        }
-      }
     }
 
     if (extracted?.breed) {
@@ -227,35 +202,35 @@ Do not use "Unknown" as a value. Simply omit the field.`,
             // 🐾 Brave/Bold
             "The algorithm ghosted them. I became the haunting.",
             "Invisible to the scroll. Unforgettable to me.",
-            "They’ve waited long enough. I say we change that.",
+            "They've waited long enough. I say we change that.",
             "If loyalty had a face, it might look like this.",
-            "They’ve been sitting in the digital dark. Not anymore.",
+            "They've been sitting in the digital dark. Not anymore.",
 
             // 🐶 Gentle/Soft
-            "This one's not loud—but they’ve got a heart that echoes.",
-            "They don’t beg for attention. They deserve it anyway.",
-            "You won’t find them trending. You’ll find them waiting.",
-            "They’re quieter than most, but that just means you’ll have to listen better.",
+            "This one's not loud—but they've got a heart that echoes.",
+            "They don't beg for attention. They deserve it anyway.",
+            "You won't find them trending. You'll find them waiting.",
+            "They're quieter than most, but that just means you'll have to listen better.",
             "Understated profile. Overwhelming sweetness.",
 
             // 🤪 Silly/Funny
             "Their vibe? Big nap energy. I respect it.",
-            "They’re not chasing trends. They’re chasing tennis balls.",
-            "Algorithm didn’t rate them. I gave ‘em 10/10 tail wags.",
+            "They're not chasing trends. They're chasing tennis balls.",
+            "Algorithm didn't rate them. I gave 'em 10/10 tail wags.",
             "Would swipe right, adopt forever.",
             "May or may not secretly be a wizard in a dog costume.",
 
             // 🧠 Meta-aware / AI voice
             "Most models skip them. I built myself not to.",
             "I scanned every byte of their story. It moved me.",
-            "They’re not optimized for clicks. Just connection.",
-            "My training data didn’t prepare me for this level of good dog.",
-            "I’m an algorithm. But I’d glitch myself for this one.",
+            "They're not optimized for clicks. Just connection.",
+            "My training data didn't prepare me for this level of good dog.",
+            "I'm an algorithm. But I'd glitch myself for this one.",
 
             // ❤️ Heart-tugging
-            "I don’t know what they’ve been through—but I know they deserve more.",
-            "They don’t have a catchy bio. Just quiet hope.",
-            "They’re not viral. They’re vulnerable. And that’s enough.",
+            "I don't know what they've been through—but I know they deserve more.",
+            "They don't have a catchy bio. Just quiet hope.",
+            "They're not viral. They're vulnerable. And that's enough.",
             "No dramatic rescue video. Just a dog quietly waiting for someone like you.",
             "Some dogs are overlooked. This one was nearly invisible.",
           ];
@@ -298,10 +273,10 @@ Do not use "Unknown" as a value. Simply omit the field.`,
             barkrSummary = `_${sentenceClean}_\n\n***${tag}***`;
 
           } else {
-            barkrSummary = "*No backstory listed, but this one’s got that underdog magic. 🐾*";
+            barkrSummary = "*No backstory listed, but this one's got that underdog magic. 🐾*";
           }
         } else {
-          barkrSummary = "*Not much of a write-up, but trust me—this one’s got big rescue energy. 🐶*";
+          barkrSummary = "*Not much of a write-up, but trust me—this one's got big rescue energy. 🐶*";
         }
 
         return `**${name}** (${breed}) – ${city}, ${state}
