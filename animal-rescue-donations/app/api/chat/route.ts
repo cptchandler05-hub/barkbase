@@ -50,7 +50,7 @@ export async function POST(req: Request) {
 
     const rememberedLocation = memory?.location;
     const rememberedBreed = memory?.breed;
-    const hasSeenResults = memory?.hasSeenResults || false;
+    const hasSeenResults = memory?.hasSeenResults || true;
     const seenDogIds = memory?.seenDogIds || [];
 
     const userInput = messages[messages.length - 1].content;
@@ -176,8 +176,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     const searchData = await searchRes.json();
     const allAnimals = searchData.animals || [];
     
-    // Filter out previously seen dogs
-    const animals = allAnimals.filter(animal => !seenDogIds.includes(animal.id));
+    const animals = allAnimals.filter(animal => !seenDogIds.includes(String(animal.id)));
 
     let barkrReply = '';
 
@@ -307,9 +306,12 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       }
     }
 
-    const newDogIds = animals.map((a) => a.id);
+    const newDogIds = animals.map((a) => String(a.id));
+
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
 
+    console.log('[🐶 Seen Dog IDs]:', updatedSeenDogIds);
+    
     return NextResponse.json({
       role: 'assistant',
       content: barkrReply,
