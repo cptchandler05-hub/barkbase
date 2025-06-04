@@ -70,8 +70,15 @@ export async function POST(req: Request) {
           role: 'system',
           content: `You are a strict JSON formatter. From the following user message, extract the most likely dog breed and geographic location.
 
-Return only JSON. Do not include comments or explanations. Use this format:
-{ "breed": "Breed", "location": "City, State" }
+Return only valid JSON. If you can only identify one field (breed or location), return just that.
+Do NOT return fields with guesses like "Unknown" or "Any". Simply omit them.
+
+Examples:
+✅ { "breed": "Labrador" }
+✅ { "location": "Boston, MA" }
+✅ { "breed": "Husky", "location": "Denver, CO" }
+❌ Do NOT return: { "breed": "Unknown" }
+❌ Do NOT include comments or explanations.
 
 For location, look for cities, states, zip codes, or regions mentioned in the text. Only return a location if one is clearly mentioned.
 For breed, look for specific dog breeds mentioned. Only return a breed if one is clearly mentioned.
@@ -85,6 +92,8 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     let extracted;
     const rawExtraction = parseResponse.choices[0].message.content || '';
+    console.log('[🧠 Parsed search terms]:', extracted);
+    
     console.log('[Barkr GPT breed/location raw output]:', rawExtraction);
 
     try {
@@ -123,7 +132,13 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       });
     }
 
-    if (clearlyNotSearch || (!hasBreed && !rememberedBreed && !hasLocation && !rememberedLocation)) {
+    const missingSearchInfo =
+      (!hasBreed && !rememberedBreed) ||
+      (!hasLocation && !rememberedLocation);
+
+    if (clearlyNotSearch && missingSearchInfo) {
+      console.log('💬 User message does not seem to be a search query. Proceeding with chat.');
+    {
       const chatCompletion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo-0125',
         messages: [
