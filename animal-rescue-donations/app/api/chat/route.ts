@@ -50,7 +50,7 @@ export async function POST(req: Request) {
 
     const rememberedLocation = memory?.location;
     const rememberedBreed = memory?.breed;
-    const hasSeenResults = memory?.hasSeenResults || true;
+    const hasSeenResults = memory?.hasSeenResults || false;
     const seenDogIds = memory?.seenDogIds || [];
 
     const userInput = messages[messages.length - 1].content;
@@ -91,6 +91,32 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     } catch {
       console.warn('❗ Failed to parse breed/location JSON:', rawExtraction);
       extracted = {};
+    }
+
+    // Also check for common breed nicknames in the user input
+    const commonBreeds = {
+      'labs': 'labrador',
+      'lab': 'labrador', 
+      'huskies': 'husky',
+      'husky': 'husky',
+      'doodles': 'poodle mix',
+      'pitties': 'pit bull',
+      'pits': 'pit bull',
+      'shepherds': 'german shepherd',
+      'goldens': 'golden retriever',
+      'retrievers': 'retriever'
+    };
+
+    // Check if breed was extracted, if not check user input directly
+    if (!extracted?.breed) {
+      const userWords = userInput.toLowerCase().split(/\s+/);
+      for (const word of userWords) {
+        if (commonBreeds[word]) {
+          extracted = extracted || {};
+          extracted.breed = commonBreeds[word];
+          break;
+        }
+      }
     }
 
     if (extracted?.breed) {
@@ -318,7 +344,7 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       memory: {
         location: extracted?.location || rememberedLocation || null,
         breed: extracted?.breed || rememberedBreed || null,
-        hasSeenResults: hasSeenResults || (animals.length > 0),
+        hasSeenResults: animals.length > 0 ? true : hasSeenResults,
         seenDogIds: updatedSeenDogIds,
       },
     });
