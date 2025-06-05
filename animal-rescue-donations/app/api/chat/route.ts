@@ -204,7 +204,36 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     }
 
     const searchData = await searchRes.json();
+
+    function scoreVisibility(dog: any): number {
+      let score = dog.visibilityScore || 0;
+
+      // Bonus for senior or special needs
+      if (dog.age?.toLowerCase() === 'senior') score += 20;
+      if (dog.attributes?.special_needs) score += 20;
+
+      // Bonus for how long they've been listed
+      const listedDate = new Date(dog.status_changed_at || dog.published_at || '');
+      if (!isNaN(listedDate.getTime())) {
+        const days = Math.floor((Date.now() - listedDate.getTime()) / (1000 * 60 * 60 * 24));
+        score += days;
+      }
+
+      // Bonus for rural ZIPs (starting with 6, 7, 8)
+      const zip = dog.contact?.address?.postal_code || '';
+      if (/^(6|7|8)\d{4}$/.test(zip)) {
+        score += 30;
+      }
+
+      return score;
+    }
+
     const allAnimals = searchData.animals || [];
+
+    const allScored = allAnimals.map(dog => ({
+      ...dog,
+      __compositeScore: scoreVisibility(dog),
+    }));
     
     const maxPerPage = 10;
 
@@ -213,7 +242,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     if (availableIds.length > 0) {
       animalsToShow = allAnimals.filter(a => availableIds.includes(String(a.id))).slice(0, maxPerPage);
-    } else {
+    } else 
       const filtered = allAnimals.filter(a => !seenDogIds.includes(String(a.id)));
       animalsToShow = filtered.slice(0, maxPerPage);
       availableIds = filtered.map(a => String(a.id));
