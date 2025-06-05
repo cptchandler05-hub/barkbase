@@ -87,9 +87,8 @@ export default function Page() {
     setInput("");
     setHasUserInteracted(false);
     setShouldScroll(true); // triggers autoscroll
+    setMemory(null); // Move this inside the function
   };
-
-  setMemory(null);
   
   const handleSend = async () => {
     if (!input.trim()) return;
