@@ -366,6 +366,7 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
         seenDogIds: updatedSeenDogIds,
         pendingDogs: updatedPendingDogs,
       }
+    });
 
   } catch (error) {
     console.error('Chat API error:', error);
