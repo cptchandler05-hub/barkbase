@@ -138,7 +138,6 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     if (clearlyNotSearch && missingSearchInfo) {
       console.log('💬 User message does not seem to be a search query. Proceeding with chat.');
-    {
       const chatCompletion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo-0125',
         messages: [

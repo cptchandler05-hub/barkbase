@@ -49,6 +49,8 @@ export default function Page() {
 
   const [location, setLocation] = useState<string | null>(null);
   const [breed, setBreed] = useState<string | null>(null);
+
+  const [memory, setMemory] = useState<any | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
@@ -87,6 +89,7 @@ export default function Page() {
     setShouldScroll(true); // triggers autoscroll
   };
 
+  setMemory(null);
   
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -103,16 +106,19 @@ export default function Page() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: newMessages,
-          memory: {
-            location,
-            breed,
-          },
+          memory: memory || { location, breed }, // fallback to local memory if full memory is null
         }),
       });
  
       const data = await res.json();
       const content = data.content || "";
- 
+
+      if (data.memory) {
+        setMemory(data.memory); // ✅ store full memory object
+        if (data.memory.location) setLocation(data.memory.location);
+        if (data.memory.breed) setBreed(data.memory.breed);
+      }
+      
       if (data.memory?.location) setLocation(data.memory.location);
       if (data.memory?.breed) setBreed(data.memory.breed);
 
