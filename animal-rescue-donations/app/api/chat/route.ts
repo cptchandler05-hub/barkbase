@@ -242,7 +242,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     if (availableIds.length > 0) {
       animalsToShow = allAnimals.filter(a => availableIds.includes(String(a.id))).slice(0, maxPerPage);
-    } else 
+    } else {
       const filtered = allAnimals.filter(a => !seenDogIds.includes(String(a.id)));
       animalsToShow = filtered.slice(0, maxPerPage);
       availableIds = filtered.map(a => String(a.id));
