@@ -266,7 +266,9 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
         const score = a.__compositeScore ?? '?';
-        let barkrSummary = `🐾 **VISIBILITY SCORE: ${score}**\n\n`;
+        let barkrSummary = `🐾 **VISIBILITY SCORE: ${score}**
+
+`;
 
         if (a.description && a.description.length > 30) {
 
@@ -354,8 +356,10 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
         return `**${name}** (${breed}) – ${city}, ${state}
 
-        ${barkrSummary}
-        ${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+${barkrSummary}
+${photo ? `![${name}](${photo})
+
+` : ''}[Adopt Me 🐾](${url})`;
 
 
       }).join('\n\n');
