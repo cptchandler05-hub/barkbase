@@ -266,9 +266,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
         const score = a.__compositeScore ?? '?';
-        let barkrSummary = `🐾 <strong>VISIBILITY SCORE: ${score}</strong>
-
-`;
+        let barkrSummary = `🐾 **VISIBILITY SCORE: ${score}**\n\n`;
 
         if (a.description && a.description.length > 30) {
 
