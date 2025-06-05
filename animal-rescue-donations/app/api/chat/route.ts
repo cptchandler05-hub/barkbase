@@ -241,19 +241,21 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     let animalsToShow: any[] = [];
 
     if (availableIds.length > 0) {
-      animalsToShow = allAnimals.filter(a => availableIds.includes(String(a.id))).slice(0, maxPerPage);
+      const pending = allScored.filter(a => availableIds.includes(String(a.id)));
+      const sortedPending = pending.sort((a, b) => b.__compositeScore - a.__compositeScore);
+      animalsToShow = sortedPending.slice(0, maxPerPage);
     } else {
-      const filtered = allAnimals.filter(a => !seenDogIds.includes(String(a.id)));
-      animalsToShow = filtered.slice(0, maxPerPage);
-      availableIds = filtered.map(a => String(a.id));
+      const unseen = allScored.filter(a => !seenDogIds.includes(String(a.id)));
+      const sortedUnseen = unseen.sort((a, b) => b.__compositeScore - a.__compositeScore);
+      animalsToShow = sortedUnseen.slice(0, maxPerPage);
+      availableIds = sortedUnseen.map(a => String(a.id));
     }
-
 
     let barkrReply = '';
 
     if (animalsToShow.length > 0) {
-      // Sort by invisibility (highest score first)
-      const sorted = animalsToShow.sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+      // Sort by composite visibility (age, seniority, rural ZIPs)
+      const sorted = animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0));
 
       const topMatches = sorted.slice(0, 10).map((a) => {
         const name = a.name;
@@ -263,11 +265,11 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         const state = a.contact?.address?.state || '';
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
-        const score = a.visibilityScore ?? '?';
-
-        let barkrSummary = '';
+        const score = a.__compositeScore ?? '?';
+        let barkrSummary = `🐾 VISIBILITY SCORE: ${score}\n\n`;
 
         if (a.description && a.description.length > 30) {
+
           const taglines = [
             // 🐾 Brave/Bold
             "The algorithm ghosted them. I became the haunting.",
@@ -340,7 +342,8 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
           if (sentence) {
             const sentenceClean = decodeHTMLEntities(sentence.trim());
-            barkrSummary = `_${sentenceClean}_\n\n***${tag}***`;
+            barkrSummary += `_${sentenceClean}_\n\n***${tag}***`;
+
 
           } else {
             barkrSummary = "*No backstory listed, but this one's got that underdog magic. 🐾*";
@@ -350,8 +353,10 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         }
 
         return `**${name}** (${breed}) – ${city}, ${state}
-**Visibility Score:** ${score}
-${barkrSummary}\n${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+
+        ${barkrSummary}
+        ${photo ? `![${name}](${photo})\n` : ''}[Adopt Me 🐾](${url})`;
+
 
       }).join('\n\n');
 
