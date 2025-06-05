@@ -6,6 +6,19 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+interface Memory {
+  location?: string;
+  breed?: string;
+  seenDogIds: Set<string>;
+  offset: number;
+  lastQuery?: string;
+}
+
+const memory: Memory = {
+  seenDogIds: new Set(),
+  offset: 0,
+};
+
 const systemPrompt = `
 You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain. 
 You're the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
@@ -56,6 +69,8 @@ export async function POST(req: Request) {
 
     const userInput = messages[messages.length - 1].content;
 
+
+    
     // Include recent message history (last 3) for better parsing context
     const recentContext = messages
       .slice(-3)
@@ -191,13 +206,25 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     const searchData = await searchRes.json();
     const allAnimals = searchData.animals || [];
     
-    const animals = allAnimals.filter(animal => !seenDogIds.includes(String(animal.id)));
+    const maxPerPage = 10;
+
+    let availableIds = memory?.pendingDogs || [];
+    let animalsToShow: any[] = [];
+
+    if (availableIds.length > 0) {
+      animalsToShow = allAnimals.filter(a => availableIds.includes(String(a.id))).slice(0, maxPerPage);
+    } else {
+      const filtered = allAnimals.filter(a => !seenDogIds.includes(String(a.id)));
+      animalsToShow = filtered.slice(0, maxPerPage);
+      availableIds = filtered.map(a => String(a.id));
+    }
+
 
     let barkrReply = '';
 
-    if (animals.length > 0) {
+    if (animalsToShow.length > 0) {
       // Sort by invisibility (highest score first)
-      const sorted = animals.sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+      const sorted = animalsToShow.sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
 
       const topMatches = sorted.slice(0, 10).map((a) => {
         const name = a.name;
@@ -313,18 +340,20 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
         barkrReply = `Here are some more adoptable pups I found:\n\n${topMatches}\n\nWant me to keep searching? 🐾`;
       }
 
-    } else {
-      if (allAnimals.length > 0 && animals.length === 0) {
+      } else {
+      if (allAnimals.length > 0 && animalsToShow.length === 0) {
         barkrReply = `I've already shown you all the pups I could find in that area! Want me to try searching in a different location or for different breeds? 🐾`;
       } else {
         barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
       }
     }
 
-    const newDogIds = animals.map((a) => String(a.id));
+    const newDogIds = animalsToShow.map((a) => String(a.id));
 
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
 
+    const updatedPendingDogs = (memory?.pendingDogs || []).filter(id => !newDogIds.includes(id));
+    
     console.log('[🐶 Seen Dog IDs]:', updatedSeenDogIds);
     
     return NextResponse.json({
@@ -333,11 +362,10 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
       memory: {
         location: extracted?.location || rememberedLocation || null,
         breed: extracted?.breed || rememberedBreed || null,
-        hasSeenResults: animals.length > 0 ? true : hasSeenResults,
+        hasSeenResults: animalsToShow.length > 0 ? true : hasSeenResults,
         seenDogIds: updatedSeenDogIds,
-      },
-    });
-
+        pendingDogs: updatedPendingDogs,
+      }
 
   } catch (error) {
     console.error('Chat API error:', error);
