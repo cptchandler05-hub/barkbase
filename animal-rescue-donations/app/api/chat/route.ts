@@ -1,6 +1,7 @@
 
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
+import { getRandomRuralZip } from '@/lib/utils';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -9,9 +10,10 @@ const openai = new OpenAI({
 interface Memory {
   location?: string;
   breed?: string;
-  seenDogIds: Set<string>;
+  seenDogIds: string[];
   offset: number;
   lastQuery?: string;
+  cachedDogs?: any[];
 }
 
 const memory: Memory = {
@@ -164,14 +166,15 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       return NextResponse.json(chatCompletion.choices[0].message);
     }
 
-    const fallbackZip = '10001';
-
-    // Use extracted location, fallback to remembered location, then to default
+    // Use extracted location, fallback to remembered location, then to random rural fallback
     let locationQuery = extracted.location?.trim() || rememberedLocation?.trim();
+
     if (!locationQuery || locationQuery === '' || locationQuery.toLowerCase() === 'unknown') {
-      locationQuery = 'New York, NY';
-      console.warn(`⚠️ No valid location found. Using fallback location: ${locationQuery}`);
+      const fallbackZip = getRandomRuralZip();
+      locationQuery = fallbackZip;
+      console.warn(`⚠️ No valid location found. Using rural fallback ZIP: ${locationQuery}`);
     }
+
 
     const query = {
       location: locationQuery,
@@ -234,22 +237,20 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       ...dog,
       __compositeScore: scoreVisibility(dog),
     }));
-    
+
+    // Merge into cachedDogs across batches
+    let cachedDogs = (memory?.cachedDogs || [])
+      .concat(allScored)
+      .filter((dog, index, self) =>
+        index === self.findIndex(d => d.id === dog.id)
+      );
+
     const maxPerPage = 10;
+    const sorted = cachedDogs
+      .filter(a => !seenDogIds.includes(String(a.id)))
+      .sort((a, b) => b.__compositeScore - a.__compositeScore);
 
-    let availableIds = memory?.pendingDogs || [];
-    let animalsToShow: any[] = [];
-
-    if (availableIds.length > 0) {
-      const pending = allScored.filter(a => availableIds.includes(String(a.id)));
-      const sortedPending = pending.sort((a, b) => b.__compositeScore - a.__compositeScore);
-      animalsToShow = sortedPending.slice(0, maxPerPage);
-    } else {
-      const unseen = allScored.filter(a => !seenDogIds.includes(String(a.id)));
-      const sortedUnseen = unseen.sort((a, b) => b.__compositeScore - a.__compositeScore);
-      animalsToShow = sortedUnseen.slice(0, maxPerPage);
-      availableIds = sortedUnseen.map(a => String(a.id));
-    }
+    const animalsToShow = sorted.slice(0, maxPerPage);
 
     let barkrReply = '';
 
@@ -402,7 +403,8 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
         breed: extracted?.breed || rememberedBreed || null,
         hasSeenResults: animalsToShow.length > 0 ? true : hasSeenResults,
         seenDogIds: updatedSeenDogIds,
-        pendingDogs: updatedPendingDogs,
+        offset: memory?.offset || 0,
+        cachedDogs: cachedDogs,
       }
     });
 
