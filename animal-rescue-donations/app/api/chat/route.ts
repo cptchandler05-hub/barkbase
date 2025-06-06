@@ -62,10 +62,7 @@ export async function POST(req: Request) {
     const rememberedLocation = memory.location;
     const rememberedBreed = memory.breed;
     const hasSeenResults = memory.hasSeenResults || false;
-
     const userInput = messages[messages.length - 1].content;
-
-
 
     // Include recent message history (last 3) for better parsing context
     const recentContext = messages
