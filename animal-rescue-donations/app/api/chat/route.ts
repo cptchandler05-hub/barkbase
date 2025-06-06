@@ -1,4 +1,3 @@
-
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import { getRandomRuralZip } from '@/lib/utils';
@@ -72,7 +71,7 @@ export async function POST(req: Request) {
     const userInput = messages[messages.length - 1].content;
 
 
-    
+
     // Include recent message history (last 3) for better parsing context
     const recentContext = messages
       .slice(-3)
@@ -110,7 +109,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     let extracted;
     const rawExtraction = parseResponse.choices[0].message.content || '';
     console.log('[🧠 Parsed search terms]:', extracted);
-    
+
     console.log('[Barkr GPT breed/location raw output]:', rawExtraction);
 
     try {
@@ -392,9 +391,9 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
 
     const updatedPendingDogs = (memory?.pendingDogs || []).filter(id => !newDogIds.includes(id));
-    
+
     console.log('[🐶 Seen Dog IDs]:', updatedSeenDogIds);
-    
+
     return NextResponse.json({
       role: 'assistant',
       content: barkrReply,
