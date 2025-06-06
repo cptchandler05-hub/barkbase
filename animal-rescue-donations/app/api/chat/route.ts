@@ -263,7 +263,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         .slice(0, maxPerPage);
       animalsToShow.push(...fallbackSorted);
     }
-    
+
     let barkrReply = '';
 
     if (animalsToShow.length > 0 || sorted.length > 0) {
