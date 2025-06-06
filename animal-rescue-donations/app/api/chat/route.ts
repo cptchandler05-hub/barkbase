@@ -263,7 +263,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     let barkrReply = '';
 
-    if (animalsToShow.length > 0 || sorted.length > 0) {
+    if (animalsToShow.length > 0) {
 
       const sorted = animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0));
 
