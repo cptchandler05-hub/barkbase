@@ -64,13 +64,38 @@ export async function POST(req: Request) {
     const hasSeenResults = memory.hasSeenResults || false;
     const userInput = messages[messages.length - 1].content;
 
+    const isInitialResults = !hasSeenResults && !isShowingMore;
+
     // Include recent message history (last 3) for better parsing context
     const recentContext = messages
       .slice(-3)
       .map((m) => m.content)
       .join(" ");
 
+    const lastMessage = messages[messages.length - 1].content;
 
+    // Step 2: Ask GPT if the user is asking to see more results
+    const intentResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo-0125',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a JSON-only classifier. Does the user message suggest they want to see more adoptable dogs from a previous search? Reply only with: { "show_more": true } or { "show_more": false }.`
+        },
+        { role: 'user', content: lastMessage },
+      ],
+      temperature: 0,
+    });
+
+    let isShowingMore = false;
+
+    try {
+      const intentJson = JSON.parse(intentResponse.choices[0].message.content || '{}');
+      isShowingMore = intentJson?.show_more === true;
+    } catch (err) {
+      console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
+    }
+    
     const parseResponse = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo-0125',
       messages: [
@@ -231,15 +256,20 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       __compositeScore: scoreVisibility(dog),
     }));
 
-    let cachedDogs = (memory?.cachedDogs || [])
-    .concat(allScored)
-    .filter((dog, index, self) => index === self.findIndex(d => d.id === dog.id))
-    .map(dog => ({
-      ...dog,
-      __compositeScore: typeof dog.__compositeScore === 'number'
-        ? dog.__compositeScore
-        : scoreVisibility(dog),
-    }));
+    let cachedDogs = [...(memory?.cachedDogs || []), ...allScored]
+      .reduce((acc, dog) => {
+        const id = String(dog.id);
+        if (!acc.map.has(id)) {
+          const score = typeof dog.__compositeScore === 'number'
+            ? dog.__compositeScore
+            : scoreVisibility(dog);
+          acc.map.set(id, { ...dog, __compositeScore: score });
+        }
+        return acc;
+      }, { map: new Map() }).map.values();
+
+    cachedDogs = Array.from(cachedDogs);
+
 
     const maxPerPage = 10;
     let unseen = cachedDogs.filter(
@@ -263,11 +293,14 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     let barkrReply = '';
 
-    if (animalsToShow.length > 0) {
+    const sorted = animalsToShow.length > 0
+      ? animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0))
+      : [];
 
-      const sorted = animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0));
+    if (sorted.length > 0) {
 
       const topMatches = sorted.slice(0, 10).map((a) => {
+
         const name = a.name;
         const breed = a.breeds?.primary || 'Unknown';
         const photo = a.photos?.[0]?.medium || null;
@@ -368,7 +401,8 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
       }).join('\n\n');
 
-      if (!hasSeenResults) {
+      if (isInitialResults || isShowingMore) {
+
         barkrReply = `I fetched some adoptable underdogs for you 🐾\n\n`;
 
         if (usedRuralFallback && !rememberedLocation && !extracted?.location) {
@@ -397,7 +431,11 @@ Do not use "Unknown" as a value. Simply omit the field.`,
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
 
     console.log('[🐶 Seen Dog IDs]:', updatedSeenDogIds);
-
+    console.log('[🐕 Animals to show]:', animalsToShow.length);
+    console.log('[📦 Cached dogs total]:', cachedDogs.length);
+    console.log('[🧮 Top composite scores]:', animalsToShow.map(d => d.__compositeScore).slice(0, 5));
+    console.log('[📣 Final reply preview]:', barkrReply.substring(0, 300));
+    
     return NextResponse.json({
       role: 'assistant',
       content: barkrReply,
