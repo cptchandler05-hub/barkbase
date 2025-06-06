@@ -226,28 +226,42 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     const searchData = await searchRes.json();
 
-    function scoreVisibility(dog: any): number {
-      let score = dog.visibilityScore || 0;
+    const ruralZips = new Set(getRandomRuralZip(true)); // uses Barkr's rural ZIP list
 
-      // Bonus for senior or special needs
+    function scoreVisibility(dog: any): number {
+      let score = 0;
+
+      // ✅ Boost for senior and special needs
       if (dog.age?.toLowerCase() === 'senior') score += 20;
       if (dog.attributes?.special_needs) score += 20;
 
-      // Bonus for how long they've been listed
+      // ✅ Time listed (days since published)
       const listedDate = new Date(dog.status_changed_at || dog.published_at || '');
       if (!isNaN(listedDate.getTime())) {
         const days = Math.floor((Date.now() - listedDate.getTime()) / (1000 * 60 * 60 * 24));
         score += days;
       }
 
-      // Bonus for rural ZIPs (starting with 6, 7, 8)
-      const zip = dog.contact?.address?.postal_code || '';
-      if (/^(6|7|8)\d{4}$/.test(zip)) {
-        score += 30;
-      }
+      // ✅ Rural boost (based on known ZIPs only)
+      const zip = dog.contact?.address?.postal_code?.trim();
+      if (zip && ruralZips.has(zip)) score += 30;
 
-      return score;
+      // 🚫 Penalty for over-promoted dogs
+      const numPhotos = dog.photos?.length || 0;
+      if (numPhotos >= 5) score -= 20;
+
+      const desc = dog.description?.toLowerCase() || '';
+      if (/trending|viral|shared widely|as seen on/i.test(desc)) score -= 20;
+
+      // ✅ Boost for under-marketed dogs
+      if (numPhotos === 0) score += 25;
+      else if (numPhotos === 1) score += 10;
+
+      if (desc.length < 40) score += 10;
+
+      return Number.isFinite(score) ? score : 0;
     }
+
 
     const allAnimals = searchData.animals || [];
 
@@ -260,9 +274,11 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       .reduce((acc, dog) => {
         const id = String(dog.id);
         if (!acc.map.has(id)) {
-          const score = typeof dog.__compositeScore === 'number'
-            ? dog.__compositeScore
-            : scoreVisibility(dog);
+          let score = scoreVisibility(dog);
+          if (typeof dog.__compositeScore === 'number' && !isNaN(dog.__compositeScore)) {
+            score = dog.__compositeScore;
+          }
+
           acc.map.set(id, { ...dog, __compositeScore: score });
         }
         return acc;
@@ -284,10 +300,23 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         .slice(0, maxPerPage);
     }
 
+    // Fallback: if no new dogs, show more from cache
     if (animalsToShow.length === 0 && cachedDogs.length > 0) {
-      const fallbackSorted = cachedDogs
-        .sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0))
+      const withScoredFallbacks = cachedDogs.map((dog) => {
+        let score = dog.__compositeScore;
+
+        // Recompute if score is missing or invalid
+        if (typeof score !== 'number' || isNaN(score)) {
+          score = scoreVisibility(dog);
+        }
+
+        return { ...dog, __compositeScore: score };
+      });
+
+      const fallbackSorted = withScoredFallbacks
+        .sort((a, b) => b.__compositeScore - a.__compositeScore)
         .slice(0, maxPerPage);
+
       animalsToShow.push(...fallbackSorted);
     }
 
@@ -401,8 +430,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
       }).join('\n\n');
 
-      if (isInitialResults || isShowingMore) {
-
+      if (isInitialResults) {
         barkrReply = `I fetched some adoptable underdogs for you 🐾\n\n`;
 
         if (usedRuralFallback && !rememberedLocation && !extracted?.location) {
@@ -416,6 +444,9 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       This is what I was built for. To find the ones they missed.
 
       Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
+
+      } else if (isShowingMore) {
+        barkrReply = `More overlooked underdogs, freshly sniffed out 🐾\n\n${topMatches}\n\nLet me know if you want even more. I’ll keep sniffing. 🐶`;
       }
 
       } else {
