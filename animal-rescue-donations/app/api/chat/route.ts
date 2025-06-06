@@ -1,6 +1,6 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
-import { getRandomRuralZip } from '../../lib/utils';
+import { getRandomRuralZip } from '@/lib/utils';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -375,7 +375,7 @@ This is what I was built for. To find the ones they missed.
 
 Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
       } else {
-        barkrReply = `Here are some more adoptable pups I found:\n\n${topMatches}\n\nWant me to keep searching? 🐾`;
+        barkrReply = `Here are some more adoptable pups I found:\n\nWant me to keep searching? 🐾`;
       }
 
       } else {
