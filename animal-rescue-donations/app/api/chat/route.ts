@@ -15,11 +15,6 @@ interface Memory {
   cachedDogs?: any[];
 }
 
-const memory: Memory = {
-  seenDogIds: new Set(),
-  offset: 0,
-};
-
 const systemPrompt = `
 You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain. 
 You're the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
@@ -60,13 +55,13 @@ function decodeHTMLEntities(text: string): string {
 
 export async function POST(req: Request) {
   try {
-    const { messages, memory } = await req.json();
-    const lastUserMessage = messages[messages.length - 1]?.content || '';
+    const { messages, memory: incomingMemory } = await req.json();
 
-    const rememberedLocation = memory?.location;
-    const rememberedBreed = memory?.breed;
-    const hasSeenResults = memory?.hasSeenResults || false;
-    const seenDogIds = memory?.seenDogIds || [];
+    const memory = incomingMemory || {};
+    const seenDogIds = memory.seenDogIds || [];
+    const rememberedLocation = memory.location;
+    const rememberedBreed = memory.breed;
+    const hasSeenResults = memory.hasSeenResults || false;
 
     const userInput = messages[messages.length - 1].content;
 
@@ -174,6 +169,8 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       console.warn(`⚠️ No valid location found. Using rural fallback ZIP: ${locationQuery}`);
     }
 
+    const usedRuralFallback = true;
+
 
     const query = {
       location: locationQuery,
@@ -237,24 +234,40 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       __compositeScore: scoreVisibility(dog),
     }));
 
-    // Merge into cachedDogs across batches
     let cachedDogs = (memory?.cachedDogs || [])
-      .concat(allScored)
-      .filter((dog, index, self) =>
-        index === self.findIndex(d => d.id === dog.id)
-      );
+    .concat(allScored)
+    .filter((dog, index, self) => index === self.findIndex(d => d.id === dog.id))
+    .map(dog => ({
+      ...dog,
+      __compositeScore: typeof dog.__compositeScore === 'number'
+        ? dog.__compositeScore
+        : scoreVisibility(dog),
+    }));
 
     const maxPerPage = 10;
-    const sorted = cachedDogs
-      .filter(a => !seenDogIds.includes(String(a.id)))
-      .sort((a, b) => b.__compositeScore - a.__compositeScore);
+    let unseen = cachedDogs.filter(
+      a => !seenDogIds.includes(String(a.id))
+    ).sort((a, b) => b.__compositeScore - a.__compositeScore);
 
-    const animalsToShow = sorted.slice(0, maxPerPage);
+    let animalsToShow = unseen.slice(0, maxPerPage);
 
+    if (animalsToShow.length === 0 && cachedDogs.length > 0) {
+      animalsToShow = cachedDogs
+        .sort((a, b) => b.__compositeScore - a.__compositeScore)
+        .slice(0, maxPerPage);
+    }
+
+    if (animalsToShow.length === 0 && cachedDogs.length > 0) {
+      const fallbackSorted = cachedDogs
+        .sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0))
+        .slice(0, maxPerPage);
+      animalsToShow.push(...fallbackSorted);
+    }
+    
     let barkrReply = '';
 
-    if (animalsToShow.length > 0) {
-      // Sort by composite visibility (age, seniority, rural ZIPs)
+    if (animalsToShow.length > 0 || sorted.length > 0) {
+
       const sorted = animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0));
 
       const topMatches = sorted.slice(0, 10).map((a) => {
@@ -265,10 +278,9 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         const state = a.contact?.address?.state || '';
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
-        const score = a.__compositeScore ?? '?';
-        let barkrSummary = `🐾 **VISIBILITY SCORE: ${score}**
+        const score = typeof a.__compositeScore === 'number' ? a.__compositeScore : 0;
 
-`;
+        let barkrSummary = `**🐾 VISIBILITY SCORE: ${score}**\n\n`;
 
         if (a.description && a.description.length > 30) {
 
@@ -354,28 +366,25 @@ Do not use "Unknown" as a value. Simply omit the field.`,
           barkrSummary = "*Not much of a write-up, but trust me—this one's got big rescue energy. 🐶*";
         }
 
-        return `**${name}** (${breed}) – ${city}, ${state}
-
-${barkrSummary}
-${photo ? `![${name}](${photo})
-
-` : ''}[Adopt Me 🐾](${url})`;
+        return `**${name}** (${breed}) – ${city}, ${state}\n\n${barkrSummary}${photo ? `<img src="${photo}" alt="${name}" style="max-width: 100%; height: auto; border-radius: 12px;" />\n\n` : ''}[Adopt Me 🐾](${url})`;
 
 
       }).join('\n\n');
 
       if (!hasSeenResults) {
-        barkrReply = `I fetched some adoptable underdogs for you 🐾
+        barkrReply = `I fetched some adoptable underdogs for you 🐾\n\n`;
 
-I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
+        if (usedRuralFallback && !rememberedLocation && !extracted?.location) {
+          barkrReply += "_(You didn’t give me a location, so I searched where dogs are most invisible—rural rescues with almost no reach. A lot of these pups can be transported, by the way.)_\n\n";
+        }
 
-The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile's been sitting in the dark. The higher the number, the more invisible they've been. Until now.
+        barkrReply += `I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
 
-This is what I was built for. To find the ones they missed.
+      The visibility score shows how overlooked a pup is—how long they've waited, how few clicks they've gotten, how quietly their profile's been sitting in the dark. The higher the number, the more invisible they've been. Until now.
 
-Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
-      } else {
-        barkrReply = `Here are some more adoptable pups I found:\n\nWant me to keep searching? 🐾`;
+      This is what I was built for. To find the ones they missed.
+
+      Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? Just say the word. 🐶💙`;
       }
 
       } else {
@@ -389,8 +398,6 @@ Here's who I dug up for you:\n\n${topMatches}\n\nWant me to sniff around again? 
     const newDogIds = animalsToShow.map((a) => String(a.id));
 
     const updatedSeenDogIds = Array.from(new Set([...seenDogIds, ...newDogIds]));
-
-    const updatedPendingDogs = (memory?.pendingDogs || []).filter(id => !newDogIds.includes(id));
 
     console.log('[🐶 Seen Dog IDs]:', updatedSeenDogIds);
 
