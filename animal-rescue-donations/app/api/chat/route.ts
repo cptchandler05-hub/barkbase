@@ -64,8 +64,6 @@ export async function POST(req: Request) {
     const hasSeenResults = memory.hasSeenResults || false;
     const userInput = messages[messages.length - 1].content;
 
-    const isInitialResults = !hasSeenResults && !isShowingMore;
-
     // Include recent message history (last 3) for better parsing context
     const recentContext = messages
       .slice(-3)
@@ -88,6 +86,8 @@ export async function POST(req: Request) {
     });
 
     let isShowingMore = false;
+
+    const isInitialResults = !hasSeenResults && !isShowingMore;
 
     try {
       const intentJson = JSON.parse(intentResponse.choices[0].message.content || '{}');
