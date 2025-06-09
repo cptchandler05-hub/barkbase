@@ -152,6 +152,7 @@ export async function POST(req: Request) {
     }
 
     console.log('[🧠 Parsed search terms]:', extracted);
+    console.log('[💾 Incoming memory]:', { breed: rememberedBreed, location: rememberedLocation });
 
     // Remove bad values or generic strings
     if (extracted.breed === 'dog' || extracted.breed === 'dogs') {

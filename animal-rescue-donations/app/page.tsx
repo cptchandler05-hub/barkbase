@@ -57,6 +57,7 @@ export default function Page() {
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
+  const lastRequestRef = useRef<string>("");
 
   useEffect(() => {
     // Only scroll when explicitly told to do so AND user has interacted
@@ -92,6 +93,14 @@ export default function Page() {
   
   const handleSend = async () => {
     if (!input.trim()) return;
+    
+    // Prevent duplicate requests
+    const currentInput = input.trim();
+    if (currentInput === lastRequestRef.current && loading) {
+      return;
+    }
+    lastRequestRef.current = currentInput;
+    
     setHasUserInteracted(true);
     const newMessages = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
