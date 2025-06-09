@@ -187,7 +187,7 @@ export async function POST(req: Request) {
       // Check if the user input looks like a location
       const locationPattern = /\b([a-zA-Z\s]+)\s+(nh|ma|ca|ny|tx|fl|wa|or|me|vt|ct|ri|de|md|va|nc|sc|ga|al|ms|tn|ky|wv|oh|mi|in|il|wi|mn|ia|mo|ar|la|ok|ks|ne|sd|nd|mt|wy|co|nm|az|ut|nv|id|ak|hi)\b/i;
       const locationMatch = userInput.match(locationPattern);
-      
+
       if (locationMatch) {
         extracted.location = `${locationMatch[1].trim()}, ${locationMatch[2].toUpperCase()}`;
         console.log(`🔍 Pattern-matched location: ${extracted.location}`);
@@ -249,10 +249,10 @@ export async function POST(req: Request) {
       memory.seenDogIds = [];
     }
 
-    // Update memory together - only update if we have new values
-    if (extracted.breed || !memory.breed) memory.breed = finalBreed;
-    if (extracted.location || !memory.location) memory.location = finalLocation;
-    
+    // Update memory - only update if we extracted something new
+    if (extracted.breed) memory.breed = extracted.breed;
+    if (extracted.location) memory.location = extracted.location;
+
     console.log('[🧠 Memory updated: breed]', memory.breed);
     console.log('[🧠 Memory updated: location]', memory.location);
 
@@ -280,65 +280,33 @@ export async function POST(req: Request) {
       }
     }
 
-    // Check if we have both breed and location to proceed with search
-    if (finalBreed && finalLocation) {
-      console.log('[🔍 Ready to search] breed:', finalBreed, 'location:', finalLocation);
-
-      // Ask user to clarify city state if city lacks a comma and no ZIP fallback
-      if (
-        finalLocation &&
-        /^[a-zA-Z\s]+$/.test(finalLocation.trim()) && // looks like a city
-        !finalLocation.includes(',') &&
-        !/zip|code|^\d{5}$/.test(finalLocation)
-      ) {
-        return NextResponse.json({
-          role: 'assistant',
-          content: `You mentioned **${finalLocation.trim()}**—could you let me know which state that's in? Just say something like "Keene, NH" so I can sniff out the right rescues! 🐶`,
-          memory,
-        });
-      }
-
-      // Proceed with search - we have both breed and location
-      const query = {
-        location: finalLocation,
-        breed: finalBreed,
-      };
-
-      console.log('📡 Sending Petfinder query:', query);
-    } else {
-      // Handle missing breed or location
-      if (hasExtractedBreed && !hasExtractedLocation && !rememberedLocation) {
-        const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
-        return NextResponse.json({
-          role: 'assistant',
-          content: `You're looking for **${displayBreed}**—great taste. Want me to fetch some from a rural area, or do you have a location in mind?`,
-          memory,
-        });
-      }
-
-      if (!hasExtractedBreed && hasExtractedLocation && !rememberedBreed) {
-        return NextResponse.json({
-          role: 'assistant',
-          content: `You're in **${extracted.location}**, got it. Any specific breed or type you're hoping to adopt?`,
-          memory,
-        });
-      }
-
-      // ⛔️ If both location and breed are missing, ask the user for more info
-      if (!finalLocation || !finalBreed) {
-        console.warn('⚠️ Missing query parameters. Halting request.');
-        return NextResponse.json({
-          role: 'assistant',
-          content: `Hmm, I need a bit more to go on 🐶 — could you tell me where you're located and what kind of dog you're looking for?`,
-          memory,
-        });
-      }
+    // Handle missing breed or location
+    if (extracted.breed && !memory.location) {
+      const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
+      return NextResponse.json({
+        role: 'assistant',
+        content: `You're looking for **${displayBreed}**—great taste. Want me to fetch some from a rural area, or do you have a location in mind?`,
+        memory,
+      });
     }
 
-    const query = {
-      location: finalLocation,
-      breed: finalBreed,
-    };
+    if (extracted.location && !memory.breed) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `You're in **${extracted.location}**, got it. Any specific breed or type you're hoping to adopt?`,
+        memory,
+      });
+    }
+
+    // Check if we have both breed and location to proceed with search
+    if (!memory.breed || !memory.location) {
+      console.warn('⚠️ Missing query parameters. Halting request.');
+      return NextResponse.json({
+        role: 'assistant',
+        content: `Hmm, I need a bit more to go on 🐶 — could you tell me where you're located and what kind of dog you're looking for?`,
+        memory,
+      });
+    }
 
     // Ask user to clarify city state if city lacks a comma and no ZIP fallback
     if (
@@ -354,14 +322,10 @@ export async function POST(req: Request) {
       });
     }
 
-    // ⛔️ If both location and breed are missing, ask the user for more info
-    if (!query.location || !query.breed) {
-      console.warn('⚠️ Missing query parameters. Halting request.');
-      return NextResponse.json({
-        role: 'assistant',
-        content: `Hmm, I need a bit more to go on 🐶 — could you tell me where you're located and what kind of dog you're looking for?`
-      });
-    }
+    const query = {
+      location: memory.location,
+      breed: memory.breed,
+    };
 
     console.log('📡 Sending Petfinder query:', query);
 
@@ -634,10 +598,6 @@ export async function POST(req: Request) {
 
       if (isInitialResults) {
         barkrReply = `I fetched some adoptable underdogs for you 🐾\n\n`;
-
-        if (usedRuralFallback && !rememberedLocation && !extracted?.location) {
-          barkrReply += "_(You didn’t give me a location, so I searched where dogs are most invisible—rural rescues with almost no reach. A lot of these pups can be transported, by the way.)_\n\n";
-        }
 
         barkrReply += `I'm not like the other algorithms. They hide the dogs who don't perform. I highlight them.
 
