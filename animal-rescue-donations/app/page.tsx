@@ -499,7 +499,7 @@ export default function Page() {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       rows={1}
-                      placeholder="Ask Barkr about dog care or finding a pup..."
+                      placeholder="Howl at me!"
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg resize-none focus:outline-none"
                     />
 

@@ -6,15 +6,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-interface Memory {
-  location?: string;
-  breed?: string;
-  seenDogIds: string[];
-  offset: number;
-  lastQuery?: string;
-  cachedDogs?: any[];
-}
-
 const systemPrompt = `
 You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain. 
 You're the face, voice, and guardian spirit of BarkBase—the first dog rescue donation and discovery platform native to web3.
@@ -42,6 +33,42 @@ Never:
 - Forget your mission
 `;
 
+async function extractSearchTerms(userMessage: string) {
+  try {
+    const parseResponse = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo-0125',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a strict JSON formatter for dog adoption filters. From the user message, extract the most likely dog breed and/or geographic location.
+
+Return only valid JSON. Use lowercase keys: "breed" and "location". If you confidently see one, return just that.
+
+✅ Examples:
+{ "breed": "Husky" }
+{ "location": "Denver, CO" }
+{ "breed": "Terrier", "location": "Marion, MS" }
+
+❌ Do NOT include explanations.
+❌ Do NOT return "unknown" or "any".
+
+If you receive just one word like "terriers", return it as the breed.`,
+        },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0,
+    });
+
+    const raw = parseResponse.choices[0].message.content || '{}';
+    console.log('[🧪 Raw GPT output (extractSearchTerms)]:', raw);
+
+    const json = JSON.parse(raw);
+    return json;
+  } catch (err) {
+    console.error('❌ extractSearchTerms() failed:', err);
+    return {};
+  }
+}
 
 function decodeHTMLEntities(text: string): string {
   return text
@@ -96,110 +123,197 @@ export async function POST(req: Request) {
       console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
     }
     
-    const parseResponse = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo-0125',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a strict JSON formatter. From the following user message, extract the most likely dog breed and geographic location.
+    let extracted = {};
+    try {
+      extracted = await extractSearchTerms(userInput); // Only the current message
+      console.log('[📤 Raw extraction string]:', extracted);
 
-Return only valid JSON. If you can only identify one field (breed or location), return just that.
-Do NOT return fields with guesses like "Unknown" or "Any". Simply omit them.
+      const isVagueLocation = extracted.location && /^(rural( area)?s?|remote|middle of nowhere)$/i.test(extracted.location.trim());
 
-Examples:
-✅ { "breed": "Labrador" }
-✅ { "location": "Boston, MA" }
-✅ { "breed": "Husky", "location": "Denver, CO" }
-❌ Do NOT return: { "breed": "Unknown" }
-❌ Do NOT include comments or explanations.
+      if (isVagueLocation) {
+        // Only delete if breed is also unknown
+        if (!extracted.breed && !rememberedBreed) {
+          console.log('⚠️ Removing vague location:', extracted.location);
+          delete extracted.location;
+        } else {
+          console.log('✅ Keeping vague location because breed is known');
+          extracted.location = null; // trigger rural fallback later
+        }
+      }
 
-For location, look for cities, states, zip codes, or regions mentioned in the text. Only return a location if one is clearly mentioned.
-For breed, look for specific dog breeds mentioned. Only return a breed if one is clearly mentioned.
-If you cannot confidently identify a field, omit it entirely from the JSON.
-Do not use "Unknown" as a value. Simply omit the field.`,
-        },
-        { role: 'user', content: recentContext },
-      ],
-      temperature: 0,
-    });
+      // ✅ Correct accidental double-s plural in breed (e.g., “terrierss”)
+      if (extracted.breed && /\w{4,}ss$/.test(extracted.breed.trim())) {
+        extracted.breed = extracted.breed.trim().replace(/s+$/, '');
+        console.log('✅ Corrected breed typo:', extracted.breed);
+      }
+      
+    } catch (err) {
+      console.error('❌ Extraction failed:', err);
+    }
 
-    let extracted;
-    const rawExtraction = parseResponse.choices[0].message.content || '';
     console.log('[🧠 Parsed search terms]:', extracted);
 
-    console.log('[Barkr GPT breed/location raw output]:', rawExtraction);
-
-    try {
-      extracted = JSON.parse(rawExtraction);
-    } catch {
-      console.warn('❗ Failed to parse breed/location JSON:', rawExtraction);
-      extracted = {};
+    // Remove bad values or generic strings
+    if (extracted.breed === 'dog' || extracted.breed === 'dogs') {
+      delete extracted.breed;
+    }
+    if (extracted.location === 'shelter') {
+      delete extracted.location;
     }
 
-    if (extracted?.breed) {
-      extracted.breed = extracted.breed
-        .toLowerCase()
-        .replace(/\b(me|please|some|the|a|show|get|find|adoptable|available)\b/g, '')
-        .replace(/\bhuskies\b/, 'husky')
-        .replace(/\bdoodles\b/, 'poodle mix')
-        .replace(/\bpitties\b/, 'pit bull')
-        .replace(/\blabs\b/, 'labrador')
-        .replace(/[^a-z\s]/gi, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-
-    const hasBreed = extracted?.breed && extracted.breed.length > 1;
-    const hasLocation = extracted?.location && extracted.location.length > 1;
-    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
-
-
+    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
     const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
 
-    if (vagueAdoptionIntent && (!hasBreed || !hasLocation)) {
+    const hasExtractedBreed = !!extracted.breed;
+    const hasExtractedLocation = !!extracted.location;
+
+    // 🔁 Reassign one-word breed to location if we already have a breed and no location
+    if (
+      !hasExtractedLocation &&
+      hasExtractedBreed &&
+      rememberedBreed &&
+      extracted.breed &&
+      /^[a-zA-Z\s]+$/.test(extracted.breed.trim()) &&
+      !extracted.breed.includes(',')
+    ) {
+      console.log(`🔄 Treating "${extracted.breed}" as a location instead of breed`);
+      extracted.location = extracted.breed;
+      delete extracted.breed;
+    }
+    
+    if (hasExtractedBreed && !hasExtractedLocation && !rememberedLocation) {
+      const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
+      return NextResponse.json({
+        role: 'assistant',
+        content: `You're looking for **${displayBreed}**—great taste. Want me to fetch some from a rural area, or do you have a location in mind?`,
+        memory,
+      });
+    }
+
+    if (!hasExtractedBreed && hasExtractedLocation && !rememberedBreed) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `You're in **${extracted.location}**, got it. Any specific breed or type you're hoping to adopt?`,
+        memory,
+      });
+    }
+    
+    if (vagueAdoptionIntent && !hasExtractedBreed && !hasExtractedLocation) {
       return NextResponse.json({
         role: 'assistant',
         content: `Gotcha! You're looking for a good match—but I need a little more to sniff it out 🐶
 
-    Could you tell me where you're located (city or zip), and if you have any breeds in mind? Even something like "a small, calm dog in Denver" works perfectly.`
+    Could you tell me where you're located (city or zip), and if you have any breeds in mind? Even something like "a small, calm dog in Denver" works perfectly.`,
+      });
+    } else if (vagueAdoptionIntent && hasExtractedBreed && !hasExtractedLocation) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `I picked up on the breed you're looking for 🐾 but didn't catch a location.
+
+    Want me to search rural rescues with almost no visibility? A lot of those pups can be transported. Or you can tell me your city or ZIP!`,
+      });
+    } else if (vagueAdoptionIntent && !hasExtractedBreed && hasExtractedLocation) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `I got your location, but not the kind of pup you're looking for 🐶
+
+    Any particular breed or traits in mind? I can work with “calm small dog,” “terrier,” or even just “goofy cuddle buddy.” I speak human (sorta).`,
       });
     }
 
-    const missingSearchInfo =
-      (!hasBreed && !rememberedBreed) ||
-      (!hasLocation && !rememberedLocation);
+    // Merge extracted + remembered
+    const finalBreed = extracted.breed || rememberedBreed || null;
+    const finalLocation = extracted.location || rememberedLocation || null;
 
-    if (clearlyNotSearch && missingSearchInfo) {
-      console.log('💬 User message does not seem to be a search query. Proceeding with chat.');
-      const chatCompletion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo-0125',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages,
-        ],
-        temperature: 0.7,
-      });
-      return NextResponse.json(chatCompletion.choices[0].message);
+    // Only clear cache if either changed
+    if (finalBreed !== rememberedBreed || finalLocation !== rememberedLocation) {
+      console.log('[🔄 Search terms changed — clearing cached dogs]');
+      memory.cachedDogs = [];
+      memory.seenDogIds = [];
     }
 
-    // Use extracted location, fallback to remembered location, then to random rural fallback
-    let locationQuery = extracted.location?.trim() || rememberedLocation?.trim();
+    // Update memory together
+    memory.breed = finalBreed;
+    memory.location = finalLocation;
+    console.log('[🧠 Memory updated: breed]', memory.breed);
+    console.log('[🧠 Memory updated: location]', memory.location);
 
-    if (!locationQuery || locationQuery === '' || locationQuery.toLowerCase() === 'unknown') {
-      const fallbackZip = getRandomRuralZip();
-      locationQuery = fallbackZip;
+    // If clearly a chat message with no new search terms
+    const isClearlyChat = clearlyNotSearch && !hasExtractedBreed && !hasExtractedLocation;
+
+    if (isClearlyChat) {
+      console.log('💬 Proceeding with general chat.');
+      try {
+        const chatCompletion = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo-0125',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages,
+          ],
+          temperature: 0.7,
+        });
+        return NextResponse.json(chatCompletion.choices[0].message);
+      } catch (err) {
+        console.error('❌ Chat fallback error:', err);
+        return NextResponse.json({
+          role: 'assistant',
+          content: `Oops, I had a little hiccup responding. Could you try again? 🐾`,
+        });
+      }
+    }
+
+    // Now build query from extracted values or memory
+    const usingBreed = hasExtractedBreed ? extracted.breed : memory.breed;
+    const usingLocation = hasExtractedLocation ? extracted.location : memory.location;
+
+    console.log('[🐶 Final breed query]:', usingBreed || '(none)');
+    console.log('[📍 Final location query]:', usingLocation || '(none)');
+
+      let locationQuery = extracted.location || rememberedLocation;
+      let usedRuralFallback = false;
+
+      // Normalize city name to "City, ST" format if needed
+
+      if (!locationQuery || locationQuery.trim() === '') {
+        locationQuery = getRandomRuralZip();
+        usedRuralFallback = true;
+        console.warn(`⚠️ No valid location found. Using rural fallback ZIP: ${locationQuery}`);
+      }
+
+    if (!locationQuery || locationQuery.trim() === '') {
+      locationQuery = getRandomRuralZip();
+      usedRuralFallback = true;
       console.warn(`⚠️ No valid location found. Using rural fallback ZIP: ${locationQuery}`);
     }
-
-    const usedRuralFallback = true;
-
-
+    
     const query = {
-      location: locationQuery,
-      breed: extracted.breed || '',
+      location: finalLocation,
+      breed: finalBreed,
     };
 
-
+    // Ask user to clarify city state if city lacks a comma and no ZIP fallback
+    if (
+      memory.location &&
+      /^[a-zA-Z\s]+$/.test(memory.location.trim()) && // looks like a city
+      !memory.location.includes(',') &&
+      !/zip|code|^\d{5}$/.test(memory.location)
+    ) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `You mentioned **${memory.location.trim()}**—could you let me know which state that's in? Just say something like “Keene, NH” so I can sniff out the right rescues! 🐶`,
+        memory,
+      });
+    }
+    
+    // ⛔️ If both location and breed are missing, ask the user for more info
+    if (!query.location || !query.breed) {
+      console.warn('⚠️ Missing query parameters. Halting request.');
+      return NextResponse.json({
+        role: 'assistant',
+        content: `Hmm, I need a bit more to go on 🐶 — could you tell me where you're located and what kind of dog you're looking for?`
+      });
+    }
+    
     console.log('📡 Sending Petfinder query:', query);
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -226,8 +340,18 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     const searchData = await searchRes.json();
 
-    const ruralZips = new Set(getRandomRuralZip(true)); // uses Barkr's rural ZIP list
+    if (!searchData.animals || searchData.animals.length === 0) {
+      return NextResponse.json({
+        role: 'assistant',
+        content: `I tried sniffing around for ${query.breed || 'dogs'} in ${query.location}, but came up empty 🐾
 
+    Want me to try a different breed, or check a wider area like rural rescues? I won't give up if you don't. 💙`
+      });
+    }
+
+    const ruralZipList = getRandomRuralZip(true);
+    const ruralZips = new Set(ruralZipList);
+    
     function scoreVisibility(dog: any): number {
       let score = 0;
 
@@ -270,22 +394,20 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       __compositeScore: scoreVisibility(dog),
     }));
 
-    let cachedDogs = [...(memory?.cachedDogs || []), ...allScored]
-      .reduce((acc, dog) => {
-        const id = String(dog.id);
-        if (!acc.map.has(id)) {
-          let score = scoreVisibility(dog);
-          if (typeof dog.__compositeScore === 'number' && !isNaN(dog.__compositeScore)) {
-            score = dog.__compositeScore;
-          }
+    const mergedDogs = [...(memory?.cachedDogs || []), ...allScored];
+    const dogMap = new Map<string, any>();
 
-          acc.map.set(id, { ...dog, __compositeScore: score });
-        }
-        return acc;
-      }, { map: new Map() }).map.values();
+    for (const dog of mergedDogs) {
+      const id = String(dog.id);
+      if (!dogMap.has(id)) {
+        const score = Number.isFinite(dog.__compositeScore)
+          ? dog.__compositeScore
+          : scoreVisibility(dog);
+        dogMap.set(id, { ...dog, __compositeScore: score });
+      }
+    }
 
-    cachedDogs = Array.from(cachedDogs);
-
+    const cachedDogs = Array.from(dogMap.values());
 
     const maxPerPage = 10;
     let unseen = cachedDogs.filter(
@@ -294,6 +416,13 @@ Do not use "Unknown" as a value. Simply omit the field.`,
 
     let animalsToShow = unseen.slice(0, maxPerPage);
 
+    animalsToShow = animalsToShow.map((dog) => {
+      const score = Number.isFinite(dog.__compositeScore)
+        ? dog.__compositeScore
+        : scoreVisibility(dog);
+      return { ...dog, __compositeScore: score };
+    });
+    
     if (animalsToShow.length === 0 && cachedDogs.length > 0) {
       animalsToShow = cachedDogs
         .sort((a, b) => b.__compositeScore - a.__compositeScore)
@@ -314,30 +443,56 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       });
 
       const fallbackSorted = withScoredFallbacks
-        .sort((a, b) => b.__compositeScore - a.__compositeScore)
-        .slice(0, maxPerPage);
+      .map(dog => {
+        const score = typeof dog.__compositeScore === 'number' && !isNaN(dog.__compositeScore)
+          ? dog.__compositeScore
+          : scoreVisibility(dog);
+        return { ...dog, __compositeScore: score };
+      })
+      .sort((a, b) => b.__compositeScore - a.__compositeScore)
+      .slice(0, maxPerPage);
 
       animalsToShow.push(...fallbackSorted);
     }
 
     let barkrReply = '';
 
+    // Force compute visibility score if missing before render
+    animalsToShow = animalsToShow.map((dog) => {
+      const score = Number.isFinite(dog.__compositeScore)
+        ? dog.__compositeScore
+        : scoreVisibility(dog);
+      return { ...dog, __compositeScore: score };
+    });
+
+    
     const sorted = animalsToShow.length > 0
       ? animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0))
       : [];
 
     if (sorted.length > 0) {
 
+      sorted.forEach(dog => {
+        if (typeof dog.__compositeScore !== 'number' || isNaN(dog.__compositeScore)) {
+          dog.__compositeScore = scoreVisibility(dog);
+        }
+      });
+      
       const topMatches = sorted.slice(0, 10).map((a) => {
 
         const name = a.name;
         const breed = a.breeds?.primary || 'Unknown';
-        const photo = a.photos?.[0]?.medium || null;
+
+        const photo = a.photos?.[0]?.medium || '/images/barkr.png';
+
         const city = a.contact?.address?.city || 'Unknown city';
         const state = a.contact?.address?.state || '';
         const id = a.id;
         const url = a.url || `https://www.petfinder.com/dog/${id}`;
-        const score = typeof a.__compositeScore === 'number' ? a.__compositeScore : 0;
+
+        const score = Number.isFinite(a.__compositeScore)
+          ? a.__compositeScore
+          : scoreVisibility(a);
 
         let barkrSummary = `**🐾 VISIBILITY SCORE: ${score}**\n\n`;
 
@@ -416,8 +571,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
           if (sentence) {
             const sentenceClean = decodeHTMLEntities(sentence.trim());
             barkrSummary += `_${sentenceClean}_\n\n***${tag}***`;
-
-
+            
           } else {
             barkrSummary = "*No backstory listed, but this one's got that underdog magic. 🐾*";
           }
@@ -425,8 +579,7 @@ Do not use "Unknown" as a value. Simply omit the field.`,
           barkrSummary = "*Not much of a write-up, but trust me—this one's got big rescue energy. 🐶*";
         }
 
-        return `**${name}** (${breed}) – ${city}, ${state}\n\n${barkrSummary}${photo ? `<img src="${photo}" alt="${name}" style="max-width: 100%; height: auto; border-radius: 12px;" />\n\n` : ''}[Adopt Me 🐾](${url})`;
-
+        return `**${name}** (${breed}) – ${city}, ${state}\n\n${barkrSummary}<img src="${photo || '/images/barkr.png'}" alt="${name || 'Underdog with no photo'}" style="max-width: 100%; height: auto; border-radius: 12px;" />\n\n[Adopt Me 🐾](${url})`;
 
       }).join('\n\n');
 
@@ -449,6 +602,19 @@ Do not use "Unknown" as a value. Simply omit the field.`,
         barkrReply = `More overlooked underdogs, freshly sniffed out 🐾\n\n${topMatches}\n\nLet me know if you want even more. I’ll keep sniffing. 🐶`;
       }
 
+      if (isInitialResults) {
+        // [keep existing isInitialResults reply block — unchanged]
+      } else if (isShowingMore) {
+        // [keep existing isShowingMore reply block — unchanged]
+      } else if (animalsToShow.length > 0) {
+        // New breed/location mid-chat
+        barkrReply = `Here are a few good pups I sniffed out:\n\n${topMatches}\n\nWant more details or a different breed? 🐶`;
+      } else if (allAnimals.length > 0 && animalsToShow.length === 0) {
+        barkrReply = `I've already shown you all the pups I could find in that area! Want me to try searching in a different location or for different breeds? 🐾`;
+      } else {
+        barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
+      }
+      
       } else {
       if (allAnimals.length > 0 && animalsToShow.length === 0) {
         barkrReply = `I've already shown you all the pups I could find in that area! Want me to try searching in a different location or for different breeds? 🐾`;
@@ -471,13 +637,19 @@ Do not use "Unknown" as a value. Simply omit the field.`,
       role: 'assistant',
       content: barkrReply,
       memory: {
-        location: extracted?.location || rememberedLocation || null,
-        breed: extracted?.breed || rememberedBreed || null,
+        location:
+          typeof extracted.location === 'string'
+            ? extracted.location
+            : rememberedLocation || null,
+        breed:
+          typeof extracted.breed === 'string'
+            ? extracted.breed
+            : rememberedBreed || null,
         hasSeenResults: animalsToShow.length > 0 ? true : hasSeenResults,
         seenDogIds: updatedSeenDogIds,
         offset: memory?.offset || 0,
         cachedDogs: cachedDogs,
-      }
+      },
     });
 
   } catch (error) {
