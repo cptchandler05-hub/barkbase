@@ -181,6 +181,22 @@ export async function POST(req: Request) {
       delete extracted.breed;
     }
 
+    // 🔧 Fix for common location patterns that GPT might miss
+    if (!hasExtractedLocation && !hasExtractedBreed) {
+      // Check if the user input looks like a location
+      const locationPattern = /\b([a-zA-Z\s]+)\s+(nh|ma|ca|ny|tx|fl|wa|or|me|vt|ct|ri|de|md|va|nc|sc|ga|al|ms|tn|ky|wv|oh|mi|in|il|wi|mn|ia|mo|ar|la|ok|ks|ne|sd|nd|mt|wy|co|nm|az|ut|nv|id|ak|hi)\b/i;
+      const locationMatch = userInput.match(locationPattern);
+      
+      if (locationMatch) {
+        extracted.location = `${locationMatch[1].trim()}, ${locationMatch[2].toUpperCase()}`;
+        console.log(`🔍 Pattern-matched location: ${extracted.location}`);
+      } else if (/^[a-zA-Z\s]+$/.test(userInput.trim()) && userInput.trim().split(' ').length <= 3) {
+        // If it's just a few words and looks like a place name
+        extracted.location = userInput.trim();
+        console.log(`🔍 Assumed location: ${extracted.location}`);
+      }
+    }
+
     if (hasExtractedBreed && !hasExtractedLocation && !rememberedLocation) {
       const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
       return NextResponse.json({
@@ -221,7 +237,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // Merge extracted + remembered
+    // Merge extracted + remembered (preserve existing values unless explicitly overridden)
     const finalBreed = extracted.breed || rememberedBreed || null;
     const finalLocation = extracted.location || rememberedLocation || null;
 
@@ -232,9 +248,10 @@ export async function POST(req: Request) {
       memory.seenDogIds = [];
     }
 
-    // Update memory together
-    memory.breed = finalBreed;
-    memory.location = finalLocation;
+    // Update memory together - only update if we have new values
+    if (extracted.breed || !memory.breed) memory.breed = finalBreed;
+    if (extracted.location || !memory.location) memory.location = finalLocation;
+    
     console.log('[🧠 Memory updated: breed]', memory.breed);
     console.log('[🧠 Memory updated: location]', memory.location);
 
