@@ -122,7 +122,7 @@ export async function POST(req: Request) {
     } catch (err) {
       console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
     }
-    
+
     let extracted = {};
     try {
       extracted = await extractSearchTerms(userInput); // Only the current message
@@ -146,7 +146,7 @@ export async function POST(req: Request) {
         extracted.breed = extracted.breed.trim().replace(/s+$/, '');
         console.log('✅ Corrected breed typo:', extracted.breed);
       }
-      
+
     } catch (err) {
       console.error('❌ Extraction failed:', err);
     }
@@ -180,7 +180,7 @@ export async function POST(req: Request) {
       extracted.location = extracted.breed;
       delete extracted.breed;
     }
-    
+
     if (hasExtractedBreed && !hasExtractedLocation && !rememberedLocation) {
       const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
       return NextResponse.json({
@@ -197,7 +197,7 @@ export async function POST(req: Request) {
         memory,
       });
     }
-    
+
     if (vagueAdoptionIntent && !hasExtractedBreed && !hasExtractedLocation) {
       return NextResponse.json({
         role: 'assistant',
@@ -285,7 +285,7 @@ export async function POST(req: Request) {
       usedRuralFallback = true;
       console.warn(`⚠️ No valid location found. Using rural fallback ZIP: ${locationQuery}`);
     }
-    
+
     const query = {
       location: finalLocation,
       breed: finalBreed,
@@ -304,7 +304,7 @@ export async function POST(req: Request) {
         memory,
       });
     }
-    
+
     // ⛔️ If both location and breed are missing, ask the user for more info
     if (!query.location || !query.breed) {
       console.warn('⚠️ Missing query parameters. Halting request.');
@@ -313,7 +313,7 @@ export async function POST(req: Request) {
         content: `Hmm, I need a bit more to go on 🐶 — could you tell me where you're located and what kind of dog you're looking for?`
       });
     }
-    
+
     console.log('📡 Sending Petfinder query:', query);
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -351,7 +351,7 @@ export async function POST(req: Request) {
 
     const ruralZipList = getRandomRuralZip(true);
     const ruralZips = new Set(ruralZipList);
-    
+
     function scoreVisibility(dog: any): number {
       let score = 0;
 
@@ -422,7 +422,7 @@ export async function POST(req: Request) {
         : scoreVisibility(dog);
       return { ...dog, __compositeScore: score };
     });
-    
+
     if (animalsToShow.length === 0 && cachedDogs.length > 0) {
       animalsToShow = cachedDogs
         .sort((a, b) => b.__compositeScore - a.__compositeScore)
@@ -465,7 +465,7 @@ export async function POST(req: Request) {
       return { ...dog, __compositeScore: score };
     });
 
-    
+
     const sorted = animalsToShow.length > 0
       ? animalsToShow.sort((a, b) => (b.__compositeScore || 0) - (a.__compositeScore || 0))
       : [];
@@ -477,7 +477,7 @@ export async function POST(req: Request) {
           dog.__compositeScore = scoreVisibility(dog);
         }
       });
-      
+
       const topMatches = sorted.slice(0, 10).map((a) => {
 
         const name = a.name;
@@ -571,7 +571,7 @@ export async function POST(req: Request) {
           if (sentence) {
             const sentenceClean = decodeHTMLEntities(sentence.trim());
             barkrSummary += `_${sentenceClean}_\n\n***${tag}***`;
-            
+
           } else {
             barkrSummary = "*No backstory listed, but this one's got that underdog magic. 🐾*";
           }
@@ -614,7 +614,7 @@ export async function POST(req: Request) {
       } else {
         barkrReply = `I tried sniffing around, but couldn't find adoptable pups right now. Want me to try somewhere else or with different filters? 🐾`;
       }
-      
+
       } else {
       if (allAnimals.length > 0 && animalsToShow.length === 0) {
         barkrReply = `I've already shown you all the pups I could find in that area! Want me to try searching in a different location or for different breeds? 🐾`;
@@ -632,7 +632,7 @@ export async function POST(req: Request) {
     console.log('[📦 Cached dogs total]:', cachedDogs.length);
     console.log('[🧮 Top composite scores]:', animalsToShow.map(d => d.__compositeScore).slice(0, 5));
     console.log('[📣 Final reply preview]:', barkrReply.substring(0, 300));
-    
+
     return NextResponse.json({
       role: 'assistant',
       content: barkrReply,
