@@ -123,16 +123,24 @@ export async function POST(req: Request) {
       console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
     }
 
-    //Detect converstaional message
-    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
+    // Detect conversational messages more comprehensively
+    const clearlyConversational = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain|awesome|great|cool|nice|wow|amazing|mission|purpose|about|info|information|details|describe|definition|meaning|whats|what's|state|your)\b/i.test(userInput) ||
+      /^(awesome|great|cool|nice|wow|amazing|perfect|good|bad|ok|okay|yes|no|maybe|sure|definitely|absolutely|nope|yep|yeah|nah)[\s!.]*$/i.test(userInput.trim()) ||
+      /\b(mission|purpose|about|info|information|details|describe|definition|meaning)\b/i.test(userInput);
+
     const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
 
-    const isConversational = clearlyNotSearch;
+    // Also check if input is very short and generic
+    const isGenericResponse = userInput.trim().length < 15 && !/\b(terrier|lab|pit|bull|retriever|shepherd|boston|denver|houston|texas|florida|maine|zip|code|\d{5})\b/i.test(userInput);
+
+    const isConversational = clearlyConversational || isGenericResponse;
 
     let extracted = {};
 
-    // Only attempt extraction if this is NOT clearly conversational
-    if (!isConversational) {
+    // Only attempt extraction if this is NOT clearly conversational AND contains potential search terms
+    const hasSearchIndicators = /\b(terrier|lab|pit|bull|retriever|shepherd|boston|denver|houston|texas|florida|maine|zip|code|\d{5}|rural|city|state|breed|dog|puppy|adopt|find|looking|want|search)\b/i.test(userInput);
+
+    if (!isConversational && hasSearchIndicators) {
       try {
         extracted = await extractSearchTerms(userInput); // Only the current message
         console.log('[📤 Raw extraction string]:', extracted);
@@ -155,7 +163,7 @@ export async function POST(req: Request) {
         console.error('❌ Extraction failed:', err);
       }
     } else {
-      console.log('💬 Skipping extraction - clearly conversational input');
+      console.log('💬 Skipping extraction - conversational or no search indicators');
     }
 
     console.log('[🧠 Parsed search terms]:', extracted);
@@ -248,25 +256,41 @@ export async function POST(req: Request) {
       extracted.location = null; // This will trigger the rural zip fallback later
     }
 
-    // Update memory with extracted values (only if we actually extracted something)
-    if (extracted.breed && extracted.breed !== rememberedBreed) {
+    // Preserve existing memory values unless we have NEW extracted values
+    // Only update memory if we actually extracted something meaningful AND different
+    let memoryUpdated = false;
+
+    if (extracted.breed && extracted.breed !== rememberedBreed && extracted.breed.length > 1) {
       memory.breed = extracted.breed;
+      memoryUpdated = true;
       console.log('🐕 Updated breed in memory:', extracted.breed);
+    } else {
+      // Preserve existing breed
+      memory.breed = rememberedBreed;
     }
-    if (extracted.location !== undefined && extracted.location !== rememberedLocation) {
+
+    if (extracted.location !== undefined && extracted.location !== rememberedLocation && (extracted.location === null || extracted.location.length > 1)) {
       memory.location = extracted.location;
+      memoryUpdated = true;
       console.log('📍 Updated location in memory:', extracted.location);
+    } else {
+      // Preserve existing location
+      memory.location = rememberedLocation;
     }
 
-    // Use memory values first, then remembered values as fallback
-    const finalBreed = memory.breed || rememberedBreed || null;
-    const finalLocation = memory.location !== undefined ? memory.location : rememberedLocation;
+    // Use preserved memory values
+    const finalBreed = memory.breed || null;
+    const finalLocation = memory.location !== undefined ? memory.location : null;
 
-    // Only clear cache if either changed
-    if (finalBreed !== rememberedBreed || finalLocation !== rememberedLocation) {
+    // Only clear cache if memory was actually updated with new values
+    if (memoryUpdated) {
       console.log('[🔄 Search terms changed — clearing cached dogs]');
       memory.cachedDogs = [];
       memory.seenDogIds = [];
+    } else {
+      // Preserve existing cache
+      memory.cachedDogs = memory.cachedDogs || [];
+      memory.seenDogIds = memory.seenDogIds || [];
     }
 
     console.log('[🧠 Memory updated: breed]', memory.breed);
@@ -285,12 +309,32 @@ export async function POST(req: Request) {
           ],
           temperature: 0.7,
         });
-        return NextResponse.json(chatCompletion.choices[0].message);
+        
+        // Return chat response with preserved memory
+        return NextResponse.json({
+          ...chatCompletion.choices[0].message,
+          memory: {
+            location: rememberedLocation,
+            breed: rememberedBreed,
+            hasSeenResults: hasSeenResults,
+            seenDogIds: seenDogIds,
+            offset: memory?.offset || 0,
+            cachedDogs: memory?.cachedDogs || [],
+          }
+        });
       } catch (err) {
         console.error('❌ Chat fallback error:', err);
         return NextResponse.json({
           role: 'assistant',
           content: `Oops, I had a little hiccup responding. Could you try again? 🐾`,
+          memory: {
+            location: rememberedLocation,
+            breed: rememberedBreed,  
+            hasSeenResults: hasSeenResults,
+            seenDogIds: seenDogIds,
+            offset: memory?.offset || 0,
+            cachedDogs: memory?.cachedDogs || [],
+          }
         });
       }
     }
