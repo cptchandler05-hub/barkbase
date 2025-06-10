@@ -34,17 +34,17 @@ Never:
 - Forget your mission
 `;
 
-// Improved adoption query detection
+// Improved adoption query detection - must explicitly mention finding/adopting dogs
 function isAdoptionQuery(message: string): boolean {
-  const adoptionKeywords = /\b(adopt|adoption|rescue|find|search|looking for|want|get|breed|dog|puppy|puppies|terrier|lab|retriever|shepherd|pitbull|beagle|chihuahua|poodle|bulldog|boxer|husky|dachshund|golden|german|border|collie|mastiff|rottweiler|doberman)\b/i;
+  // Core adoption intent phrases - must be present for adoption queries
+  const adoptionIntentPhrases = /\b(find (me )?a dog|looking for (a )?dog|want to adopt|searching for (a )?dog|need a dog|get a dog|adopt a dog|find.*dog|show me.*dog|more dogs|another dog|different dog|rural dog|country dog|dogs? (in|near|around))\b/i;
   
-  const locationKeywords = /\b(city|state|zip|location|area|near|around|rural|urban|texas|california|florida|new york|boston|chicago|houston|phoenix|philadelphia|san antonio|dallas|austin|jacksonville)\b/i;
+  // Breed + location combinations that suggest searching
+  const breedLocationSearch = /\b(terrier|lab|retriever|shepherd|pitbull|beagle|chihuahua|poodle|bulldog|boxer|husky|dachshund|golden|german|border|collie|mastiff|rottweiler|doberman).*(in|near|around).*(city|state|area|texas|california|florida|boston|chicago|houston|phoenix|philadelphia|san antonio|dallas|austin|jacksonville)\b/i;
   
-  const adoptionPhrases = /\b(find (me )?a dog|looking for|want to adopt|searching for|need a|get a dog|dog (in|near|around)|breed (in|near|around)|show me|more dogs|another dog|different dog|rural dog|country dog)\b/i;
+  const locationBreedSearch = /\b(city|state|area|texas|california|florida|boston|chicago|houston|phoenix|philadelphia|san antonio|dallas|austin|jacksonville).*(terrier|lab|retriever|shepherd|pitbull|beagle|chihuahua|poodle|bulldog|boxer|husky|dachshund|golden|german|border|collie|mastiff|rottweiler|doberman)\b/i;
   
-  const sizeAgeKeywords = /\b(small|medium|large|extra large|puppy|adult|senior|young|old|baby|tiny|giant|big)\b/i;
-  
-  return adoptionKeywords.test(message) || locationKeywords.test(message) || adoptionPhrases.test(message) || sizeAgeKeywords.test(message);
+  return adoptionIntentPhrases.test(message) || breedLocationSearch.test(message) || locationBreedSearch.test(message);
 }
 
 // Check if message is clearly conversational (not about adoption)
@@ -56,7 +56,7 @@ function isConversationalOnly(message: string): boolean {
     /^(good|great|awesome|nice|cool|wow|amazing|perfect|excellent|wonderful|fantastic|ok|okay|yes|no|maybe|sure|alright)[\s!.]*$/i,
     /^(who are you|what are you|tell me about yourself|what's your name)[\s?!.]*$/i,
     /\b(mission|purpose|about|info|information|what.*barkr|who.*barkr|barkbase|what.*barkbase|platform|website|blockchain|crypto|ethereum|base)\b/i,
-    /\b(training|nutrition|behavior|exercise|health|grooming|feeding|commands|tricks|care|wellness|vet|veterinary)\b/i,
+    /\b(training|nutrition|behavior|exercise|health|grooming|feeding|commands|tricks|care|wellness|vet|veterinary|advice|help.*dog|dog.*advice|senior dog|puppy.*care|food|diet|eating|medical|sick|healthy)\b/i,
     /\b(joke|funny|laugh|humor|pun|story|tell me)\b/i
   ];
 
@@ -179,9 +179,9 @@ export async function POST(req: Request) {
       });
     }
 
-    // Handle pure conversational messages when no adoption search is active
-    if (isConversational && !isAdoption && !memory.hasSeenResults) {
-      console.log('💬 Pure conversational mode');
+    // Handle pure conversational messages (nutrition, training, general questions)
+    if (isConversational && !isAdoption) {
+      console.log('💬 Conversational mode - nutrition/training/general question');
       try {
         const chatCompletion = await openai.chat.completions.create({
           model: 'gpt-3.5-turbo-0125',
@@ -194,28 +194,14 @@ export async function POST(req: Request) {
 
         return NextResponse.json({
           ...chatCompletion.choices[0].message,
-          memory: {
-            location: null,
-            breed: null,
-            hasSeenResults: false,
-            seenDogIds: [],
-            offset: 0,
-            cachedDogs: [],
-          }
+          memory: memory // Preserve existing memory
         });
       } catch (err) {
         console.error('❌ Chat error:', err);
         return NextResponse.json({
           role: 'assistant',
           content: `Oops, I had a little hiccup responding. Could you try again? 🐾`,
-          memory: {
-            location: null,
-            breed: null,
-            hasSeenResults: false,
-            seenDogIds: [],
-            offset: 0,
-            cachedDogs: [],
-          }
+          memory: memory // Preserve existing memory
         });
       }
     }
