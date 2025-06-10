@@ -131,14 +131,8 @@ export async function POST(req: Request) {
       const isVagueLocation = extracted.location && /^(rural( area)?s?|remote|middle of nowhere)$/i.test(extracted.location.trim());
 
       if (isVagueLocation) {
-        // Only delete if breed is also unknown
-        if (!extracted.breed && !rememberedBreed) {
-          console.log('⚠️ Removing vague location:', extracted.location);
-          delete extracted.location;
-        } else {
-          console.log('✅ Keeping vague location because breed is known');
-          extracted.location = null; // trigger rural fallback later
-        }
+        console.log('🌾 Detected vague/rural location request:', extracted.location);
+        extracted.location = null; // Always trigger rural fallback for these requests
       }
 
       // ✅ Correct accidental double-s plural in breed (e.g., “terrierss”)
@@ -238,28 +232,29 @@ export async function POST(req: Request) {
       });
     }
 
-    // Merge extracted + remembered (preserve existing values unless explicitly overridden)
-    const finalBreed = extracted.breed || memory.breed || rememberedBreed || null;
-    const finalLocation = extracted.location || memory.location || rememberedLocation || null;
+    // Handle rural requests specifically
+    if (extracted.location && /^rural( area)?s?$/i.test(extracted.location.trim())) {
+      console.log('🌾 Rural location detected, setting to null for fallback');
+      extracted.location = null; // This will trigger the rural zip fallback later
+    }
+
+    // Update memory with extracted values
+    if (extracted.breed) {
+      memory.breed = extracted.breed;
+    }
+    if (extracted.location !== undefined) { // Allow null to be set
+      memory.location = extracted.location;
+    }
+
+    // Merge current memory with remembered values (memory takes precedence)
+    const finalBreed = memory.breed || rememberedBreed || null;
+    const finalLocation = memory.location !== undefined ? memory.location : rememberedLocation;
 
     // Only clear cache if either changed
     if (finalBreed !== rememberedBreed || finalLocation !== rememberedLocation) {
       console.log('[🔄 Search terms changed — clearing cached dogs]');
       memory.cachedDogs = [];
       memory.seenDogIds = [];
-    }
-
-    // Update memory - only update if we extracted something new, preserve existing values
-    if (extracted.breed) {
-      memory.breed = extracted.breed;
-    } else if (!memory.breed) {
-      memory.breed = rememberedBreed;
-    }
-    
-    if (extracted.location) {
-      memory.location = extracted.location;
-    } else if (!memory.location) {
-      memory.location = rememberedLocation;
     }
 
     console.log('[🧠 Memory updated: breed]', memory.breed);
@@ -289,10 +284,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // Handle missing breed or location - but check memory first
-    if ((extracted.breed || memory.breed) && !memory.location && !extracted.location) {
-      const displayBreed = (extracted.breed || memory.breed)?.endsWith('s') ? 
-        (extracted.breed || memory.breed) : `${extracted.breed || memory.breed}s`;
+    // Handle missing breed or location
+    if (finalBreed && !finalLocation && finalLocation !== null) {
+      const displayBreed = finalBreed.endsWith('s') ? finalBreed : `${finalBreed}s`;
       return NextResponse.json({
         role: 'assistant',
         content: `You're looking for **${displayBreed}**—great taste. Want me to fetch some from a rural area, or do you have a location in mind?`,
@@ -300,10 +294,10 @@ export async function POST(req: Request) {
       });
     }
 
-    if ((extracted.location || memory.location) && !memory.breed && !extracted.breed) {
+    if (finalLocation && !finalBreed) {
       return NextResponse.json({
         role: 'assistant',
-        content: `You're in **${extracted.location || memory.location}**, got it. Any specific breed or type you're hoping to adopt?`,
+        content: `You're in **${finalLocation}**, got it. Any specific breed or type you're hoping to adopt?`,
         memory,
       });
     }
@@ -332,8 +326,15 @@ export async function POST(req: Request) {
       });
     }
 
+    // Handle rural zip fallback when location is null
+    let queryLocation = finalLocation;
+    if (queryLocation === null || queryLocation === 'rural') {
+      queryLocation = getRandomRuralZip();
+      console.log('🌾 Using rural zip fallback:', queryLocation);
+    }
+
     const query = {
-      location: finalLocation,
+      location: queryLocation,
       breed: finalBreed,
     };
 
