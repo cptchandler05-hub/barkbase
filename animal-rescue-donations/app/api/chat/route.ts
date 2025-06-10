@@ -275,5 +275,14 @@ If someone shows heart? You show teeth—against the system that overlooks the i
 
       const response = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
       return NextResponse.json({ content: response, memory: updatedMemory });
+    }
+  } catch (error) {
+    console.error('[❌ Chat Error]', error);
+    return NextResponse.json(
+      { error: 'Sorry, I couldn\'t fetch a reply. Try again?' },
+      { status: 500 }
+    );
+  }
+}
 
 
