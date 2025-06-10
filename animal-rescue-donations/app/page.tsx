@@ -106,34 +106,46 @@ export default function Page() {
     setMessages(newMessages);
     setInput("");
     setLoading(true);
-    setShouldScroll(true); // Trigger scroll after user sends message
+    setShouldScroll(true);
 
     try {
+      // Build memory object from current state
+      const currentMemory = {
+        location: memory?.location || location || null,
+        breed: memory?.breed || breed || null,
+        hasSeenResults: memory?.hasSeenResults || false,
+        seenDogIds: memory?.seenDogIds || [],
+        offset: memory?.offset || 0,
+        cachedDogs: memory?.cachedDogs || [],
+      };
+
+      console.log('[🖥️ Frontend sending memory]:', currentMemory);
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: newMessages,
-          memory: memory || { location, breed }, // fallback to local memory if full memory is null
+          memory: currentMemory,
         }),
       });
  
       const data = await res.json();
       const content = data.content || "";
 
+      // Update memory state from API response
       if (data.memory) {
-        setMemory(data.memory); // ✅ store full memory object
-        if (data.memory.location) setLocation(data.memory.location);
-        if (data.memory.breed) setBreed(data.memory.breed);
+        console.log('[🖥️ Frontend received memory]:', data.memory);
+        setMemory(data.memory);
+        
+        // Update individual state for backward compatibility
+        if (data.memory.location !== undefined) setLocation(data.memory.location);
+        if (data.memory.breed !== undefined) setBreed(data.memory.breed);
       }
-      
-      if (data.memory?.location) setLocation(data.memory.location);
-      if (data.memory?.breed) setBreed(data.memory.breed);
-
       
       if (content) {
         setMessages((prev) => [...prev, { role: "assistant", content }]);
-        setShouldScroll(true); // Trigger scroll after assistant responds
+        setShouldScroll(true);
       }
     } catch (error) {
       console.error("API error:", error);

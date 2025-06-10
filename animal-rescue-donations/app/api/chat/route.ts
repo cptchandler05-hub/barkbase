@@ -249,9 +249,18 @@ export async function POST(req: Request) {
       memory.seenDogIds = [];
     }
 
-    // Update memory - only update if we extracted something new
-    if (extracted.breed) memory.breed = extracted.breed;
-    if (extracted.location) memory.location = extracted.location;
+    // Update memory - only update if we extracted something new, preserve existing values
+    if (extracted.breed) {
+      memory.breed = extracted.breed;
+    } else if (!memory.breed) {
+      memory.breed = rememberedBreed;
+    }
+    
+    if (extracted.location) {
+      memory.location = extracted.location;
+    } else if (!memory.location) {
+      memory.location = rememberedLocation;
+    }
 
     console.log('[🧠 Memory updated: breed]', memory.breed);
     console.log('[🧠 Memory updated: location]', memory.location);
@@ -646,14 +655,8 @@ export async function POST(req: Request) {
       role: 'assistant',
       content: barkrReply,
       memory: {
-        location:
-          typeof extracted.location === 'string'
-            ? extracted.location
-            : rememberedLocation || null,
-        breed:
-          typeof extracted.breed === 'string'
-            ? extracted.breed
-            : rememberedBreed || null,
+        location: memory.location || null,
+        breed: memory.breed || null,
         hasSeenResults: animalsToShow.length > 0 ? true : hasSeenResults,
         seenDogIds: updatedSeenDogIds,
         offset: memory?.offset || 0,
