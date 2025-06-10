@@ -28,11 +28,7 @@ const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
 
 export default function Page() {
   const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content:
-        "Hi! I'm Barkr—ask me anything about dog rescue, training, or finding a dog to adopt.",
-    },
+    { role: "assistant", content: "Hi! I'm Barkr—ask me anything about dog rescue, training, or finding a dog to adopt." },
   ]);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);

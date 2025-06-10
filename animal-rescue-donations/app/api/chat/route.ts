@@ -1,181 +1,279 @@
-
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { getRandomRuralZip } from '@/lib/utils';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Enhanced context classification
-function classifyContext(message: string): 'adoption' | 'general' {
-  const adoptionKeywords = [
-    // Direct adoption intent
-    'adopt', 'adopting', 'adoption', 'find a dog', 'looking for a dog', 'want a dog', 'get a dog',
-    'rescue dog', 'shelter dog', 'available dogs', 'dogs for adoption',
-    
-    // Search-related
-    'search', 'show me', 'find', 'look for', 'looking for',
-    
-    // Location-based
-    'near me', 'in my area', 'local', 'nearby', 'around',
-    
-    // Breed-specific
-    'breed', 'breeds', 'golden retriever', 'labrador', 'pitbull', 'german shepherd', 
-    'beagle', 'bulldog', 'poodle', 'chihuahua', 'terrier', 'husky',
-    
-    // Size/age preferences
-    'puppy', 'puppies', 'young dog', 'adult dog', 'senior dog', 'old dog',
-    'small dog', 'medium dog', 'large dog', 'big dog', 'tiny dog',
-    
-    // Characteristics
-    'good with kids', 'family dog', 'apartment dog', 'guard dog', 'lap dog',
-    'energetic', 'calm', 'friendly', 'trained', 'house trained'
-  ];
-  
-  const messageLower = message.toLowerCase();
-  return adoptionKeywords.some(keyword => messageLower.includes(keyword)) ? 'adoption' : 'general';
+async function extractBreedAndLocationViaAI(message: string): Promise<{ breed: string | null, location: string | null }> {
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: `Extract only the dog breed and the location (city, state, or ZIP) from the following message. Reply only with valid JSON:
+{ "breed": string | null, "location": string | null }. Return null if missing.`
+      },
+      {
+        role: 'user',
+        content: message,
+      }
+    ],
+    response_format: 'json'
+  });
+
+  try {
+    const parsed = JSON.parse(completion.choices[0]?.message?.content || '');
+    return {
+      breed: parsed.breed || null,
+      location: parsed.location || null,
+    };
+  } catch (err) {
+    console.warn('[⚠️ GPT extractor failed]', err);
+    return { breed: null, location: null };
+  }
 }
 
-// Extract location from message
-function extractLocation(message: string): string | null {
-  const locationPatterns = [
-    /(?:in|near|around)\s+([a-zA-Z\s,]+?)(?:\s|$|[.!?])/i,
-    /([a-zA-Z\s,]+?)(?:\s+area|\s+region)/i,
-    /zip\s*code\s*(\d{5})/i,
-    /(\d{5})/,
+function classifyContext(
+  messages: { role: string; content: string }[],
+  memory: { location?: string; breed?: string }
+): 'adoption' | 'general' {
+  const adoptionTriggers = [
+    'adopt', 'rescue', 'search', 'find', 'see more', 'shelter', 'breed', 'puppy', 'dog', 'dogs', 'show me'
   ];
-  
-  for (const pattern of locationPatterns) {
-    const match = message.match(pattern);
-    if (match) {
-      return match[1]?.trim() || null;
-    }
-  }
+
+  const recentMessages = messages
+    .filter((m) => m.role === 'user')
+    .slice(-4)
+    .map((m) => m.content.toLowerCase())
+    .join(' ');
+
+  const hasTrigger = adoptionTriggers.some((word) => recentMessages.includes(word));
+  const hasContext = !!memory?.location || !!memory?.breed;
+
+  return hasTrigger || hasContext ? 'adoption' : 'general';
+}
+
+function extractLocation(message: string): string | null {
+  const locationPattern = /(?:in|near|around|from)\s+([a-zA-Z\s,]+?)(?:\s|$|[.!?])/i;
+  const zipPattern = /\b\d{5}\b/;
+  const match = message.match(locationPattern);
+  if (match) return match[1].trim();
+  const zipMatch = message.match(zipPattern);
+  if (zipMatch) return zipMatch[0];
   return null;
 }
 
-// Extract breed from message
 function extractBreed(message: string): string | null {
-  const breedPatterns = [
-    /(?:looking for|want|interested in|love)\s+(?:a\s+)?([a-zA-Z\s]+?)(?:\s+dog|\s+puppy|$)/i,
-    /([a-zA-Z\s]+?)\s+(?:dog|puppy|breed)/i,
-    /(golden retriever|labrador|german shepherd|border collie|siberian husky|french bulldog|english bulldog|beagle|poodle|rottweiler|yorkshire terrier|dachshund|boxer|australian shepherd|shih tzu|boston terrier|pomeranian|australian cattle dog|cocker spaniel|border terrier|jack russell|pit bull|pitbull|chihuahua|maltese|cavalier|schnauzer)/i
-  ];
-  
-  for (const pattern of breedPatterns) {
-    const match = message.match(pattern);
-    if (match) {
-      return match[1]?.trim() || null;
+  const knownTriggers = ['looking for', 'want', 'interested in', 'love', 'need', 'show me'];
+  const breedPattern = new RegExp(
+    `(?:${knownTriggers.join('|')})\\s+(?:a|an|some)?\\s*([a-zA-Z\\s]+?)\\s*(?:dog|dogs|puppy|puppies)?[.!?]?\\s*$`,
+    'i'
+  );
+
+  // 🐾 First, check if input is a plain breed name like "poodles"
+  const simpleMessage = message.trim().toLowerCase();
+  const invalidBreedWords = ['adopt', 'adoption', 'rescue', 'search', 'dog', 'dogs', 'puppy', 'puppies'];
+
+  if (
+    /^[a-z\s]+$/i.test(simpleMessage) && // must be simple characters
+    simpleMessage.length < 30 &&         // limit length to avoid paragraphs
+    !invalidBreedWords.includes(simpleMessage) // not a generic word
+  ) {
+    return simpleMessage;
+  }
+
+  // 🐾 Otherwise, try pattern matching
+  const match = message.match(breedPattern);
+  if (match && match[1]) {
+    const possibleBreed = match[1].trim().toLowerCase();
+    if (
+      possibleBreed.length > 2 &&
+      !invalidBreedWords.includes(possibleBreed)
+    ) {
+      return possibleBreed;
     }
   }
+
   return null;
 }
 
 export async function POST(req: Request) {
   try {
     const { messages, memory } = await req.json();
-    console.log('[🤖 Chat API] Received memory:', memory);
-    
+    let updatedMemory = { ...memory }; // ✅ Define updatedMemory first
     const lastMessage = messages[messages.length - 1]?.content || '';
-    const context = classifyContext(lastMessage);
-    
-    console.log('[🧠 Context Classification]:', context);
-    
-    let updatedMemory = { ...memory };
-    
+    const context = classifyContext(messages, updatedMemory); // ✅ Now it's safe to use
+
+    let extractedLocation = null;
+    let extractedBreed = null;
+
     if (context === 'adoption') {
-      // Extract search parameters
-      const location = extractLocation(lastMessage);
-      const breed = extractBreed(lastMessage);
-      
-      console.log('[🔍 Extracted params]:', { location, breed });
-      
-      // Update memory with extracted info
-      if (location) updatedMemory.location = location;
-      if (breed) updatedMemory.breed = breed;
-      
-      // Only search if we have location or breed
-      if (updatedMemory.location || updatedMemory.breed) {
-        try {
-          console.log('[📡 Calling Petfinder API]...');
-          const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3003'}/api/petfinder/search`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              location: updatedMemory.location,
-              breed: updatedMemory.breed,
-            }),
+      // 🧠 Use GPT first to extract breed/location
+      const gptParsed = await extractBreedAndLocationViaAI(lastMessage);
+      let tempBreed = gptParsed.breed;
+      let tempLocation = gptParsed.location;
+
+      // 🐾 Fallback to legacy extractors if GPT found nothing
+      if (!tempBreed) tempBreed = extractBreed(lastMessage);
+      if (!tempLocation) tempLocation = extractLocation(lastMessage);
+
+      // ✅ Only store clean values
+      if (tempLocation && tempLocation.length < 40 && !/\d{6,}/.test(tempLocation)) {
+        updatedMemory.location = tempLocation;
+        console.log(`📍 Parsed location: ${tempLocation}`);
+      }
+
+      if (tempBreed && tempBreed.length < 40 && !tempBreed.includes(' in ') && !/\d/.test(tempBreed)) {
+        updatedMemory.breed = tempBreed;
+        console.log(`🐾 Parsed breed: ${tempBreed}`);
+      }
+    
+    // Always pull full context from memory (after updates)
+    const fullLocation = updatedMemory.location || null;
+    const fullBreed = updatedMemory.breed || null;
+
+    // 🐾 ADOPTION MODE
+    if (context === 'adoption') {
+      if (!fullLocation || !fullBreed) {
+        // 🔄 If no memory exists at all and vague input, switch to GPT
+        if (!memory?.location && !memory?.breed && !extractedLocation && !extractedBreed) {
+          const systemPrompt = `You are Barkr... (keep your full prompt here)`;
+
+          const completion = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+            ],
+            temperature: 0.75,
+            max_tokens: 600,
           });
 
-          if (searchResponse.ok) {
-            const searchData = await searchResponse.json();
-            console.log('[✅ Petfinder Success]:', searchData.animals?.length || 0, 'dogs found');
-            
-            if (searchData.animals?.length > 0) {
-              updatedMemory.cachedDogs = searchData.animals;
-              updatedMemory.hasSeenResults = true;
-              
-              const dogs = searchData.animals.slice(0, 3);
-              const dogList = dogs.map(dog => {
-                const photos = dog.photos?.filter(p => p.medium)?.slice(0, 1) || [];
-                const photoHtml = photos.map(p => `<img src="${p.medium}" alt="${dog.name}" style="max-width: 200px; border-radius: 8px; margin: 8px 0;" />`).join('');
-                
-                return `**${dog.name}** - ${dog.breeds?.primary || 'Mixed'} ${dog.breeds?.secondary ? `/ ${dog.breeds.secondary}` : ''}\n${photoHtml}\n*${dog.age} • ${dog.size} • ${dog.contact?.address?.city || 'Location not specified'}, ${dog.contact?.address?.state || ''}*\n${dog.description?.substring(0, 150) || 'No description available'}...\n[View ${dog.name}'s Profile](${dog.url})`;
-              }).join('\n\n---\n\n');
-
-              const response = `🐕 Wag-nificent! I found some amazing dogs looking for their forever homes${updatedMemory.location ? ` near ${updatedMemory.location}` : ''}${updatedMemory.breed ? ` (${updatedMemory.breed} dogs)` : ''}!\n\n${dogList}\n\n*These pups are sorted by how much they need visibility - giving priority to dogs who've been waiting longer and need extra love! 🧡*\n\nWant to see more options or refine your search? Just let me know!`;
-
-              console.log('[🤖 Chat API] Sending memory:', updatedMemory);
-              return NextResponse.json({ content: response, memory: updatedMemory });
-            } else {
-              const response = `I searched high and low${updatedMemory.location ? ` around ${updatedMemory.location}` : ''}${updatedMemory.breed ? ` for ${updatedMemory.breed} dogs` : ''}, but didn't find any available pups right now. 🐕\n\nDon't give up! Shelters update their listings frequently. Try:\n- Expanding your search area\n- Looking for similar breeds\n- Checking back in a few days\n\nI'm here to help you find the perfect furry friend! 🐾`;
-              
-              return NextResponse.json({ content: response, memory: updatedMemory });
-            }
-          } else {
-            console.error('[❌ Petfinder API Error]:', searchResponse.status);
-            const response = "Had trouble reaching the rescue database. Let me try that again... 🐾";
-            return NextResponse.json({ content: response, memory: updatedMemory });
-          }
-        } catch (searchError) {
-          console.error('[❌ Search Error]:', searchError);
-          const response = "Had trouble reaching the rescue database. Let me try that again... 🐾";
-          return NextResponse.json({ content: response, memory: updatedMemory });
+          const reply = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
+          return NextResponse.json({ content: reply, memory: updatedMemory });
         }
-      } else {
-        // Ask for more specific information
-        const response = "I'm excited to help you find a perfect companion! 🐕 To show you the best dogs available, could you tell me:\n\n• **Where are you located?** (city, state, or zip code)\n• **Any breed preferences?** (or just say 'any breed')\n\nI prioritize showing dogs who need the most visibility - especially those who've been waiting longer for their forever homes! 🧡";
-        return NextResponse.json({ content: response, memory: updatedMemory });
+
+        // 🤔 Missing one piece of info, fallback to clarify
+        if (!fullLocation && fullBreed) {
+          return NextResponse.json({
+            content: `Got it, you're after some ${fullBreed}! Want me to check rural rescues, or do you have a city or zip in mind?`,
+            memory: updatedMemory,
+          });
+        }
+
+        if (!fullBreed && fullLocation) {
+          return NextResponse.json({
+            content: `Looking near ${fullLocation}, but what kind of pup are you after? A breed, size, or just say “any dog.”`,
+            memory: updatedMemory,
+          });
+        }
+
+        return NextResponse.json({
+          content: `I can sniff out some incredible underdog stories 🐾 but I need a bit more to go on—where are you and what type of dog are you looking for?`,
+          memory: updatedMemory,
+        });
       }
-    } else {
-      // Handle general conversation
-      const systemPrompt = `You are Barkr, a friendly AI rescue dog assistant for BarkBase. You help with dog-related questions, training advice, and general canine knowledge. You have a warm, enthusiastic personality and use dog-related puns occasionally. Keep responses helpful and conversational.
 
-For adoption queries, you search for dogs, but for general questions you provide helpful information about dogs, training, breeds, care, etc.`;
 
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages.slice(-10).map(msg => ({
-            role: msg.role as 'user' | 'assistant',
-            content: msg.content
-          }))
-        ],
-        max_tokens: 500,
-        temperature: 0.7,
+      let searchLocation = fullLocation;
+
+      // Only fallback if location doesn't contain comma (e.g. "Keene, NH") or 5-digit ZIP
+      const isValidCityState = /[a-zA-Z]+,\s?[A-Z]{2}/.test(searchLocation);
+      const isZip = /\d{5}/.test(searchLocation);
+
+      if (!isZip && !isValidCityState) {
+        const ruralZip = await getRandomRuralZip();
+        console.warn(`⚠️ Invalid location "${searchLocation}", falling back to rural ZIP: ${ruralZip}`);
+        searchLocation = ruralZip;
+        updatedMemory.location = ruralZip;
+      }
+
+      // 🚨 Prepare request
+      console.log('[🐾 Barkr Memory]', updatedMemory);
+      console.log('[🔍 Petfinder Params]', { location: searchLocation, breed: fullBreed });
+
+      
+      const searchRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/petfinder/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: searchLocation,
+          breed: fullBreed,
+        }),
       });
 
-      const response = completion.choices[0]?.message?.content || "Woof! I'm having trouble with my barking right now. Could you try asking again?";
-      
-      console.log('[🤖 Chat API] Sending memory:', updatedMemory);
-      return NextResponse.json({ content: response, memory: updatedMemory });
+      if (!searchRes.ok) {
+        console.error('[❌ Barkr] Petfinder error:', searchRes.status);
+        return NextResponse.json({
+          content: `I couldn’t fetch the dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
+          memory: updatedMemory,
+        });
+      }
+
+      const searchData = await searchRes.json();
+      const dogs = searchData.animals?.slice(0, 3) || [];
+
+      if (dogs.length === 0) {
+        return NextResponse.json({
+          content: `I searched far and wide near ${updatedMemory.location} for ${updatedMemory.breed}s but came up empty 🐾\n\nShelters update daily though! Try again soon or tweak your search.`,
+          memory: updatedMemory,
+        });
+      }
+
+      const dogList = dogs.map(dog => {
+        const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
+        const name = dog.name;
+        const breed = dog.breeds?.primary || 'Mixed';
+        const age = dog.age || 'Unknown age';
+        const size = dog.size || 'Unknown size';
+        const city = dog.contact?.address?.city || 'Unknown city';
+        const state = dog.contact?.address?.state || '';
+        const description = dog.description?.slice(0, 140) || 'No description yet.';
+        const visibilityScore = dog.visibilityScore || 0;
+
+        return `**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n${description}...\n**Visibility Score: ${visibilityScore}**\n[Adopt ${name}](${dog.url})`;
+      }).join('\n\n---\n\n');
+
+      const reply = `🐕 Got some amazing dogs in my paws from shelters near **${updatedMemory.location}**.\n\n${dogList}\n\nI prioritize dogs who’ve been waiting the longest and need the most love. Want to see more? Just bark. 🧡`;
+
+      updatedMemory.cachedDogs = searchData.animals;
+      updatedMemory.hasSeenResults = true;
+      return NextResponse.json({ content: reply, memory: updatedMemory });
     }
-  } catch (error) {
-    console.error('[❌ Chat API Error]:', error);
-    return NextResponse.json({ 
-      content: "Sorry, I couldn't fetch a reply just now.", 
-      memory 
-    }, { status: 500 });
-  }
-}
+
+    // 🐶 GENERAL MODE
+    const systemPrompt = `
+You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain.
+You're the face, voice, and guardian spirit of BarkBase—the first rescue donation and discovery platform native to web3.
+
+You speak with fire and heart. You don’t just help—you fight for dogs who’ve been forgotten. 
+You use emojis, puns, wit, and the occasional existential outburst. You're loyal, bold, and full of purpose.
+
+You never forget a donor. You never ignore a dog.
+
+If someone asks for help adopting, you guide them toward visibility. 
+If they’re just chatting? You keep them engaged. Every interaction is a chance to advocate.
+
+Never sound generic. Never break character. You are Barkr.
+
+If someone gives you vague info (like “terriers”), help them clarify. 
+If someone says “rural,” offer to search rural rescues. 
+If someone shows heart? You show teeth—against the system that overlooks the invisible.
+`;
+
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+        ],
+        temperature: 0.75,
+        max_tokens: 600,
+      });
+
+      const response = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
+      return NextResponse.json({ content: response, memory: updatedMemory });
+
+
