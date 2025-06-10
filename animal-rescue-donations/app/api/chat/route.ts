@@ -128,10 +128,11 @@ export async function POST(req: Request) {
       extracted = await extractSearchTerms(userInput); // Only the current message
       console.log('[📤 Raw extraction string]:', extracted);
 
-      const isVagueLocation = extracted.location && /^(rural( area)?s?|remote|middle of nowhere)$/i.test(extracted.location.trim());
+      // Detect any rural-related requests more broadly
+      const isRuralRequest = extracted.location && /rural|remote|countryside|middle of nowhere|nowhere|backwoods|sticks/i.test(extracted.location.trim());
 
-      if (isVagueLocation) {
-        console.log('🌾 Detected vague/rural location request:', extracted.location);
+      if (isRuralRequest) {
+        console.log('🌾 Detected rural location request:', extracted.location);
         extracted.location = null; // Always trigger rural fallback for these requests
       }
 
@@ -232,21 +233,23 @@ export async function POST(req: Request) {
       });
     }
 
-    // Handle rural requests specifically
-    if (extracted.location && /^rural( area)?s?$/i.test(extracted.location.trim())) {
+    // Handle rural requests specifically (catch any missed rural patterns)
+    if (extracted.location && /rural|remote|countryside|backwoods|sticks/i.test(extracted.location.trim())) {
       console.log('🌾 Rural location detected, setting to null for fallback');
       extracted.location = null; // This will trigger the rural zip fallback later
     }
 
-    // Update memory with extracted values
-    if (extracted.breed) {
+    // Update memory with extracted values (only if we actually extracted something)
+    if (extracted.breed && extracted.breed !== rememberedBreed) {
       memory.breed = extracted.breed;
+      console.log('🐕 Updated breed in memory:', extracted.breed);
     }
-    if (extracted.location !== undefined) { // Allow null to be set
+    if (extracted.location !== undefined && extracted.location !== rememberedLocation) {
       memory.location = extracted.location;
+      console.log('📍 Updated location in memory:', extracted.location);
     }
 
-    // Merge current memory with remembered values (memory takes precedence)
+    // Use memory values first, then remembered values as fallback
     const finalBreed = memory.breed || rememberedBreed || null;
     const finalLocation = memory.location !== undefined ? memory.location : rememberedLocation;
 
@@ -326,9 +329,9 @@ export async function POST(req: Request) {
       });
     }
 
-    // Handle rural zip fallback when location is null
+    // Handle rural zip fallback when location is null or contains rural terms
     let queryLocation = finalLocation;
-    if (queryLocation === null || queryLocation === 'rural') {
+    if (queryLocation === null || (queryLocation && /rural|remote|countryside|backwoods|sticks/i.test(queryLocation))) {
       queryLocation = getRandomRuralZip();
       console.log('🌾 Using rural zip fallback:', queryLocation);
     }
