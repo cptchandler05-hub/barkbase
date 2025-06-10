@@ -64,23 +64,25 @@ async function extractSearchTerms(userMessage: string) {
       messages: [
         {
           role: 'system',
-          content: `You are a strict JSON formatter for dog adoption searches. Extract breed and location ONLY if they are clearly mentioned for dog adoption.
+          content: `You are a strict JSON formatter for dog adoption searches. Extract breed and location ONLY if they are clearly mentioned for dog adoption/searching.
 
 Return only valid JSON with lowercase keys: "breed" and "location". 
 
-✅ Good examples:
-{ "breed": "terrier" }
-{ "location": "Denver, CO" }
-{ "breed": "lab", "location": "Boston" }
+✅ Extract ONLY from clear adoption contexts:
+{ "breed": "terrier" } - from "I want a terrier" or "looking for terriers"
+{ "location": "Denver, CO" } - from "dogs in Denver" or "Denver area"
+{ "breed": "lab", "location": "Boston" } - from "labs in Boston"
 
-❌ NEVER extract from these types of messages:
-- General questions: "how are you", "what's your mission", "tell me about training"
-- Single conversational words: "awesome", "thanks", "hello"
-- Non-adoption contexts: "state your mission", "what are terriers like"
+❌ NEVER extract from these contexts:
+- Questions about me: "how are you", "what's your mission", "state your mission", "what's barkbase"
+- Single words: "awesome", "thanks", "hello", "great", "cool", "nice"  
+- General info: "tell me about terriers", "what are pitbulls like"
+- Training/care: "how to train", "dog nutrition", "exercise needs"
+- Non-location words: "state your mission" ≠ "state" as location
 
-If the message is NOT clearly about finding/adopting a dog, return empty: {}
+CRITICAL: If the message contains phrases like "state your", "what's", "how are", "tell me", "what are" - return empty {}
 
-Only extract if the user is clearly looking to adopt or find a specific dog.`,
+Only extract when user is clearly looking to FIND/ADOPT a specific dog with specific criteria.`,
         },
         { role: 'user', content: userMessage },
       ],
