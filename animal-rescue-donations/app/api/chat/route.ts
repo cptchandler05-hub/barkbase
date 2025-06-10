@@ -123,27 +123,39 @@ export async function POST(req: Request) {
       console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
     }
 
+    //Detect converstaional message
+    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
+    const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
+
+    const isConversational = clearlyNotSearch;
+
     let extracted = {};
-    try {
-      extracted = await extractSearchTerms(userInput); // Only the current message
-      console.log('[📤 Raw extraction string]:', extracted);
 
-      // Detect any rural-related requests more broadly
-      const isRuralRequest = extracted.location && /rural|remote|countryside|middle of nowhere|nowhere|backwoods|sticks/i.test(extracted.location.trim());
+    // Only attempt extraction if this is NOT clearly conversational
+    if (!isConversational) {
+      try {
+        extracted = await extractSearchTerms(userInput); // Only the current message
+        console.log('[📤 Raw extraction string]:', extracted);
 
-      if (isRuralRequest) {
-        console.log('🌾 Detected rural location request:', extracted.location);
-        extracted.location = null; // Always trigger rural fallback for these requests
+        // Detect any rural-related requests more broadly
+        const isRuralRequest = extracted.location && /rural|remote|countryside|middle of nowhere|nowhere|backwoods|sticks/i.test(extracted.location.trim());
+
+        if (isRuralRequest) {
+          console.log('🌾 Detected rural location request:', extracted.location);
+          extracted.location = null; // Always trigger rural fallback for these requests
+        }
+
+        // ✅ Correct accidental double-s plural in breed (e.g., "terrierss")
+        if (extracted.breed && /\w{4,}ss$/.test(extracted.breed.trim())) {
+          extracted.breed = extracted.breed.trim().replace(/s+$/, '');
+          console.log('✅ Corrected breed typo:', extracted.breed);
+        }
+
+      } catch (err) {
+        console.error('❌ Extraction failed:', err);
       }
-
-      // ✅ Correct accidental double-s plural in breed (e.g., “terrierss”)
-      if (extracted.breed && /\w{4,}ss$/.test(extracted.breed.trim())) {
-        extracted.breed = extracted.breed.trim().replace(/s+$/, '');
-        console.log('✅ Corrected breed typo:', extracted.breed);
-      }
-
-    } catch (err) {
-      console.error('❌ Extraction failed:', err);
+    } else {
+      console.log('💬 Skipping extraction - clearly conversational input');
     }
 
     console.log('[🧠 Parsed search terms]:', extracted);
@@ -156,9 +168,6 @@ export async function POST(req: Request) {
     if (extracted.location === 'shelter') {
       delete extracted.location;
     }
-
-    const clearlyNotSearch = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain)\b/i.test(userInput);
-    const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
 
     const hasExtractedBreed = !!extracted.breed;
     const hasExtractedLocation = !!extracted.location;
@@ -264,9 +273,8 @@ export async function POST(req: Request) {
     console.log('[🧠 Memory updated: location]', memory.location);
 
     // If clearly a chat message with no new search terms
-    const isClearlyChat = clearlyNotSearch && !hasExtractedBreed && !hasExtractedLocation;
 
-    if (isClearlyChat) {
+    if (isConversational) {
       console.log('💬 Proceeding with general chat.');
       try {
         const chatCompletion = await openai.chat.completions.create({
