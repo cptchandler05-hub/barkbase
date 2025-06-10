@@ -180,7 +180,7 @@ export async function POST(req: Request) {
     }
 
     // Handle pure conversational messages when no adoption search is active
-    if (isConversational && !isAdoption && !memory.breed && !memory.location && !memory.hasSeenResults) {
+    if (isConversational && !isAdoption && !memory.hasSeenResults) {
       console.log('💬 Pure conversational mode');
       try {
         const chatCompletion = await openai.chat.completions.create({
@@ -245,7 +245,7 @@ export async function POST(req: Request) {
       // Handle special requests
       const ruralRequest = /\b(rural|remote|countryside|backwoods|country|sticks|middle of nowhere)\b/i.test(userInput);
       
-      // Update memory with new extractions
+      // Update memory with new extractions - only update if we actually extracted something
       let searchTermsChanged = false;
 
       if (extracted.breed && extracted.breed !== memory.breed) {
@@ -260,7 +260,7 @@ export async function POST(req: Request) {
         console.log('📍 Updated location:', extracted.location);
       }
 
-      if (ruralRequest && !memory.location) {
+      if (ruralRequest) {
         memory.location = null; // Will trigger rural zip selection
         searchTermsChanged = true;
         console.log('🌾 Rural request - will use random rural zip');
