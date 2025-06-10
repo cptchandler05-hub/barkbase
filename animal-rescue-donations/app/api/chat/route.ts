@@ -123,17 +123,16 @@ export async function POST(req: Request) {
       console.warn('⚠️ Failed to parse show_more GPT intent JSON:', intentResponse.choices[0].message.content);
     }
 
-    // Detect conversational messages more comprehensively
-    const clearlyConversational = /\b(how|what|why|who|when|are|you|u|r|hello|hi|thanks|thank you|barkr|today|doing|cat|cats|weather|feel|mood|training|intelligence|smart|think|opinion|question|talk|tell|explain|awesome|great|cool|nice|wow|amazing|mission|purpose|about|info|information|details|describe|definition|meaning|whats|what's|state|your)\b/i.test(userInput) ||
-      /^(awesome|great|cool|nice|wow|amazing|perfect|good|bad|ok|okay|yes|no|maybe|sure|definitely|absolutely|nope|yep|yeah|nah)[\s!.]*$/i.test(userInput.trim()) ||
-      /\b(mission|purpose|about|info|information|details|describe|definition|meaning)\b/i.test(userInput);
+    // More precise conversational detection - only block if clearly not about dogs/adoption
+    const clearlyConversational = /^(how are you|what are you|who are you|hello|hi|thanks|thank you|today|doing|weather|feel|mood)[\s!.]*$/i.test(userInput.trim()) ||
+      /^(awesome|great|cool|nice|wow|amazing|perfect|good|bad|ok|okay|yes|no|maybe|sure|definitely|absolutely|nope|yep|yeah|nah)[\s!.]*$/i.test(userInput.trim());
+
+    const questionAboutBarkr = /\b(mission|purpose|about|info|information|details|describe|definition|meaning|what.*barkr|who.*barkr|state.*mission)\b/i.test(userInput);
 
     const vagueAdoptionIntent = /small(er)?|calm|low energy|not too big|not hyper|easy|laid[- ]?back|gentle|chill|quiet/i.test(userInput);
 
-    // Also check if input is very short and generic
-    const isGenericResponse = userInput.trim().length < 15 && !/\b(terrier|lab|pit|bull|retriever|shepherd|boston|denver|houston|texas|florida|maine|zip|code|\d{5})\b/i.test(userInput);
-
-    const isConversational = clearlyConversational || isGenericResponse;
+    // Only consider it conversational if it's clearly NOT about dogs/adoption AND we don't have existing search criteria
+    const isConversational = (clearlyConversational || questionAboutBarkr) && !rememberedBreed && !rememberedLocation;
 
     let extracted = {};
 
@@ -256,26 +255,23 @@ export async function POST(req: Request) {
       extracted.location = null; // This will trigger the rural zip fallback later
     }
 
-    // Preserve existing memory values unless we have NEW extracted values
-    // Only update memory if we actually extracted something meaningful AND different
+    // Always preserve existing memory unless we have new valid extractions
+    memory.breed = rememberedBreed;
+    memory.location = rememberedLocation;
+    
     let memoryUpdated = false;
 
+    // Only update if we have new, different, and valid extracted values
     if (extracted.breed && extracted.breed !== rememberedBreed && extracted.breed.length > 1) {
       memory.breed = extracted.breed;
       memoryUpdated = true;
       console.log('🐕 Updated breed in memory:', extracted.breed);
-    } else {
-      // Preserve existing breed
-      memory.breed = rememberedBreed;
     }
 
     if (extracted.location !== undefined && extracted.location !== rememberedLocation && (extracted.location === null || extracted.location.length > 1)) {
       memory.location = extracted.location;
       memoryUpdated = true;
       console.log('📍 Updated location in memory:', extracted.location);
-    } else {
-      // Preserve existing location
-      memory.location = rememberedLocation;
     }
 
     // Use preserved memory values
@@ -314,8 +310,8 @@ export async function POST(req: Request) {
         return NextResponse.json({
           ...chatCompletion.choices[0].message,
           memory: {
-            location: rememberedLocation,
-            breed: rememberedBreed,
+            location: memory.location,
+            breed: memory.breed,
             hasSeenResults: hasSeenResults,
             seenDogIds: seenDogIds,
             offset: memory?.offset || 0,
@@ -328,8 +324,8 @@ export async function POST(req: Request) {
           role: 'assistant',
           content: `Oops, I had a little hiccup responding. Could you try again? 🐾`,
           memory: {
-            location: rememberedLocation,
-            breed: rememberedBreed,  
+            location: memory.location,
+            breed: memory.breed,  
             hasSeenResults: hasSeenResults,
             seenDogIds: seenDogIds,
             offset: memory?.offset || 0,
