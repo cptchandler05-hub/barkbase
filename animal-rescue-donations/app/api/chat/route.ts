@@ -239,8 +239,8 @@ export async function POST(req: Request) {
     }
 
     // Merge extracted + remembered (preserve existing values unless explicitly overridden)
-    const finalBreed = extracted.breed || rememberedBreed || null;
-    const finalLocation = extracted.location || rememberedLocation || null;
+    const finalBreed = extracted.breed || memory.breed || rememberedBreed || null;
+    const finalLocation = extracted.location || memory.location || rememberedLocation || null;
 
     // Only clear cache if either changed
     if (finalBreed !== rememberedBreed || finalLocation !== rememberedLocation) {
@@ -289,9 +289,10 @@ export async function POST(req: Request) {
       }
     }
 
-    // Handle missing breed or location
-    if (extracted.breed && !memory.location) {
-      const displayBreed = extracted.breed?.endsWith('s') ? extracted.breed : `${extracted.breed}s`;
+    // Handle missing breed or location - but check memory first
+    if ((extracted.breed || memory.breed) && !memory.location && !extracted.location) {
+      const displayBreed = (extracted.breed || memory.breed)?.endsWith('s') ? 
+        (extracted.breed || memory.breed) : `${extracted.breed || memory.breed}s`;
       return NextResponse.json({
         role: 'assistant',
         content: `You're looking for **${displayBreed}**—great taste. Want me to fetch some from a rural area, or do you have a location in mind?`,
@@ -299,16 +300,16 @@ export async function POST(req: Request) {
       });
     }
 
-    if (extracted.location && !memory.breed) {
+    if ((extracted.location || memory.location) && !memory.breed && !extracted.breed) {
       return NextResponse.json({
         role: 'assistant',
-        content: `You're in **${extracted.location}**, got it. Any specific breed or type you're hoping to adopt?`,
+        content: `You're in **${extracted.location || memory.location}**, got it. Any specific breed or type you're hoping to adopt?`,
         memory,
       });
     }
 
     // Check if we have both breed and location to proceed with search
-    if (!memory.breed || !memory.location) {
+    if (!finalBreed || !finalLocation) {
       console.warn('⚠️ Missing query parameters. Halting request.');
       return NextResponse.json({
         role: 'assistant',
@@ -332,8 +333,8 @@ export async function POST(req: Request) {
     }
 
     const query = {
-      location: memory.location,
-      breed: memory.breed,
+      location: finalLocation,
+      breed: finalBreed,
     };
 
     console.log('📡 Sending Petfinder query:', query);
