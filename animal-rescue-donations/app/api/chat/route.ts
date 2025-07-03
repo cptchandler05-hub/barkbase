@@ -602,8 +602,3 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
     );
   }
 }
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
