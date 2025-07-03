@@ -584,11 +584,11 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('[❌ POST Error]', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    } catch (error) {
+      console.error('[❌ POST Error]', error);
+      return NextResponse.json(
+        { error: 'Internal server error' },
+        { status: 500 }
+      );
+    }
   }
-}
