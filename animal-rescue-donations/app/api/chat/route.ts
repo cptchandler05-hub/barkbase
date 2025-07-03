@@ -218,7 +218,7 @@ function isCleanMemoryValue(value: string | null): boolean {
   return lower.length > 1 && !vague.includes(lower);
 }
 
-export async function POST(req: Request) {
+      export async function POST(req: Request) {
   try {
     const { messages, memory } = await req.json();
     let updatedMemory = { ...memory }; // ✅ Define updatedMemory first
@@ -556,51 +556,41 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
       updatedMemory.hasSeenResults = true;
 
       return NextResponse.json({ content: reply, memory: updatedMemory });
-    }
+      } else {
+        // 🐶 GENERAL MODE
+        const systemPrompt = BARKR_SYSTEM_PROMPT;
 
-    // 🐶 GENERAL MODE
-    const systemPrompt = BARKR_SYSTEM_PROMPT;
+        try {
+          const completion = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages.slice(-10).map((m: { role: string; content: string }) => ({
+                role: m.role,
+                content: m.content,
+              })),
+            ],
+            temperature: 0.75,
+            max_tokens: 600,
+          });
 
-    try {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages.slice(-10).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content })),
-        ],
-        temperature: 0.75,
-        max_tokens: 600,
-      });
+          const response = completion.choices[0]?.message?.content;
 
-      const response = completion.choices[0]?.message?.content;
+          if (!response) {
+            console.warn("[⚠️ Barkr] GPT returned no message content.");
+            return NextResponse.json({
+              content: "My circuits got tangled in a leash—try me again? 🐾",
+              memory: updatedMemory,
+            });
+          }
 
-      if (!response) {
-        console.warn("[⚠️ Barkr] GPT returned no message content.");
-        return NextResponse.json(
-          {
-            error: "Sorry, something short-circuited on my end. Try me again?",
-          },
-          { status: 500 }
-        );
+          return NextResponse.json({ content: response, memory: updatedMemory });
+
+        } catch (error) {
+          console.error('[❌ Chat Error]', error);
+          return NextResponse.json(
+            { error: "Sorry, I couldn't fetch a reply. Try again?" },
+            { status: 500 }
+          );
+        }
       }
-      console.log("[✅ Barkr GPT response]:", response);
-
-      return NextResponse.json({ content: response, memory: updatedMemory });
-
-    } catch (error) {
-      console.error('[❌ Chat Error]', error);
-      return NextResponse.json(
-        { error: 'Sorry, I couldn\'t fetch a reply. Try again?' },
-        { status: 500 }
-      );
-    }
-  }
-
-  } catch (error) {
-    console.error('[❌ POST Error]', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
