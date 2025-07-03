@@ -82,14 +82,27 @@ export default function Page() {
       },
     ]);
     setInput("");
-    setHasUserInteracted(false);
+    setHasUserInteracted(true);
     setShouldScroll(true); // triggers autoscroll
     setMemory(null); // Move this inside the function
   };
   
   const handleSend = async () => {
     if (!input.trim()) return;
-    
+    // Block short garbage inputs locally too
+    if (input.trim().length <= 3) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Throw me a bone here 🐾. I need a bit more to work with.",
+        },
+      ]);
+      setInput("");
+      setShouldScroll(true);
+      return;
+    }
+
     // Prevent duplicate requests
     const currentInput = input.trim();
     if (currentInput === lastRequestRef.current && loading) {
@@ -134,15 +147,29 @@ export default function Page() {
         console.log('[🖥️ Frontend received memory]:', data.memory);
         setMemory(data.memory);
         
-        // Update individual state for backward compatibility
-        if (data.memory.location !== undefined) setLocation(data.memory.location);
-        if (data.memory.breed !== undefined) setBreed(data.memory.breed);
-      }
-      
-      if (content) {
-        setMessages((prev) => [...prev, { role: "assistant", content }]);
-        setShouldScroll(true);
-      }
+        // Update individual state for backward compatibility, with basic validation
+        if (
+          data.memory.location &&
+          data.memory.location.length > 2 &&
+          !["rural areas", "location", "near me"].includes(data.memory.location.toLowerCase())
+        ) {
+          setLocation(data.memory.location);
+        }
+
+        if (
+          data.memory.breed &&
+          data.memory.breed.length > 1 &&
+          !["dogs", "breeds", "terriers", "puppies"].includes(data.memory.breed.toLowerCase())
+        ) {
+          setBreed(data.memory.breed);
+        }
+
+        if (content && content.trim().length > 1) {
+          setMessages((prev) => [...prev, { role: "assistant", content }]);
+          setShouldScroll(true);
+        }
+        } // 👈 FINAL closing brace for the try block
+
     } catch (error) {
       console.error("API error:", error);
       setMessages((prev) => [
