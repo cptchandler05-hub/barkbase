@@ -560,28 +560,36 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
       return NextResponse.json({ content: reply, memory: updatedMemory });
     }
 
-      // 🐶 GENERAL MODE
-      const systemPrompt = BARKR_SYSTEM_PROMPT;
-   
-             try {
-               const completion = await openai.chat.completions.create({
-                 model: 'gpt-4',
-                 messages: [
-                   { role: 'system', content: systemPrompt },
-                   ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
-                 ],
-                 temperature: 0.75,
-                 max_tokens: 600,
-               });
+    // 🐶 GENERAL MODE
+    const systemPrompt = BARKR_SYSTEM_PROMPT;
+ 
+    try {
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+        ],
+        temperature: 0.75,
+        max_tokens: 600,
+      });
 
-               const response = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
-               return NextResponse.json({ content: response, memory: updatedMemory });
+      const response = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
+      return NextResponse.json({ content: response, memory: updatedMemory });
 
-      } catch (error) {
+    } catch (error) {
       console.error('[❌ Chat Error]', error);
       return NextResponse.json(
         { error: 'Sorry, I couldn\'t fetch a reply. Try again?' },
         { status: 500 }
       );
-      }
+    }
+  } catch (error) {
+    console.error('[❌ POST Error]', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
       }
