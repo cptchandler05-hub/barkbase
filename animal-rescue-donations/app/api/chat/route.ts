@@ -556,44 +556,44 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
       updatedMemory.hasSeenResults = true;
 
       return NextResponse.json({ content: reply, memory: updatedMemory });
-      } else {
-        // 🐶 GENERAL MODE
-        const systemPrompt = BARKR_SYSTEM_PROMPT;
+    } else {
+      // 🐶 GENERAL MODE
+      const systemPrompt = BARKR_SYSTEM_PROMPT;
 
-        try {
-          const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...messages.slice(-10).map((m: { role: string; content: string }) => ({
-                role: m.role,
-                content: m.content,
-              })),
-            ],
-            temperature: 0.75,
-            max_tokens: 600,
+      try {
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages.slice(-10).map((m: { role: string; content: string }) => ({
+              role: m.role,
+              content: m.content,
+            })),
+          ],
+          temperature: 0.75,
+          max_tokens: 600,
+        });
+
+        const response = completion.choices[0]?.message?.content;
+
+        if (!response) {
+          console.warn("[⚠️ Barkr] GPT returned no message content.");
+          return NextResponse.json({
+            content: "My circuits got tangled in a leash—try me again? 🐾",
+            memory: updatedMemory,
           });
-
-          const response = completion.choices[0]?.message?.content;
-
-          if (!response) {
-            console.warn("[⚠️ Barkr] GPT returned no message content.");
-            return NextResponse.json({
-              content: "My circuits got tangled in a leash—try me again? 🐾",
-              memory: updatedMemory,
-            });
-          }
-
-          return NextResponse.json({ content: response, memory: updatedMemory });
-
-        } catch (error) {
-          console.error('[❌ Chat Error]', error);
-          return NextResponse.json(
-            { error: "Sorry, I couldn't fetch a reply. Try again?" },
-            { status: 500 }
-          );
         }
+
+        return NextResponse.json({ content: response, memory: updatedMemory });
+
+      } catch (error) {
+        console.error('[❌ Chat Error]', error);
+        return NextResponse.json(
+          { error: "Sorry, I couldn't fetch a reply. Try again?" },
+          { status: 500 }
+        );
       }
+    }
 
   } catch (error) {
     console.error('[❌ POST Error]', error);
