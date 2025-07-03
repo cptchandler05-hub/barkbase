@@ -274,15 +274,13 @@ export async function POST(req: Request) {
       // 🧠 Only update location if valid and new
       if (aiExtracted.location && aiExtracted.location !== updatedMemory.location) {
         console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
-                 if (isValidLocationInput(aiExtracted.location)) {
-                   updatedMemory.location = aiExtracted.location;
-                 } else {
-                   console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
-                 }
-
-
-      fullLocation = possibleNewLocation;
-    }
+        if (isValidLocationInput(aiExtracted.location)) {
+          updatedMemory.location = aiExtracted.location;
+          fullLocation = aiExtracted.location;
+        } else {
+          console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
+        }
+      }
 
     // 🧠 Only update breed if valid and new
     if (aiExtracted.breed && isValidBreed(aiExtracted.breed)) {
@@ -596,6 +594,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
         { status: 500 }
       );
     }
+  }
 
   } catch (error) {
     console.error('[❌ POST Error]', error);
