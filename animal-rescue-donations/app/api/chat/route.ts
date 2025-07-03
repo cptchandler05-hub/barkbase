@@ -316,7 +316,7 @@ export async function POST(req: Request) {
     if (!updatedMemory.breed && fullBreed) {
       updatedMemory.breed = fullBreed;
     }
-    
+
     if (!fullBreed) {
       const normalizedExtracted = normalizeBreedName(extractedBreed);
       const normalizedAI = normalizeBreedName(aiExtracted.breed);
@@ -351,11 +351,11 @@ export async function POST(req: Request) {
     if (!updatedMemory.location && memory.location && memory.location.length > 60) {
       console.warn('[⚠️ Barkr Warning] Previous location memory was invalid and has been wiped:', memory.location);
     }
-    
+
     const moreRequest = lastMessage.toLowerCase().includes('show me more') || lastMessage.toLowerCase().includes('more dogs');
 
 
-    
+
     if (moreRequest && updatedMemory.cachedDogs?.length) {
       const nextOffset = (updatedMemory.offset || 10) + 10;
       const moreDogs = updatedMemory.cachedDogs.slice(updatedMemory.offset || 10, nextOffset);
@@ -402,7 +402,7 @@ export async function POST(req: Request) {
         memory: updatedMemory,
       });
     }
-    
+
     // 🐾 ADOPTION MODE
     if (context === 'adoption') {
       const lastUserMsg = lastMessage.trim().toLowerCase();
@@ -434,7 +434,7 @@ export async function POST(req: Request) {
           memory: updatedMemory,
         });
       }
-      
+
       // If breed or location are still missing, prompt for what’s missing
       if (!fullLocation || !fullBreed) {
         // If both are missing, give a full smart ask
@@ -562,7 +562,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
 
     // 🐶 GENERAL MODE
     const systemPrompt = BARKR_SYSTEM_PROMPT;
- 
+
     try {
       const completion = await openai.chat.completions.create({
         model: 'gpt-4',
