@@ -568,13 +568,25 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
         model: 'gpt-4',
         messages: [
           { role: 'system', content: systemPrompt },
-          ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+          ...messages.slice(-10).map((m: { role: string; content: string }) => ({ role: m.role, content: m.content })),
         ],
         temperature: 0.75,
         max_tokens: 600,
       });
 
-      const response = completion.choices[0]?.message?.content || "My circuits got tangled in a leash—try me again? 🐾";
+      const response = completion.choices[0]?.message?.content;
+
+      if (!response) {
+        console.warn("[⚠️ Barkr] GPT returned no message content.");
+        return NextResponse.json(
+          {
+            error: "Sorry, something short-circuited on my end. Try me again?",
+          },
+          { status: 500 }
+        );
+      }
+      console.log("[✅ Barkr GPT response]:", response);
+
       return NextResponse.json({ content: response, memory: updatedMemory });
 
     } catch (error) {
