@@ -592,4 +592,3 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
     );
   }
 }
-      }
