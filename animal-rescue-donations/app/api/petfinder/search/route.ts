@@ -8,8 +8,24 @@ export async function POST(req: Request) {
   try {
     console.log('[🐾 /api/petfinder/search hit]');
     
-    const { location, breed } = await req.json();
-    console.log('[🔍 Petfinder Search] Input:', { location, breed });
+    let { location, breed } = await req.json();
+
+    // 🧼 Trim and normalize user input
+    location = typeof location === 'string' ? location.trim().toLowerCase() : '';
+    breed = typeof breed === 'string' ? breed.trim().toLowerCase() : '';
+
+    // 📍 Normalize 3+ word cities (e.g., "san luis obispo ca" → "san luis obispo, ca")
+    // 📍 Normalize ZIP or 3+ word cities
+    const zipRegex = /^\d{5}$/;
+    if (!zipRegex.test(location)) {
+      const locationParts = location.split(/\s+/);
+      if (locationParts.length >= 3) {
+        const state = locationParts.pop();
+        const city = locationParts.join(' ');
+        location = `${city}, ${state}`;
+      }
+      // If it's 1–2 words, leave as-is and fall through to 2-letter state logic below
+    }
 
     const accessToken = await getAccessToken();
     if (!accessToken) {
@@ -24,16 +40,38 @@ export async function POST(req: Request) {
       limit: '100',
     });
 
-    if (location && location !== 'null') {
+    if (location && location.toLowerCase() !== 'null') {
+      // Normalize "city state" → "city, state" if applicable
+      const locParts = location.trim().split(" ");
+      if (
+        locParts.length === 2 &&
+        /^[a-z]{2}$/i.test(locParts[1])
+      ) {
+        location = `${locParts[0]}, ${locParts[1]}`;
+      }
+
+      // ✅ Final cleanup: remove accidental double commas, extra spaces
+      location = location
+        .replace(/\s{2,}/g, ' ')        // collapse multiple spaces
+        .replace(/,+/g, ',')            // collapse multiple commas
+        .replace(/\s*,\s*/g, ', ')      // normalize comma spacing
+        .trim();
+
       params.append('location', location);
       params.append('distance', '100');
     }
 
-    if (breed && breed !== 'null') {
-      const bestMatch = await findBestBreedMatch(breed);
+    if (breed && breed.toLowerCase() !== 'null') {
+      const normalizedBreed =
+        breed.endsWith('s') && breed.length > 3
+          ? breed.slice(0, -1)
+          : breed;
+
+      const bestMatch = await findBestBreedMatch(normalizedBreed);
       if (bestMatch) {
+        const safeBreed = bestMatch;
         console.log(`[🐾 Fuzzy Breed Match] "${breed}" → "${bestMatch}"`);
-        params.append('breed', bestMatch);
+        params.append('breed', safeBreed);
       }
     }
 
@@ -50,7 +88,14 @@ export async function POST(req: Request) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('[❌ API Error]', response.status, errorText);
-      return NextResponse.json({ error: 'Petfinder API error', details: errorText }, { status: response.status });
+
+      const isBadLocation = errorText.includes('"path":"location"') || errorText.toLowerCase().includes('could not determine location');
+
+      return NextResponse.json({
+        error: 'Petfinder API error',
+        details: errorText,
+        invalidLocation: isBadLocation
+      }, { status: response.status });
     }
 
     const data = await response.json();

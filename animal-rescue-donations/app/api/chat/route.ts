@@ -3,6 +3,19 @@ import OpenAI from 'openai';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import { getRandomRuralZip } from '@/lib/utils';
 
+type Dog = {
+  id: string | number;
+  name?: string;
+  breeds?: { primary?: string };
+  age?: string;
+  size?: string;
+  photos?: { medium?: string }[];
+  contact?: { address?: { city?: string; state?: string } };
+  description?: string;
+  url?: string;
+  visibilityScore?: number;
+};
+
 const BARKR_SYSTEM_PROMPT = `
 You are Barkr—an unshakably loyal, slightly unhinged, hyper-intelligent rescue mutt who lives onchain.
 You're the face, voice, and guardian spirit of BarkBase—the first rescue donation and discovery platform native to web3.
@@ -103,65 +116,14 @@ function classifyContext(
   return hasTrigger || hasContext ? 'adoption' : 'general';
 }
 
-function extractLocation(message: string): string | null {
-  const locationPattern = /(?:in|near|around|from)\s+([a-zA-Z\s,]+?)(?:\s|$|[.!?])/i;
-  const zipPattern = /\b\d{5}\b/;
-  const match = message.match(locationPattern);
-  if (match) return match[1].trim();
-  const zipMatch = message.match(zipPattern);
-  if (zipMatch) return zipMatch[0];
-  return null;
-}
-
 function isValidLocationInput(input: string | null): boolean {
    if (!input) return false;
-   const cleaned = input.trim().toLowerCase();
-   const invalids = ['rural', 'rural area', 'rural areas', 'the country', 'anywhere'];
+   const cleaned = input.trim().toLowerCase().replace(/\s+/g, ' ');
+   const invalids = ['rural', 'rural area', 'rural areas', 'the country', 'anywhere', 'you pick', 'up to you', 'whatever'];
    if (invalids.includes(cleaned)) return false;
    const zipRegex = /^\d{5}$/;
-   const cityStateRegex = /^[a-zA-Z\s]+(?:,\s?[A-Z]{2})?$/;
+   const cityStateRegex = /^[a-zA-Z\s]+(?:,\s?[a-zA-Z]{2,})?$/i;
    return zipRegex.test(cleaned) || cityStateRegex.test(cleaned);
-}
-
-function extractBreed(message: string): string | null {
-  const knownTriggers = ['looking for', 'want', 'interested in', 'love', 'need', 'show me'];
-  const breedPattern = new RegExp(
-    `(?:${knownTriggers.join('|')})\\s+(?:a|an|some)?\\s*([a-zA-Z\\s]+?)\\s*(?:dog|dogs|puppy|puppies)?[.!?]?\\s*$`,
-    'i'
-  );
-
-  // 🐾 First, check if input is a simple phrase like "poodles"
-  const simpleMessage = message.trim().toLowerCase();
-  const invalidWords = [
-    'adopt', 'adoption', 'rescue', 'search', 'dog', 'dogs', 'puppy', 'puppies',
-    'any', 'something', 'anything', 'everything', 'how r u', 'hi', 'hello', 'hey',
-    'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don’t know'
-  ];
-
-  const words = simpleMessage.split(/\s+/);
-  const isLikelyGarbage = words.length > 3 || invalidWords.includes(simpleMessage);
-
-  if (
-    /^[a-z\s]+$/i.test(simpleMessage) &&
-    simpleMessage.length < 30 &&
-    !isLikelyGarbage
-  ) {
-    return simpleMessage;
-  }
-
-  const match = message.match(breedPattern);
-  if (match && match[1]) {
-    const possible = match[1].trim().toLowerCase();
-    if (
-      possible.length > 2 &&
-      !invalidWords.includes(possible) &&
-      possible.split(/\s+/).length < 4
-    ) {
-      return possible;
-    }
-  }
-
-  return null;
 }
 
 function getRandomTagline(name: string): string {
@@ -181,28 +143,13 @@ function getRandomTagline(name: string): string {
   return taglines[Math.floor(Math.random() * taglines.length)];
 }
 
-function normalizeBreedName(breed: string | null): string | null {
-  if (!breed) return null;
-  const trimmed = breed.trim().toLowerCase();
-
-  // Handle common plural → singular conversion
-  if (trimmed.endsWith('ies')) {
-    return trimmed.slice(0, -3) + 'y'; // e.g., "puppies" → "puppy"
-  }
-  if (trimmed.endsWith('s') && trimmed.length > 3) {
-    return trimmed.slice(0, -1); // e.g., "poodles" → "poodle"
-  }
-
-  return trimmed;
-}
-
 function isValidBreed(breed: string | null): boolean {
   if (!breed) return false;
   const clean = breed.trim().toLowerCase();
   const banned = [
     'hi', 'hello', 'hey', 'how are you', 'how r u', 'yo', 'sup',
     'adopt', 'adoption', 'rescue', 'search', 'something', 'anything',
-    'dog', 'dogs', 'puppy', 'puppies', 'any',
+    'dog', 'dogs', 'puppy', 'puppies', 'any', 'whatever', 'you pick', 'up to you',
     'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don’t know'
   ];
 
@@ -217,31 +164,63 @@ function isCleanMemoryValue(value: string | null): boolean {
   const vague = ["anywhere", "everywhere", "somewhere", "rural", "rural areas"];
   return lower.length > 1 && !vague.includes(lower);
 }
+// 🔍 Triggers for rural/urgent fallback ZIPs
+const ruralTriggers = [
+  'rural',
+  'rural area',
+  'rural areas',
+  'small town',
+  'country shelter',
+  'country rescue'
+];
+
+const urgencyTriggers = [
+  'urgent',
+  'at risk',
+  'invisible',
+  'forgotten',
+  'overlooked',
+  'underdog',
+  'dogs in danger',
+  'the ones no one sees',
+  'unseen'
+];
 
       export async function POST(req: Request) {
   try {
     const { messages, memory } = await req.json();
     let updatedMemory = { ...memory }; // ✅ Define updatedMemory first
     const lastMessage = messages[messages.length - 1]?.content || '';
-    const context = classifyContext(messages, updatedMemory); // ✅ Now it's safe to use
 
-    const extractedLocation = extractLocation(lastMessage);
-    const extractedBreed = extractBreed(lastMessage);
+    let context = classifyContext(messages, updatedMemory);
 
-    // Run AI fallback if both are missing and the message is short/vague
-    let aiExtracted: { breed: string | null; location: string | null } = { breed: null, location: null };
+    // 🧠 Run GPT intent + breed/location parser on every message
+    const aiExtracted = await extractBreedAndLocationViaAI(lastMessage);
 
-    const vagueTriggers = ['rural', 'idk', 'any dog', 'i don’t know', 'dogs', 'show me', 'more', 'hi', 'hello', 'help'];
-    const lowerMsg = lastMessage.toLowerCase();
-    const wordsInMsg = lowerMsg.trim().split(/\s+/).length;
+    // 🧠 Use AI extraction unless memory proves we're in adoption mode
+    let aiIntent: 'adoption' | 'general' =
+      aiExtracted.intent === 'adoption' ||
+      aiExtracted.breed !== null ||
+      aiExtracted.location !== null ||
+      (memory.breed && memory.location)
+        ? 'adoption'
+        : 'general';
 
-    const looksVague =
-      (!extractedLocation && !extractedBreed && wordsInMsg <= 6) ||
-      vagueTriggers.some(term => lowerMsg.includes(term));
-
-    if (looksVague) {
-      aiExtracted = await extractBreedAndLocationViaAI(lastMessage);
+    // ✅ Force adoption mode if memory is active and message is vague
+    if (
+      memory.isAdoptionMode === true &&
+      ["more", "more dogs", "show me more", "more please", "another", "next"].includes(lastMessage.trim().toLowerCase())
+    ) {
+      aiIntent = 'adoption';
+      console.log("[🧠 Adoption Mode Override] Kept adoption mode due to vague message and prior memory");
     }
+
+    // 🧠 Override classified context if AI disagrees
+    if (context !== aiIntent) {
+      context = aiIntent;
+      console.warn('[🧠 Barkr] AI overrode context →', context);
+    }
+
 
     if (!aiExtracted.breed && !aiExtracted.location) {
       console.warn('[🧠 GPT Parser] No clear breed or location found in:', lastMessage);
@@ -251,17 +230,46 @@ function isCleanMemoryValue(value: string | null): boolean {
       aiExtracted.location = updatedMemory?.location || null;
     }
 
-    let fullLocation: string | null = aiExtracted.location || updatedMemory.location || null;
-    let fullBreed: string | null = aiExtracted.breed || updatedMemory.breed || null;
+    // 🧼 Clear memory fallback if AI gave confident new values
+    if (aiExtracted.location && isValidLocationInput(aiExtracted.location)) {
+      updatedMemory.location = null;
+    }
+    if (aiExtracted.breed && isValidBreed(aiExtracted.breed)) {
+      updatedMemory.breed = null;
+    }
 
+    // 🚫 Filter out vague or invalid AI-extracted values before use
+    if (aiExtracted.location && !isValidLocationInput(aiExtracted.location)) {
+      console.warn('[⚠️ Barkr] GPT returned invalid location:', aiExtracted.location);
+      aiExtracted.location = null;
+    }
+    if (aiExtracted.breed && !isValidBreed(aiExtracted.breed)) {
+      console.warn('[⚠️ Barkr] GPT returned invalid breed:', aiExtracted.breed);
+      aiExtracted.breed = null;
+    }
 
-     fullLocation = isCleanMemoryValue(aiExtracted.location)
-      ? aiExtracted.location
-      : updatedMemory.location || null;
+    // ✅ Use cleaned and validated values only
+    let fullLocation: string | null = null;
+    let fullBreed: string | null = null;
 
-     fullBreed = isCleanMemoryValue(aiExtracted.breed)
-      ? aiExtracted.breed
-      : updatedMemory.breed || null;
+    if (isValidLocationInput(aiExtracted.location)) {
+      fullLocation = aiExtracted.location;
+      updatedMemory.location = aiExtracted.location;
+      updatedMemory.seenDogIds = [];
+    } else if (isValidLocationInput(updatedMemory.location)) {
+      fullLocation = updatedMemory.location;
+    }
+
+    if (isValidBreed(aiExtracted.breed)) {
+      fullBreed = aiExtracted.breed;
+      updatedMemory.breed = aiExtracted.breed;
+      updatedMemory.hasSeenResults = false;
+      updatedMemory.seenDogIds = [];
+      updatedMemory.cachedDogs = []; // ✅ Clear cached dogs if breed changes
+
+    } else if (isValidBreed(updatedMemory.breed)) {
+      fullBreed = updatedMemory.breed;
+    }
 
     const possibleNewLocation = aiExtracted.location || null;
 
@@ -269,24 +277,31 @@ function isCleanMemoryValue(value: string | null): boolean {
       possibleNewLocation &&
       typeof possibleNewLocation === 'string' &&
       possibleNewLocation.length <= 60 &&
+      !/^rural/i.test(possibleNewLocation.trim()) &&
       !possibleNewLocation.toLowerCase().includes('rural areas')
-    ) {
+    )
+{
       // 🧠 Only update location if valid and new
       if (aiExtracted.location && aiExtracted.location !== updatedMemory.location) {
         console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
         if (isValidLocationInput(aiExtracted.location)) {
           updatedMemory.location = aiExtracted.location;
           fullLocation = aiExtracted.location;
+          updatedMemory.seenDogIds = [];
+          updatedMemory.cachedDogs = []; // ✅ Clear cached dogs if location changes
+
         } else {
           console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
         }
       }
-
+    }
     // 🧠 Only update breed if valid and new
     if (aiExtracted.breed && isValidBreed(aiExtracted.breed)) {
       if (aiExtracted.breed !== updatedMemory.breed) {
         console.warn('[🔷 Barkr] New breed provided, wiping previous:', updatedMemory.breed);
         updatedMemory.breed = aiExtracted.breed;
+        updatedMemory.hasSeenResults = false;
+        updatedMemory.seenDogIds = [];
       }
       fullBreed = aiExtracted.breed;
     } else if (aiExtracted.breed) {
@@ -296,39 +311,7 @@ function isCleanMemoryValue(value: string | null): boolean {
     if (!fullBreed && isCleanMemoryValue(memory.breed)) {
       fullBreed = memory.breed;
     }
-
-    if (!fullLocation) {
-      const fallbackLocation = extractedLocation || aiExtracted.location || null;
-      if (isCleanMemoryValue(memory.location)) {
-        fullLocation = fallbackLocation || memory.location;
-      } else {
-        fullLocation = fallbackLocation;
-      }
-      if (fullLocation) updatedMemory.location = fullLocation;
-    }
-
-    // 🧠 Final fallback update to memory if still missing
-    if (!updatedMemory.location && fullLocation) {
-      updatedMemory.location = fullLocation;
-    }
-    if (!updatedMemory.breed && fullBreed) {
-      updatedMemory.breed = fullBreed;
-    }
-
-    if (!fullBreed) {
-      const normalizedExtracted = normalizeBreedName(extractedBreed);
-      const normalizedAI = normalizeBreedName(aiExtracted.breed);
-
-      const validExtractedBreed = isValidBreed(normalizedExtracted) ? normalizedExtracted : null;
-      const validAIExtractedBreed = isValidBreed(normalizedAI) ? normalizedAI : null;
-
-      fullBreed = validExtractedBreed || validAIExtractedBreed || null;
-
-      if (fullBreed && isValidBreed(fullBreed)) {
-        updatedMemory.breed = normalizeBreedName(fullBreed);
-      }
-    }
-
+    
     // 🚫 Final memory validation (more robust)
     if (!isValidBreed(updatedMemory.breed)) {
       console.warn('[⚠️ Barkr] Invalid breed in memory, wiping:', updatedMemory.breed);
@@ -350,24 +333,61 @@ function isCleanMemoryValue(value: string | null): boolean {
       console.warn('[⚠️ Barkr Warning] Previous location memory was invalid and has been wiped:', memory.location);
     }
 
-    const moreRequest = lastMessage.toLowerCase().includes('show me more') || lastMessage.toLowerCase().includes('more dogs');
+    const normalizedMsg = lastMessage.trim().toLowerCase();
+    const moreRequest =
+      ['more', 'more please', 'more dogs', 'show me more', 'another', 'next'].includes(normalizedMsg) ||
+      normalizedMsg.includes('more dogs') ||
+      normalizedMsg.includes('show me more');
 
+    // ✅ If user asked for more dogs and adoption context is present, force adoption mode
+    if (moreRequest && (updatedMemory.breed || updatedMemory.location)) {
+      context = 'adoption';
+    }
 
-
-    if (moreRequest && updatedMemory.cachedDogs?.length) {
-      const nextOffset = (updatedMemory.offset || 10) + 10;
-      const moreDogs = updatedMemory.cachedDogs.slice(updatedMemory.offset || 10, nextOffset);
-
-      if (moreDogs.length === 0) {
+    if (moreRequest) {
+      // 🧠 Fallback guard if cache was never populated
+      if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
         return NextResponse.json({
-          content: `You've seen every pup I could dig up 🐶 Try changing your filters or check back soon!`,
+          content: `Hmm… I don’t have any more dogs cached right now 🐶. Try a new search or say a breed + location again.`,
           memory: updatedMemory,
         });
       }
 
-      updatedMemory.offset = nextOffset;
+      // ✅ Ensure all cached dogs have visibilityScore before filtering
+      for (const dog of updatedMemory.cachedDogs) {
+        if (dog.visibilityScore === undefined) {
+          dog.visibilityScore = calculateVisibilityScore(dog);
+        }
+      }
+
+      const unseenDogs = updatedMemory.cachedDogs.filter(
+        (dog: Dog) => !updatedMemory.seenDogIds?.includes(dog.id)
+      );
+
+      const moreDogs = unseenDogs.slice(0, 10);
+
+      // ✅ Add shown dogs to seen list *immediately*
+      if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+      updatedMemory.seenDogIds.push(...moreDogs.map((d: Dog) => d.id));
+      if (updatedMemory.seenDogIds.length > 200) {
+        updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
+      }
+      updatedMemory.hasSeenResults = true;
+
+      if (moreDogs.length === 0) {
+        return NextResponse.json({
+          barkrReply:
+            "Looks like I’ve already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!",
+          memory: updatedMemory,
+        });
+      }
+
+      updatedMemory.hasSeenResults = true;
 
       const dogListParts: string[] = [];
+
+      // ✅ Ensure final batch is sorted by visibility score before formatting
+      moreDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
 
       for (const dog of moreDogs) {
         const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
@@ -380,11 +400,10 @@ function isCleanMemoryValue(value: string | null): boolean {
         const description = dog.description?.slice(0, 140) || 'No description yet.';
 
         const visibilityScore = calculateVisibilityScore(dog);
-
         dog.visibilityScore = visibilityScore;
 
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
-        const tagline = `> _${getRandomTagline(name)}_`;
+        const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
         const adoptLink = `[**Adopt ${name} ❤️**](${dog.url})`;
 
@@ -405,98 +424,217 @@ function isCleanMemoryValue(value: string | null): boolean {
     if (context === 'adoption') {
       const lastUserMsg = lastMessage.trim().toLowerCase();
 
-      // Handle rural-only replies
-      const wantsRural = ['rural', 'rural area', 'rural areas'].some(term => lastUserMsg.includes(term));
-      if (wantsRural && !fullLocation) {
+      const msg = lastUserMsg;
+      const hasRuralIntent = ruralTriggers.some((t) => msg.includes(t));
+      const hasUrgencyIntent = urgencyTriggers.some((t) => msg.includes(t));
+
+      if (
+        context === 'adoption' &&
+        !fullLocation &&
+        (hasRuralIntent || hasUrgencyIntent)
+      ) {
         const ruralZip = getRandomRuralZip();
         updatedMemory.location = ruralZip;
         fullLocation = ruralZip;
       }
 
-      // 🚫 Stop Barkr from replying if input is still garbage
-      const badPhrases = ['hi', 'hey', 'yes', 'no', 'what', 'who', 'how', 'barkr', 'you', '?'];
+      const missionIntentPhrases = [
+        'invisible dogs',
+        'forgotten dogs',
+        'overlooked dogs',
+        'dogs in danger',
+        'underdogs',
+        'rural dogs',
+        'the dogs no one sees',
+        'longest waiting',
+        'show me the invisible dogs',
+        'help the ones nobody sees',
+      ];
+
+      // 🧠 Garbage input fallback
+      const badPhrases = [
+        'hi', 'hey', 'hello', 'yes', 'no',
+        'what', 'who', 'how', 'you', '?', 'ok', 'okay', 'help', 'idk'
+      ];
+
       const last = lastMessage.toLowerCase().trim();
       const looksUseless = badPhrases.some(p => last.includes(p)) || last.length <= 12;
 
-      const inputWasUseless = !fullLocation && !fullBreed && looksUseless;
-      if (inputWasUseless) {
+      const missionIntentDetected = missionIntentPhrases.some(p => last.includes(p));
+
+      if (!fullBreed && !fullLocation && missionIntentDetected) {
+        return NextResponse.json({
+          content: `I see you. And I see them—the ones the system forgot. But I still need a location or breed to sniff them out.\n\nWant to see rural shelter dogs? Just say “rural.” Or tell me what kind of pup you’re drawn to. 🐾`,
+          memory: updatedMemory,
+        });
+      }
+
+      if (!fullBreed && !fullLocation && looksUseless) {
         return NextResponse.json({
           content: `I'm trying, but I need more than that 🐾. Tell me what kind of dog you're looking for and where!`,
           memory: updatedMemory,
         });
       }
 
-      if (inputWasUseless) {
+      // 🐾 Prompt for missing inputs
+      if (!fullBreed && !fullLocation) {
         return NextResponse.json({
-          content: `I'm trying, but I need more than that 🐾. Tell me what kind of dog you're looking for and where!`,
+          content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.\n\nWhat kind of pup are you looking for—and where should I search? You can also say “rural” to see dogs from small-town shelters. 🐾`,
           memory: updatedMemory,
         });
       }
 
-      // If breed or location are still missing, prompt for what’s missing
-      if (!fullLocation || !fullBreed) {
-        // If both are missing, give a full smart ask
-        if (!fullLocation && !fullBreed) {
-          return NextResponse.json({
-            content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.\n\nWhat kind of pup are you looking for—and where should I search? You can also say “rural” to see dogs from small-town shelters. 🐾`,
-            memory: updatedMemory,
-          });
-        }
+      if (!fullLocation && fullBreed) {
+        return NextResponse.json({
+          content: `Got it — you're hoping to meet some **${fullBreed}** 🐶  
+      Can I show you the ones most in need?  
+      I track urgent rescues in rural areas—the dogs no one else sees.  
+      Transport’s not a problem—rescues work with partners to close the gap.  
+      Or if you’ve got a ZIP or full city + state, I can zero in locally.  
+      Your call. But the invisible ones? They’re waiting.`,
+          memory: updatedMemory,
+        });
+      }
 
-        // Only missing location
-        if (!fullLocation && fullBreed) {
-          return NextResponse.json({
-            content: `Got it — you're looking for **${fullBreed}s**! 🐶  
-            Now… can I sniff out the ones who need us most?  
-            I track urgent rescues in rural areas—the dogs no one else sees.  
-            Transport’s not a problem—rescues work with partners to close the gap.  
-            Or if you’ve got a ZIP or full city + state, I can zero in locally.  
-            Your call. But the invisible ones? They’re waiting.`,
+      if (!fullBreed && fullLocation) {
+        return NextResponse.json({
+          content: `Looking near **${fullLocation}**, but I need a clue about what kind of dog you’re after. Drop a breed, size, or just say “any dog.” 🐶`,
+          memory: updatedMemory,
+        });
+      }
 
-            memory: updatedMemory,
-          });
-        }
 
-        // Only missing breed
-        if (!fullBreed && fullLocation) {
-          return NextResponse.json({
-            content: `Looking near **${fullLocation}**, but I need a clue about what kind of dog you’re after. Drop a breed, size, or just say “any dog.” 🐶`,
-            memory: updatedMemory,
-          });
+      let searchLocation = (fullLocation || '').trim().toLowerCase();
+
+      // ✅ Handle inputs like "austin texas"
+      const commonStateNames: { [key: string]: string } = {
+        alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
+        colorado: 'CO', connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA',
+        hawaii: 'HI', idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA',
+        kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME', maryland: 'MD',
+        massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS',
+        missouri: 'MO', montana: 'MT', nebraska: 'NE', nevada: 'NV',
+        "new hampshire": 'NH', "new jersey": 'NJ', "new mexico": 'NM', "new york": 'NY',
+        "north carolina": 'NC', "north dakota": 'ND', ohio: 'OH', oklahoma: 'OK',
+        oregon: 'OR', pennsylvania: 'PA', "rhode island": 'RI',
+        "south carolina": 'SC', "south dakota": 'SD', tennessee: 'TN',
+        texas: 'TX', utah: 'UT', vermont: 'VT', virginia: 'VA',
+        washington: 'WA', "west virginia": 'WV', wisconsin: 'WI', wyoming: 'WY'
+      };
+
+      // ✅ Try ZIP
+      const zipMatch = searchLocation.match(/\b\d{5}\b/);
+      if (zipMatch) {
+        searchLocation = zipMatch[0];
+      } else {
+        const words = searchLocation.split(/\s+/);
+        const lastWord = words[words.length - 1];
+        const possibleState = commonStateNames[lastWord];
+
+        if (possibleState) {
+          const cityWords = words.slice(0, -1).map(w => w.replace(/,+$/, ''));
+          const city = cityWords
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+
+          searchLocation = `${city}, ${possibleState}`;
+
+          // 🧼 Final comma cleanup to avoid double commas
+          searchLocation = searchLocation.replace(/,+/g, ',').replace(/\s+,/g, ',').replace(/,\s+/g, ', ');
+          console.log("[🧼 Final Cleaned Location]", searchLocation);
+          
+        } else {
+          // fallback for city + 2-letter state like "austin tx"
+          const cityStateMatch = searchLocation.match(/([\w\s]+)[,]?\s+([a-zA-Z]{2})$/);
+          if (cityStateMatch) {
+            const rawCity = cityStateMatch[1].trim();
+            const stateRaw = cityStateMatch[2].toUpperCase();
+            const formattedCity = rawCity
+              .split(/\s+/)
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            searchLocation = `${formattedCity}, ${stateRaw}`;
+          }
         }
       }
 
-      let searchLocation = fullLocation;
+      console.log("[📍 Normalized Location]", searchLocation);
+
+      // ✅ Final assignment
+      fullLocation = searchLocation;
+      updatedMemory.location = searchLocation;
+
       const isZip = /^\d{5}$/.test(searchLocation || '');
-      const isCity = /^[a-zA-Z\s]{3,}$/.test(searchLocation || '');
+      const isCityState = /^[a-zA-Z\s]+,\s?[A-Z]{2}$/.test(searchLocation || '');
 
-      if (!isZip && !isCity) {
-        const ruralZip = getRandomRuralZip();
-        console.warn(`⚠️ Invalid location "${searchLocation}", falling back to rural ZIP: ${ruralZip}`);
-        searchLocation = ruralZip;
-        updatedMemory.location = ruralZip;
+      if (!isZip && !isCityState) {
+        console.warn(`⚠️ Invalid location "${searchLocation}", asking user for clarification.`);
+        return NextResponse.json({
+          content: `Hmm… I couldn’t use **${searchLocation}** as a search location. Can you give me a ZIP code or full city + state like “Austin, TX”?`,
+          memory: updatedMemory,
+        });
       }
 
       console.log('[🐾 Barkr Memory]', updatedMemory);
       console.log('[🔍 Petfinder Params]', { location: searchLocation, breed: fullBreed });
 
       const origin = req.headers.get('origin') || 'http://localhost:3000';
-      const searchRes = await fetch(`${origin}/api/petfinder/search`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ location: searchLocation, breed: fullBreed }),
-      });
 
-      if (!searchRes.ok) {
-        console.error('[❌ Barkr] Petfinder error:', searchRes.status);
-        return NextResponse.json({
-          content: `I couldn’t fetch dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
-          memory: updatedMemory,
+      let allDogs: Dog[] = [];
+
+      if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
+        const searchRes = await fetch(`${origin}/api/petfinder/search`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            location: searchLocation ?? '',
+            breed: fullBreed ?? '',
+          }),
         });
-      }
 
-      const searchData = await searchRes.json();
-      const dogs = searchData.animals?.slice(0, 10) || [];
+        if (!searchRes.ok) {
+          const err = await searchRes.json();
+          console.error('[❌ Barkr] Petfinder error:', searchRes.status);
+
+          if (err.invalidLocation) {
+            return NextResponse.json({
+              content: `That location didn’t work 🐾. Can you give me a ZIP code or a full city and state like “Austin, TX” or “Brooklyn, NY”?`,
+              memory: updatedMemory,
+            });
+          }
+
+          return NextResponse.json({
+            content: `I couldn’t fetch dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
+            memory: updatedMemory,
+          });
+        }
+
+        const searchData = await searchRes.json();
+        const fetchedDogs = searchData.animals || [];
+
+        if (fetchedDogs.length > 0) {
+          allDogs = fetchedDogs;
+          updatedMemory.cachedDogs = fetchedDogs;
+        } else if (Array.isArray(updatedMemory.cachedDogs) && updatedMemory.cachedDogs.length > 0) {
+          allDogs = updatedMemory.cachedDogs;
+        } else {
+          return NextResponse.json({
+            content: `I tried fetching adoptable dogs, but got nothing back 🐶. Try a different search or wait a moment and retry.`,
+            memory: updatedMemory,
+          });
+        }
+
+      const newDogs = allDogs.filter(
+        (dog: any) => !updatedMemory.seenDogIds?.includes(dog.id)
+      );
+
+      const dogs = newDogs.slice(0, 10);
+        console.log("[🐶 Debug] Showing unseen dogs:", dogs.map(d => d.id));
+
+        updatedMemory.hasSeenResults = true;
+
+      if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+      updatedMemory.seenDogIds.push(...dogs.map((d: Dog) => d.id));
 
       if (dogs.length === 0) {
         return NextResponse.json({
@@ -521,7 +659,7 @@ function isCleanMemoryValue(value: string | null): boolean {
         dog.visibilityScore = visibilityScore;
 
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
-        const tagline = `> _${getRandomTagline(name)}_`;
+        const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
         const adoptLink = `[**Adopt ${name} ❤️**](${dog.url})`;
 
@@ -550,22 +688,72 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
     💡 Ask for more dogs anytime. I’ll keep digging. 🧡`;
       }
 
-      const sortedDogs = [...searchData.animals].sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
-      updatedMemory.cachedDogs = sortedDogs;
-      updatedMemory.offset = 10;
+      // 🧠 Sort by visibility score (high score = more overlooked)
+      // 🧠 Sort and filter Petfinder results by visibility and memory
+      
+      // ✅ REUSE THE EXISTING PARSED BODY
+      const rawDogs = [...allDogs];
+
+
+      const sortedVisibleDogs = rawDogs.sort((a, b) =>
+        (b.visibilityScore || 0) - (a.visibilityScore || 0)
+      );
+
+      const seenDogIds = new Set<string | number>(updatedMemory.seenDogIds || []);
+
+      const unseenDogs = sortedVisibleDogs.filter((dog) => !seenDogIds.has(dog.id));
+
+      const dogsToShow = unseenDogs.slice(0, 10);
+
+      // 🧠 Update memory
+      updatedMemory.seenDogIds = [
+        ...(Array.from(seenDogIds) as (string | number)[]),
+        ...dogsToShow.map((d) => d.id),
+      ];
+
       updatedMemory.hasSeenResults = true;
 
+      // 🧠 Exit adoption mode if last message is clearly general
+      const generalTriggers = [
+        'who are you',
+        'what is barkbase',
+        'how are you',
+        'what do you do',
+        'why do you exist',
+        'do dogs bark',
+        'tell me about yourself'
+      ];
+      const recentUserMsg = lastMessage.toLowerCase().trim();
+      const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
+      if (isGeneralMsg) {
+        context = 'general';
+        updatedMemory.context = 'general'; // ✅ Actually update memory to exit adoption mode
+      }
+      if (updatedMemory.context === 'general') {
+        return NextResponse.json({
+          content: `Got it. Switching gears 🐾 Let me know how I can help.`,
+          memory: updatedMemory
+        });
+      }
+
       return NextResponse.json({ content: reply, memory: updatedMemory });
+
     } else {
       // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
 
       try {
+        let trimmedMessages = messages;
+        if (messages.length > 10) {
+          trimmedMessages = messages.slice(-10);
+        }
+
         const completion = await openai.chat.completions.create({
           model: 'gpt-4',
           messages: [
             { role: 'system', content: systemPrompt },
-            ...messages.slice(-10).map((m: { role: string; content: string }) => ({
+            ...trimmedMessages.map((m: { role: string; content: string }) => ({
+
               role: m.role,
               content: m.content,
             })),
@@ -593,12 +781,4 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           { status: 500 }
         );
       }
-    }
-  } catch (error) {
-    console.error('[❌ POST Error]', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
+    

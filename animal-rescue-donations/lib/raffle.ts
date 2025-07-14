@@ -33,10 +33,12 @@ export async function enterRaffle(referrer: string = ethers.ZeroAddress, count: 
   try {
     const contract = await getRaffleContract();
     const entryFee = await contract.ENTRY_FEE();
-    const provider = await contract.runner?.provider;
-    if (!provider) throw new Error("No provider available");
+    const { ethereum } = window as any;
+    if (!ethereum) throw new Error("No wallet found");
 
-    const signer = await provider.getSigner();
+    const browserProvider = new ethers.BrowserProvider(ethereum);
+    const signer = await browserProvider.getSigner();
+
     if (!signer) throw new Error("No signer available");
 
     const entrantAddress = await signer.getAddress();

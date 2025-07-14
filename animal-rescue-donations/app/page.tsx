@@ -124,7 +124,6 @@ export default function Page() {
         breed: memory?.breed || breed || null,
         hasSeenResults: memory?.hasSeenResults || false,
         seenDogIds: memory?.seenDogIds || [],
-        offset: memory?.offset || 0,
         cachedDogs: memory?.cachedDogs || [],
       };
 
@@ -145,6 +144,11 @@ export default function Page() {
       // Update memory state from API response
       if (data.memory) {
         console.log('[🖥️ Frontend received memory]:', data.memory);
+
+        if (data.memory.isAdoptionMode === false) {
+          console.log("[🧠 Frontend] Barkr exited adoption mode.");
+        }
+
         setMemory(data.memory);
         
         // Update individual state for backward compatibility, with basic validation
@@ -167,7 +171,17 @@ export default function Page() {
         if (content && content.trim().length > 1) {
           setMessages((prev) => [...prev, { role: "assistant", content }]);
           setShouldScroll(true);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: "Something got stuck in the ether—want to try again?",
+            },
+          ]);
+          setShouldScroll(true);
         }
+
         } // 👈 FINAL closing brace for the try block
 
     } catch (error) {
@@ -461,6 +475,18 @@ export default function Page() {
                           remarkPlugins={[remarkGfm]}
                           rehypePlugins={[rehypeRaw]}
                           components={{
+                            strong: ({ node, ...props }) => (
+                              <strong className="font-bold">
+                                {props.children}
+                              </strong>
+
+                            ),
+                            blockquote: ({ node, ...props }) => (
+                              <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-yellow-700 my-2">
+                                {props.children}
+                              </blockquote>
+                            ),
+
                             a: ({ node, ...props }) => (
                               <a
                                 {...props}
