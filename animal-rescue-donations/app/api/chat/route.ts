@@ -642,6 +642,10 @@ const urgencyTriggers = [
           memory: updatedMemory,
         });
       }
+      } else {
+        // Use cached dogs
+        allDogs = updatedMemory.cachedDogs;
+      }
 
       const dogListParts: string[] = [];
 
