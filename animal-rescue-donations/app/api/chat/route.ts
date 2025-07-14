@@ -642,10 +642,6 @@ const urgencyTriggers = [
           memory: updatedMemory,
         });
       }
-      } else {
-        // Use cached dogs
-        allDogs = updatedMemory.cachedDogs;
-      }
 
       const dogListParts: string[] = [];
 
@@ -778,12 +774,15 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
 
         return NextResponse.json({ content: response, memory: updatedMemory });
 
-      } catch (error) {
-        console.error('[❌ Chat Error]', error);
-        return NextResponse.json(
-          { error: "Sorry, I couldn't fetch a reply. Try again?" },
-          { status: 500 }
-        );
+        } catch (error) {
+          console.error('[❌ Chat Error]', error);
+          return new NextResponse(
+            JSON.stringify({ error: "Sorry, I couldn't fetch a reply. Try again?" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        }
+
       }
-    }
-    
