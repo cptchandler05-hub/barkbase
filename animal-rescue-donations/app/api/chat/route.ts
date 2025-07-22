@@ -211,8 +211,25 @@ const urgencyTriggers = [
         ? 'adoption'
         : 'general';
 
+    // ✅ Check if user is asking a clearly general question first
+    const generalTriggers = [
+      'thanks', 'thank you', 'cool', 'awesome', 'great', 'nice',
+      'who are you', 'what is barkbase', 'how are you', 'what do you do',
+      'why do you exist', 'do dogs bark', 'tell me about yourself',
+      'why do dogs', 'how do dogs', 'what are dogs', 'dog behavior',
+      'training', 'care', 'health', 'feeding', 'grooming'
+    ];
+    const recentUserMsg = lastMessage.toLowerCase().trim();
+    const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
+
+    // 🧠 If it's clearly a general message, force general mode
+    if (isGeneralMsg) {
+      aiIntent = 'general';
+      context = 'general';
+      console.log("[🧠 General Mode Override] Detected general question, switching to general mode");
+    }
     // ✅ Force adoption mode if memory is active and message is vague
-    if (
+    else if (
       memory.isAdoptionMode === true &&
       ["more", "more dogs", "show me more", "more please", "another", "next"].includes(lastMessage.trim().toLowerCase())
     ) {
@@ -220,8 +237,8 @@ const urgencyTriggers = [
       console.log("[🧠 Adoption Mode Override] Kept adoption mode due to vague message and prior memory");
     }
 
-    // 🧠 Override classified context if AI disagrees
-    if (context !== aiIntent) {
+    // 🧠 Override classified context if AI disagrees (unless already overridden above)
+    if (context !== aiIntent && !isGeneralMsg) {
       context = aiIntent;
       console.warn('[🧠 Barkr] AI overrode context →', context);
     }
@@ -708,25 +725,7 @@ ${dogList}
         reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
       }
 
-      // 🧠 Exit adoption mode if last message is clearly general
-      const generalTriggers = [
-        'who are you',
-        'what is barkbase',
-        'how are you',
-        'what do you do',
-        'why do you exist',
-        'do dogs bark',
-        'tell me about yourself'
-      ];
-      const recentUserMsg = lastMessage.toLowerCase().trim();
-      const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
-
-        if (isGeneralMsg) {
-          context = 'general';
-          updatedMemory.context = 'general';
-        } else if (updatedMemory.context === 'general') {
-          context = 'general';
-        }
+      
 
       return NextResponse.json({
         content: reply,
