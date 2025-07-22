@@ -257,10 +257,11 @@ const urgencyTriggers = [
     let fullLocation: string | null = null;
     let fullBreed: string | null = null;
 
-    if (isValidLocationInput(aiExtracted.location)) {
+    if (isValidLocationInput(aiExtracted.location) && !moreRequest) {
       fullLocation = aiExtracted.location;
       updatedMemory.location = aiExtracted.location;
       updatedMemory.seenDogIds = [];
+      updatedMemory.cachedDogs = [];
     } else if (isValidLocationInput(updatedMemory.location)) {
       fullLocation = updatedMemory.location;
     }
@@ -291,7 +292,7 @@ const urgencyTriggers = [
     )
 {
       // 🧠 Only update location if valid and new
-      if (aiExtracted.location && aiExtracted.location !== updatedMemory.location) {
+      if (aiExtracted.location && aiExtracted.location !== updatedMemory.location && !moreRequest) {
         console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
         if (isValidLocationInput(aiExtracted.location)) {
           updatedMemory.location = aiExtracted.location;
