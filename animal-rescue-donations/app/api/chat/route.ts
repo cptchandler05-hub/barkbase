@@ -761,7 +761,7 @@ ${dogList}
 
         const response = completion.choices?.[0]?.message?.content;
         if (!response) {
-          This code removes misleading messaging about "rural" and improves related prompts.          console.warn("[⚠️ Barkr] GPT returned no message content.");
+         console.warn("[⚠️ Barkr] GPT returned no message content.");
           return NextResponse.json({
             content: "My circuits got tangled in a leash—try me again? 🐾",            memory: updatedMemory,
           });
