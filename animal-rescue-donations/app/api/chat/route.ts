@@ -261,12 +261,16 @@ const urgencyTriggers = [
     }
 
     if (isValidBreed(aiExtracted.breed)) {
-      fullBreed = aiExtracted.breed;
-      updatedMemory.breed = aiExtracted.breed;
-      updatedMemory.hasSeenResults = false;
-      updatedMemory.seenDogIds = [];
-      updatedMemory.cachedDogs = []; // ✅ Clear cached dogs if breed changes
-
+      // Only clear cache if this is actually a different breed
+      if (aiExtracted.breed !== updatedMemory.breed) {
+        fullBreed = aiExtracted.breed;
+        updatedMemory.breed = aiExtracted.breed;
+        updatedMemory.hasSeenResults = false;
+        updatedMemory.seenDogIds = [];
+        updatedMemory.cachedDogs = [];
+      } else {
+        fullBreed = aiExtracted.breed;
+      }
     } else if (isValidBreed(updatedMemory.breed)) {
       fullBreed = updatedMemory.breed;
     }
@@ -288,23 +292,23 @@ const urgencyTriggers = [
           updatedMemory.location = aiExtracted.location;
           fullLocation = aiExtracted.location;
           updatedMemory.seenDogIds = [];
-          updatedMemory.cachedDogs = []; // ✅ Clear cached dogs if location changes
-
+          updatedMemory.cachedDogs = [];
         } else {
           console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
         }
       }
     }
-    // 🧠 Only update breed if valid and new
-    if (aiExtracted.breed && isValidBreed(aiExtracted.breed)) {
+    // 🧠 Only update breed if valid and new (but don't clear on "more dogs" requests)
+    if (aiExtracted.breed && isValidBreed(aiExtracted.breed) && !moreRequest) {
       if (aiExtracted.breed !== updatedMemory.breed) {
         console.warn('[🔷 Barkr] New breed provided, wiping previous:', updatedMemory.breed);
         updatedMemory.breed = aiExtracted.breed;
         updatedMemory.hasSeenResults = false;
         updatedMemory.seenDogIds = [];
+        updatedMemory.cachedDogs = [];
       }
       fullBreed = aiExtracted.breed;
-    } else if (aiExtracted.breed) {
+    } else if (aiExtracted.breed && !moreRequest) {
       console.warn('[⚠️ Barkr] Invalid breed parsed:', aiExtracted.breed);
     }
 
