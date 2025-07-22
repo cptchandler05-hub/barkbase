@@ -634,11 +634,11 @@ const urgencyTriggers = [
         allDogs = fetchedDogs;
         updatedMemory.cachedDogs = fetchedDogs;
       } else {
-        // ✅ Use cached dogs
-        allDogs = updatedMemory.cachedDogs;
+        // Use cached dogs
+        allDogs = updatedMemory.cachedDogs || [];
       }
 
-      // ✅ Get dogs to display (filter out already seen, then take next 10)
+      // Get dogs to display
       const seen = new Set(updatedMemory.seenDogIds || []);
       const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
       const dogs = unseenDogs.slice(0, 10);
