@@ -61,17 +61,11 @@ export default function DogProfilePage() {
 
   const fetchDogDetails = async () => {
     try {
-      // For now, we'll simulate fetching from Petfinder API
-      // In a real implementation, you'd create an API route to fetch individual dog details
-      const res = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_PETFINDER_ACCESS_TOKEN}`
-        }
-      });
+      const res = await fetch(`/api/dog/${dogId}`);
       
       if (res.ok) {
-        const data = await res.json();
-        setDog(data.animal);
+        const dog = await res.json();
+        setDog(dog);
       } else {
         console.error("Failed to fetch dog details");
       }
