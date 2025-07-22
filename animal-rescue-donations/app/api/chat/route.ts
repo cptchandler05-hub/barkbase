@@ -345,10 +345,10 @@ const urgencyTriggers = [
     }
 
     if (moreRequest) {
-      // 🧠 Fallback guard if cache was never populated
+      // 🧠 Check if we have cached dogs - if not, something went wrong with memory
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
         return NextResponse.json({
-          content: `Hmm… I don’t have any more dogs cached right now 🐶. Try a new search or say a breed + location again.`,
+          content: `Hmm… I don't have any more dogs cached right now 🐶. Try a new search or say a breed + location again.`,
           memory: updatedMemory,
         });
       }
@@ -763,6 +763,7 @@ ${dogList}
 
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
+          ```text
           return NextResponse.json({
             content: "My circuits got tangled in a leash—try me again? 🐾",            memory: updatedMemory,
           });
