@@ -720,19 +720,15 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
       ];
       const recentUserMsg = lastMessage.toLowerCase().trim();
       const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
-      if (isGeneralMsg) {
-        context = 'general';
-        updatedMemory.context = 'general'; // ✅ Actually update memory to exit adoption mode
-      }
 
-        else if (updatedMemory.context === 'general') {
+        if (isGeneralMsg) {
           context = 'general';
-        }        
+          updatedMemory.context = 'general';
+        } else if (updatedMemory.context === 'general') {
+          context = 'general';
+        }
 
-      return NextResponse.json({ content: reply, memory: updatedMemory });
-
-        
-    } else {
+    } else {}
       // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
 
@@ -766,6 +762,14 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           });
         }
 
+        if (!response) {
+          console.warn("[🪂 Barkr Fallback] No valid response from GPT. Sending generic fallback.");
+          return NextResponse.json({
+            content: "Hmm... I couldn’t quite fetch anything helpful. Want to try rephrasing?",
+            memory: updatedMemory,
+          });
+        }
+
         return NextResponse.json({
           content: response,
           memory: updatedMemory,
@@ -781,16 +785,4 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
             }
           );
         }
-      }
-    }
-  } catch (error) {
-    console.error('[❌ POST Error]', error);
-    return new NextResponse(
-      JSON.stringify({ error: "Internal server error" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
-}
+        }
