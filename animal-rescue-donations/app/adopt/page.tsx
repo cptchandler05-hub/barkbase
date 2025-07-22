@@ -57,8 +57,6 @@ export default function AdoptPage() {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        // Parse the markdown response to extract dog data
         // For now, we'll fetch from a random rural location
         await fetchDogsFromRuralArea();
       }
