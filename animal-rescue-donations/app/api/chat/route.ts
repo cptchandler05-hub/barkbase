@@ -654,7 +654,29 @@ const urgencyTriggers = [
         // ✅ Update memory state
         updatedMemory.hasSeenResults = true;
         updatedMemory.cachedDogs = allDogs;
+      } else {
+        // Use cached dogs
+        allDogs = updatedMemory.cachedDogs || [];
+        
+        // ✅ Filter out already seen
+        const seen = new Set(updatedMemory.seenDogIds || []);
+        const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
 
+        // ✅ Slice the next 10
+        const dogs = unseenDogs.slice(0, 10);
+
+        // ✅ Push to seenDogIds
+        if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+        updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
+        if (updatedMemory.seenDogIds.length > 200) {
+          updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
+        }
+      }
+
+        // Get dogs to display
+      const seen = new Set(updatedMemory.seenDogIds || []);
+      const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
+      const dogs = unseenDogs.slice(0, 10);
 
       if (dogs.length === 0) {
         return NextResponse.json({
