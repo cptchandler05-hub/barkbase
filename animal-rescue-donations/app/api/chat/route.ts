@@ -191,6 +191,11 @@ const urgencyTriggers = [
     const { messages, memory } = await req.json();
     let updatedMemory = { ...memory }; // ✅ Define updatedMemory first
     const lastMessage = messages[messages.length - 1]?.content || '';
+        const normalizedMsg = lastMessage.trim().toLowerCase();
+    const moreRequest =
+      ['more', 'more please', 'more dogs', 'show me more', 'another', 'next'].includes(normalizedMsg) ||
+      normalizedMsg.includes('more dogs') ||
+      normalizedMsg.includes('show me more');
 
     let context = classifyContext(messages, updatedMemory);
 
@@ -337,11 +342,6 @@ const urgencyTriggers = [
       console.warn('[⚠️ Barkr Warning] Previous location memory was invalid and has been wiped:', memory.location);
     }
 
-    const normalizedMsg = lastMessage.trim().toLowerCase();
-    const moreRequest =
-      ['more', 'more please', 'more dogs', 'show me more', 'another', 'next'].includes(normalizedMsg) ||
-      normalizedMsg.includes('more dogs') ||
-      normalizedMsg.includes('show me more');
 
     // ✅ If user asked for more dogs and adoption context is present, force adoption mode
     if (moreRequest && (updatedMemory.breed || updatedMemory.location)) {
@@ -763,8 +763,7 @@ ${dogList}
           max_tokens: 600,
         });
 
-        const response = completion.choices?.[0]?.message?.content;
-
+        const response = completion.choices?.[0]?.message?.content.
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
           return NextResponse.json({
