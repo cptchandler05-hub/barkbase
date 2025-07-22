@@ -375,11 +375,13 @@ const urgencyTriggers = [
       updatedMemory.hasSeenResults = true;
 
       if (moreDogs.length === 0) {
-        return NextResponse.json({
-          barkrReply:
-            "Looks like I’ve already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!",
-          memory: updatedMemory,
-        });
+        return new NextResponse(
+          JSON.stringify({
+            memory: updatedMemory,
+            reply: `Looks like I’ve already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!`,
+          }),
+          { status: 200 }
+        );
       }
 
       updatedMemory.hasSeenResults = true;
@@ -624,17 +626,35 @@ const urgencyTriggers = [
           });
         }
 
-      const newDogs = allDogs.filter(
-        (dog: any) => !updatedMemory.seenDogIds?.includes(dog.id)
-      );
+        // ✅ Assign visibility scores if missing
+        for (const dog of allDogs) {
+          if (dog.visibilityScore === undefined) {
+            dog.visibilityScore = calculateVisibilityScore(dog);
+          }
+        }
 
-      const dogs = newDogs.slice(0, 10);
-        console.log("[🐶 Debug] Showing unseen dogs:", dogs.map(d => d.id));
+        // ✅ Sort allDogs once
+        allDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
 
+        // ✅ Filter out already seen
+        const seen = new Set(updatedMemory.seenDogIds || []);
+        const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
+
+        // ✅ Slice the next 10
+        const dogs = unseenDogs.slice(0, 10);
+        console.log("[🐶 Debug] Showing unseen dogs:", dogs.map((d) => d.id));
+
+        // ✅ Push to seenDogIds
+        if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+        updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
+        if (updatedMemory.seenDogIds.length > 200) {
+          updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
+        }
+
+        // ✅ Update memory state
         updatedMemory.hasSeenResults = true;
+        updatedMemory.cachedDogs = allDogs;
 
-      if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
-      updatedMemory.seenDogIds.push(...dogs.map((d: Dog) => d.id));
 
       if (dogs.length === 0) {
         return NextResponse.json({
@@ -687,32 +707,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
 
     💡 Ask for more dogs anytime. I’ll keep digging. 🧡`;
       }
-
-      // 🧠 Sort by visibility score (high score = more overlooked)
-      // 🧠 Sort and filter Petfinder results by visibility and memory
       
-      // ✅ REUSE THE EXISTING PARSED BODY
-      const rawDogs = [...allDogs];
-
-
-      const sortedVisibleDogs = rawDogs.sort((a, b) =>
-        (b.visibilityScore || 0) - (a.visibilityScore || 0)
-      );
-
-      const seenDogIds = new Set<string | number>(updatedMemory.seenDogIds || []);
-
-      const unseenDogs = sortedVisibleDogs.filter((dog) => !seenDogIds.has(dog.id));
-
-      const dogsToShow = unseenDogs.slice(0, 10);
-
-      // 🧠 Update memory
-      updatedMemory.seenDogIds = [
-        ...(Array.from(seenDogIds) as (string | number)[]),
-        ...dogsToShow.map((d) => d.id),
-      ];
-
-      updatedMemory.hasSeenResults = true;
-
       // 🧠 Exit adoption mode if last message is clearly general
       const generalTriggers = [
         'who are you',
@@ -729,15 +724,14 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
         context = 'general';
         updatedMemory.context = 'general'; // ✅ Actually update memory to exit adoption mode
       }
-      if (updatedMemory.context === 'general') {
-        return NextResponse.json({
-          content: `Got it. Switching gears 🐾 Let me know how I can help.`,
-          memory: updatedMemory
-        });
-      }
+
+        else if (updatedMemory.context === 'general') {
+          context = 'general';
+        }        
 
       return NextResponse.json({ content: reply, memory: updatedMemory });
 
+        
     } else {
       // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
@@ -762,7 +756,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           max_tokens: 600,
         });
 
-        const response = completion.choices[0]?.message?.content;
+        const response = completion.choices?.[0]?.message?.content;
 
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
@@ -772,7 +766,10 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           });
         }
 
-        return NextResponse.json({ content: response, memory: updatedMemory });
+        return NextResponse.json({
+          content: response,
+          memory: updatedMemory,
+        });
 
         } catch (error) {
           console.error('[❌ Chat Error]', error);
