@@ -70,14 +70,30 @@ async function extractBreedAndLocationViaAI(message: string): Promise<{ breed: s
         {
           role: "system",
           content:
-            "Extract the DOG BREED (if mentioned), LOCATION (city, state, or ZIP), and INTENT from the user's message. Intent should be 'adoption' if the user wants to find, adopt, or look at dogs. Otherwise, label it 'general'. Return JSON like { breed: '', location: '', intent: '' }.",
+            `Extract DOG BREED (only if relevant for searching/adopting), LOCATION (city, state, or ZIP), and INTENT from the user's message.
+
+INTENT should be 'adoption' ONLY if the user wants to:
+- Find dogs to adopt
+- Search for dogs  
+- See dogs for adoption
+- Adopt a specific breed
+
+INTENT should be 'general' if the user is:
+- Asking questions about dog breeds (why, how, what, when, etc.)
+- Asking about dog behavior, training, health
+- Making casual conversation
+- Saying thanks, goodbye, etc.
+
+BREED should only be extracted if it's relevant for an adoption search, NOT for general questions about breeds.
+
+Return JSON like { breed: '', location: '', intent: '' }.`,
         },
         {
           role: "user",
           content: message,
         },
       ],
-      temperature: 0.4,
+      temperature: 0.3,
     });
 
     const jsonString = completion.choices[0]?.message?.content?.trim();
@@ -202,14 +218,14 @@ const urgencyTriggers = [
     // 🧠 Run GPT intent + breed/location parser on every message
     const aiExtracted = await extractBreedAndLocationViaAI(lastMessage);
 
-    // 🧠 Use AI extraction unless memory proves we're in adoption mode
-    let aiIntent: 'adoption' | 'general' =
-      aiExtracted.intent === 'adoption' ||
-      aiExtracted.breed !== null ||
-      aiExtracted.location !== null ||
-      (memory.breed && memory.location)
-        ? 'adoption'
-        : 'general';
+    // 🧠 Trust the AI intent detection - don't override it just because breed/location was extracted
+    let aiIntent: 'adoption' | 'general' = aiExtracted.intent;
+    
+    // Only override to adoption if we have strong adoption context in memory
+    if (aiIntent === 'general' && memory.breed && memory.location && memory.isAdoptionMode) {
+      console.log("[🧠 Override] General intent but strong adoption context in memory");
+      aiIntent = 'adoption';
+    }
 
     // ✅ Improved mode switching - prioritize AI intent and user signals
     const recentUserMsg = lastMessage.toLowerCase().trim();
