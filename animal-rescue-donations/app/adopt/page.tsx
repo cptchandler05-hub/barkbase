@@ -30,11 +30,22 @@ export default function AdoptPage() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const dogsPerPage = 12;
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Auto-load most invisible dogs on page load
   useEffect(() => {
     handleShowMostInvisible();
   }, []);
+
+  // Scroll to results when page changes
+  useEffect(() => {
+    if (currentPage > 1 && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }, [currentPage]);
 
   const handleShowMostInvisible = async () => {
     setLoading(true);
@@ -313,7 +324,7 @@ export default function AdoptPage() {
 
           {/* Results Header */}
           {dogs.length > 0 && (
-            <div className="mb-6">
+            <div ref={resultsRef} className="mb-6">
               <h2 className="text-2xl font-bold text-blue-900 mb-2">
                 {hasSearched 
                   ? `Found ${dogs.length} overlooked dogs` 
