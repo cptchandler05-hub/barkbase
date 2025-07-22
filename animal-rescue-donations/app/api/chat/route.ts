@@ -213,20 +213,46 @@ const urgencyTriggers = [
 
     // ✅ Check if user is asking a clearly general question first
     const generalTriggers = [
-      'thanks', 'thank you', 'cool', 'awesome', 'great', 'nice',
+      'thanks', 'thank you', 'cool', 'awesome', 'great', 'nice', 'ok', 'okay',
       'who are you', 'what is barkbase', 'how are you', 'what do you do',
       'why do you exist', 'do dogs bark', 'tell me about yourself',
       'why do dogs', 'how do dogs', 'what are dogs', 'dog behavior',
-      'training', 'care', 'health', 'feeding', 'grooming'
+      'training', 'care', 'health', 'feeding', 'grooming', 'nevermind',
+      'never mind', 'stop', 'enough', 'done', 'finished', 'that\'s all',
+      'thats all', 'no more', 'different question', 'something else',
+      'change topic', 'new topic', 'actually', 'instead', 'forget that',
+      'what about', 'tell me', 'explain', 'describe', 'discuss'
     ];
+    
+    // ✅ Enhanced detection for conversational endings and topic changes
+    const conversationEnders = [
+      /^(ok|okay|cool|awesome|great|nice|thanks?|thank you)\.?$/,
+      /^(that'?s (it|all|enough|good|great|cool|nice)\.?)$/,
+      /^(done|finished|nevermind|never mind)\.?$/,
+      /^(no more|enough|stop)\.?$/
+    ];
+    
+    const topicChangers = [
+      /^(actually|instead|what about|tell me about|explain|describe)/,
+      /(different|new) (question|topic)/,
+      /something else/,
+      /change (topic|subject)/,
+      /forget (that|about)/
+    ];
+    
     const recentUserMsg = lastMessage.toLowerCase().trim();
-    const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
+    const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger)) ||
+                        conversationEnders.some(pattern => pattern.test(recentUserMsg)) ||
+                        topicChangers.some(pattern => pattern.test(recentUserMsg));
 
-    // 🧠 If it's clearly a general message, force general mode
+    // 🧠 If it's clearly a general message, force general mode and clear adoption memory
     if (isGeneralMsg) {
       aiIntent = 'general';
       context = 'general';
-      console.log("[🧠 General Mode Override] Detected general question, switching to general mode");
+      // Clear adoption mode memory to prevent getting stuck
+      updatedMemory.isAdoptionMode = false;
+      updatedMemory.hasSeenResults = false;
+      console.log("[🧠 General Mode Override] Detected general question, switching to general mode and clearing adoption memory");
     }
     // ✅ Force adoption mode if memory is active and message is vague
     else if (
@@ -235,6 +261,19 @@ const urgencyTriggers = [
     ) {
       aiIntent = 'adoption';
       console.log("[🧠 Adoption Mode Override] Kept adoption mode due to vague message and prior memory");
+    }
+    // 🧠 Detect if user is asking a question that's clearly not about adoption
+    else if (memory.isAdoptionMode === true) {
+      const questionWords = ['why', 'how', 'what', 'when', 'where', 'who', 'can you', 'do you', 'are you', 'tell me'];
+      const hasQuestionStructure = questionWords.some(q => recentUserMsg.startsWith(q)) || recentUserMsg.includes('?');
+      const hasAdoptionKeywords = ['dog', 'breed', 'adopt', 'find', 'search', 'show', 'more'].some(k => recentUserMsg.includes(k));
+      
+      if (hasQuestionStructure && !hasAdoptionKeywords) {
+        aiIntent = 'general';
+        context = 'general';
+        updatedMemory.isAdoptionMode = false;
+        console.log("[🧠 Question Override] Detected non-adoption question, switching to general mode");
+      }
     }
 
     // 🧠 Override classified context if AI disagrees (unless already overridden above)
@@ -657,12 +696,13 @@ const urgencyTriggers = [
       const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
       const dogs = unseenDogs.slice(0, 10);
 
-      // ✅ Add shown dogs to seen list
+      // ✅ Add shown dogs to seen list and set adoption mode flag
       if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
       updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
       if (updatedMemory.seenDogIds.length > 200) {
         updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
       }
+      updatedMemory.isAdoptionMode = true;
 
       if (dogs.length === 0) {
         return NextResponse.json({
