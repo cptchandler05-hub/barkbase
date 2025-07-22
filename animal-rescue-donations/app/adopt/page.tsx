@@ -221,10 +221,10 @@ export default function AdoptPage() {
             <div className="absolute inset-0 bg-[url('/images/pawprints.png')] bg-cover opacity-5" />
             <div className="relative z-10 max-w-4xl mx-auto">
               <h1 className="text-4xl md:text-6xl font-bold text-blue-900 mb-4">
-                Adopt the dog they already scrolled past.
+                Every dog deserves to be seen.
               </h1>
               <p className="text-xl md:text-2xl text-gray-700 mb-8">
-                We don't show you the most wanted dogs. We show you the ones who still wait.
+                Our visibility algorithm lifts up the dogs at greatest risk of being passed by. This is adoption, rebalanced.
               </p>
               <div className="relative inline-block">
                 <button
