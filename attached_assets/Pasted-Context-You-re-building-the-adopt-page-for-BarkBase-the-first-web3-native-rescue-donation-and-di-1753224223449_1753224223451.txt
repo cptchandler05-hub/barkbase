@@ -1,0 +1,134 @@
+Context:
+You're building the /adopt page for BarkBase — the first web3-native rescue donation and discovery platform. It is powered by Barkr, an AI dog who surfaces invisible, overlooked, and rural dogs using a custom visibility scoring system. This is not a generic adoption site — the goal is to reroute user attention to dogs who need it most, especially from underfunded rural shelters.
+
+🛠 TASK
+Create the /adopt page and associated components based on the following specifications. Do not rely on standard filters or Petfinder UI assumptions. This must be mission-first, visibility-optimized, and tightly aligned with the Barkr experience.
+
+PAGE: /adopt
+1. Hero Section (Top of Page)
+Large headline:
+"Adopt the dog they already scrolled past."
+
+Subheadline:
+"We surface the overlooked, the invisible, the rural. Barkr sees what others don’t."
+
+CTA Button:
+
+Label: "Show Me the Most Invisible"
+
+Action: Triggers a fetch of top 10–15 dogs from rural ZIPs with the highest visibility score (using getRandomRuralZip() and scoreVisibility() functions from the backend)
+
+Scrolls user down to results section
+
+Optional: Add Barkr avatar + hoverable tooltip:
+
+“Why are these dogs shown first?” → short blurb about visibility scoring
+
+2. Filter/Search Panel
+Location Input: ZIP or City, State (required for precise queries)
+
+Breed Input: Optional free-text or dropdown
+
+Size Filter: Optional (Small, Medium, Large, XL)
+
+Age Filter: Optional (Puppy / Adult / Senior)
+
+DO NOT INCLUDE:
+
+“Newest”
+
+“Trending”
+
+“Popular near me”
+
+3. Default Dog Results (Before Search)
+If no filters are used, show:
+
+Top 10–15 dogs with lowest visibility score from a rotating pool of rural ZIPs
+
+Dogs should be sorted using calculateVisibilityScore()
+
+Pull from cached or dynamic Petfinder API data (limit to 100 dogs per fetch, paginate manually)
+
+4. Dog Cards (for all results)
+For each dog in the result grid:
+
+Photo (first from array)
+
+Name
+
+Age / Size / Breed summary
+
+Location (City, State)
+
+🔶 Visibility Score badge (composite number or stars)
+
+🧠 Barkr quote (e.g., “Skipped 14 times this week. Still waiting.”)
+
+“Meet [Name]” → opens /adopt/[dogId] internal profile (not Petfinder)
+
+Optional badges:
+
+“Still Waiting” (if this dog was previously shown and not yet adopted)
+
+“Rescue Partner” (if from a BarkBase-partnered rescue)
+
+5. Dog Profile Page: /adopt/[dogId]
+Each dog should get a dedicated BarkBase-hosted profile that displays:
+
+All available Petfinder data:
+name, age, breed, size, photos, bio, location, contact
+
+Barkr-generated quote or summary
+
+Visibility score + tooltip:
+“This dog is in the bottom 10% of adoption visibility nationwide.”
+
+Donation button if tied to a partner rescue (rescueId field present)
+
+“Adopt Me” link only if no direct contact is available or required
+
+Share buttons (X, Telegram, Facebook)
+
+6. Backend Logic / Routing Notes
+Use Barkr’s memory and scoring logic (already present in chat/route.ts) for:
+
+Fetching dogs from Petfinder API
+
+Filtering + sorting by visibility score
+
+Choosing rural ZIPs via getRandomRuralZip() utility
+
+cachedDogs should persist dog data across pagination
+
+seenDogIds should prevent duplicates when showing “more dogs”
+
+Visibility scoring is based on:
+
+Days listed
+
+Location remoteness
+
+Photo presence
+
+Breed popularity
+
+Bio length
+
+7. Extra Features (Optional)
+“Try another batch” button (refreshes invisible dogs)
+
+Filter: “Only show rescue partners”
+
+Tooltip for each filter:
+e.g., “Why can’t I sort by popularity?” → “Because this isn’t a contest.”
+
+8. Design Guidelines
+Use clean, humane, emotionally-resonant design
+
+Dog cards should prioritize emotion and mission, not flash
+
+Avoid overloading with UI elements — let the dogs and Barkr speak
+
+Match BarkBase color palette and soft UI styling
+

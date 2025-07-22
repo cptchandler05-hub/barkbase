@@ -121,7 +121,7 @@ export async function POST(req: Request) {
 
     const reply = `👻 **The Most Invisible Dogs Right Now**
 
-These are the most overlooked dogs I could find in rural **${ruralZip}**—the ones with the highest invisibility scores. 
+These are the most overlooked dogs I could find in rural **${ruralZip}**—the ones with the highest scores = the most invisible.
 
 They've been waiting the longest, have the fewest photos, or carry the traits that algorithms ignore. But not anymore.
 

@@ -1,0 +1,107 @@
+✅ AI DEVELOPER PROMPT
+Build the /adopt page for BarkBase — the first rescue donation and discovery platform native to web3.
+This page must reflect the core mission: rescue visibility, rural inclusion, overlooked dogs first. Barkr, our AI rescue mutt, is the guide behind the scenes.
+
+🧭 OVERALL EXPERIENCE
+Create a clean, mobile-optimized /adopt page that feels emotionally urgent, dignified, and Barkr-powered.
+The focus is not on what's popular or newest — it’s on what’s most invisible.
+
+Dogs are ranked by a custom visibilityScore.
+
+Higher score = more overlooked.
+This score is computed using custom BarkBase logic (e.g. skipped count, time listed, rural ZIP weighting).
+
+The page must never default to popularity or recency. It’s about need and neglect.
+
+🧱 1. HERO SECTION
+Headline:
+"Adopt the dog they already scrolled past."
+
+Subheadline:
+"We don’t show you the most wanted dogs. We show you the ones who still wait."
+
+Button: "Show Me the Most Invisible"
+→ On click, trigger Barkr to fetch 10–15 dogs with the highest visibility scores, from rural ZIPs only, using the Petfinder API + calculateVisibilityScore() and getRandomRuralZip() utilities.
+
+Optional Tooltip (Barkr-style):
+
+“These aren’t trending. These are forgotten. That’s why they’re here.”
+
+🎛️ 2. SEARCH & FILTER PANEL
+Location input: ZIP or “City, State” (normalized)
+
+Breed: Optional free text or dropdown
+
+Size: S, M, L, XL
+
+Age: Puppy, Adult, Senior
+
+Important rules:
+
+No sort dropdown (we always sort by visibilityScore descending)
+
+No popularity tags, no “featured near you”
+
+If a user doesn’t enter a location, fallback to getRandomRuralZip()
+
+🐾 3. DEFAULT RESULTS (Before User Searches)
+Show top 10–15 most overlooked dogs (highest visibility score), pulled from a rotating batch of rural ZIPs via Petfinder API.
+This gives users an immediate glimpse into BarkBase’s mission.
+
+🐶 4. DOG CARD DESIGN
+Each dog card must include:
+
+Name
+
+First photo
+
+Age, Size, Breed
+
+City, State
+
+🔶 Visibility Score badge (e.g. “Score: 88 – Highly Overlooked”)
+
+Barkr-generated line (e.g. “Skipped 52 times. Still smiling.”)
+
+Button: "Meet [Name]" → links to /adopt/[dogId] page
+
+Optional tags:
+
+“Still Waiting” → Barkr has shown them before
+
+“Rescue Partner” → Rescue is verified BarkBase partner
+
+📄 5. DOG PROFILE PAGES — /adopt/[dogId]
+Each dog gets its own BarkBase-hosted page.
+
+Pull and display:
+
+All photos (carousel)
+
+Full description
+
+Breed, age, size, location
+
+Visibility score
+
+Barkr’s analysis (e.g. “Why this dog is overlooked”)
+
+Rescue contact info (if available)
+
+Buttons:
+
+“I want to adopt” → adoption interest form or contact link
+
+“Donate in [Name]’s honor” → sends ETH/USDC tagged to dog/rescue
+
+“Share [Name]” → share to Farcaster, X, Telegram
+
+🚫 Do not send users to Petfinder unless absolutely necessary.
+Host everything natively on BarkBase where possible.
+
+🧠 BARKR INTEGRATION (Optional)
+Add a small Barkr widget or sidebar:
+
+“Don’t see what you’re looking for? Ask me to find dogs by vibe, size, or place. I don’t just search — I notice what others miss.”
+
+Click → expands Barkr chat window with memory of filters.
