@@ -763,7 +763,7 @@ ${dogList}
           max_tokens: 600,
         });
 
-        const response = completion.choices?.[0]?.message?.content.
+        const response = completion.choices?.[0]?.message?.content;
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
           return NextResponse.json({
