@@ -584,6 +584,7 @@ const urgencyTriggers = [
 
       let allDogs: Dog[] = [];
 
+      // ✅ Check if we need to fetch new dogs from API
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
         const searchRes = await fetch(`${origin}/api/petfinder/search`, {
           method: 'POST',
@@ -600,13 +601,13 @@ const urgencyTriggers = [
 
           if (err.invalidLocation) {
             return NextResponse.json({
-              content: `That location didn’t work 🐾. Can you give me a ZIP code or a full city and state like “Austin, TX” or “Brooklyn, NY”?`,
+              content: `That location didn't work 🐾. Can you give me a ZIP code or a full city and state like "Austin, TX" or "Brooklyn, NY"?`,
               memory: updatedMemory,
             });
           }
 
           return NextResponse.json({
-            content: `I couldn’t fetch dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
+            content: `I couldn't fetch dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
             memory: updatedMemory,
           });
         }
@@ -614,69 +615,40 @@ const urgencyTriggers = [
         const searchData = await searchRes.json();
         const fetchedDogs = searchData.animals || [];
 
-        if (fetchedDogs.length > 0) {
-          allDogs = fetchedDogs;
-          updatedMemory.cachedDogs = fetchedDogs;
-        } else if (Array.isArray(updatedMemory.cachedDogs) && updatedMemory.cachedDogs.length > 0) {
-          allDogs = updatedMemory.cachedDogs;
-        } else {
+        if (fetchedDogs.length === 0) {
           return NextResponse.json({
-            content: `I tried fetching adoptable dogs, but got nothing back 🐶. Try a different search or wait a moment and retry.`,
+            content: `I searched near **${searchLocation}** for **${fullBreed || 'dogs'}** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
             memory: updatedMemory,
           });
         }
 
-        // ✅ Assign visibility scores if missing
-        for (const dog of allDogs) {
-          if (dog.visibilityScore === undefined) {
-            dog.visibilityScore = calculateVisibilityScore(dog);
-          }
+        // ✅ Assign visibility scores to all fetched dogs
+        for (const dog of fetchedDogs) {
+          dog.visibilityScore = calculateVisibilityScore(dog);
         }
 
-        // ✅ Sort allDogs once
-        allDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+        // ✅ Sort all dogs by visibility score (highest first - most invisible)
+        fetchedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
 
-        // ✅ Filter out already seen
-        const seen = new Set(updatedMemory.seenDogIds || []);
-        const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
-
-        // ✅ Slice the next 10
-        const dogs = unseenDogs.slice(0, 10);
-        console.log("[🐶 Debug] Showing unseen dogs:", dogs.map((d) => d.id));
-
-        // ✅ Push to seenDogIds
-        if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
-        updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
-        if (updatedMemory.seenDogIds.length > 200) {
-          updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
-        }
-
-        // ✅ Update memory state
-        updatedMemory.hasSeenResults = true;
-        updatedMemory.cachedDogs = allDogs;
+        // ✅ Cache all sorted dogs
+        allDogs = fetchedDogs;
+        updatedMemory.cachedDogs = fetchedDogs;
       } else {
-        // Use cached dogs
-        allDogs = updatedMemory.cachedDogs || [];
-        
-        // ✅ Filter out already seen
-        const seen = new Set(updatedMemory.seenDogIds || []);
-        const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
-
-        // ✅ Slice the next 10
-        const dogs = unseenDogs.slice(0, 10);
-
-        // ✅ Push to seenDogIds
-        if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
-        updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
-        if (updatedMemory.seenDogIds.length > 200) {
-          updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
-        }
+        // ✅ Use cached dogs
+        allDogs = updatedMemory.cachedDogs;
       }
 
-        // Get dogs to display
+      // ✅ Get dogs to display (filter out already seen, then take next 10)
       const seen = new Set(updatedMemory.seenDogIds || []);
       const unseenDogs = allDogs.filter((dog: Dog) => !seen.has(dog.id));
       const dogs = unseenDogs.slice(0, 10);
+
+      // ✅ Add shown dogs to seen list
+      if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+      updatedMemory.seenDogIds.push(...dogs.map((d) => d.id));
+      if (updatedMemory.seenDogIds.length > 200) {
+        updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
+      }
 
       if (dogs.length === 0) {
         return NextResponse.json({
@@ -712,9 +684,10 @@ const urgencyTriggers = [
 
       const dogList = dogListParts.join('\n\n---\n\n');
 
-      let reply = `🐕 Here’s what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
+      let reply: string;
 
       if (!updatedMemory.hasSeenResults) {
+        // ✅ First time seeing results - show visibility explanation
         reply = `🐾 **How I Rank Dogs:**
 
 Most platforms boost the dogs that already get attention.
@@ -723,11 +696,19 @@ I do the opposite.
 
 I built a signal for the invisible ones—the long-overlooked, underpromoted, unchosen.
 
-**High score = high invisibility.** That’s who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that’s because they don't have one of their own.
+**High score = high invisibility.** That's who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that's because they don't have one of their own.
 
-    ${reply}
+🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:
 
-    💡 Ask for more dogs anytime. I’ll keep digging. 🧡`;
+${dogList}
+
+💡 Ask for more dogs anytime. I'll keep digging. 🧡`;
+
+        // ✅ Mark that user has now seen results
+        updatedMemory.hasSeenResults = true;
+      } else {
+        // ✅ Subsequent requests - simpler reply
+        reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
       }
 
       // 🧠 Exit adoption mode if last message is clearly general
@@ -783,8 +764,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
           return NextResponse.json({
-            content: "My circuits got tangled in a leash—try me again? 🐾",
-            memory: updatedMemory,
+            content: "My circuits got tangled in a leash—try me again? 🐾",            memory: updatedMemory,
           });
         }
 
