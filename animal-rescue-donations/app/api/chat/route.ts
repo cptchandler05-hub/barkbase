@@ -763,17 +763,8 @@ ${dogList}
 
         if (!response) {
           console.warn("[⚠️ Barkr] GPT returned no message content.");
-          ```text
           return NextResponse.json({
             content: "My circuits got tangled in a leash—try me again? 🐾",            memory: updatedMemory,
-          });
-        }
-
-        if (!response) {
-          console.warn("[🪂 Barkr Fallback] No valid response from GPT. Sending generic fallback.");
-          return NextResponse.json({
-            content: "Hmm... I couldn’t quite fetch anything helpful. Want to try rephrasing?",
-            memory: updatedMemory,
           });
         }
 
