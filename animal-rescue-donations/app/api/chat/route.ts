@@ -728,7 +728,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           context = 'general';
         }
 
-    } else {}
+    } else {
       // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
 
@@ -786,3 +786,4 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           );
         }
         }
+    }
