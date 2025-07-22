@@ -380,13 +380,10 @@ const urgencyTriggers = [
       updatedMemory.hasSeenResults = true;
 
       if (moreDogs.length === 0) {
-        return new NextResponse(
-          JSON.stringify({
-            memory: updatedMemory,
-            reply: `Looks like I’ve already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!`,
-          }),
-          { status: 200 }
-        );
+        return NextResponse.json({
+          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!`,
+          memory: updatedMemory,
+        });
       }
 
       updatedMemory.hasSeenResults = true;
