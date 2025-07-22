@@ -211,23 +211,30 @@ const urgencyTriggers = [
         ? 'adoption'
         : 'general';
 
-    // ✅ Simplified mode switching - prioritize AI intent unless explicitly overridden
+    // ✅ Improved mode switching - prioritize AI intent and user signals
     const recentUserMsg = lastMessage.toLowerCase().trim();
     
-    // Clear conversation enders
+    // Clear conversation enders and topic changes
     const conversationEnders = ['thanks', 'thank you', 'cool', 'awesome', 'great', 'nice', 'ok', 'okay'];
     const topicChangers = ['nevermind', 'never mind', 'different question', 'something else', 'change topic'];
     
     const isConversationEnder = conversationEnders.some(phrase => recentUserMsg === phrase);
     const isTopicChanger = topicChangers.some(phrase => recentUserMsg.includes(phrase));
     
-    // Force general mode for clear conversation enders or topic changes
-    if (isConversationEnder || isTopicChanger) {
+    // Detect general questions that should override adoption mode
+    const generalQuestionWords = ['who', 'what', 'why', 'how', 'when', 'where', 'tell me', 'explain', 'describe'];
+    const adoptionKeywords = ['dog', 'dogs', 'breed', 'adopt', 'search', 'find', 'show', 'more'];
+    
+    const hasGeneralQuestion = generalQuestionWords.some(word => recentUserMsg.startsWith(word) || recentUserMsg.includes(word + ' '));
+    const hasAdoptionKeywords = adoptionKeywords.some(word => recentUserMsg.includes(word));
+    
+    // Force general mode for conversation enders, topic changes, or general questions without adoption keywords
+    if (isConversationEnder || isTopicChanger || (hasGeneralQuestion && !hasAdoptionKeywords)) {
       aiIntent = 'general';
       context = 'general';
       updatedMemory.isAdoptionMode = false;
       updatedMemory.hasSeenResults = false;
-      console.log("[🧠 Mode Switch] Detected conversation ender/topic change");
+      console.log("[🧠 Mode Switch] Switching to general mode");
     }
     // Keep adoption mode for "more" requests when in adoption context
     else if (
@@ -236,6 +243,12 @@ const urgencyTriggers = [
     ) {
       aiIntent = 'adoption';
       console.log("[🧠 Adoption Mode] Kept adoption mode for more request");
+    }
+    // Trust AI intent if it detected general mode
+    else if (aiIntent === 'general') {
+      context = 'general';
+      updatedMemory.isAdoptionMode = false;
+      console.log("[🧠 AI Intent] AI detected general question, switching modes");
     }
 
     // 🧠 Use AI intent as final context
