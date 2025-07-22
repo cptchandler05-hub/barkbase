@@ -350,11 +350,12 @@ export default function AdoptPage() {
                     transition={{ duration: 0.3 }}
                     className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="relative">
+                    <div className="relative overflow-hidden">
                       <img
                         src={dog.photos?.[0]?.medium || "/images/barkr.png"}
                         alt={dog.name}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-48 object-cover object-center"
+                        style={{ objectPosition: 'center 30%' }}
                       />
                       <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${getVisibilityBadgeColor(dog.visibilityScore)}`}>
                         Score: {dog.visibilityScore}
@@ -386,16 +387,50 @@ export default function AdoptPage() {
                         >
                           View {dog.name}
                         </a>
-                        <button
-                          onClick={() => {
-                            const url = `https://x.com/intent/tweet?text=${encodeURIComponent(`${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`)}&url=${encodeURIComponent(dog.url)}`;
-                            window.open(url, '_blank');
-                          }}
-                          className="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm rounded-lg transition"
-                          title={`Share ${dog.name}`}
-                        >
-                          📤
-                        </button>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => {
+                              const url = `https://x.com/intent/tweet?text=${encodeURIComponent(`${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`)}&url=${encodeURIComponent(dog.url)}`;
+                              window.open(url, '_blank');
+                            }}
+                            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                            title={`Share ${dog.name} on X`}
+                          >
+                            <img src="/logos/x-logo.png" alt="X" className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(dog.url)}`;
+                              window.open(url, '_blank');
+                            }}
+                            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                            title={`Share ${dog.name} on Facebook`}
+                          >
+                            <img src="/logos/facebook-logo.png" alt="Facebook" className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const text = `${dog.name} needs a home! Help spread the word! 🐾`;
+                              const url = `https://t.me/share/url?url=${encodeURIComponent(dog.url)}&text=${encodeURIComponent(text)}`;
+                              window.open(url, '_blank');
+                            }}
+                            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                            title={`Share ${dog.name} on Telegram`}
+                          >
+                            <img src="/logos/telegram-logo.png" alt="Telegram" className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const text = `${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
+                              const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + dog.url)}`;
+                              window.open(url, '_blank');
+                            }}
+                            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                            title={`Share ${dog.name} on Farcaster`}
+                          >
+                            <span className="text-purple-600 font-bold text-sm">F</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

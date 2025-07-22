@@ -127,6 +127,12 @@ export default function DogProfilePage() {
     window.open(url, '_blank');
   };
 
+  const shareToFarcaster = () => {
+    const text = `${dog?.name} needs a home! This ${dog?.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
+    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + (dog?.url || window.location.href))}`;
+    window.open(url, '_blank');
+  };
+
   if (loading) {
     return (
       <div 
@@ -230,11 +236,12 @@ export default function DogProfilePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Photo Gallery */}
             <div className="space-y-4">
-              <div className="relative">
+              <div className="relative overflow-hidden rounded-xl">
                 <img
                   src={dog.photos?.[currentPhotoIndex]?.large || dog.photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
-                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                  className="w-full h-96 object-cover object-center shadow-lg"
+                  style={{ objectPosition: 'center 30%' }}
                 />
                 <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   Score: {dog.visibilityScore || 0}
@@ -346,7 +353,7 @@ export default function DogProfilePage() {
                   
                   {showShareOptions && (
                     <div className="absolute top-full mt-2 left-0 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-10">
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-4 gap-2">
                         <button
                           onClick={shareToX}
                           className="flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition"
@@ -367,6 +374,15 @@ export default function DogProfilePage() {
                         >
                           <img src="/logos/telegram-logo.png" alt="Telegram" className="w-8 h-8 mb-1" />
                           <span className="text-xs">Telegram</span>
+                        </button>
+                        <button
+                          onClick={shareToFarcaster}
+                          className="flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition"
+                        >
+                          <div className="w-8 h-8 mb-1 bg-purple-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">F</span>
+                          </div>
+                          <span className="text-xs">Farcaster</span>
                         </button>
                       </div>
                     </div>
