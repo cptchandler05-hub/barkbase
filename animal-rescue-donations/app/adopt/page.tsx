@@ -171,16 +171,8 @@ export default function AdoptPage() {
   const totalPages = Math.ceil(dogs.length / dogsPerPage);
 
   return (
-    <div 
-      className="min-h-screen w-full font-sans text-gray-800"
-      style={{
-        backgroundImage: "url('/barkbase-tech-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed"
-      }}
-    >
-      <div className="min-h-screen bg-white bg-opacity-95">
+    <div className="min-h-screen w-full font-sans text-gray-800">
+      <div className="min-h-screen">
         <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Header */}
           <header className="flex items-center justify-between mb-8 z-50 relative">
