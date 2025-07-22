@@ -235,11 +235,11 @@ const urgencyTriggers = [
       aiExtracted.location = updatedMemory?.location || null;
     }
 
-    // 🧼 Clear memory fallback if AI gave confident new values
-    if (aiExtracted.location && isValidLocationInput(aiExtracted.location)) {
+    // 🧼 Clear memory fallback if AI gave confident new values (but not on more requests)
+    if (aiExtracted.location && isValidLocationInput(aiExtracted.location) && !moreRequest) {
       updatedMemory.location = null;
     }
-    if (aiExtracted.breed && isValidBreed(aiExtracted.breed)) {
+    if (aiExtracted.breed && isValidBreed(aiExtracted.breed) && !moreRequest) {
       updatedMemory.breed = null;
     }
 
@@ -265,7 +265,7 @@ const urgencyTriggers = [
       fullLocation = updatedMemory.location;
     }
 
-    if (isValidBreed(aiExtracted.breed)) {
+    if (isValidBreed(aiExtracted.breed) && !moreRequest) {
       // Only clear cache if this is actually a different breed
       if (aiExtracted.breed !== updatedMemory.breed) {
         fullBreed = aiExtracted.breed;
