@@ -211,76 +211,36 @@ const urgencyTriggers = [
         ? 'adoption'
         : 'general';
 
-    // ✅ Check if user is asking a clearly general question first
-    const generalTriggers = [
-      'thanks', 'thank you', 'cool', 'awesome', 'great', 'nice', 'ok', 'okay',
-      'who are you', 'what is barkbase', 'how are you', 'what do you do',
-      'why do you exist', 'do dogs bark', 'tell me about yourself',
-      'why do dogs', 'how do dogs', 'what are dogs', 'dog behavior',
-      'training', 'care', 'health', 'feeding', 'grooming', 'nevermind',
-      'never mind', 'stop', 'enough', 'done', 'finished', 'that\'s all',
-      'thats all', 'no more', 'different question', 'something else',
-      'change topic', 'new topic', 'actually', 'instead', 'forget that',
-      'what about', 'tell me', 'explain', 'describe', 'discuss'
-    ];
-    
-    // ✅ Enhanced detection for conversational endings and topic changes
-    const conversationEnders = [
-      /^(ok|okay|cool|awesome|great|nice|thanks?|thank you)\.?$/,
-      /^(that'?s (it|all|enough|good|great|cool|nice)\.?)$/,
-      /^(done|finished|nevermind|never mind)\.?$/,
-      /^(no more|enough|stop)\.?$/
-    ];
-    
-    const topicChangers = [
-      /^(actually|instead|what about|tell me about|explain|describe)/,
-      /(different|new) (question|topic)/,
-      /something else/,
-      /change (topic|subject)/,
-      /forget (that|about)/
-    ];
-    
+    // ✅ Simplified mode switching - prioritize AI intent unless explicitly overridden
     const recentUserMsg = lastMessage.toLowerCase().trim();
-    const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger)) ||
-                        conversationEnders.some(pattern => pattern.test(recentUserMsg)) ||
-                        topicChangers.some(pattern => pattern.test(recentUserMsg));
-
-    // 🧠 If it's clearly a general message, force general mode and clear adoption memory
-    if (isGeneralMsg) {
+    
+    // Clear conversation enders
+    const conversationEnders = ['thanks', 'thank you', 'cool', 'awesome', 'great', 'nice', 'ok', 'okay'];
+    const topicChangers = ['nevermind', 'never mind', 'different question', 'something else', 'change topic'];
+    
+    const isConversationEnder = conversationEnders.some(phrase => recentUserMsg === phrase);
+    const isTopicChanger = topicChangers.some(phrase => recentUserMsg.includes(phrase));
+    
+    // Force general mode for clear conversation enders or topic changes
+    if (isConversationEnder || isTopicChanger) {
       aiIntent = 'general';
       context = 'general';
-      // Clear adoption mode memory to prevent getting stuck
       updatedMemory.isAdoptionMode = false;
       updatedMemory.hasSeenResults = false;
-      console.log("[🧠 General Mode Override] Detected general question, switching to general mode and clearing adoption memory");
+      console.log("[🧠 Mode Switch] Detected conversation ender/topic change");
     }
-    // ✅ Force adoption mode if memory is active and message is vague
+    // Keep adoption mode for "more" requests when in adoption context
     else if (
       memory.isAdoptionMode === true &&
-      ["more", "more dogs", "show me more", "more please", "another", "next"].includes(lastMessage.trim().toLowerCase())
+      ["more", "more dogs", "show me more", "more please", "another", "next"].includes(recentUserMsg)
     ) {
       aiIntent = 'adoption';
-      console.log("[🧠 Adoption Mode Override] Kept adoption mode due to vague message and prior memory");
-    }
-    // 🧠 Detect if user is asking a question that's clearly not about adoption
-    else if (memory.isAdoptionMode === true) {
-      const questionWords = ['why', 'how', 'what', 'when', 'where', 'who', 'can you', 'do you', 'are you', 'tell me'];
-      const hasQuestionStructure = questionWords.some(q => recentUserMsg.startsWith(q)) || recentUserMsg.includes('?');
-      const hasAdoptionKeywords = ['dog', 'breed', 'adopt', 'find', 'search', 'show', 'more'].some(k => recentUserMsg.includes(k));
-      
-      if (hasQuestionStructure && !hasAdoptionKeywords) {
-        aiIntent = 'general';
-        context = 'general';
-        updatedMemory.isAdoptionMode = false;
-        console.log("[🧠 Question Override] Detected non-adoption question, switching to general mode");
-      }
+      console.log("[🧠 Adoption Mode] Kept adoption mode for more request");
     }
 
-    // 🧠 Override classified context if AI disagrees (unless already overridden above)
-    if (context !== aiIntent && !isGeneralMsg) {
-      context = aiIntent;
-      console.warn('[🧠 Barkr] AI overrode context →', context);
-    }
+    // 🧠 Use AI intent as final context
+    context = aiIntent;
+    console.log('[🧠 Barkr] Final context:', context);
 
 
     if (!aiExtracted.breed && !aiExtracted.location) {
@@ -777,8 +737,8 @@ ${dogList}
 
       try {
         let trimmedMessages = messages;
-        if (messages.length > 10) {
-          trimmedMessages = messages.slice(-10);
+        if (messages.length > 5) {
+          trimmedMessages = messages.slice(-5);
         }
 
         const completion = await openai.chat.completions.create({
