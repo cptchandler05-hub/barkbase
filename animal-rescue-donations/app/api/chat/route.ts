@@ -311,7 +311,7 @@ const urgencyTriggers = [
     if (!fullBreed && isCleanMemoryValue(memory.breed)) {
       fullBreed = memory.breed;
     }
-    
+
     // 🚫 Final memory validation (more robust)
     if (!isValidBreed(updatedMemory.breed)) {
       console.warn('[⚠️ Barkr] Invalid breed in memory, wiping:', updatedMemory.breed);
@@ -544,7 +544,7 @@ const urgencyTriggers = [
           // 🧼 Final comma cleanup to avoid double commas
           searchLocation = searchLocation.replace(/,+/g, ',').replace(/\s+,/g, ',').replace(/,\s+/g, ', ');
           console.log("[🧼 Final Cleaned Location]", searchLocation);
-          
+
         } else {
           // fallback for city + 2-letter state like "austin tx"
           const cityStateMatch = searchLocation.match(/([\w\s]+)[,]?\s+([a-zA-Z]{2})$/);
@@ -707,7 +707,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
 
     💡 Ask for more dogs anytime. I’ll keep digging. 🧡`;
       }
-      
+
       // 🧠 Exit adoption mode if last message is clearly general
       const generalTriggers = [
         'who are you',
@@ -721,15 +721,20 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
       const recentUserMsg = lastMessage.toLowerCase().trim();
       const isGeneralMsg = generalTriggers.some(trigger => recentUserMsg.includes(trigger));
 
-        if (isGeneralMsg) {
-          context = 'general';
-          updatedMemory.context = 'general';
-        } else if (updatedMemory.context === 'general') {
-          context = 'general';
-        }
+      if (isGeneralMsg) {
+        context = 'general';
+        updatedMemory.context = 'general';
+      } else if (updatedMemory.context === 'general') {
+        context = 'general';
+      }
 
-    } else {
-      // 🐶 GENERAL MODE
+      return NextResponse.json({
+        content: reply,
+        memory: updatedMemory,
+      });
+    }
+
+    // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
 
       try {
@@ -775,15 +780,24 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           memory: updatedMemory,
         });
 
-        } catch (error) {
-          console.error('[❌ Chat Error]', error);
-          return new NextResponse(
-            JSON.stringify({ error: "Sorry, I couldn't fetch a reply. Try again?" }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-        }
-        }
-    }
+      } catch (error) {
+        console.error('[❌ Chat Error]', error);
+        return new NextResponse(
+          JSON.stringify({ error: "Sorry, I couldn't fetch a reply. Try again?" }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+  } catch (error) {
+    console.error('[❌ Chat Error]', error);
+    return new NextResponse(
+      JSON.stringify({ error: "Sorry, I couldn't fetch a reply. Try again?" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
