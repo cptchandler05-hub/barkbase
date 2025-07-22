@@ -471,7 +471,7 @@ const urgencyTriggers = [
 
       if (!fullBreed && !fullLocation && missionIntentDetected) {
         return NextResponse.json({
-          content: `I see you. And I see them—the ones the system forgot. But I still need a location or breed to sniff them out.\n\nWant to see rural shelter dogs? Just say “rural.” Or tell me what kind of pup you’re drawn to. 🐾`,
+          content: `I see you. And I see them—the ones the system forgot. But I still need a location or breed to sniff them out.\n\nTell me what kind of pup you're drawn to, and give me a ZIP code or city + state to search. 🐾`,
           memory: updatedMemory,
         });
       }
@@ -486,19 +486,14 @@ const urgencyTriggers = [
       // 🐾 Prompt for missing inputs
       if (!fullBreed && !fullLocation) {
         return NextResponse.json({
-          content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.\n\nWhat kind of pup are you looking for—and where should I search? You can also say “rural” to see dogs from small-town shelters. 🐾`,
+          content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.\n\nWhat kind of pup are you looking for—and where should I search? Give me a ZIP code or city + state. 🐾`,
           memory: updatedMemory,
         });
       }
 
       if (!fullLocation && fullBreed) {
         return NextResponse.json({
-          content: `Got it — you're hoping to meet some **${fullBreed}** 🐶  
-      Can I show you the ones most in need?  
-      I track urgent rescues in rural areas—the dogs no one else sees.  
-      Transport’s not a problem—rescues work with partners to close the gap.  
-      Or if you’ve got a ZIP or full city + state, I can zero in locally.  
-      Your call. But the invisible ones? They’re waiting.`,
+          content: `Got it — you're hoping to meet some **${fullBreed}** 🐶\n\nNow I just need to know WHERE to search. Give me a ZIP code or city + state, and I'll find the most overlooked ${fullBreed}s in that area. 🐾`,
           memory: updatedMemory,
         });
       }
@@ -766,7 +761,7 @@ ${dogList}
 
         const response = completion.choices?.[0]?.message?.content;
         if (!response) {
-          console.warn("[⚠️ Barkr] GPT returned no message content.");
+          This code removes misleading messaging about "rural" and improves related prompts.          console.warn("[⚠️ Barkr] GPT returned no message content.");
           return NextResponse.json({
             content: "My circuits got tangled in a leash—try me again? 🐾",            memory: updatedMemory,
           });
