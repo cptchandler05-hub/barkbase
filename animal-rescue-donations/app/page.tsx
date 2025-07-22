@@ -168,21 +168,21 @@ export default function Page() {
           setBreed(data.memory.breed);
         }
 
-        if (content && content.trim().length > 1) {
-          setMessages((prev) => [...prev, { role: "assistant", content }]);
-          setShouldScroll(true);
-        } else {
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "assistant",
-              content: "Something got stuck in the ether—want to try again?",
-            },
-          ]);
-          setShouldScroll(true);
         }
 
-        } // 👈 FINAL closing brace for the try block
+      if (content && content.trim().length > 1) {
+        setMessages((prev) => [...prev, { role: "assistant", content }]);
+        setShouldScroll(true);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Something got stuck in the ether—want to try again?",
+          },
+        ]);
+        setShouldScroll(true);
+      }
 
     } catch (error) {
       console.error("API error:", error);
