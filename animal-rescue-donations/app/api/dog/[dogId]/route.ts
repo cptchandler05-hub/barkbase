@@ -1,28 +1,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
+import { getAccessToken } from "../../utils/tokenManager";
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
-
-async function getAccessToken() {
-  const response = await fetch(`${PETFINDER_API_URL}/oauth2/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: process.env.PETFINDER_API_KEY!,
-      client_secret: process.env.PETFINDER_SECRET!,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to get access token");
-  }
-
-  const data = await response.json();
-  return data.access_token;
-}
 
 export async function GET(
   request: NextRequest,
