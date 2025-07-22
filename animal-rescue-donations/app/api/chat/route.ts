@@ -1,4 +1,3 @@
-typescript
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
@@ -312,7 +311,7 @@ const urgencyTriggers = [
     if (!fullBreed && isCleanMemoryValue(memory.breed)) {
       fullBreed = memory.breed;
     }
-
+    
     // 🚫 Final memory validation (more robust)
     if (!isValidBreed(updatedMemory.breed)) {
       console.warn('[⚠️ Barkr] Invalid breed in memory, wiping:', updatedMemory.breed);
@@ -545,7 +544,7 @@ const urgencyTriggers = [
           // 🧼 Final comma cleanup to avoid double commas
           searchLocation = searchLocation.replace(/,+/g, ',').replace(/\s+,/g, ',').replace(/,\s+/g, ', ');
           console.log("[🧼 Final Cleaned Location]", searchLocation);
-
+          
         } else {
           // fallback for city + 2-letter state like "austin tx"
           const cityStateMatch = searchLocation.match(/([\w\s]+)[,]?\s+([a-zA-Z]{2})$/);
@@ -708,7 +707,7 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
 
     💡 Ask for more dogs anytime. I’ll keep digging. 🧡`;
       }
-
+      
       // 🧠 Exit adoption mode if last message is clearly general
       const generalTriggers = [
         'who are you',
@@ -729,48 +728,52 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
           context = 'general';
         }
 
+    } else {}
+      // 🐶 GENERAL MODE
+      const systemPrompt = BARKR_SYSTEM_PROMPT;
+
+      try {
+        let trimmedMessages = messages;
+        if (messages.length > 10) {
+          trimmedMessages = messages.slice(-10);
+        }
+
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...trimmedMessages.map((m: { role: string; content: string }) => ({
+
+              role: m.role,
+              content: m.content,
+            })),
+          ],
+          temperature: 0.75,
+          max_tokens: 600,
+        });
+
+        const response = completion.choices?.[0]?.message?.content;
+
+        if (!response) {
+          console.warn("[⚠️ Barkr] GPT returned no message content.");
+          return NextResponse.json({
+            content: "My circuits got tangled in a leash—try me again? 🐾",
+            memory: updatedMemory,
+          });
+        }
+
+        if (!response) {
+          console.warn("[🪂 Barkr Fallback] No valid response from GPT. Sending generic fallback.");
+          return NextResponse.json({
+            content: "Hmm... I couldn’t quite fetch anything helpful. Want to try rephrasing?",
+            memory: updatedMemory,
+          });
+        }
+
         return NextResponse.json({
-          content: reply,
+          content: response,
           memory: updatedMemory,
         });
-      } else {
-        // 🐶 GENERAL MODE
-        const systemPrompt = BARKR_SYSTEM_PROMPT;
-
-        try {
-          let trimmedMessages = messages;
-          if (messages.length > 10) {
-            trimmedMessages = messages.slice(-10);
-          }
-
-          const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...trimmedMessages.map((m: { role: string; content: string }) => ({
-                role: m.role,
-                content: m.content,
-              })),
-            ],
-            temperature: 0.75,
-            max_tokens: 600,
-          });
-
-          const response = completion.choices?.[0]?.message?.content;
-
-          if (!response) {
-            console.warn("[⚠️ Barkr] GPT returned no message content.");
-            return NextResponse.json({
-              content: "My circuits got tangled in a leash—try me again? 🐾",
-              memory: updatedMemory,
-            });
-          }
-
-          return NextResponse.json({
-            content: response,
-            memory: updatedMemory,
-            memory: updatedMemory,
-          });
 
         } catch (error) {
           console.error('[❌ Chat Error]', error);
@@ -782,13 +785,4 @@ I built a signal for the invisible ones—the long-overlooked, underpromoted, un
             }
           );
         }
-      }
-    }
-  } catch (e) {
-    console.error('[❌ POST Error]', e);
-    return new NextResponse(
-      JSON.stringify({ error: "Something went wrong. Please try again later." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
-}
+        }
