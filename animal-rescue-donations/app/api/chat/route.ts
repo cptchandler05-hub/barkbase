@@ -236,19 +236,25 @@ const urgencyTriggers = [
       updatedMemory.hasSeenResults = false;
       console.log("[🧠 Mode Switch] Switching to general mode");
     }
-    // Keep adoption mode for "more" requests when in adoption context
+    // Keep adoption mode for explicit "more" requests when in adoption context
     else if (
       memory.isAdoptionMode === true &&
-      ["more", "more dogs", "show me more", "more please", "another", "next"].includes(recentUserMsg)
+      (moreRequest || ["more", "more dogs", "show me more", "more please", "another", "next"].includes(recentUserMsg))
     ) {
       aiIntent = 'adoption';
       console.log("[🧠 Adoption Mode] Kept adoption mode for more request");
     }
-    // Trust AI intent if it detected general mode
+    // Trust AI intent if it detected general mode - don't override it
     else if (aiIntent === 'general') {
       context = 'general';
       updatedMemory.isAdoptionMode = false;
       console.log("[🧠 AI Intent] AI detected general question, switching modes");
+    }
+    // Only default to adoption mode if AI explicitly detected adoption intent
+    else if (aiIntent === 'adoption') {
+      context = 'adoption';
+      updatedMemory.isAdoptionMode = true;
+      console.log("[🧠 AI Intent] AI detected adoption intent, staying in adoption mode");
     }
 
     // 🧠 Use AI intent as final context
@@ -373,10 +379,8 @@ const urgencyTriggers = [
     }
 
 
-    // ✅ If user asked for more dogs and adoption context is present, force adoption mode
-    if (moreRequest && (updatedMemory.breed || updatedMemory.location)) {
-      context = 'adoption';
-    }
+    // ✅ Final context decision - trust the AI intent and mode switching logic above
+    console.log(`[🧠 Final Decision] aiIntent: ${aiIntent}, context: ${context}, isAdoptionMode: ${updatedMemory.isAdoptionMode}`);
 
     if (moreRequest) {
       // 🧠 Check if we have cached dogs - if not, something went wrong with memory
