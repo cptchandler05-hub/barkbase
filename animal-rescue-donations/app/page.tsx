@@ -86,6 +86,53 @@ export default function Page() {
     setShouldScroll(true); // triggers autoscroll
     setMemory(null); // Move this inside the function
   };
+
+  // Show most invisible dogs from rural areas
+  const handleShowInvisibleDogs = async () => {
+    setHasUserInteracted(true);
+    setLoading(true);
+    setShouldScroll(true);
+
+    try {
+      const res = await fetch("/api/invisible-dogs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+      const content = data.content || "";
+
+      if (content && content.trim().length > 1) {
+        setMessages((prev) => [...prev, { role: "assistant", content }]);
+        setShouldScroll(true);
+        
+        // Update memory if provided
+        if (data.memory) {
+          setMemory(data.memory);
+        }
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Sorry, I couldn't fetch the invisible dogs right now. Try again in a moment.",
+          },
+        ]);
+        setShouldScroll(true);
+      }
+    } catch (error) {
+      console.error("Invisible dogs error:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Something went wrong while searching for invisible dogs. Please try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -429,12 +476,19 @@ export default function Page() {
                       adoptions, breed info, or let Barkr help find you a dog.
                     </p>
 
-                    <div className="mt-2 text-center">
+                    <div className="mt-2 text-center space-x-3">
                       <button
                         onClick={handleResetChat}
                         className="inline-block px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition"
                       >
                         🔄 Reset Chat
+                      </button>
+                      <button
+                        onClick={handleShowInvisibleDogs}
+                        disabled={loading}
+                        className="inline-block px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition disabled:opacity-50"
+                      >
+                        👻 Most Invisible Dogs
                       </button>
                     </div>
 
