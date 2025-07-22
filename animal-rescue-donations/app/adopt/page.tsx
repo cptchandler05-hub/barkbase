@@ -90,11 +90,6 @@ export default function AdoptPage() {
   };
 
   const handleSearch = async () => {
-    if (!searchLocation.trim()) {
-      alert("Please enter a location (ZIP code or City, State)");
-      return;
-    }
-
     setLoading(true);
     setHasSearched(true);
     setCurrentPage(1);
@@ -104,7 +99,7 @@ export default function AdoptPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          location: searchLocation,
+          location: searchLocation.trim() || "", // Empty string will trigger rural fallback
           breed: searchBreed || ""
         }),
       });
