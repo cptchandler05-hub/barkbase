@@ -381,7 +381,7 @@ const urgencyTriggers = [
 
       if (moreDogs.length === 0) {
         return NextResponse.json({
-          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [adoption page](/adopt) to see more!`,
+          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [Adoption Page](/adopt) to see more!`,
           memory: updatedMemory,
         });
       }
