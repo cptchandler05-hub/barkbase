@@ -234,8 +234,7 @@ export default function DogProfilePage() {
                 <img
                   src={dog.photos?.[currentPhotoIndex]?.large || dog.photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
-                  className="w-full h-96 object-cover shadow-lg"
-                  style={{ objectPosition: 'center 20%' }}
+                  className="w-full h-80 object-contain bg-gray-100 shadow-lg"
                 />
                 <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   Score: {dog.visibilityScore || 0}
@@ -263,7 +262,7 @@ export default function DogProfilePage() {
                         <img
                           src={photo.small || photo.medium}
                           alt={`${dog.name} photo ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain bg-gray-50"
                         />
                       </button>
                     ))}
