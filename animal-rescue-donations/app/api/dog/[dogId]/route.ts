@@ -5,7 +5,7 @@ import { calculateVisibilityScore } from "../../../../lib/scoreVisibility";
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { dogId: string } }
 ) {
   try {
