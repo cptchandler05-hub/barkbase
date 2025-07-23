@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../../utils/tokenManager";
+import { calculateVisibilityScore } from "../../../lib/scoreVisibility";
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
@@ -35,14 +36,8 @@ export async function GET(
     // Add visibility score calculation
     const dog = data.animal;
     
-    // Calculate a basic visibility score based on available data
-    let visibilityScore = 0;
-    if (dog.published_at) {
-      const publishedDate = new Date(dog.published_at);
-      const daysSincePublished = Math.floor((Date.now() - publishedDate.getTime()) / (1000 * 60 * 60 * 24));
-      visibilityScore = Math.min(100, Math.max(0, daysSincePublished * 2));
-    }
-    
+    // Calculate proper visibility score using the same algorithm as the search results
+    const visibilityScore = calculateVisibilityScore(dog);
     dog.visibilityScore = visibilityScore;
 
     return NextResponse.json(dog);

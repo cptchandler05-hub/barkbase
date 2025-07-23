@@ -328,14 +328,48 @@ export default function DogProfilePage() {
 
               {/* Action Buttons */}
               <div className="space-y-4">
-                <a
-                  href={dog.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-6 rounded-xl text-center transition transform hover:scale-105 shadow-lg"
-                >
-                  ❤️ Adopt {dog.name} on Petfinder
-                </a>
+                {dog.contact?.phone || dog.contact?.email ? (
+                  <div className="space-y-2">
+                    <div className="bg-blue-600 text-white font-bold text-lg py-4 px-6 rounded-xl text-center shadow-lg">
+                      ❤️ Contact About {dog.name}
+                    </div>
+                    <div className="bg-blue-50 p-4 rounded-lg space-y-2">
+                      {dog.contact.phone && (
+                        <a
+                          href={`tel:${dog.contact.phone}`}
+                          className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
+                        >
+                          📞 Call: {dog.contact.phone}
+                        </a>
+                      )}
+                      {dog.contact.email && (
+                        <a
+                          href={`mailto:${dog.contact.email}?subject=Interested in adopting ${dog.name}`}
+                          className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
+                        >
+                          ✉️ Email: {dog.contact.email}
+                        </a>
+                      )}
+                      <a
+                        href={dog.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition text-sm"
+                      >
+                        View on Petfinder
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <a
+                    href={dog.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-6 rounded-xl text-center transition transform hover:scale-105 shadow-lg"
+                  >
+                    ❤️ Adopt {dog.name} on Petfinder
+                  </a>
+                )}
 
                 <div className="relative">
                   <button
