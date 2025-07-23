@@ -14,6 +14,8 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
 
   if (forceRefresh) {
     console.log('🔄 Force refreshing Petfinder token...');
+    cachedToken = null;
+    tokenExpiresAt = 0;
   } else {
     console.log('🔑 Fetching new Petfinder access token...');
   }
@@ -25,10 +27,15 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   // Check if environment variables exist
   if (!process.env.PETFINDER_CLIENT_ID || !process.env.PETFINDER_CLIENT_SECRET) {
     console.error('❌ Missing Petfinder environment variables!');
-    console.error('   PETFINDER_CLIENT_ID:', !!process.env.PETFINDER_CLIENT_ID);
-    console.error('   PETFINDER_CLIENT_SECRET:', !!process.env.PETFINDER_CLIENT_SECRET);
-    throw new Error('Missing Petfinder API credentials');
+    console.error('   PETFINDER_CLIENT_ID exists:', !!process.env.PETFINDER_CLIENT_ID);
+    console.error('   PETFINDER_CLIENT_SECRET exists:', !!process.env.PETFINDER_CLIENT_SECRET);
+    console.error('   Available env vars:', Object.keys(process.env).filter(key => key.includes('PETFINDER')));
+    throw new Error('Missing Petfinder API credentials - check environment variables');
   }
+
+  console.log('✅ Petfinder credentials found');
+  console.log('   Client ID length:', process.env.PETFINDER_CLIENT_ID.length);
+  console.log('   Client Secret length:', process.env.PETFINDER_CLIENT_SECRET.length);
 
   try {
     const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
@@ -46,7 +53,9 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
       console.error('❌ Token fetch failed:');
       console.error('   Status:', res.status);
       console.error('   Response:', errorText);
-      console.error('   Client ID exists:', !!process.env.PETFINDER_CLIENT_ID);
+      console.error('   Headers:', Object.fromEntries(res.headers.entries()));
+      console.error('   Request URL:', 'https://api.petfinder.com/v2/oauth2/token');
+      console.error('   Client ID first 10 chars:', process.env.PETFINDER_CLIENT_ID?.substring(0, 10) + '...');
       throw new Error(`Failed to retrieve Petfinder access token: ${res.status} - ${errorText}`);
     }
 
