@@ -220,7 +220,7 @@ const urgencyTriggers = [
 
     // 🧠 Trust the AI intent detection - don't override it just because breed/location was extracted
     let aiIntent: 'adoption' | 'general' = aiExtracted.intent;
-    
+
     // Only override to adoption if we have strong adoption context in memory
     if (aiIntent === 'general' && memory.breed && memory.location && memory.isAdoptionMode) {
       console.log("[🧠 Override] General intent but strong adoption context in memory");
@@ -229,21 +229,21 @@ const urgencyTriggers = [
 
     // ✅ Improved mode switching - prioritize AI intent and user signals
     const recentUserMsg = lastMessage.toLowerCase().trim();
-    
+
     // Clear conversation enders and topic changes
     const conversationEnders = ['thanks', 'thank you', 'cool', 'awesome', 'great', 'nice', 'ok', 'okay'];
     const topicChangers = ['nevermind', 'never mind', 'different question', 'something else', 'change topic'];
-    
+
     const isConversationEnder = conversationEnders.some(phrase => recentUserMsg === phrase);
     const isTopicChanger = topicChangers.some(phrase => recentUserMsg.includes(phrase));
-    
+
     // Detect general questions that should override adoption mode
     const generalQuestionWords = ['who', 'what', 'why', 'how', 'when', 'where', 'tell me', 'explain', 'describe'];
     const adoptionKeywords = ['dog', 'dogs', 'breed', 'adopt', 'search', 'find', 'show', 'more'];
-    
+
     const hasGeneralQuestion = generalQuestionWords.some(word => recentUserMsg.startsWith(word) || recentUserMsg.includes(word + ' '));
     const hasAdoptionKeywords = adoptionKeywords.some(word => recentUserMsg.includes(word));
-    
+
     // Force general mode for conversation enders, topic changes, or general questions without adoption keywords
     if (isConversationEnder || isTopicChanger || (hasGeneralQuestion && !hasAdoptionKeywords)) {
       aiIntent = 'general';
@@ -458,7 +458,7 @@ const urgencyTriggers = [
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
-        const adoptLink = `[**Adopt ${name} ❤️**](${dog.url})`;
+        const adoptLink = `[**View ${name} ❤️**](/adopt/${dog.id})`;
 
         const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 
@@ -722,14 +722,14 @@ const urgencyTriggers = [
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
-        const adoptLink = `[**Adopt ${name} ❤️**](${dog.url})`;
+        const adoptLink = `[**View ${name} ❤️**](/adopt/${dog.id})`;
 
         const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 
         dogListParts.push(dogMarkdown);
       }
 
-      const dogList = dogListParts.join('\n\n---\n\n');
+      const dogList = dogListParts.join('\n\n---\n\n\n');
 
       let reply: string;
 
@@ -758,7 +758,7 @@ ${dogList}
         reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
       }
 
-      
+
 
       return NextResponse.json({
         content: reply,

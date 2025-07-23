@@ -394,7 +394,8 @@ export default function AdoptPage() {
                         <div className="flex gap-1">
                           <button
                             onClick={() => {
-                              const url = `https://x.com/intent/tweet?text=${encodeURIComponent(`${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`)}&url=${encodeURIComponent(dog.url)}`;
+                              const barkbaseUrl = `${window.location.origin}/adopt/${dog.id}`;
+                              const url = `https://x.com/intent/tweet?text=${encodeURIComponent(`${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`)}&url=${encodeURIComponent(barkbaseUrl)}`;
                               window.open(url, '_blank');
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
@@ -404,7 +405,8 @@ export default function AdoptPage() {
                           </button>
                           <button
                             onClick={() => {
-                              const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(dog.url)}`;
+                              const barkbaseUrl = `${window.location.origin}/adopt/${dog.id}`;
+                              const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(barkbaseUrl)}`;
                               window.open(url, '_blank');
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
@@ -414,8 +416,9 @@ export default function AdoptPage() {
                           </button>
                           <button
                             onClick={() => {
+                              const barkbaseUrl = `${window.location.origin}/adopt/${dog.id}`;
                               const text = `${dog.name} needs a home! Help spread the word! 🐾`;
-                              const url = `https://t.me/share/url?url=${encodeURIComponent(dog.url)}&text=${encodeURIComponent(text)}`;
+                              const url = `https://t.me/share/url?url=${encodeURIComponent(barkbaseUrl)}&text=${encodeURIComponent(text)}`;
                               window.open(url, '_blank');
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
@@ -425,8 +428,9 @@ export default function AdoptPage() {
                           </button>
                           <button
                             onClick={() => {
+                              const barkbaseUrl = `${window.location.origin}/adopt/${dog.id}`;
                               const text = `${dog.name} needs a home! This ${dog.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
-                              const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + dog.url)}`;
+                              const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + barkbaseUrl)}`;
                               window.open(url, '_blank');
                             }}
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"

@@ -106,24 +106,24 @@ export default function DogProfilePage() {
 
   const shareToX = () => {
     const text = `${dog?.name} needs a home! This ${dog?.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
-    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(dog?.url || window.location.href)}`;
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
     window.open(url, '_blank');
   };
 
   const shareToFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(dog?.url || window.location.href)}`;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
     window.open(url, '_blank');
   };
 
   const shareToTelegram = () => {
     const text = `${dog?.name} needs a home! Help spread the word! 🐾`;
-    const url = `https://t.me/share/url?url=${encodeURIComponent(dog?.url || window.location.href)}&text=${encodeURIComponent(text)}`;
+    const url = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
   const shareToFarcaster = () => {
     const text = `${dog?.name} needs a home! This ${dog?.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
-    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + (dog?.url || window.location.href))}`;
+    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + window.location.href)}`;
     window.open(url, '_blank');
   };
 
@@ -354,25 +354,18 @@ export default function DogProfilePage() {
                           ✉️ Email: {dog.contact.email}
                         </a>
                       )}
-                      <a
-                        href={dog.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition text-sm"
-                      >
-                        View on Petfinder
-                      </a>
+                      
                     </div>
                   </div>
                 ) : (
-                  <a
-                    href={dog.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-6 rounded-xl text-center transition transform hover:scale-105 shadow-lg"
-                  >
-                    ❤️ Adopt {dog.name} on Petfinder
-                  </a>
+                  <div className="bg-gray-50 p-4 rounded-lg text-center">
+                    <p className="text-gray-600 mb-2">
+                      Contact information not available through our system.
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Try searching for "{dog.name}" on adoption websites or contact local shelters near {dog.contact?.address?.city}, {dog.contact?.address?.state}.
+                    </p>
+                  </div>
                 )}
 
                 <div className="relative">
@@ -463,7 +456,7 @@ export default function DogProfilePage() {
             
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800">
-                💡 <strong>Ready to adopt?</strong> Contact them directly through Petfinder for the fastest response, or visit their website to learn about their adoption process.
+                💡 <strong>Ready to adopt?</strong> Contact the rescue directly using the information above for the fastest response about {dog.name}.
               </p>
             </div>
           </div>
