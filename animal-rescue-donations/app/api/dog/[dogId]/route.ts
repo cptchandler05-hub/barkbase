@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../../utils/tokenManager";
-import { calculateVisibilityScore } from "../../../lib/scoreVisibility";
+import { calculateVisibilityScore } from "../../../../lib/scoreVisibility";
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
