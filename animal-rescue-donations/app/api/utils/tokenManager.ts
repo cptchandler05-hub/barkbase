@@ -1,18 +1,22 @@
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
 
-export async function getAccessToken(): Promise<string> {
+export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
   const now = Date.now();
   
   // Add 5-minute buffer to prevent using token right before expiry
   const buffer = 5 * 60 * 1000; // 5 minutes in milliseconds
   
-  if (cachedToken && now < (tokenExpiresAt - buffer)) {
+  if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
     console.log('🔄 Using cached Petfinder token');
     return cachedToken;
   }
 
-  console.log('🔑 Fetching new Petfinder access token...');
+  if (forceRefresh) {
+    console.log('🔄 Force refreshing Petfinder token...');
+  } else {
+    console.log('🔑 Fetching new Petfinder access token...');
+  }
   
   // Clear expired token
   cachedToken = null;
