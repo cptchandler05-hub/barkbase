@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../../utils/tokenManager";
 import { calculateVisibilityScore } from "../../../../lib/scoreVisibility";
@@ -32,15 +31,30 @@ export async function GET(
     }
 
     const data = await response.json();
-    
+
     // Add visibility score calculation
     const dog = data.animal;
-    
+
     // Calculate proper visibility score using the same algorithm as the search results
     const visibilityScore = calculateVisibilityScore(dog);
     dog.visibilityScore = visibilityScore;
 
-    return NextResponse.json(dog);
+    // Ensure we return all necessary fields
+    const enrichedDog = {
+      ...dog,
+      visibilityScore,
+      // Ensure we have the basic fields the frontend expects
+      id: dog.id,
+      name: dog.name,
+      breeds: dog.breeds,
+      age: dog.age,
+      size: dog.size,
+      photos: dog.photos,
+      contact: dog.contact,
+      description: dog.description,
+    };
+
+    return NextResponse.json(enrichedDog);
   } catch (error) {
     console.error("Error fetching dog details:", error);
     return NextResponse.json(

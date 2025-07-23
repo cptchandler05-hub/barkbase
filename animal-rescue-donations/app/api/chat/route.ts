@@ -458,7 +458,8 @@ const urgencyTriggers = [
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
-        const adoptLink = `[**View ${name} ❤️**](/adopt/${dog.id})`;
+        const dogUrl = `/adopt/${dog.id}`;
+        const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
 
         const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 
@@ -722,7 +723,8 @@ const urgencyTriggers = [
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
-        const adoptLink = `[**View ${name} ❤️**](/adopt/${dog.id})`;
+        const dogUrl = `/adopt/${dog.id}`;
+        const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
 
         const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 

@@ -110,7 +110,7 @@ export async function POST(req: Request) {
 
       const compositeScore = `**Visibility Score: ${visibilityScore}**`;
       const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
-      const adoptLink = `[**Adopt ${name} ❤️**](${dog.url})`;
+      const adoptLink = `[**Meet ${name} ❤️**](/adopt/${dog.id})`;
 
       const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 

@@ -50,16 +50,10 @@ export default function AdoptPage() {
   const handleShowMostInvisible = async () => {
     setLoading(true);
     setHasSearched(false);
+    setCurrentPage(1);
     try {
-      const res = await fetch("/api/invisible-dogs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (res.ok) {
-        // For now, we'll fetch from a random rural location
-        await fetchDogsFromRuralArea();
-      }
+      // Fetch from a random rural location directly
+      await fetchDogsFromRuralArea();
     } catch (error) {
       console.error("Error fetching invisible dogs:", error);
     } finally {
