@@ -234,8 +234,8 @@ export default function DogProfilePage() {
                 <img
                   src={dog.photos?.[currentPhotoIndex]?.large || dog.photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
-                  className="w-full h-96 object-cover object-center shadow-lg"
-                  style={{ objectPosition: 'center 30%' }}
+                  className="w-full h-96 object-cover shadow-lg"
+                  style={{ objectPosition: 'center 20%' }}
                 />
                 <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   Score: {dog.visibilityScore || 0}
@@ -247,22 +247,27 @@ export default function DogProfilePage() {
               
               {/* Photo Thumbnails */}
               {dog.photos && dog.photos.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto">
-                  {dog.photos.map((photo, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentPhotoIndex(index)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
-                        index === currentPhotoIndex ? 'border-blue-500' : 'border-gray-300'
-                      }`}
-                    >
-                      <img
-                        src={photo.small || photo.medium}
-                        alt={`${dog.name} photo ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600 text-center">
+                    📸 {dog.photos.length} photos - Click to view
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {dog.photos.map((photo, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPhotoIndex(index)}
+                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-3 transition ${
+                          index === currentPhotoIndex ? 'border-blue-500 shadow-lg' : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        <img
+                          src={photo.small || photo.medium}
+                          alt={`${dog.name} photo ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -330,9 +335,9 @@ export default function DogProfilePage() {
               <div className="space-y-4">
                 {dog.contact?.phone || dog.contact?.email ? (
                   <div className="space-y-2">
-                    <div className="bg-blue-600 text-white font-bold text-lg py-4 px-6 rounded-xl text-center shadow-lg">
+                    <h3 className="text-xl font-bold text-blue-900 mb-3 text-center">
                       ❤️ Contact About {dog.name}
-                    </div>
+                    </h3>
                     <div className="bg-blue-50 p-4 rounded-lg space-y-2">
                       {dog.contact.phone && (
                         <a
