@@ -61,13 +61,16 @@ export default function DogProfilePage() {
 
   const fetchDogDetails = async () => {
     try {
+      console.log("Fetching dog details for dogId:", dogId);
       const res = await fetch(`/api/dog/${dogId}`);
       
       if (res.ok) {
         const dog = await res.json();
+        console.log("Successfully fetched dog:", dog.name);
         setDog(dog);
       } else {
-        console.error("Failed to fetch dog details");
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to fetch dog details:", res.status, errorData);
       }
     } catch (error) {
       console.error("Error fetching dog details:", error);
