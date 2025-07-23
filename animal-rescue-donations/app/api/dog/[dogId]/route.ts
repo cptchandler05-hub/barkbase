@@ -31,6 +31,8 @@ export async function GET(
     }
 
     const data = await response.json();
+    console.log("Successfully fetched dog data for:", data.animal?.name);
+    console.log("Description length:", data.animal?.description?.length || 0);
 
     // Add visibility score calculation
     const dog = data.animal;

@@ -422,9 +422,9 @@ export default function DogProfilePage() {
             <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-blue-900 mb-4">About {dog.name}</h2>
               <div className="prose max-w-none text-gray-700">
-                {dog.description.split('\n').map((paragraph, index) => (
-                  <p key={index} className="mb-3">{paragraph}</p>
-                ))}
+                <div className="whitespace-pre-line text-gray-700 leading-relaxed">
+                  {dog.description}
+                </div>
               </div>
             </div>
           )}
