@@ -16,9 +16,9 @@ export async function GET(
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
-    // Always get a fresh token for individual dog requests to avoid stale token issues
-    let accessToken = await getAccessToken(true);
-    console.log("Got fresh access token, making API call...");
+    // Get access token with proper rate limiting
+    let accessToken = await getAccessToken();
+    console.log("Got access token, making API call...");
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${params.dogId}`;
     console.log("Making request to:", apiUrl);
@@ -60,52 +60,10 @@ export async function GET(
       return NextResponse.json({ error: "Dog not found" }, { status: 404 });
     }
 
-    // If 401 (unauthorized), try once more with fresh token
+    // If 401 (unauthorized), the token manager will handle refresh on next request
     if (response.status === 401) {
-      console.log("Got 401, force refreshing token and retrying...");
-      try {
-        const newAccessToken = await getAccessToken(true); // Force refresh
-        
-        const retryResponse = await fetch(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        console.log("Retry API response status:", retryResponse.status);
-
-        if (retryResponse.ok) {
-          const retryData = await retryResponse.json();
-          console.log("Successfully fetched dog data on retry for:", retryData.animal?.name);
-
-          if (!retryData.animal) {
-            console.error("No animal data in retry response");
-            return NextResponse.json({ error: "Invalid response from API" }, { status: 500 });
-          }
-
-          const dog = retryData.animal;
-          const visibilityScore = calculateVisibilityScore(dog);
-          
-          const enrichedDog = {
-            ...dog,
-            visibilityScore,
-          };
-
-          console.log("Returning enriched dog data from retry with visibility score:", visibilityScore);
-          return NextResponse.json(enrichedDog);
-        } else {
-          const retryErrorText = await retryResponse.text();
-          console.error("Retry failed with:", retryResponse.status, retryErrorText);
-          if (retryResponse.status === 404) {
-            return NextResponse.json({ error: "Dog not found" }, { status: 404 });
-          }
-          throw new Error(`Petfinder API retry error: ${retryResponse.status} - ${retryErrorText}`);
-        }
-      } catch (retryError) {
-        console.error("Error during token refresh retry:", retryError);
-        throw new Error(`Token refresh failed: ${retryError instanceof Error ? retryError.message : "Unknown error"}`);
-      }
+      console.log("Got 401 unauthorized, token may be expired");
+      return NextResponse.json({ error: "Authentication error - please try again" }, { status: 401 });
     }
 
     // For other errors, throw error

@@ -1,17 +1,62 @@
+
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
+let isRefreshing = false;
+let refreshPromise: Promise<string> | null = null;
+
+// Rate limiting: track last request time and enforce minimum delay
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 100; // 100ms between requests
+
+// Request queue to prevent concurrent token refreshes
+const pendingRequests: Array<{
+  resolve: (token: string) => void;
+  reject: (error: Error) => void;
+}> = [];
 
 export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
   const now = Date.now();
+  
+  // Rate limiting: ensure minimum time between requests
+  const timeSinceLastRequest = now - lastRequestTime;
+  if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+    const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+    console.log(`⏱️ Rate limiting: waiting ${waitTime}ms before next request`);
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
   
   // Add 5-minute buffer to prevent using token right before expiry
   const buffer = 5 * 60 * 1000; // 5 minutes in milliseconds
   
   if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
     console.log('🔄 Using cached Petfinder token');
+    lastRequestTime = Date.now();
     return cachedToken;
   }
 
+  // If we're already refreshing, wait for that refresh to complete
+  if (isRefreshing && refreshPromise) {
+    console.log('⏳ Token refresh in progress, waiting...');
+    return refreshPromise;
+  }
+
+  // Start the refresh process
+  isRefreshing = true;
+  refreshPromise = performTokenRefresh(forceRefresh);
+
+  try {
+    const token = await refreshPromise;
+    lastRequestTime = Date.now();
+    return token;
+  } catch (error) {
+    throw error;
+  } finally {
+    isRefreshing = false;
+    refreshPromise = null;
+  }
+}
+
+async function performTokenRefresh(forceRefresh: boolean): Promise<string> {
   if (forceRefresh) {
     console.log('🔄 Force refreshing Petfinder token...');
     cachedToken = null;
@@ -66,6 +111,7 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
       throw new Error('Invalid token response from Petfinder API');
     }
     
+    const now = Date.now();
     cachedToken = data.access_token;
     tokenExpiresAt = now + (data.expires_in * 1000);
     
