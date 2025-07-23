@@ -16,8 +16,9 @@ export async function GET(
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
-    let accessToken = await getAccessToken();
-    console.log("Got access token, making API call...");
+    // Always get a fresh token for individual dog requests to avoid stale token issues
+    let accessToken = await getAccessToken(true);
+    console.log("Got fresh access token, making API call...");
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${params.dogId}`;
     console.log("Making request to:", apiUrl);
