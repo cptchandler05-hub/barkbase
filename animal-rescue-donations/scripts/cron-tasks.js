@@ -12,7 +12,7 @@ const TASKS = {
   TRIGGER_RAFFLE: process.env.TASK_TYPE === 'raffle' || process.env.TASK_TYPE === 'all'
 };
 
-const API_BASE_URL = process.env.API_BASE_URL || 'https://your-app.vercel.app'; // Update this
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://animal-rescue-donations.replit.dev'; // Update this
 
 async function makeHttpRequest(url, method = 'GET', data = null) {
   return new Promise((resolve, reject) => {

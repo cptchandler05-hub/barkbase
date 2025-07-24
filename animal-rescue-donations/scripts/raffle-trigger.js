@@ -2,7 +2,7 @@
 // Every-2-minutes raffle trigger task
 const https = require('https');
 
-const API_BASE_URL = process.env.API_BASE_URL || 'https://animal-rescue-donations.replit.dev'; // Will be updated to Vercel URL when deployed
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://animal-rescue-donations.replit.dev'; // Will be updated to Vercel URL when deployed
 
 async function makeHttpRequest(url, method = 'POST', data = null) {
   return new Promise((resolve, reject) => {
