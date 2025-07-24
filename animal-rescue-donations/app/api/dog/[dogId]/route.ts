@@ -15,7 +15,7 @@ export async function GET(
     console.log("Params object:", params);
     console.log("Raw dogId from params:", params.dogId);
     console.log("Type of dogId:", typeof params.dogId);
-    
+
     const dogId = await params.dogId; // Handle potential Promise
     console.log("Resolved dogId:", dogId);
 
@@ -66,7 +66,7 @@ export async function GET(
 
       const dog = data.animal;
       const visibilityScore = calculateVisibilityScore(dog);
-      
+
       const enrichedDog = {
         ...dog,
         visibilityScore,
@@ -82,7 +82,7 @@ export async function GET(
     console.error("Request URL was:", apiUrl);
     console.error("Dog ID was:", dogId);
     console.error("Original params.dogId was:", params.dogId);
-    
+
     if (response.status === 404) {
       console.log("Dog not found:", params.dogId);
       return NextResponse.json({ error: "Dog not found" }, { status: 404 });
