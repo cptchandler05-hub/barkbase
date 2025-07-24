@@ -107,7 +107,7 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
-    // Get unique traits about this specific dog
+    // Get unique traits about this specific dog for varied descriptions
     const visibilityScore = dog.visibilityScore || 0;
     const isHighlyOverlooked = visibilityScore >= 80;
     const isSenior = age === 'Senior';
@@ -120,74 +120,86 @@ export default function DogProfilePage() {
     const goodWithKids = dog.environment?.children;
     const goodWithDogs = dog.environment?.dogs;
     const goodWithCats = dog.environment?.cats;
+    const isHouseTrained = dog.attributes?.house_trained;
+    const hasTags = dog.tags && dog.tags.length > 0;
 
-    // Generate unique content based on dog's specific characteristics
+    // Generate unique varied content based on dog's specific characteristics and timestamp
+    const uniqueSeed = Date.now() + dog.id;
+    const randomizer = (uniqueSeed % 1000) / 1000;
+
     const openingLines = [
-      `No description for ${name}? Typical. Small rescues are drowning in work - saving lives with no time for marketing fluff.`,
-      `${name} didn't get a bio because the rescue workers are too busy pulling dogs from kill lists to write poetry.`,
-      `The rescue forgot to describe ${name}. They're swamped saving lives on zero budget. Lucky ${pronoun} has me.`,
-      `Empty description for ${name}? That's what happens when heroes work 16-hour days for free with no marketing team.`
+      `No description for ${name}? Look, small rescues are drowning - pulling dogs from kill lists with zero time for marketing copy.`,
+      `${name} didn't get a bio because these heroes are too busy saving lives to write fancy descriptions.`,
+      `The rescue forgot to describe ${name}. They're running on fumes and heart, no budget for PR teams. Lucky for ${objective}, I'm here.`,
+      `Empty description for ${name}? That's rescue life - 16-hour days saving dogs while everyone else sleeps.`,
+      `${name} has no write-up because the volunteers are too busy being actual heroes to craft perfect bios.`
     ];
 
-    const dogSpecificTraits = [];
+    const traitDescriptions = [];
     
     if (isHighlyOverlooked) {
-      dogSpecificTraits.push(`With a visibility score of ${visibilityScore}, ${name} is practically invisible to the algorithm. That's criminal.`);
+      traitDescriptions.push(`Visibility score ${visibilityScore}? ${name} is practically a ghost to the algorithm. Absolute crime.`);
     }
     
-    if (isSenior) {
-      dogSpecificTraits.push(`${pronounCap}'s a senior - the most overlooked demographic in rescue. People want puppies, not wisdom.`);
-    } else if (isPuppy) {
-      dogSpecificTraits.push(`Even as a ${age.toLowerCase()}, ${name} gets skipped. Shows how broken the system is.`);
+    if (isSenior && randomizer > 0.5) {
+      traitDescriptions.push(`At ${age.toLowerCase()}, ${pronoun}'s got wisdom people overlook for puppy energy. Their loss.`);
+    } else if (isPuppy && randomizer < 0.6) {
+      traitDescriptions.push(`Even young ${name} gets skipped over. Shows how broken this whole system really is.`);
     }
     
-    if (isLarge) {
-      dogSpecificTraits.push(`${pronounCap}'s ${size.toLowerCase()} - another strike against ${objective} in a world obsessed with lap dogs.`);
-    } else if (isSmall) {
-      dogSpecificTraits.push(`${pronounCap}'s ${size.toLowerCase()} but still invisible. Size doesn't guarantee love, apparently.`);
+    if (isLarge && randomizer > 0.4) {
+      traitDescriptions.push(`${pronounCap}'s ${size.toLowerCase()} in a world obsessed with purse dogs. Big hearts need big homes.`);
+    } else if (isSmall && randomizer < 0.7) {
+      traitDescriptions.push(`Small but mighty - ${name} packs personality into that ${size.toLowerCase()} frame.`);
     }
     
-    if (!hasPhotos) {
-      dogSpecificTraits.push(`No photos? That's a death sentence in today's swipe-left world. But ${name} is real, not a profile pic.`);
+    if (hasTags && randomizer > 0.3) {
+      const tagList = dog.tags?.slice(0, 2).join(' and ') || '';
+      traitDescriptions.push(`Tagged as ${tagList.toLowerCase()} - that's who ${name} really is when someone bothers to look.`);
     }
     
-    if (isSpecialNeeds) {
-      dogSpecificTraits.push(`${pronounCap} has special needs - which just means ${pronoun} needs someone who gives a damn.`);
+    if (isSpecialNeeds && randomizer > 0.6) {
+      traitDescriptions.push(`Special needs just means ${pronoun} needs someone who actually cares. Novel concept, right?`);
     }
     
-    if (isNotNeutered) {
-      dogSpecificTraits.push(`Not fixed yet? The rescue will handle that. They handle everything nobody else will.`);
+    if (isNotNeutered && randomizer < 0.5) {
+      traitDescriptions.push(`Not fixed yet? The rescue will handle that - they handle everything nobody else bothers with.`);
     }
 
-    const personalityGuess = [];
-    if (goodWithKids) {
-      personalityGuess.push(`${pronounCap} loves kids - the kind of patient soul who'd protect your family.`);
-    }
-    if (goodWithDogs) {
-      personalityGuess.push(`Good with other dogs means ${pronoun}'s social, not territorial.`);
-    }
-    if (goodWithCats) {
-      personalityGuess.push(`${pronounCap} gets along with cats - that's emotional intelligence right there.`);
+    if (isHouseTrained && randomizer > 0.5) {
+      traitDescriptions.push(`House trained and ready - ${name} just needs someone to notice ${possessive} potential.`);
     }
 
-    const closingLines = [
-      `The rescue doesn't have time for fancy descriptions. They're too busy being heroes. But ${name}? ${pronounCap}'s the reason they do it.`,
-      `Small rescues survive on heart alone. No marketing budget, no PR team. Just pure determination to save dogs like ${name}.`,
-      `Every day ${name} waits, volunteers work unpaid to keep ${objective} alive. You could end that wait today.`,
-      `The system failed ${name}. The rescue stepped up. Now it's your turn.`
+    const personalityInsights = [];
+    if (goodWithKids && randomizer > 0.4) {
+      personalityInsights.push(`${pronounCap} loves kids - the patient type who'd guard your family with ${possessive} life.`);
+    }
+    if (goodWithDogs && randomizer < 0.8) {
+      personalityInsights.push(`Plays well with other dogs - social, not territorial. Pack mentality done right.`);
+    }
+    if (goodWithCats && randomizer > 0.3) {
+      personalityInsights.push(`Gets along with cats too - that's serious emotional intelligence right there.`);
+    }
+
+    const closingMessages = [
+      `These rescue warriors don't have time for marketing fluff. They're too busy being heroes. ${name} is why they fight.`,
+      `Small rescues run on pure heart - no fancy budgets, just determination to save souls like ${name}.`,
+      `Every day ${name} waits, volunteers sacrifice everything to keep ${objective} alive. End that wait.`,
+      `The system abandoned ${name}. The rescue stepped up. Your turn now.`,
+      `While people chase Instagram-perfect puppies, ${name} waits for someone real. Someone like you.`
     ];
 
-    // Randomly select components to create unique descriptions
-    const opening = openingLines[Math.floor(Math.random() * openingLines.length)];
-    const traits = dogSpecificTraits.length > 0 
-      ? dogSpecificTraits.slice(0, 2).join(' ') 
-      : `This ${breed} has been waiting in ${cityState} while people chase designer dogs.`;
-    const personality = personalityGuess.length > 0 
-      ? personalityGuess.join(' ') 
-      : `${pronounCap}'s the kind of loyal soul who'll remember you saved ${objective} forever.`;
-    const closing = closingLines[Math.floor(Math.random() * closingLines.length)];
+    // Create unique combinations using the dog's specific data
+    const selectedOpening = openingLines[Math.floor(randomizer * openingLines.length)];
+    const selectedTraits = traitDescriptions.length > 0 
+      ? traitDescriptions.slice(0, Math.min(2, traitDescriptions.length)).join(' ')
+      : `This ${breed} from ${cityState} has been waiting while people chase trendy breeds.`;
+    const selectedPersonality = personalityInsights.length > 0 
+      ? personalityInsights.join(' ')
+      : `${pronounCap}'s the loyal type who'll remember you saved ${objective} for the rest of ${possessive} days.`;
+    const selectedClosing = closingMessages[Math.floor(randomizer * closingMessages.length)];
 
-    return `${opening}\n\n${traits}\n\n${personality}\n\n${closing}\n\nDon't scroll past ${name}. ${pronounCap}'s been invisible long enough.`;
+    return `${selectedOpening}\n\n${selectedTraits}\n\n${selectedPersonality}\n\n${selectedClosing}\n\nDon't scroll past ${name}. ${pronounCap}'s been invisible long enough.`;
   };
 
   const getVisibilityBadgeColor = (score: number) => {
