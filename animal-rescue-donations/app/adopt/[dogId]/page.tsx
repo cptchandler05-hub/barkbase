@@ -602,7 +602,10 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                             onError={(e) => {
                               console.warn('Farcaster logo failed to load, using fallback');
                               e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                              const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (nextSibling) {
+                                nextSibling.style.display = 'flex';
+                              }
                             }}
                           />
                           <div className="w-8 h-8 mb-1 bg-purple-600 rounded-lg flex items-center justify-center" style={{display: 'none'}}>
