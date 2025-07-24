@@ -25,8 +25,15 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
     await new Promise(resolve => setTimeout(resolve, waitTime));
   }
   
-  // Add 5-minute buffer to prevent using token right before expiry
-  const buffer = 5 * 60 * 1000; // 5 minutes in milliseconds
+  // Add 10-minute buffer to prevent using token right before expiry (increased from 5min)
+  const buffer = 10 * 60 * 1000; // 10 minutes in milliseconds
+  
+  // Always refresh if forceRefresh is true
+  if (forceRefresh) {
+    console.log('🔄 Force refreshing token as requested');
+    cachedToken = null;
+    tokenExpiresAt = 0;
+  }
   
   if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
     console.log('🔄 Using cached Petfinder token');

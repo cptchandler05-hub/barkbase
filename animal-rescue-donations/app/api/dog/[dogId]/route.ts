@@ -16,14 +16,14 @@ export async function GET(
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
-    // Get fresh access token to avoid stale token issues
-    let accessToken = await getAccessToken();
-    console.log("Got access token, making API call...");
+    // Always get a fresh token for individual dog requests to avoid stale token issues
+    const accessToken = await getAccessToken(true);
+    console.log("Got fresh access token for dog details");
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${params.dogId}`;
     console.log("Making request to:", apiUrl);
 
-    let response = await fetch(apiUrl, {
+    const response = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
@@ -31,19 +31,6 @@ export async function GET(
     });
 
     console.log("API response status:", response.status);
-
-    // If we get 401, try one more time with a fresh token
-    if (response.status === 401) {
-      console.log("Got 401, trying with fresh token...");
-      accessToken = await getAccessToken(true); // Force refresh
-      response = await fetch(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log("Retry API response status:", response.status);
-    }
 
     if (response.ok) {
       const data = await response.json();
@@ -74,8 +61,8 @@ export async function GET(
     }
 
     if (response.status === 401) {
-      console.log("Still getting 401 after token refresh");
-      return NextResponse.json({ error: "Authentication failed - API credentials may be invalid" }, { status: 401 });
+      console.log("Got 401 with fresh token - credentials may be invalid");
+      return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
     }
 
     // For other errors, throw error
