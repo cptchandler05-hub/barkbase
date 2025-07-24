@@ -1,5 +1,6 @@
 
 const { createClient } = require('@supabase/supabase-js');
+const { getRandomRuralZip } = require('../lib/utils.ts');
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -257,15 +258,27 @@ async function main() {
   try {
     const accessToken = await getAccessToken();
     
-    // List of major US cities to search from
-    const locations = [
+    // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
+    const locations = [];
+    
+    // Add 50 random rural ZIPs each run for comprehensive coverage
+    for (let i = 0; i < 50; i++) {
+      locations.push(getRandomRuralZip());
+    }
+    
+    // Add a few major cities for comparison/balance (10% of searches)
+    const majorCities = [
       'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-      'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'San Diego, CA',
-      'Dallas, TX', 'San Jose, CA', 'Austin, TX', 'Charlotte, NC',
-      'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA',
-      // Rural ZIP codes for invisible dogs
-      '59718', '82414', '87901', '88264', '97720', '83025', '59901'
+      'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA'
     ];
+    
+    // Add 5 random major cities
+    for (let i = 0; i < 5; i++) {
+      const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
+      if (!locations.includes(randomCity)) {
+        locations.push(randomCity);
+      }
+    }
 
     let allDogs = [];
     
