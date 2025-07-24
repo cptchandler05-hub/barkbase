@@ -120,18 +120,34 @@ export async function POST(req: Request) {
       console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
 
       if (dogsNeedingFullDetails.length > 0) {
-        // Fetch full details for dogs with missing descriptions (limit to first 15 with retry logic)
-        const detailPromises = dogsNeedingFullDetails.slice(0, 15).map(async (dog: Dog, index: number) => {
-          // Add delay to avoid rate limiting - increased spacing
-          await new Promise(resolve => setTimeout(resolve, index * 200));
+        // Reduce concurrent requests - only fetch details for first 5 dogs to avoid rate limits
+        const dogsToUpdate = dogsNeedingFullDetails.slice(0, 5);
+        console.log(`[🔍 Full Details] Processing ${dogsToUpdate.length} dogs sequentially`);
+        
+        let updatedCount = 0;
+        
+        // Process dogs sequentially to avoid rate limits
+        for (let i = 0; i < dogsToUpdate.length; i++) {
+          const dog = dogsToUpdate[i];
           
           try {
+            // Add delay between each request
+            if (i > 0) {
+              await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
             let detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
             });
+            
+            // Handle rate limit specifically
+            if (detailResponse.status === 429) {
+              console.warn(`[⚠️ Rate Limited] Skipping remaining detail fetches`);
+              break;
+            }
             
             // If we get 401, try once with fresh token
             if (detailResponse.status === 401) {
@@ -151,7 +167,13 @@ export async function POST(req: Request) {
               
               if (fullDescription && fullDescription.length > 50 && !fullDescription.includes('...')) {
                 console.log(`[📝 Full Description Retrieved] ${dog.name}: ${fullDescription.length} chars`);
-                return { id: dog.id, description: fullDescription };
+                
+                // Update the dog directly in the array
+                const dogIndex = data.animals.findIndex((d: Dog) => d.id === dog.id);
+                if (dogIndex !== -1) {
+                  data.animals[dogIndex].description = fullDescription;
+                  updatedCount++;
+                }
               }
             } else {
               console.warn(`[⚠️ Detail API Error] Dog ${dog.id}: ${detailResponse.status}`);
@@ -159,24 +181,9 @@ export async function POST(req: Request) {
           } catch (error) {
             console.warn(`[❌ Failed Detail Fetch] Dog ${dog.id}:`, error);
           }
-          return null;
-        });
-
-        const fullDescriptions = await Promise.all(detailPromises);
+        }
         
-        // Update the dogs with full descriptions
-        let updatedCount = 0;
-        fullDescriptions.forEach(result => {
-          if (result && result.description) {
-            const dogIndex = data.animals.findIndex((dog: Dog) => dog.id === result.id);
-            if (dogIndex !== -1) {
-              data.animals[dogIndex].description = result.description;
-              updatedCount++;
-            }
-          }
-        });
-        
-        console.log(`[✅ Descriptions Updated] ${updatedCount}/${dogsNeedingFullDetails.length} dogs got full descriptions`);
+        console.log(`[✅ Descriptions Updated] ${updatedCount}/${dogsToUpdate.length} dogs got full descriptions`);
       }
     }
 

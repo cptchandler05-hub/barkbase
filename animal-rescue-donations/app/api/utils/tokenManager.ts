@@ -6,13 +6,7 @@ let refreshPromise: Promise<string> | null = null;
 
 // Rate limiting: track last request time and enforce minimum delay
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 50; // 50ms between requests (reduced from 100ms)
-
-// Request queue to prevent concurrent token refreshes
-const pendingRequests: Array<{
-  resolve: (token: string) => void;
-  reject: (error: Error) => void;
-}> = [];
+const MIN_REQUEST_INTERVAL = 200; // Increased to 200ms between requests
 
 export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
   const now = Date.now();
@@ -21,7 +15,6 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   const timeSinceLastRequest = now - lastRequestTime;
   if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
     const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
-    console.log(`⏱️ Rate limiting: waiting ${waitTime}ms before next request`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
   }
   
@@ -33,6 +26,8 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
     console.log('🔄 Force refreshing token as requested');
     cachedToken = null;
     tokenExpiresAt = 0;
+    isRefreshing = false;
+    refreshPromise = null;
   }
   
   if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
@@ -44,12 +39,19 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   // If we're already refreshing, wait for that refresh to complete
   if (isRefreshing && refreshPromise) {
     console.log('⏳ Token refresh in progress, waiting...');
-    return refreshPromise;
+    try {
+      return await refreshPromise;
+    } catch (error) {
+      // If the refresh failed, reset state and try again
+      isRefreshing = false;
+      refreshPromise = null;
+      throw error;
+    }
   }
 
   // Start the refresh process
   isRefreshing = true;
-  refreshPromise = performTokenRefresh(forceRefresh);
+  refreshPromise = performTokenRefresh();
 
   try {
     const token = await refreshPromise;
@@ -63,14 +65,8 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   }
 }
 
-async function performTokenRefresh(forceRefresh: boolean): Promise<string> {
-  if (forceRefresh) {
-    console.log('🔄 Force refreshing Petfinder token...');
-    cachedToken = null;
-    tokenExpiresAt = 0;
-  } else {
-    console.log('🔑 Fetching new Petfinder access token...');
-  }
+async function performTokenRefresh(): Promise<string> {
+  console.log('🔑 Fetching new Petfinder access token...');
   
   // Clear expired token
   cachedToken = null;
@@ -79,15 +75,10 @@ async function performTokenRefresh(forceRefresh: boolean): Promise<string> {
   // Check if environment variables exist
   if (!process.env.PETFINDER_CLIENT_ID || !process.env.PETFINDER_CLIENT_SECRET) {
     console.error('❌ Missing Petfinder environment variables!');
-    console.error('   PETFINDER_CLIENT_ID exists:', !!process.env.PETFINDER_CLIENT_ID);
-    console.error('   PETFINDER_CLIENT_SECRET exists:', !!process.env.PETFINDER_CLIENT_SECRET);
-    console.error('   Available env vars:', Object.keys(process.env).filter(key => key.includes('PETFINDER')));
     throw new Error('Missing Petfinder API credentials - check environment variables');
   }
 
   console.log('✅ Petfinder credentials found');
-  console.log('   Client ID length:', process.env.PETFINDER_CLIENT_ID.length);
-  console.log('   Client Secret length:', process.env.PETFINDER_CLIENT_SECRET.length);
 
   try {
     const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
@@ -102,12 +93,13 @@ async function performTokenRefresh(forceRefresh: boolean): Promise<string> {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error('❌ Token fetch failed:');
-      console.error('   Status:', res.status);
-      console.error('   Response:', errorText);
-      console.error('   Headers:', Object.fromEntries(res.headers.entries()));
-      console.error('   Request URL:', 'https://api.petfinder.com/v2/oauth2/token');
-      console.error('   Client ID first 10 chars:', process.env.PETFINDER_CLIENT_ID?.substring(0, 10) + '...');
+      console.error('❌ Token fetch failed:', res.status, errorText);
+      
+      // Handle rate limit errors specifically
+      if (res.status === 429) {
+        throw new Error('Rate limit exceeded on token endpoint');
+      }
+      
       throw new Error(`Failed to retrieve Petfinder access token: ${res.status} - ${errorText}`);
     }
 

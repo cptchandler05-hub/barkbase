@@ -78,13 +78,18 @@ export async function GET(
     console.error(`[❌ API Error] ${response.status} for dog ${dogId}:`, errorText);
 
     if (response.status === 404) {
-      console.log("Dog not found:", params.dogId);
+      console.log("Dog not found:", dogId);
       return NextResponse.json({ error: "Dog not found" }, { status: 404 });
     }
 
     if (response.status === 401) {
       console.log("Authentication failed even after token refresh");
       return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
+    }
+
+    if (response.status === 429) {
+      console.log("Rate limit exceeded for dog details");
+      return NextResponse.json({ error: "Rate limit exceeded - please try again later" }, { status: 429 });
     }
 
     // For other errors, throw error
