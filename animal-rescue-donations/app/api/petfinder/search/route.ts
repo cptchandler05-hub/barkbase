@@ -120,19 +120,30 @@ export async function POST(req: Request) {
       console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
 
       if (dogsNeedingFullDetails.length > 0) {
-        // Fetch full details for dogs with missing descriptions (limit to first 25 with retry logic)
-        const detailPromises = dogsNeedingFullDetails.slice(0, 25).map(async (dog: Dog, index: number) => {
-          // Add small delay to avoid rate limiting
-          await new Promise(resolve => setTimeout(resolve, index * 100));
+        // Fetch full details for dogs with missing descriptions (limit to first 15 with retry logic)
+        const detailPromises = dogsNeedingFullDetails.slice(0, 15).map(async (dog: Dog, index: number) => {
+          // Add delay to avoid rate limiting - increased spacing
+          await new Promise(resolve => setTimeout(resolve, index * 200));
           
           try {
-            const detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
+            let detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
-              timeout: 5000, // 5 second timeout per request
             });
+            
+            // If we get 401, try once with fresh token
+            if (detailResponse.status === 401) {
+              console.log(`[🔄 Token Refresh] Retrying dog ${dog.id} with fresh token`);
+              const freshToken = await getAccessToken(true);
+              detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
+                headers: {
+                  Authorization: `Bearer ${freshToken}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+            }
             
             if (detailResponse.ok) {
               const fullData = await detailResponse.json();

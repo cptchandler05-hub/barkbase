@@ -6,7 +6,7 @@ let refreshPromise: Promise<string> | null = null;
 
 // Rate limiting: track last request time and enforce minimum delay
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 100; // 100ms between requests
+const MIN_REQUEST_INTERVAL = 50; // 50ms between requests (reduced from 100ms)
 
 // Request queue to prevent concurrent token refreshes
 const pendingRequests: Array<{
@@ -25,8 +25,8 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
     await new Promise(resolve => setTimeout(resolve, waitTime));
   }
   
-  // Add 10-minute buffer to prevent using token right before expiry (increased from 5min)
-  const buffer = 10 * 60 * 1000; // 10 minutes in milliseconds
+  // Add 5-minute buffer to prevent using token right before expiry
+  const buffer = 5 * 60 * 1000; // 5 minutes in milliseconds
   
   // Always refresh if forceRefresh is true
   if (forceRefresh) {

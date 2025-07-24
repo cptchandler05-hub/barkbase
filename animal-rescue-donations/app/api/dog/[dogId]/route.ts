@@ -9,17 +9,11 @@ export async function GET(
   { params }: { params: Promise<{ dogId: string }> | { dogId: string } }
 ) {
   try {
-    // Debug the full request context
-    console.log("=== DOG DETAILS REQUEST DEBUG ===");
-    console.log("Full request URL:", request.url);
-    console.log("Params object:", params);
-    
     // Handle both Promise and direct params
     const resolvedParams = await params;
     const dogId = resolvedParams.dogId;
     
-    console.log("Raw dogId from params:", dogId);
-    console.log("Type of dogId:", typeof dogId);
+    console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
 
     if (!dogId) {
       console.error("No dogId provided after resolution");
@@ -28,11 +22,9 @@ export async function GET(
 
     // Get cached token first, same as search endpoint
     let accessToken = await getAccessToken();
-    console.log("Got access token for dog details");
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${dogId}`;
-    console.log("Making request to:", apiUrl);
-    console.log("Using dogId in URL:", dogId);
+    console.log(`[📡 API Request] ${apiUrl}`);
 
     let response = await fetch(apiUrl, {
       headers: {
@@ -83,10 +75,7 @@ export async function GET(
 
     // Handle error responses
     const errorText = await response.text();
-    console.error(`API Error Response [${response.status}]:`, errorText);
-    console.error("Request URL was:", apiUrl);
-    console.error("Dog ID was:", dogId);
-    console.error("Original params.dogId was:", params.dogId);
+    console.error(`[❌ API Error] ${response.status} for dog ${dogId}:`, errorText);
 
     if (response.status === 404) {
       console.log("Dog not found:", params.dogId);
@@ -102,11 +91,7 @@ export async function GET(
     throw new Error(`Petfinder API error: ${response.status} - ${errorText}`);
 
   } catch (error) {
-    console.error("=== ERROR IN DOG DETAILS API ===");
-    console.error("Error type:", error instanceof Error ? error.name : typeof error);
-    console.error("Error message:", error instanceof Error ? error.message : error);
-    console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
-    console.error("DogId that caused error:", dogId);
+    console.error(`[❌ Dog Details Error] ${dogId}:`, error instanceof Error ? error.message : error);
 
     return NextResponse.json(
       { 
