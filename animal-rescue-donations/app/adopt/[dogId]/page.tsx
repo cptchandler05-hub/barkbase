@@ -358,6 +358,18 @@ export default function DogProfilePage() {
                         </a>
                       )}
                       
+                      {/* Petfinder verification link - required for legal compliance */}
+                      {dog.url && (
+                        <a
+                          href={dog.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg text-center transition border border-gray-300"
+                        >
+                          ✅ Verified on Petfinder
+                        </a>
+                      )}
+                      
                     </div>
                   </div>
                 ) : (

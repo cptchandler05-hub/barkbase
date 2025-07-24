@@ -16,14 +16,14 @@ export async function GET(
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
-    // Get access token with proper rate limiting
+    // Get fresh access token to avoid stale token issues
     let accessToken = await getAccessToken();
     console.log("Got access token, making API call...");
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${params.dogId}`;
     console.log("Making request to:", apiUrl);
 
-    const response = await fetch(apiUrl, {
+    let response = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
@@ -31,6 +31,19 @@ export async function GET(
     });
 
     console.log("API response status:", response.status);
+
+    // If we get 401, try one more time with a fresh token
+    if (response.status === 401) {
+      console.log("Got 401, trying with fresh token...");
+      accessToken = await getAccessToken(true); // Force refresh
+      response = await fetch(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log("Retry API response status:", response.status);
+    }
 
     if (response.ok) {
       const data = await response.json();
@@ -60,10 +73,9 @@ export async function GET(
       return NextResponse.json({ error: "Dog not found" }, { status: 404 });
     }
 
-    // If 401 (unauthorized), the token manager will handle refresh on next request
     if (response.status === 401) {
-      console.log("Got 401 unauthorized, token may be expired");
-      return NextResponse.json({ error: "Authentication error - please try again" }, { status: 401 });
+      console.log("Still getting 401 after token refresh");
+      return NextResponse.json({ error: "Authentication failed - API credentials may be invalid" }, { status: 401 });
     }
 
     // For other errors, throw error
