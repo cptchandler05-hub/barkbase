@@ -1,7 +1,7 @@
-
 import { NextResponse } from 'next/server';
-import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import { getAccessToken } from '@/app/api/utils/tokenManager';
+import { searchDogs, getAllDogs } from '@/lib/supabase';
+import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import { findBestBreedMatch } from '@/app/api/utils/fuzzyBreedMatch';
 type Dog = { [key: string]: any };
 
@@ -13,16 +13,61 @@ const MAX_REQUESTS_PER_MINUTE = 50;
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 
 export async function POST(req: Request) {
+  console.log('[🔍 /api/petfinder/search] Starting search request');
+
   try {
+    const { location: rawLocation, breed: rawBreed } = await req.json();
+    console.log('[📋 Raw Input]', { location: rawLocation, breed: rawBreed });
+
+    // 🔥 Try database first if we have a valid location/breed
+    if (rawLocation && rawLocation.trim() && rawLocation !== 'null') {
+      try {
+        console.log('[💾 Database] Trying database search first...');
+        const dbDogs = await searchDogs(rawLocation.trim(), rawBreed?.trim());
+
+        if (dbDogs && dbDogs.length > 0) {
+          console.log(`[✅ Database Hit] Found ${dbDogs.length} dogs in database`);
+
+          // Transform database dogs to API format
+          const formattedDogs = dbDogs.map(dog => ({
+            id: parseInt(dog.petfinder_id),
+            organization_id: dog.organization_id,
+            name: dog.name,
+            breeds: {
+              primary: dog.breed_primary,
+              secondary: dog.breed_secondary,
+              mixed: dog.breed_secondary ? true : false
+            },
+            age: dog.age,
+            gender: dog.gender,
+            size: dog.size,
+            description: dog.description,
+            photos: dog.photos.map(url => ({ large: url, medium: url, small: url })),
+            contact: { address: { city: dog.location.split(',')[0], state: dog.location.split(',')[1] } },
+            visibilityScore: dog.visibility_score
+          }));
+
+          return NextResponse.json({
+            animals: formattedDogs,
+            source: 'database',
+            total: formattedDogs.length
+          });
+        }
+      } catch (dbError) {
+        console.warn('[⚠️ Database Fallback] Database search failed, using live API:', dbError);
+      }
+    }
+
+    // 🌐 Fall back to live Petfinder API
     console.log('[🐾 /api/petfinder/search hit]');
-    
+
     // Check rate limiting
     const now = Date.now();
     if (now > rateLimitResetTime) {
       requestCount = 0;
       rateLimitResetTime = now + RATE_LIMIT_WINDOW;
     }
-    
+
     if (requestCount >= MAX_REQUESTS_PER_MINUTE) {
       console.warn('[⚠️ Internal Rate Limit] Too many requests, backing off');
       return NextResponse.json({
@@ -30,7 +75,7 @@ export async function POST(req: Request) {
         retryAfter: Math.ceil((rateLimitResetTime - now) / 1000)
       }, { status: 429 });
     }
-    
+
     // Ensure minimum time between requests
     const timeSinceLastRequest = now - lastRequestTime;
     if (timeSinceLastRequest < 1000) { // 1 second minimum between requests
@@ -38,10 +83,10 @@ export async function POST(req: Request) {
       console.log(`[⏳ Rate Limiting] Waiting ${waitTime}ms before request`);
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
-    
+
     requestCount++;
     lastRequestTime = Date.now();
-    
+
     let { location, breed } = await req.json();
 
     // 🧼 Trim and normalize user input
@@ -167,32 +212,32 @@ export async function POST(req: Request) {
         // Further reduce concurrent requests - only fetch details for first 3 dogs to avoid rate limits
         const dogsToUpdate = dogsNeedingFullDetails.slice(0, 3);
         console.log(`[🔍 Full Details] Processing ${dogsToUpdate.length} dogs sequentially`);
-        
+
         let updatedCount = 0;
-        
+
         // Process dogs sequentially with longer delays to avoid rate limits
         for (let i = 0; i < dogsToUpdate.length; i++) {
           const dog = dogsToUpdate[i];
-          
+
           try {
             // Add longer delay between each request
             if (i > 0) {
               await new Promise(resolve => setTimeout(resolve, 1000)); // Increased to 1 second
             }
-            
+
             let detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
             });
-            
+
             // Handle rate limit specifically
             if (detailResponse.status === 429) {
               console.warn(`[⚠️ Rate Limited] Skipping remaining detail fetches`);
               break;
             }
-            
+
             // If we get 401, try once with fresh token
             if (detailResponse.status === 401) {
               console.log(`[🔄 Token Refresh] Retrying dog ${dog.id} with fresh token`);
@@ -205,14 +250,14 @@ export async function POST(req: Request) {
                 },
               });
             }
-            
+
             if (detailResponse.ok) {
               const fullData = await detailResponse.json();
               const fullDescription = fullData.animal?.description;
-              
+
               if (fullDescription && fullDescription.length > 50 && !fullDescription.includes('...')) {
                 console.log(`[📝 Full Description Retrieved] ${dog.name}: ${fullDescription.length} chars`);
-                
+
                 // Update the dog directly in the array
                 const dogIndex = data.animals.findIndex((d: Dog) => d.id === dog.id);
                 if (dogIndex !== -1) {
@@ -232,7 +277,7 @@ export async function POST(req: Request) {
             console.warn(`[❌ Failed Detail Fetch] Dog ${dog.id}:`, error);
           }
         }
-        
+
         console.log(`[✅ Descriptions Updated] ${updatedCount}/${dogsToUpdate.length} dogs got full descriptions`);
       }
     }
