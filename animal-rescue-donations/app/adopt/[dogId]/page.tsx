@@ -46,7 +46,7 @@ interface Dog {
 export default function DogProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const dogId = params.dogId as string;
+  const dogId = Array.isArray(params.dogId) ? params.dogId[0] : params.dogId;
   
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,18 +62,35 @@ export default function DogProfilePage() {
   const fetchDogDetails = async () => {
     try {
       console.log("Fetching dog details for dogId:", dogId);
-      const res = await fetch(`/api/dog/${dogId}`);
+      console.log("Type of dogId:", typeof dogId);
+      console.log("dogId is truthy:", !!dogId);
+      
+      if (!dogId) {
+        console.error("No dogId available");
+        setLoading(false);
+        return;
+      }
+      
+      const apiUrl = `/api/dog/${dogId}`;
+      console.log("Making request to:", apiUrl);
+      
+      const res = await fetch(apiUrl);
+      console.log("Response status:", res.status);
+      console.log("Response ok:", res.ok);
       
       if (res.ok) {
         const dog = await res.json();
-        console.log("Successfully fetched dog:", dog.name);
+        console.log("Successfully fetched dog:", dog?.name || 'No name');
+        console.log("Full dog object keys:", Object.keys(dog || {}));
         setDog(dog);
       } else {
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch dog details:", res.status, errorData);
+        console.error("Error response body:", errorData);
       }
     } catch (error) {
       console.error("Error fetching dog details:", error);
+      console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
     } finally {
       setLoading(false);
     }

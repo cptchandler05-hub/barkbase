@@ -474,7 +474,20 @@ export default function AdoptPage() {
                               alt="Farcaster" 
                               className="w-4 h-4"
                               onError={(e) => {
-                                console.warn('Farcaster logo failed to load on adoption page');
+                                console.warn('Farcaster logo failed to load, using fallback');
+                                e.currentTarget.style.display = 'none';
+                                const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (nextSibling) {
+                                  nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                            <div 
+                              className="w-4 h-4 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs"
+                              style={{display: 'none'}}
+                            >
+                              F
+                            </div>ad on adoption page');
                                 e.currentTarget.outerHTML = '<div class="w-4 h-4 bg-purple-600 rounded flex items-center justify-center"><span class="text-white font-bold text-xs">F</span></div>';
                               }}
                             />

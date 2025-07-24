@@ -101,7 +101,17 @@ export default function ThankYouToast({ imageUrl, onClose, onDownload }: ThankYo
                 alt="Share on Farcaster"
                 width={24}
                 height={24}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                }}
               />
+              <div 
+                className="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                style={{display: 'none'}}
+              >
+                F
+              </div>
             </a>
           </div>
         </div>

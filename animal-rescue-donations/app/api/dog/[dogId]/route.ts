@@ -6,18 +6,20 @@ const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { dogId: string } }
+  { params }: { params: Promise<{ dogId: string }> | { dogId: string } }
 ) {
   try {
     // Debug the full request context
     console.log("=== DOG DETAILS REQUEST DEBUG ===");
     console.log("Full request URL:", request.url);
     console.log("Params object:", params);
-    console.log("Raw dogId from params:", params.dogId);
-    console.log("Type of dogId:", typeof params.dogId);
-
-    const dogId = await params.dogId; // Handle potential Promise
-    console.log("Resolved dogId:", dogId);
+    
+    // Handle both Promise and direct params
+    const resolvedParams = await params;
+    const dogId = resolvedParams.dogId;
+    
+    console.log("Raw dogId from params:", dogId);
+    console.log("Type of dogId:", typeof dogId);
 
     if (!dogId) {
       console.error("No dogId provided after resolution");

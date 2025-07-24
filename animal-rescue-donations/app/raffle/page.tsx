@@ -271,7 +271,21 @@ export default function RafflePage() {
                     rel="noopener noreferrer"
                     className="hover:opacity-80 transition"
                   >
-                    <img src="/logos/farcaster-logo.png" alt="Share on Farcaster" className="w-7 h-7" />
+                    <img 
+                      src="/logos/farcaster-logo.png" 
+                      alt="Share on Farcaster" 
+                      className="w-7 h-7"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div 
+                      className="w-7 h-7 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                      style={{display: 'none'}}
+                    >
+                      F
+                    </div>
                   </a>
                 </div>
               </div>
