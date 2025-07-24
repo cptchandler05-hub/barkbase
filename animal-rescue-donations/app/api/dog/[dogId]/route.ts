@@ -45,6 +45,7 @@ export async function GET(
       console.log("Retry API response status:", response.status);
     }
 
+    // Handle successful response
     if (response.ok) {
       const data = await response.json();
       console.log("Successfully fetched dog data for:", data.animal?.name);
@@ -66,15 +67,19 @@ export async function GET(
       return NextResponse.json(enrichedDog);
     }
 
+    // Handle error responses
     const errorText = await response.text();
-    console.error("API Error Response:", errorText);
+    console.error(`API Error Response [${response.status}]:`, errorText);
+    console.error("Request URL was:", apiUrl);
+    console.error("Dog ID was:", params.dogId);
     
     if (response.status === 404) {
+      console.log("Dog not found:", params.dogId);
       return NextResponse.json({ error: "Dog not found" }, { status: 404 });
     }
 
     if (response.status === 401) {
-      console.log("Still getting 401 after token refresh");
+      console.log("Authentication failed even after token refresh");
       return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
     }
 
