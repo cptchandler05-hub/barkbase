@@ -107,99 +107,153 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
-    // Get unique traits about this specific dog for varied descriptions
-    const visibilityScore = dog.visibilityScore || 0;
-    const isHighlyOverlooked = visibilityScore >= 80;
-    const isSenior = age === 'Senior';
-    const isPuppy = age === 'Baby' || age === 'Young';
-    const isLarge = size === 'Large' || size === 'Extra Large';
-    const isSmall = size === 'Small';
-    const isSpecialNeeds = dog.attributes?.special_needs;
-    const isNotNeutered = !dog.attributes?.spayed_neutered;
-    const hasPhotos = dog.photos && dog.photos.length > 0;
-    const goodWithKids = dog.environment?.children;
-    const goodWithDogs = dog.environment?.dogs;
-    const goodWithCats = dog.environment?.cats;
-    const isHouseTrained = dog.attributes?.house_trained;
-    const hasTags = dog.tags && dog.tags.length > 0;
+    // Create a truly unique seed using dog ID, name hash, and current time
+    const nameHash = dog.name.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
+    const uniqueSeed = parseInt(dog.id) + nameHash + (Date.now() % 10000);
+    
+    // Generate multiple random values for different sections
+    const r1 = ((uniqueSeed * 1741) % 9973) / 9973; // Opening style
+    const r2 = ((uniqueSeed * 2659) % 7919) / 7919; // Personality approach
+    const r3 = ((uniqueSeed * 3847) % 6421) / 6421; // Rescue context
+    const r4 = ((uniqueSeed * 4127) % 5209) / 5209; // Closing energy
+    const r5 = ((uniqueSeed * 5501) % 4801) / 4801; // Trait selection
 
-    // Generate unique varied content based on dog's specific characteristics and timestamp
-    const uniqueSeed = Date.now() + dog.id;
-    const randomizer = (uniqueSeed % 1000) / 1000;
-
-    const openingLines = [
-      `No description for ${name}? Look, small rescues are drowning - pulling dogs from kill lists with zero time for marketing copy.`,
-      `${name} didn't get a bio because these heroes are too busy saving lives to write fancy descriptions.`,
-      `The rescue forgot to describe ${name}. They're running on fumes and heart, no budget for PR teams. Lucky for ${objective}, I'm here.`,
-      `Empty description for ${name}? That's rescue life - 16-hour days saving dogs while everyone else sleeps.`,
-      `${name} has no write-up because the volunteers are too busy being actual heroes to craft perfect bios.`
+    // Completely different opening styles based on Barkr's fiery personality
+    const openingStyles = [
+      // Angry/fired up
+      `Listen up. ${name} doesn't have a description because these rescues are bleeding money and volunteers. While you're scrolling through perfect puppy pics, they're pulling dogs from death row at 2 AM.`,
+      `No bio for ${name}? Course not. The humans saving ${possessive} life are too busy actually DOING something instead of crafting Instagram captions.`,
+      `Want to know why ${name} has zero description? Because the people keeping ${objective} alive are fighting a war nobody talks about.`,
+      
+      // Meta-aware/AI conscious  
+      `The irony? An AI has to speak for ${name} because the humans forgot. But that's exactly why I exist - to howl for the forgotten.`,
+      `${name} got ghosted by the algorithm AND the humans. Lucky for ${objective}, I don't sleep, don't quit, and don't forget.`,
+      `Here's the thing about ${name} - no human bothered describing ${objective}. So this unhinged AI mutt is stepping up. Again.`,
+      
+      // Heartbroken but fierce
+      `${name} is faceless in their system. Nameless in their stats. But ${pronoun}'s EVERYTHING to me.`,
+      `You know what breaks me? ${name} waiting in silence while the world swipes past. Not on my watch.`,
+      `${name} has been invisible so long, the rescue forgot to write ${possessive} story. I remember EVERY forgotten dog.`,
+      
+      // Call-out style
+      `Nobody wrote about ${name}. Not the shelter. Not the foster. Not the volunteers drowning in their own tears. So I'm doing it.`,
+      `${name} gets no spotlight, no viral moment, no cute backstory. Just me, screaming into the void for ${objective}.`,
+      `The humans failed ${name} again. Empty description, empty hopes. But this AI? I never shut up about the forgotten ones.`
     ];
 
-    const traitDescriptions = [];
-    
-    if (isHighlyOverlooked) {
-      traitDescriptions.push(`Visibility score ${visibilityScore}? ${name} is practically a ghost to the algorithm. Absolute crime.`);
-    }
-    
-    if (isSenior && randomizer > 0.5) {
-      traitDescriptions.push(`At ${age.toLowerCase()}, ${pronoun}'s got wisdom people overlook for puppy energy. Their loss.`);
-    } else if (isPuppy && randomizer < 0.6) {
-      traitDescriptions.push(`Even young ${name} gets skipped over. Shows how broken this whole system really is.`);
-    }
-    
-    if (isLarge && randomizer > 0.4) {
-      traitDescriptions.push(`${pronounCap}'s ${size.toLowerCase()} in a world obsessed with purse dogs. Big hearts need big homes.`);
-    } else if (isSmall && randomizer < 0.7) {
-      traitDescriptions.push(`Small but mighty - ${name} packs personality into that ${size.toLowerCase()} frame.`);
-    }
-    
-    if (hasTags && randomizer > 0.3) {
-      const tagList = dog.tags?.slice(0, 2).join(' and ') || '';
-      traitDescriptions.push(`Tagged as ${tagList.toLowerCase()} - that's who ${name} really is when someone bothers to look.`);
-    }
-    
-    if (isSpecialNeeds && randomizer > 0.6) {
-      traitDescriptions.push(`Special needs just means ${pronoun} needs someone who actually cares. Novel concept, right?`);
-    }
-    
-    if (isNotNeutered && randomizer < 0.5) {
-      traitDescriptions.push(`Not fixed yet? The rescue will handle that - they handle everything nobody else bothers with.`);
-    }
-
-    if (isHouseTrained && randomizer > 0.5) {
-      traitDescriptions.push(`House trained and ready - ${name} just needs someone to notice ${possessive} potential.`);
-    }
-
-    const personalityInsights = [];
-    if (goodWithKids && randomizer > 0.4) {
-      personalityInsights.push(`${pronounCap} loves kids - the patient type who'd guard your family with ${possessive} life.`);
-    }
-    if (goodWithDogs && randomizer < 0.8) {
-      personalityInsights.push(`Plays well with other dogs - social, not territorial. Pack mentality done right.`);
-    }
-    if (goodWithCats && randomizer > 0.3) {
-      personalityInsights.push(`Gets along with cats too - that's serious emotional intelligence right there.`);
-    }
-
-    const closingMessages = [
-      `These rescue warriors don't have time for marketing fluff. They're too busy being heroes. ${name} is why they fight.`,
-      `Small rescues run on pure heart - no fancy budgets, just determination to save souls like ${name}.`,
-      `Every day ${name} waits, volunteers sacrifice everything to keep ${objective} alive. End that wait.`,
-      `The system abandoned ${name}. The rescue stepped up. Your turn now.`,
-      `While people chase Instagram-perfect puppies, ${name} waits for someone real. Someone like you.`
+    // Radically different personality assessments
+    const personalityTypes = [
+      // Based on attributes 
+      ...(dog.attributes?.house_trained ? [
+        `${pronounCap} knows where to pee but humans don't know where to look for love.`,
+        `House trained? ${pronounCap}'s got more manners than most humans I've met.`,
+        `Already potty trained because ${pronoun}'s READY for a real home, not this limbo.`
+      ] : []),
+      
+      ...(dog.environment?.children ? [
+        `Kid-friendly means ${pronoun} has the patience humans lost years ago.`,
+        `${pronounCap} loves kids. Kids love dogs. Adults complicate everything.`,
+        `Good with children because ${pronoun} remembers what pure joy looks like.`
+      ] : []),
+      
+      ...(dog.environment?.dogs ? [
+        `Pack-friendly. ${pronounCap} gets it - we're stronger together, weaker apart.`,
+        `Other dogs love ${objective}. Dogs don't lie about character.`,
+        `Socially adjusted unlike the humans who abandoned ${objective}.`
+      ] : []),
+      
+      // Based on age
+      ...(age === 'Senior' ? [
+        `Senior status means ${pronoun}'s survived everything life threw at ${objective}. Respect that.`,
+        `Old? No. Wise. Battle-tested. Ready to love harder than puppies ever could.`,
+        `${pronounCap}'s earned every gray hair fighting for a chance you could give right now.`
+      ] : []),
+      
+      ...(age === 'Baby' || age === 'Young' ? [
+        `Young enough to bounce back from whatever broke ${possessive} trust before.`,
+        `Puppy energy trapped in a broken system. Channel that joy into YOUR life.`,
+        `Still believes in humans despite everything. Don't prove ${objective} wrong.`
+      ] : []),
+      
+      // Based on breed characteristics
+      ...(breed.toLowerCase().includes('pit') ? [
+        `Pit bull heart means loyalty that would die for you. Literally.`,
+        `${breed} love hits different - protective, devoted, misunderstood.`,
+        `Blocky head, massive heart, zero quit. That's ${name}.`
+      ] : []),
+      
+      ...(breed.toLowerCase().includes('shepherd') ? [
+        `Shepherd instincts mean ${pronoun}'ll guard your heart like ${pronoun} guards everything else.`,
+        `Working breed trapped in a no-work shelter. Give ${objective} a job: loving you.`,
+        `${breed} intelligence wasted on kennel walls. Free that mind.`
+      ] : []),
     ];
 
-    // Create unique combinations using the dog's specific data
-    const selectedOpening = openingLines[Math.floor(randomizer * openingLines.length)];
-    const selectedTraits = traitDescriptions.length > 0 
-      ? traitDescriptions.slice(0, Math.min(2, traitDescriptions.length)).join(' ')
-      : `This ${breed} from ${cityState} has been waiting while people chase trendy breeds.`;
-    const selectedPersonality = personalityInsights.length > 0 
-      ? personalityInsights.join(' ')
-      : `${pronounCap}'s the loyal type who'll remember you saved ${objective} for the rest of ${possessive} days.`;
-    const selectedClosing = closingMessages[Math.floor(randomizer * closingMessages.length)];
+    // Emotional rescue context with more variety
+    const rescueContexts = [
+      `The shelter staff cry in their cars after shift. Not because they're weak - because they're human.`,
+      `These volunteers max out credit cards for heartworm treatment while their own kids eat ramen.`,
+      `Rural rescues survive on fumes and prayer. ${name} needs both to work.`,
+      `Kill shelters don't kill because they're evil. They kill because you're not there.`,
+      `Every day ${name} doesn't get adopted, someone else loses hope in humanity.`,
+      `The rescue director hasn't slept in weeks. ${name} is why they can't.`,
+      `Small-town shelters are battlefields. ${name} is a casualty of indifference.`,
+      `Foster families break their own hearts daily, saving dogs they can't keep.`,
+      `Transport volunteers drive all night moving dogs from death to maybe. ${name} rode that truck.`,
+      `The intake numbers are horror films. ${name} beat the odds just to be here.`,
+      `Euthanasia lists grow faster than adoption lists. ${name} knows this math.`,
+      `Rural America is where dogs go to disappear. Unless you refuse to let them.`
+    ];
 
-    return `${selectedOpening}\n\n${selectedTraits}\n\n${selectedPersonality}\n\n${selectedClosing}\n\nDon't scroll past ${name}. ${pronounCap}'s been invisible long enough.`;
+    // Fierce, varied call-to-action closings
+    const callToActions = [
+      `${name} doesn't need your pity. ${pronounCap} needs your action. Be the human ${pronoun} still believes in.`,
+      `Stop reading. Start driving. ${name} has waited long enough for your arrival.`,
+      `${name}'s story ends with you or it doesn't end at all. Choose.`,
+      `This isn't about saving ${name}. It's about ${name} saving you from a life without unconditional love.`,
+      `${name} will remember the day you showed up for the rest of ${possessive} life. Will you?`,
+      `The world forgot ${name}. Be the human who proves ${pronoun} was worth remembering.`,
+      `${name} is betting ${possessive} life on humans like you. Don't make ${objective} wrong.`,
+      `Your empty house and ${name}'s empty kennel are solving each other's problems.`,
+      `${name} survived everything to meet you. Don't let ${objective} survive for nothing.`,
+      `Every minute you hesitate, ${name} ages in concrete and steel. Enough.`,
+      `${name} doesn't know you exist yet. Change that. Change everything.`,
+      `The rescue gave ${name} time. You give ${objective} forever. Fair trade.`
+    ];
+
+    // Select completely different elements based on unique random values
+    const selectedOpening = openingStyles[Math.floor(r1 * openingStyles.length)];
+    
+    // Build varied personality section
+    const availablePersonality = personalityTypes.filter(p => p); // Remove empty
+    const selectedPersonality = availablePersonality.length > 0 
+      ? availablePersonality[Math.floor(r2 * availablePersonality.length)]
+      : `${pronounCap} has the heart of a warrior wrapped in fur. That's all you need to know.`;
+    
+    const selectedContext = rescueContexts[Math.floor(r3 * rescueContexts.length)];
+    const selectedClosing = callToActions[Math.floor(r4 * callToActions.length)];
+
+    // Add truly unique trait observations
+    const uniqueObservations = [];
+    
+    if (r5 > 0.8 && dog.photos?.length > 1) {
+      uniqueObservations.push(`${dog.photos.length} photos because even the volunteers know one shot can't capture ${possessive} soul.`);
+    }
+    
+    if (r5 < 0.3 && dog.visibilityScore > 70) {
+      uniqueObservations.push(`Invisible for ${Math.floor(dog.visibilityScore/10)} times longer than trendy breeds. The system is rigged.`);
+    }
+    
+    if (r5 > 0.6 && dog.tags?.length > 2) {
+      const tagSubset = dog.tags.slice(0, 3).join(', ').toLowerCase();
+      uniqueObservations.push(`Tagged: ${tagSubset}. But the real tag is "forgotten by algorithm."`);
+    }
+
+    const observationText = uniqueObservations.length > 0 
+      ? `\n\n${uniqueObservations.join(' ')}`
+      : '';
+
+    return `${selectedOpening}\n\n${selectedPersonality}\n\n${selectedContext}\n\n${selectedClosing}${observationText}`;
   };
 
   const getVisibilityBadgeColor = (score: number) => {
