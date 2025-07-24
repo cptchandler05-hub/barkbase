@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken } from "../../utils/tokenManager";
-import { calculateVisibilityScore } from "../../../../lib/scoreVisibility";
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getAccessToken } from '@/app/api/utils/tokenManager';
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
+
+// Rate limiting for individual dog requests
+let lastDogRequestTime = 0;
+const MIN_DOG_REQUEST_INTERVAL = 500; // 500ms between dog detail requests
 
 export async function GET(
   request: NextRequest,
@@ -20,6 +24,17 @@ export async function GET(
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
+    // Rate limiting for dog detail requests
+    const now = Date.now();
+    const timeSinceLastRequest = now - lastDogRequestTime;
+    if (timeSinceLastRequest < MIN_DOG_REQUEST_INTERVAL) {
+      const waitTime = MIN_DOG_REQUEST_INTERVAL - timeSinceLastRequest;
+      console.log(`[⏳ Dog Detail Rate Limiting] Waiting ${waitTime}ms`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    lastDogRequestTime = Date.now();
+
     // Get cached token first, same as search endpoint
     let accessToken = await getAccessToken();
 
@@ -35,10 +50,23 @@ export async function GET(
 
     console.log("API response status:", response.status);
 
+    // Handle rate limit specifically
+    if (response.status === 429) {
+      console.log("Rate limit exceeded for dog details");
+      return NextResponse.json({ 
+        error: "Rate limit exceeded - please try again later",
+        retryAfter: 300 // 5 minutes
+      }, { status: 429 });
+    }
+
     // If we get 401, retry once with a fresh token
     if (response.status === 401) {
       console.log("Got 401, trying with fresh token...");
       accessToken = await getAccessToken(true);
+      
+      // Wait a bit before retrying to avoid rapid successive calls
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       response = await fetch(apiUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -46,54 +74,29 @@ export async function GET(
         },
       });
       console.log("Retry API response status:", response.status);
-    }
-
-    // Handle successful response
-    if (response.ok) {
-      // Process the response
-      const data = await response.json();
-      console.log(`Fetched dog details for ${dogId}:`, data.animal?.name || 'Unknown name');
-
-      if (data.animal) {
-        // Add visibility score
-        data.animal.visibilityScore = calculateVisibilityScore(data.animal);
-        console.log(`Visibility score calculated: ${data.animal.visibilityScore}`);
-
-        // Log description status for debugging
-        if (data.animal.description) {
-          console.log(`Description length: ${data.animal.description.length} chars`);
-          if (data.animal.description.includes('...')) {
-            console.warn(`⚠️ Description appears truncated for ${data.animal.name}`);
-          }
-        } else {
-          console.warn(`⚠️ No description found for ${data.animal.name}`);
-        }
+      
+      // Check rate limit again after retry
+      if (response.status === 429) {
+        console.log("Rate limit exceeded on retry for dog details");
+        return NextResponse.json({ 
+          error: "Rate limit exceeded - please try again later",
+          retryAfter: 300
+        }, { status: 429 });
       }
-
-      return NextResponse.json(data.animal);
     }
 
-    // Handle error responses
-    const errorText = await response.text();
-    console.error(`[❌ API Error] ${response.status} for dog ${dogId}:`, errorText);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[❌ API Error] ${response.status}:`, errorText);
 
-    if (response.status === 404) {
-      console.log("Dog not found:", dogId);
-      return NextResponse.json({ error: "Dog not found" }, { status: 404 });
+      // For other errors, throw error
+      throw new Error(`Petfinder API error: ${response.status} - ${errorText}`);
     }
 
-    if (response.status === 401) {
-      console.log("Authentication failed even after token refresh");
-      return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
-    }
+    const data = await response.json();
+    console.log(`[✅ Dog Details Success] Retrieved data for: ${data.animal?.name || dogId}`);
 
-    if (response.status === 429) {
-      console.log("Rate limit exceeded for dog details");
-      return NextResponse.json({ error: "Rate limit exceeded - please try again later" }, { status: 429 });
-    }
-
-    // For other errors, throw error
-    throw new Error(`Petfinder API error: ${response.status} - ${errorText}`);
+    return NextResponse.json(data);
 
   } catch (error) {
     console.error(`[❌ Dog Details Error] ${dogId}:`, error instanceof Error ? error.message : error);

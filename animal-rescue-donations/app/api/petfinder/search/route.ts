@@ -1,12 +1,46 @@
+
 import { NextResponse } from 'next/server';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import { getAccessToken } from '@/app/api/utils/tokenManager';
 import { findBestBreedMatch } from '@/app/api/utils/fuzzyBreedMatch';
 type Dog = { [key: string]: any };
 
+// Rate limiting state
+let lastRequestTime = 0;
+let requestCount = 0;
+let rateLimitResetTime = 0;
+const MAX_REQUESTS_PER_MINUTE = 50;
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+
 export async function POST(req: Request) {
   try {
     console.log('[🐾 /api/petfinder/search hit]');
+    
+    // Check rate limiting
+    const now = Date.now();
+    if (now > rateLimitResetTime) {
+      requestCount = 0;
+      rateLimitResetTime = now + RATE_LIMIT_WINDOW;
+    }
+    
+    if (requestCount >= MAX_REQUESTS_PER_MINUTE) {
+      console.warn('[⚠️ Internal Rate Limit] Too many requests, backing off');
+      return NextResponse.json({
+        error: 'Too many requests, please try again in a moment',
+        retryAfter: Math.ceil((rateLimitResetTime - now) / 1000)
+      }, { status: 429 });
+    }
+    
+    // Ensure minimum time between requests
+    const timeSinceLastRequest = now - lastRequestTime;
+    if (timeSinceLastRequest < 1000) { // 1 second minimum between requests
+      const waitTime = 1000 - timeSinceLastRequest;
+      console.log(`[⏳ Rate Limiting] Waiting ${waitTime}ms before request`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    requestCount++;
+    lastRequestTime = Date.now();
     
     let { location, breed } = await req.json();
 
@@ -89,6 +123,16 @@ export async function POST(req: Request) {
       const errorText = await response.text();
       console.error('[❌ API Error]', response.status, errorText);
 
+      // Handle rate limit specifically
+      if (response.status === 429) {
+        console.error('[❌ Rate Limit Hit] Petfinder API rate limit exceeded');
+        return NextResponse.json({
+          error: 'API rate limit exceeded',
+          details: 'Please try again in a few minutes',
+          retryAfter: 300 // 5 minutes
+        }, { status: 429 });
+      }
+
       const isBadLocation = errorText.includes('"path":"location"') || errorText.toLowerCase().includes('could not determine location');
 
       return NextResponse.json({
@@ -120,20 +164,20 @@ export async function POST(req: Request) {
       console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
 
       if (dogsNeedingFullDetails.length > 0) {
-        // Reduce concurrent requests - only fetch details for first 5 dogs to avoid rate limits
-        const dogsToUpdate = dogsNeedingFullDetails.slice(0, 5);
+        // Further reduce concurrent requests - only fetch details for first 3 dogs to avoid rate limits
+        const dogsToUpdate = dogsNeedingFullDetails.slice(0, 3);
         console.log(`[🔍 Full Details] Processing ${dogsToUpdate.length} dogs sequentially`);
         
         let updatedCount = 0;
         
-        // Process dogs sequentially to avoid rate limits
+        // Process dogs sequentially with longer delays to avoid rate limits
         for (let i = 0; i < dogsToUpdate.length; i++) {
           const dog = dogsToUpdate[i];
           
           try {
-            // Add delay between each request
+            // Add longer delay between each request
             if (i > 0) {
-              await new Promise(resolve => setTimeout(resolve, 300));
+              await new Promise(resolve => setTimeout(resolve, 1000)); // Increased to 1 second
             }
             
             let detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
@@ -153,6 +197,7 @@ export async function POST(req: Request) {
             if (detailResponse.status === 401) {
               console.log(`[🔄 Token Refresh] Retrying dog ${dog.id} with fresh token`);
               const freshToken = await getAccessToken(true);
+              await new Promise(resolve => setTimeout(resolve, 500)); // Wait before retry
               detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
                 headers: {
                   Authorization: `Bearer ${freshToken}`,
@@ -177,6 +222,11 @@ export async function POST(req: Request) {
               }
             } else {
               console.warn(`[⚠️ Detail API Error] Dog ${dog.id}: ${detailResponse.status}`);
+              // If we hit rate limit on detail requests, stop trying
+              if (detailResponse.status === 429) {
+                console.warn(`[⚠️ Rate Limited on Details] Stopping detail fetches`);
+                break;
+              }
             }
           } catch (error) {
             console.warn(`[❌ Failed Detail Fetch] Dog ${dog.id}:`, error);

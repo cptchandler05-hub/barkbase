@@ -6,9 +6,23 @@ let refreshPromise: Promise<string> | null = null;
 
 // Rate limiting: track last request time and enforce minimum delay
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 200; // Increased to 200ms between requests
+const MIN_REQUEST_INTERVAL = 500; // Increased to 500ms between requests
+
+// Request queue to prevent concurrent API calls
+let requestQueue: Array<{
+  resolve: (value: string) => void;
+  reject: (error: any) => void;
+}> = [];
+let isProcessingQueue = false;
 
 export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
+  // If we're already processing the queue, add this request to the queue
+  if (isProcessingQueue && !forceRefresh) {
+    return new Promise((resolve, reject) => {
+      requestQueue.push({ resolve, reject });
+    });
+  }
+
   const now = Date.now();
   
   // Rate limiting: ensure minimum time between requests
@@ -33,6 +47,10 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
     console.log('🔄 Using cached Petfinder token');
     lastRequestTime = Date.now();
+    
+    // Process any queued requests with the cached token
+    processQueue(cachedToken);
+    
     return cachedToken;
   }
 
@@ -40,29 +58,52 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
   if (isRefreshing && refreshPromise) {
     console.log('⏳ Token refresh in progress, waiting...');
     try {
-      return await refreshPromise;
+      const token = await refreshPromise;
+      processQueue(token);
+      return token;
     } catch (error) {
       // If the refresh failed, reset state and try again
       isRefreshing = false;
       refreshPromise = null;
+      processQueue(null, error);
       throw error;
     }
   }
 
   // Start the refresh process
+  isProcessingQueue = true;
   isRefreshing = true;
   refreshPromise = performTokenRefresh();
 
   try {
     const token = await refreshPromise;
     lastRequestTime = Date.now();
+    processQueue(token);
     return token;
   } catch (error) {
+    processQueue(null, error);
     throw error;
   } finally {
     isRefreshing = false;
     refreshPromise = null;
+    isProcessingQueue = false;
   }
+}
+
+function processQueue(token: string | null, error?: any) {
+  // Process all queued requests
+  const currentQueue = [...requestQueue];
+  requestQueue = [];
+  
+  currentQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else if (token) {
+      resolve(token);
+    } else {
+      reject(new Error('No token available'));
+    }
+  });
 }
 
 async function performTokenRefresh(): Promise<string> {
