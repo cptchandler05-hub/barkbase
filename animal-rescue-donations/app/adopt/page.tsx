@@ -32,9 +32,35 @@ export default function AdoptPage() {
   const dogsPerPage = 12;
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Auto-load most invisible dogs on page load
+  // Auto-load most invisible dogs on page load, but preserve state if returning from dog page
   useEffect(() => {
-    handleShowMostInvisible();
+    const savedState = sessionStorage.getItem('adoptPageState');
+    
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState);
+        console.log('Restoring saved adoption page state:', state);
+        
+        // Restore all state
+        setDogs(state.dogs || []);
+        setSearchLocation(state.searchLocation || "");
+        setSearchBreed(state.searchBreed || "");
+        setSearchSize(state.searchSize || "");
+        setSearchAge(state.searchAge || "");
+        setHasSearched(state.hasSearched || false);
+        setCurrentPage(state.currentPage || 1);
+        
+        // Clear the saved state after restoring
+        sessionStorage.removeItem('adoptPageState');
+      } catch (error) {
+        console.error('Error restoring adoption page state:', error);
+        // Fallback to default behavior
+        handleShowMostInvisible();
+      }
+    } else {
+      // No saved state, load default invisible dogs
+      handleShowMostInvisible();
+    }
   }, []);
 
   // Scroll to results when page changes
@@ -381,6 +407,19 @@ export default function AdoptPage() {
                       <div className="flex gap-2">
                         <a
                           href={`/adopt/${dog.id}`}
+                          onClick={() => {
+                            // Save current state before navigation
+                            const stateToSave = {
+                              dogs,
+                              searchLocation,
+                              searchBreed,
+                              searchSize,
+                              searchAge,
+                              hasSearched,
+                              currentPage
+                            };
+                            sessionStorage.setItem('adoptPageState', JSON.stringify(stateToSave));
+                          }}
                           className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-3 py-2 rounded-lg text-center transition"
                         >
                           View {dog.name}

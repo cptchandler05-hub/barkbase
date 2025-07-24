@@ -173,7 +173,10 @@ export default function DogProfilePage() {
           <h2 className="text-2xl font-bold text-gray-700 mb-2">Dog Not Found</h2>
           <p className="text-gray-600 mb-4">This pup might have already found a home!</p>
           <button
-            onClick={() => router.push('/adopt')}
+            onClick={() => {
+              // Navigate back to adoption page
+              router.push('/adopt');
+            }}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition"
           >
             Back to Adoption Page
@@ -222,7 +225,17 @@ export default function DogProfilePage() {
           <div className="mb-6">
             <nav className="text-sm">
               <button
-                onClick={() => router.push('/adopt')}
+                onClick={() => {
+                  // Check if there's saved state and preserve it when going back
+                  const savedState = sessionStorage.getItem('adoptPageState');
+                  if (savedState) {
+                    // State already saved, just navigate back
+                    router.push('/adopt');
+                  } else {
+                    // No saved state, but still navigate back
+                    router.push('/adopt');
+                  }
+                }}
                 className="text-blue-600 hover:text-blue-800 transition"
               >
                 ← Back to Adoption Page
