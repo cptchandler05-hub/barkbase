@@ -469,7 +469,15 @@ export default function AdoptPage() {
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
                             title={`Share ${dog.name} on Farcaster`}
                           >
-                            <img src="/logos/farcaster-logo.png" alt="Farcaster" className="w-4 h-4" />
+                            <img 
+                              src="/logos/farcaster-logo.png" 
+                              alt="Farcaster" 
+                              className="w-4 h-4"
+                              onError={(e) => {
+                                console.warn('Farcaster logo failed to load on adoption page');
+                                e.currentTarget.outerHTML = '<div class="w-4 h-4 bg-purple-600 rounded flex items-center justify-center"><span class="text-white font-bold text-xs">F</span></div>';
+                              }}
+                            />
                           </button>
                         </div>
                       </div>

@@ -56,26 +56,27 @@ export async function GET(
 
     // Handle successful response
     if (response.ok) {
+      // Process the response
       const data = await response.json();
-      console.log("Successfully fetched dog data for:", data.animal?.name);
+      console.log(`Fetched dog details for ${dogId}:`, data.animal?.name || 'Unknown name');
 
-      if (!data.animal) {
-        console.error("No animal data in response");
-        return NextResponse.json({ error: "Invalid response from API" }, { status: 500 });
+      if (data.animal) {
+        // Add visibility score
+        data.animal.visibilityScore = calculateVisibilityScore(data.animal);
+        console.log(`Visibility score calculated: ${data.animal.visibilityScore}`);
+
+        // Log description status for debugging
+        if (data.animal.description) {
+          console.log(`Description length: ${data.animal.description.length} chars`);
+          if (data.animal.description.includes('...')) {
+            console.warn(`⚠️ Description appears truncated for ${data.animal.name}`);
+          }
+        } else {
+          console.warn(`⚠️ No description found for ${data.animal.name}`);
+        }
       }
 
-      const dog = data.animal;
-      const visibilityScore = calculateVisibilityScore(dog);
-
-      const enrichedDog = {
-        ...dog,
-        visibilityScore,
-        // Ensure full description is included without truncation
-        description: dog.description ? dog.description.trim() : null,
-      };
-
-      console.log("Returning enriched dog data with visibility score:", visibilityScore);
-      return NextResponse.json(enrichedDog);
+      return NextResponse.json(data.animal);
     }
 
     // Handle error responses

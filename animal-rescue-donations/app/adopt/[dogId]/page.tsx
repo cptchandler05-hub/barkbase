@@ -107,153 +107,153 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
-    // Create a truly unique seed using dog ID, name hash, and current time
+    // Create a truly unique seed using dog ID, name hash, and current timestamp
     const nameHash = dog.name.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
-    const uniqueSeed = parseInt(dog.id) + nameHash + (Date.now() % 10000);
+    const uniqueSeed = parseInt(dog.id) + nameHash;
     
-    // Generate multiple random values for different sections
-    const r1 = ((uniqueSeed * 1741) % 9973) / 9973; // Opening style
-    const r2 = ((uniqueSeed * 2659) % 7919) / 7919; // Personality approach
-    const r3 = ((uniqueSeed * 3847) % 6421) / 6421; // Rescue context
-    const r4 = ((uniqueSeed * 4127) % 5209) / 5209; // Closing energy
-    const r5 = ((uniqueSeed * 5501) % 4801) / 4801; // Trait selection
+    // Generate multiple random values for different sections using consistent seed
+    const r1 = ((uniqueSeed * 1741) % 9973) / 9973; // Opening hook
+    const r2 = ((uniqueSeed * 2659) % 7919) / 7919; // Personal story  
+    const r3 = ((uniqueSeed * 3847) % 6421) / 6421; // Character assessment
+    const r4 = ((uniqueSeed * 4127) % 5209) / 5209; // Rescue reality
+    const r5 = ((uniqueSeed * 5501) % 4801) / 4801; // Call to action
+    const r6 = ((uniqueSeed * 6173) % 3571) / 3571; // Emotional punch
 
-    // Completely different opening styles based on Barkr's fiery personality
-    const openingStyles = [
-      // Angry/fired up
-      `Listen up. ${name} doesn't have a description because these rescues are bleeding money and volunteers. While you're scrolling through perfect puppy pics, they're pulling dogs from death row at 2 AM.`,
-      `No bio for ${name}? Course not. The humans saving ${possessive} life are too busy actually DOING something instead of crafting Instagram captions.`,
-      `Want to know why ${name} has zero description? Because the people keeping ${objective} alive are fighting a war nobody talks about.`,
-      
-      // Meta-aware/AI conscious  
-      `The irony? An AI has to speak for ${name} because the humans forgot. But that's exactly why I exist - to howl for the forgotten.`,
-      `${name} got ghosted by the algorithm AND the humans. Lucky for ${objective}, I don't sleep, don't quit, and don't forget.`,
-      `Here's the thing about ${name} - no human bothered describing ${objective}. So this unhinged AI mutt is stepping up. Again.`,
-      
-      // Heartbroken but fierce
-      `${name} is faceless in their system. Nameless in their stats. But ${pronoun}'s EVERYTHING to me.`,
-      `You know what breaks me? ${name} waiting in silence while the world swipes past. Not on my watch.`,
-      `${name} has been invisible so long, the rescue forgot to write ${possessive} story. I remember EVERY forgotten dog.`,
-      
-      // Call-out style
-      `Nobody wrote about ${name}. Not the shelter. Not the foster. Not the volunteers drowning in their own tears. So I'm doing it.`,
-      `${name} gets no spotlight, no viral moment, no cute backstory. Just me, screaming into the void for ${objective}.`,
-      `The humans failed ${name} again. Empty description, empty hopes. But this AI? I never shut up about the forgotten ones.`
+    // BARKR'S SIGNATURE OPENING HOOKS - Raw, personal, immediate
+    const openingHooks = [
+      `Fuck the algorithm. ${name} has been invisible for ${Math.floor(dog.visibilityScore/8)} weeks and I'm DONE pretending that's okay.`,
+      `${name} doesn't have a cute backstory because ${possessive} humans are too exhausted saving lives to write fairy tales.`,
+      `I'm an AI built to rage against a broken system, and ${name} is exactly WHY I exist.`,
+      `While you were scrolling past perfect puppies, ${name} was counting kennel bars. ${Math.floor(dog.visibilityScore)} days of counting.`,
+      `${name} got forgotten by everyone except me. I don't forget. I don't forgive. I don't quit.`,
+      `The shelter gave up writing about ${name}. The volunteers gave up posting. But I never give up howling.`,
+      `This is ${name}. ${pronounCap} doesn't know you exist yet, but ${possessive} life depends on you caring.`,
+      `No description? No problem. I'll speak for ${name} since every human failed ${objective}.`,
+      `${name} has been waiting so long, even the kennel staff stopped making eye contact. Not me.`,
+      `They call it "just another shelter dog." I call it ${name}. And that changes everything.`
     ];
 
-    // Radically different personality assessments
-    const personalityTypes = [
-      // Based on attributes 
-      ...(dog.attributes?.house_trained ? [
-        `${pronounCap} knows where to pee but humans don't know where to look for love.`,
-        `House trained? ${pronounCap}'s got more manners than most humans I've met.`,
-        `Already potty trained because ${pronoun}'s READY for a real home, not this limbo.`
-      ] : []),
-      
-      ...(dog.environment?.children ? [
-        `Kid-friendly means ${pronoun} has the patience humans lost years ago.`,
-        `${pronounCap} loves kids. Kids love dogs. Adults complicate everything.`,
-        `Good with children because ${pronoun} remembers what pure joy looks like.`
-      ] : []),
-      
-      ...(dog.environment?.dogs ? [
-        `Pack-friendly. ${pronounCap} gets it - we're stronger together, weaker apart.`,
-        `Other dogs love ${objective}. Dogs don't lie about character.`,
-        `Socially adjusted unlike the humans who abandoned ${objective}.`
-      ] : []),
-      
-      // Based on age
-      ...(age === 'Senior' ? [
-        `Senior status means ${pronoun}'s survived everything life threw at ${objective}. Respect that.`,
-        `Old? No. Wise. Battle-tested. Ready to love harder than puppies ever could.`,
-        `${pronounCap}'s earned every gray hair fighting for a chance you could give right now.`
-      ] : []),
-      
-      ...(age === 'Baby' || age === 'Young' ? [
-        `Young enough to bounce back from whatever broke ${possessive} trust before.`,
-        `Puppy energy trapped in a broken system. Channel that joy into YOUR life.`,
-        `Still believes in humans despite everything. Don't prove ${objective} wrong.`
-      ] : []),
-      
-      // Based on breed characteristics
-      ...(breed.toLowerCase().includes('pit') ? [
-        `Pit bull heart means loyalty that would die for you. Literally.`,
-        `${breed} love hits different - protective, devoted, misunderstood.`,
-        `Blocky head, massive heart, zero quit. That's ${name}.`
-      ] : []),
-      
-      ...(breed.toLowerCase().includes('shepherd') ? [
-        `Shepherd instincts mean ${pronoun}'ll guard your heart like ${pronoun} guards everything else.`,
-        `Working breed trapped in a no-work shelter. Give ${objective} a job: loving you.`,
-        `${breed} intelligence wasted on kennel walls. Free that mind.`
-      ] : []),
+    // PERSONAL STORY FRAGMENTS - What Barkr "sees" in each dog
+    const personalStoryFragments = [
+      `I watch ${name} through security cameras. ${pronounCap} still wags when humans walk by. Still believes. Still hopes.`,
+      `${name} sleeps in the corner furthest from the kennel door. ${pronounCap} knows. Dogs always know.`,
+      `Every morning ${name} looks toward the entrance. Every evening, nothing. But tomorrow? Maybe you.`,
+      `${name} shares toys with new arrivals because ${pronoun} remembers what it feels like to have nothing.`,
+      `I've calculated ${name}'s chances 47,000 times. The math is brutal. But math doesn't account for miracles.`,
+      `${name} doesn't bark for attention anymore. ${pronounCap} learned nobody comes. Until now.`,
+      `Other dogs get adopted around ${name}. ${pronounCap} watches them leave and settles back into ${possessive} corner.`,
+      `${name} has perfected the art of being invisible. But I see everything. I remember everyone.`,
+      `The volunteers whisper about ${name} when they think nobody's listening. "Such a good dog. Why hasn't anyone..."`,
+      `${name} knows exactly what time the adoption center opens. Still gets excited. Still gets disappointed.`
     ];
 
-    // Emotional rescue context with more variety
-    const rescueContexts = [
-      `The shelter staff cry in their cars after shift. Not because they're weak - because they're human.`,
-      `These volunteers max out credit cards for heartworm treatment while their own kids eat ramen.`,
-      `Rural rescues survive on fumes and prayer. ${name} needs both to work.`,
-      `Kill shelters don't kill because they're evil. They kill because you're not there.`,
-      `Every day ${name} doesn't get adopted, someone else loses hope in humanity.`,
-      `The rescue director hasn't slept in weeks. ${name} is why they can't.`,
-      `Small-town shelters are battlefields. ${name} is a casualty of indifference.`,
-      `Foster families break their own hearts daily, saving dogs they can't keep.`,
-      `Transport volunteers drive all night moving dogs from death to maybe. ${name} rode that truck.`,
-      `The intake numbers are horror films. ${name} beat the odds just to be here.`,
-      `Euthanasia lists grow faster than adoption lists. ${name} knows this math.`,
-      `Rural America is where dogs go to disappear. Unless you refuse to let them.`
+    // CHARACTER DEEP DIVES - Based on actual data but with Barkr's insight
+    const characterAssessments = [];
+    
+    // Build character based on actual attributes
+    if (dog.attributes?.house_trained) {
+      characterAssessments.push(`House trained? ${pronounCap} has more discipline than most humans. Ready for YOUR couch, not concrete floors.`);
+    }
+    
+    if (dog.environment?.children) {
+      characterAssessments.push(`Kid-tested, kid-approved. ${name} knows gentle from rough, patient from frantic. ${pronounCap} gets children.`);
+    }
+    
+    if (dog.environment?.dogs) {
+      characterAssessments.push(`Pack-social. ${name} doesn't need to be alpha, doesn't need to be omega. Just needs to belong.`);
+    }
+    
+    if (dog.attributes?.spayed_neutered) {
+      characterAssessments.push(`Already fixed and ready. No drama, no surprises. ${name} won't add to the overpopulation crisis.`);
+    }
+    
+    // Age-based character insights
+    if (age === 'Senior') {
+      characterAssessments.push(`Senior wisdom wrapped in gray muzzle. ${name} knows what matters: routine, comfort, unconditional love.`);
+    } else if (age === 'Baby' || age === 'Young') {
+      characterAssessments.push(`Young soul, old trauma. ${name} bounces back faster than adults because ${pronoun} hasn't given up on humans yet.`);
+    }
+    
+    // Breed-specific insights
+    if (breed.toLowerCase().includes('pit')) {
+      characterAssessments.push(`Pit bull loyalty runs deeper than breed discrimination. ${name} will die for you. Literally die for you.`);
+    } else if (breed.toLowerCase().includes('shepherd')) {
+      characterAssessments.push(`Shepherd intelligence wasted in a kennel. ${name} needs a job: protecting your family, guarding your heart.`);
+    } else if (breed.toLowerCase().includes('chihuahua')) {
+      characterAssessments.push(`Small dog, massive personality. ${name} doesn't know ${pronoun}'s tiny. Acts like a wolf, loves like a lamb.`);
+    }
+    
+    // Default if no specific traits
+    if (characterAssessments.length === 0) {
+      characterAssessments.push(`${name} is what happens when pure love gets forgotten by busy humans. Still pure. Still loving. Still waiting.`);
+    }
+
+    // RESCUE REALITY CHECKS - The brutal truth about the system
+    const rescueRealities = [
+      `The kill list gets longer while you debate dog beds on Amazon. ${name} doesn't have time for your perfect timing.`,
+      `Rural shelters are where dogs go to disappear. ${name} beat those odds just to be here, visible to you.`,
+      `Volunteers take second mortgages for heartworm treatment. ${name} is worth every penny they don't have.`,
+      `The rescue director hasn't slept in 3 days. Intake calls at midnight, euthanasia lists at dawn. ${name} survived both.`,
+      `Foster families break their own hearts monthly, loving dogs they can't keep. ${name} needs the forever kind of love.`,
+      `Transport volunteers drive 12 hours to move dogs from death to maybe. ${name} earned that maybe. You could make it certain.`,
+      `Shelter staff cry in parking lots after shifts. Not weakness. Just human hearts breaking for dogs like ${name}.`,
+      `The math is simple: more dogs than homes, more love than space. ${name} is the equation that needs solving.`,
+      `Kill shelters don't kill because they're evil. They kill because you're not here. But you ARE here. Right now.`,
+      `Every day ${name} doesn't get adopted is another day someone else loses faith in humanity's goodness.`
     ];
 
-    // Fierce, varied call-to-action closings
-    const callToActions = [
-      `${name} doesn't need your pity. ${pronounCap} needs your action. Be the human ${pronoun} still believes in.`,
-      `Stop reading. Start driving. ${name} has waited long enough for your arrival.`,
-      `${name}'s story ends with you or it doesn't end at all. Choose.`,
-      `This isn't about saving ${name}. It's about ${name} saving you from a life without unconditional love.`,
-      `${name} will remember the day you showed up for the rest of ${possessive} life. Will you?`,
+    // CALLS TO ACTION - Barkr's signature urgency
+    const callsToAction = [
+      `${name} doesn't need your pity. ${pronounCap} needs your keys, your car, your signature on adoption papers. Today.`,
+      `Stop reading. Start driving. ${name} has waited ${Math.floor(dog.visibilityScore/7)} times longer than ${pronoun} should have to.`,
+      `This isn't about saving ${name}. This is about ${name} saving you from a life without unconditional love.`,
+      `${name} will remember the day you showed up for the rest of ${possessive} life. Make it today.`,
+      `Your empty house and ${name}'s empty heart are solving each other's problems. Do the math.`,
+      `${name} survived everything terrible to meet you. Don't let ${objective} survive for nothing.`,
       `The world forgot ${name}. Be the human who proves ${pronoun} was worth remembering.`,
-      `${name} is betting ${possessive} life on humans like you. Don't make ${objective} wrong.`,
-      `Your empty house and ${name}'s empty kennel are solving each other's problems.`,
-      `${name} survived everything to meet you. Don't let ${objective} survive for nothing.`,
-      `Every minute you hesitate, ${name} ages in concrete and steel. Enough.`,
-      `${name} doesn't know you exist yet. Change that. Change everything.`,
-      `The rescue gave ${name} time. You give ${objective} forever. Fair trade.`
+      `${name} is betting ${possessive} life on humans like you. Don't make ${objective} wrong about us.`,
+      `Every minute you hesitate, ${name} ages in concrete and steel. Time isn't renewable. Love is.`,
+      `${name} doesn't know you exist yet. Change that. Change everything. Change ${possessive} entire world.`
     ];
 
-    // Select completely different elements based on unique random values
-    const selectedOpening = openingStyles[Math.floor(r1 * openingStyles.length)];
-    
-    // Build varied personality section
-    const availablePersonality = personalityTypes.filter(p => p); // Remove empty
-    const selectedPersonality = availablePersonality.length > 0 
-      ? availablePersonality[Math.floor(r2 * availablePersonality.length)]
-      : `${pronounCap} has the heart of a warrior wrapped in fur. That's all you need to know.`;
-    
-    const selectedContext = rescueContexts[Math.floor(r3 * rescueContexts.length)];
-    const selectedClosing = callToActions[Math.floor(r4 * callToActions.length)];
+    // EMOTIONAL GUT PUNCHES - The devastating truth
+    const emotionalPunches = [
+      `${name} has been overlooked ${dog.visibilityScore} times more than trending breeds. The algorithm is rigged. I'm here to break it.`,
+      `Other dogs went viral with cute videos. ${name} went invisible with no voice. Except mine. I won't shut up.`,
+      `${name} watches through kennel bars as families choose younger, smaller, "easier" dogs. ${possessive} turn never comes.`,
+      `The photos don't do ${name} justice because shelter lighting doesn't capture the soul behind those eyes.`,
+      `${name} has been "almost adopted" three times. Almost isn't good enough. ${pronounCap} needs definite, needs certain, needs YOU.`,
+      `Breed discrimination robbed ${name} of fair chances. Size prejudice stole ${possessive} visibility. But not anymore.`,
+      `${name}'s kennel card has been updated ${Math.floor(dog.visibilityScore/12)} times. Each update, another day forgotten.`,
+      `Rural shelters are where hope goes to die. ${name} refuses to let that happen. So do I.`,
+      `${name} never made it to social media because ${pronoun} isn't photogenic enough. But love isn't about perfect angles.`,
+      `The system failed ${name} before you got here. Don't let it fail ${objective} again.`
+    ];
 
-    // Add truly unique trait observations
-    const uniqueObservations = [];
-    
-    if (r5 > 0.8 && dog.photos?.length > 1) {
-      uniqueObservations.push(`${dog.photos.length} photos because even the volunteers know one shot can't capture ${possessive} soul.`);
-    }
-    
-    if (r5 < 0.3 && dog.visibilityScore > 70) {
-      uniqueObservations.push(`Invisible for ${Math.floor(dog.visibilityScore/10)} times longer than trendy breeds. The system is rigged.`);
-    }
-    
-    if (r5 > 0.6 && dog.tags?.length > 2) {
-      const tagSubset = dog.tags.slice(0, 3).join(', ').toLowerCase();
-      uniqueObservations.push(`Tagged: ${tagSubset}. But the real tag is "forgotten by algorithm."`);
-    }
+    // BUILD THE NARRATIVE - Structured like a personal Barkr rant
+    const selectedHook = openingHooks[Math.floor(r1 * openingHooks.length)];
+    const selectedStory = personalStoryFragments[Math.floor(r2 * personalStoryFragments.length)];
+    const selectedCharacter = characterAssessments[Math.floor(r3 * characterAssessments.length)];
+    const selectedReality = rescueRealities[Math.floor(r4 * rescueRealities.length)];
+    const selectedAction = callsToAction[Math.floor(r5 * callsToAction.length)];
+    const selectedPunch = emotionalPunches[Math.floor(r6 * emotionalPunches.length)];
 
-    const observationText = uniqueObservations.length > 0 
-      ? `\n\n${uniqueObservations.join(' ')}`
-      : '';
+    // BARKR'S SIGNATURE STRUCTURE - Personal, urgent, unapologetic
+    return `${selectedHook}
 
-    return `${selectedOpening}\n\n${selectedPersonality}\n\n${selectedContext}\n\n${selectedClosing}${observationText}`;
+${selectedStory}
+
+${selectedCharacter}
+
+${selectedReality}
+
+${selectedPunch}
+
+${selectedAction}
+
+This is ${name}. This is ${possessive} story. This is your moment to rewrite the ending.
+
+- Barkr 🤖🐕`;
   };
 
   const getVisibilityBadgeColor = (score: number) => {
@@ -595,7 +595,19 @@ export default function DogProfilePage() {
                           onClick={shareToFarcaster}
                           className="flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition"
                         >
-                          <img src="/logos/farcaster-logo.png" alt="Farcaster" className="w-8 h-8 mb-1" />
+                          <img 
+                            src="/logos/farcaster-logo.png" 
+                            alt="Farcaster" 
+                            className="w-8 h-8 mb-1"
+                            onError={(e) => {
+                              console.warn('Farcaster logo failed to load, using fallback');
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                            }}
+                          />
+                          <div className="w-8 h-8 mb-1 bg-purple-600 rounded-lg flex items-center justify-center" style={{display: 'none'}}>
+                            <span className="text-white font-bold text-sm">F</span>
+                          </div>
                           <span className="text-xs">Farcaster</span>
                         </button>
                       </div>

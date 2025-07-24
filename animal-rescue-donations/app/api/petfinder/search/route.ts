@@ -110,27 +110,43 @@ export async function POST(req: Request) {
 
       // For dogs with missing or truncated descriptions, fetch full details
       const dogsNeedingFullDetails = data.animals.filter((dog: Dog) => 
-        !dog.description || dog.description.length < 50 || dog.description.includes('...')
+        !dog.description || 
+        dog.description.length < 100 || 
+        dog.description.includes('...') ||
+        dog.description.includes('..') ||
+        dog.description.trim().endsWith('...')
       );
 
       console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
 
       if (dogsNeedingFullDetails.length > 0) {
-        // Fetch full details for dogs with missing descriptions (limit to first 20 to avoid timeout)
-        const detailPromises = dogsNeedingFullDetails.slice(0, 20).map(async (dog: Dog) => {
+        // Fetch full details for dogs with missing descriptions (limit to first 25 with retry logic)
+        const detailPromises = dogsNeedingFullDetails.slice(0, 25).map(async (dog: Dog, index: number) => {
+          // Add small delay to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, index * 100));
+          
           try {
             const detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
               },
+              timeout: 5000, // 5 second timeout per request
             });
+            
             if (detailResponse.ok) {
               const fullData = await detailResponse.json();
-              return { id: dog.id, description: fullData.animal?.description };
+              const fullDescription = fullData.animal?.description;
+              
+              if (fullDescription && fullDescription.length > 50 && !fullDescription.includes('...')) {
+                console.log(`[📝 Full Description Retrieved] ${dog.name}: ${fullDescription.length} chars`);
+                return { id: dog.id, description: fullDescription };
+              }
+            } else {
+              console.warn(`[⚠️ Detail API Error] Dog ${dog.id}: ${detailResponse.status}`);
             }
           } catch (error) {
-            console.warn(`Failed to fetch full details for dog ${dog.id}:`, error);
+            console.warn(`[❌ Failed Detail Fetch] Dog ${dog.id}:`, error);
           }
           return null;
         });
@@ -138,15 +154,18 @@ export async function POST(req: Request) {
         const fullDescriptions = await Promise.all(detailPromises);
         
         // Update the dogs with full descriptions
+        let updatedCount = 0;
         fullDescriptions.forEach(result => {
           if (result && result.description) {
             const dogIndex = data.animals.findIndex((dog: Dog) => dog.id === result.id);
             if (dogIndex !== -1) {
               data.animals[dogIndex].description = result.description;
-              console.log(`[📝 Description Updated] ${data.animals[dogIndex].name} now has full description`);
+              updatedCount++;
             }
           }
         });
+        
+        console.log(`[✅ Descriptions Updated] ${updatedCount}/${dogsNeedingFullDetails.length} dogs got full descriptions`);
       }
     }
 
