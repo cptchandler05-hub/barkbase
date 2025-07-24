@@ -99,11 +99,16 @@ export async function GET(
     throw new Error(`Petfinder API error: ${response.status} - ${errorText}`);
 
   } catch (error) {
-    console.error("Error fetching dog details:", error);
+    console.error("=== ERROR IN DOG DETAILS API ===");
+    console.error("Error type:", error instanceof Error ? error.name : typeof error);
+    console.error("Error message:", error instanceof Error ? error.message : error);
+    console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
+    console.error("DogId that caused error:", dogId);
+
     return NextResponse.json(
       { 
-        error: "Failed to fetch dog details", 
-        details: error instanceof Error ? error.message : "Unknown error" 
+        error: "Failed to fetch dog details",
+        details: error instanceof Error ? error.message : "Unknown error"
       },
       { status: 500 }
     );

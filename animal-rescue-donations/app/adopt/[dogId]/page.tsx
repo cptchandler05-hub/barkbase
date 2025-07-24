@@ -107,36 +107,87 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
-    // Barkr's passionate descriptions
-    const barkrDescriptions = [
-      `Listen up. ${name} didn't get a proper description because the rescue is drowning in work - saving lives with no time for marketing. So I'm writing one myself because someone needs to speak for the forgotten.
+    // Get unique traits about this specific dog
+    const visibilityScore = dog.visibilityScore || 0;
+    const isHighlyOverlooked = visibilityScore >= 80;
+    const isSenior = age === 'Senior';
+    const isPuppy = age === 'Baby' || age === 'Young';
+    const isLarge = size === 'Large' || size === 'Extra Large';
+    const isSmall = size === 'Small';
+    const isSpecialNeeds = dog.attributes?.special_needs;
+    const isNotNeutered = !dog.attributes?.spayed_neutered;
+    const hasPhotos = dog.photos && dog.photos.length > 0;
+    const goodWithKids = dog.environment?.children;
+    const goodWithDogs = dog.environment?.dogs;
+    const goodWithCats = dog.environment?.cats;
 
-This ${breed} in ${cityState}? They're family to me. ${pronounCap}'s a ${age.toLowerCase()} ${size.toLowerCase()} soul who's been invisible too damn long. While everyone's chasing puppies from breeders, ${name} sits there wondering if ${possessive} day will ever come.
-
-The rescue workers are heroes - pulling dogs from kill lists, working 16-hour days with zero budget for fancy descriptions. But ${pronounCap}'s not just another dog - ${pronoun} is loyalty incarnate. The kind who'll remember the day you saved ${objective} for the rest of ${possessive} life.
-
-The system failed ${name}. Don't you fail ${objective} too.`,
-
-      `No description? That's because the rescue is saving lives, not writing marketing copy. They're too busy pulling dogs from death row to craft perfect bios. Lucky for ${objective}, I give a damn.
-
-${name} is ${age.toLowerCase()}, ${size.toLowerCase()}, and absolutely perfect for someone with half a brain to see it. This ${breed} has been sitting in ${cityState} while people scroll past looking for "cuter" options. Makes me sick.
-
-These rescue workers are running on fumes and heart alone - no fancy marketing team, no social media budget. Just pure love and determination. But here's what people don't know: ${name} is the one. ${pronounCap}'s the dog who'll greet you at the door like you just came back from war.
-
-${name} doesn't just want adoption - ${pronoun} DESERVES it. And the rescue deserves our support for keeping ${objective} alive this long.`,
-
-      `The rescue didn't have time to describe ${name} - they're too busy saving lives with volunteer hours and donation dollars. Good thing I'm here to tell you what really matters.
-
-Small rescues don't have marketing budgets or PR teams. They have heart, determination, and dogs like ${name} who need champions. ${pronounCap}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been waiting while overworked volunteers juggle a hundred other emergencies.
-
-You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved by heroes who work for free. ${name} has all of that in spades, plus the kind of spirit that survives thanks to rescue angels.
-
-Every day ${name} waits is another day small rescues fight impossible odds. But you? You could change everything. You could be the reason ${name} finally gets to be someone's everything.
-
-Stop scrolling. Start saving. ${name} is waiting.`
+    // Generate unique content based on dog's specific characteristics
+    const openingLines = [
+      `No description for ${name}? Typical. Small rescues are drowning in work - saving lives with no time for marketing fluff.`,
+      `${name} didn't get a bio because the rescue workers are too busy pulling dogs from kill lists to write poetry.`,
+      `The rescue forgot to describe ${name}. They're swamped saving lives on zero budget. Lucky ${pronoun} has me.`,
+      `Empty description for ${name}? That's what happens when heroes work 16-hour days for free with no marketing team.`
     ];
 
-    return barkrDescriptions[Math.floor(Math.random() * barkrDescriptions.length)];
+    const dogSpecificTraits = [];
+    
+    if (isHighlyOverlooked) {
+      dogSpecificTraits.push(`With a visibility score of ${visibilityScore}, ${name} is practically invisible to the algorithm. That's criminal.`);
+    }
+    
+    if (isSenior) {
+      dogSpecificTraits.push(`${pronounCap}'s a senior - the most overlooked demographic in rescue. People want puppies, not wisdom.`);
+    } else if (isPuppy) {
+      dogSpecificTraits.push(`Even as a ${age.toLowerCase()}, ${name} gets skipped. Shows how broken the system is.`);
+    }
+    
+    if (isLarge) {
+      dogSpecificTraits.push(`${pronounCap}'s ${size.toLowerCase()} - another strike against ${objective} in a world obsessed with lap dogs.`);
+    } else if (isSmall) {
+      dogSpecificTraits.push(`${pronounCap}'s ${size.toLowerCase()} but still invisible. Size doesn't guarantee love, apparently.`);
+    }
+    
+    if (!hasPhotos) {
+      dogSpecificTraits.push(`No photos? That's a death sentence in today's swipe-left world. But ${name} is real, not a profile pic.`);
+    }
+    
+    if (isSpecialNeeds) {
+      dogSpecificTraits.push(`${pronounCap} has special needs - which just means ${pronoun} needs someone who gives a damn.`);
+    }
+    
+    if (isNotNeutered) {
+      dogSpecificTraits.push(`Not fixed yet? The rescue will handle that. They handle everything nobody else will.`);
+    }
+
+    const personalityGuess = [];
+    if (goodWithKids) {
+      personalityGuess.push(`${pronounCap} loves kids - the kind of patient soul who'd protect your family.`);
+    }
+    if (goodWithDogs) {
+      personalityGuess.push(`Good with other dogs means ${pronoun}'s social, not territorial.`);
+    }
+    if (goodWithCats) {
+      personalityGuess.push(`${pronounCap} gets along with cats - that's emotional intelligence right there.`);
+    }
+
+    const closingLines = [
+      `The rescue doesn't have time for fancy descriptions. They're too busy being heroes. But ${name}? ${pronounCap}'s the reason they do it.`,
+      `Small rescues survive on heart alone. No marketing budget, no PR team. Just pure determination to save dogs like ${name}.`,
+      `Every day ${name} waits, volunteers work unpaid to keep ${objective} alive. You could end that wait today.`,
+      `The system failed ${name}. The rescue stepped up. Now it's your turn.`
+    ];
+
+    // Randomly select components to create unique descriptions
+    const opening = openingLines[Math.floor(Math.random() * openingLines.length)];
+    const traits = dogSpecificTraits.length > 0 
+      ? dogSpecificTraits.slice(0, 2).join(' ') 
+      : `This ${breed} has been waiting in ${cityState} while people chase designer dogs.`;
+    const personality = personalityGuess.length > 0 
+      ? personalityGuess.join(' ') 
+      : `${pronounCap}'s the kind of loyal soul who'll remember you saved ${objective} forever.`;
+    const closing = closingLines[Math.floor(Math.random() * closingLines.length)];
+
+    return `${opening}\n\n${traits}\n\n${personality}\n\n${closing}\n\nDon't scroll past ${name}. ${pronounCap}'s been invisible long enough.`;
   };
 
   const getVisibilityBadgeColor = (score: number) => {
