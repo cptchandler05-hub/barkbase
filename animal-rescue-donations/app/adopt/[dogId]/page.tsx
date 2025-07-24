@@ -595,9 +595,7 @@ export default function DogProfilePage() {
                           onClick={shareToFarcaster}
                           className="flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition"
                         >
-                          <div className="w-8 h-8 mb-1 bg-purple-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">F</span>
-                          </div>
+                          <img src="/logos/farcaster-logo.png" alt="Farcaster" className="w-8 h-8 mb-1" />
                           <span className="text-xs">Farcaster</span>
                         </button>
                       </div>

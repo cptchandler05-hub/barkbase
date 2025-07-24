@@ -469,7 +469,7 @@ export default function AdoptPage() {
                             className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
                             title={`Share ${dog.name} on Farcaster`}
                           >
-                            <span className="text-purple-600 font-bold text-sm">F</span>
+                            <img src="/logos/farcaster-logo.png" alt="Farcaster" className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
