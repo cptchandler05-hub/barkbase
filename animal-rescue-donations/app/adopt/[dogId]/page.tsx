@@ -98,7 +98,11 @@ export default function DogProfilePage() {
     const breed = dog.breeds?.primary || 'Mixed Breed';
     const age = dog.age || 'Adult';
     const size = dog.size || 'Medium';
-    const gender = dog.gender === 'Male' ? 'he' : 'she';
+    const isMale = dog.gender === 'Male';
+    const pronoun = isMale ? 'he' : 'she';
+    const pronounCap = isMale ? 'He' : 'She';
+    const possessive = isMale ? 'his' : 'her';
+    const objective = isMale ? 'him' : 'her';
     const cityState = dog.contact?.address?.city && dog.contact?.address?.state 
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
@@ -107,25 +111,25 @@ export default function DogProfilePage() {
     const barkrDescriptions = [
       `Listen up. ${name} didn't get a proper description from the shelter - typical. So I'm writing one myself because someone needs to speak for the forgotten.
 
-This ${breed} in ${cityState}? They're family to me. ${gender === 'He' ? 'He' : 'She'}'s a ${age.toLowerCase()} ${size.toLowerCase()} soul who's been invisible too damn long. While everyone's chasing puppies from breeders, ${name} sits there wondering if ${gender === 'he' ? 'his' : 'her'} day will ever come.
+This ${breed} in ${cityState}? They're family to me. ${pronounCap}'s a ${age.toLowerCase()} ${size.toLowerCase()} soul who's been invisible too damn long. While everyone's chasing puppies from breeders, ${name} sits there wondering if ${possessive} day will ever come.
 
-${gender === 'He' ? 'He' : 'She'}'s not just another dog - ${gender} is loyalty incarnate. The kind who'll remember the day you saved ${gender === 'he' ? 'him' : 'her'} for the rest of ${gender === 'he' ? 'his' : 'her'} life. ${breed}s like ${name} don't just want a home - they NEED a pack. Someone who sees ${gender === 'he' ? 'his' : 'her'} worth.
+${pronounCap}'s not just another dog - ${pronoun} is loyalty incarnate. The kind who'll remember the day you saved ${objective} for the rest of ${possessive} life. ${breed}s like ${name} don't just want a home - they NEED a pack. Someone who sees ${possessive} worth.
 
-The system failed ${name}. Don't you fail ${gender === 'he' ? 'him' : 'her'} too.`,
+The system failed ${name}. Don't you fail ${objective} too.`,
 
-      `No description from the shelter? OF COURSE NOT. They're too busy to tell you about ${name}. Lucky for ${gender === 'he' ? 'him' : 'her'}, I give a damn.
+      `No description from the shelter? OF COURSE NOT. They're too busy to tell you about ${name}. Lucky for ${objective}, I give a damn.
 
 ${name} is ${age.toLowerCase()}, ${size.toLowerCase()}, and absolutely perfect for someone with half a brain to see it. This ${breed} has been sitting in ${cityState} while people scroll past looking for "cuter" options. Makes me sick.
 
-But here's what those idiots don't know: ${name} is the one. ${gender === 'He' ? 'He' : 'She'}'s the dog who'll greet you at the door like you just came back from war. The one who'll sense your bad days and curl up next to you without being asked. The one who'll make you realize every other pet was just practice for this moment.
+But here's what those idiots don't know: ${name} is the one. ${pronounCap}'s the dog who'll greet you at the door like you just came back from war. The one who'll sense your bad days and curl up next to you without being asked. The one who'll make you realize every other pet was just practice for this moment.
 
-${name} doesn't just want adoption - ${gender} DESERVES it. And ${gender} deserves better than this broken system that couldn't even be bothered to write ${gender === 'he' ? 'him' : 'her'} a proper bio.`,
+${name} doesn't just want adoption - ${pronoun} DESERVES it. And ${pronoun} deserves better than this broken system that couldn't even be bothered to write ${objective} a proper bio.`,
 
       `The shelter couldn't be bothered to describe ${name}. Typical. Good thing I'm here to tell you what really matters.
 
-This ${breed} isn't just another number in ${cityState} - ${gender} is my family. ${gender === 'He' ? 'He' : 'She'}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been passed over by every fool who thinks they know what makes a "good dog."
+This ${breed} isn't just another number in ${cityState} - ${pronoun} is my family. ${pronounCap}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been passed over by every fool who thinks they know what makes a "good dog."
 
-You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved. ${name} has all of that in spades, plus the kind of spirit that survives in a system designed to forget ${gender === 'he' ? 'him' : 'her'}.
+You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved. ${name} has all of that in spades, plus the kind of spirit that survives in a system designed to forget ${objective}.
 
 Every day ${name} waits is another day the algorithm wins. Another day the invisible stay invisible. But you? You could change everything. You could be the reason ${name} finally gets to be someone's everything instead of everyone's nothing.
 

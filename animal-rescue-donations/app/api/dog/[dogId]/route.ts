@@ -71,7 +71,7 @@ export async function GET(
         ...dog,
         visibilityScore,
         // Ensure full description is included without truncation
-        description: dog.description || null,
+        description: dog.description ? dog.description.trim() : null,
       };
 
       console.log("Returning enriched dog data with visibility score:", visibilityScore);
