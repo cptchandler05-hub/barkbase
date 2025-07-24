@@ -103,84 +103,36 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
-    // Breed-specific traits
-    const breedTraits: { [key: string]: string[] } = {
-      'Pit Bull Terrier': ['loyal', 'energetic', 'affectionate', 'strong'],
-      'Labrador Retriever': ['friendly', 'outgoing', 'active', 'loyal'],
-      'German Shepherd': ['confident', 'courageous', 'versatile', 'intelligent'],
-      'Golden Retriever': ['friendly', 'intelligent', 'devoted', 'gentle'],
-      'Chihuahua': ['charming', 'graceful', 'sassy', 'alert'],
-      'Beagle': ['amiable', 'determined', 'excitable', 'gentle'],
-      'Bulldog': ['friendly', 'courageous', 'calm', 'dignified'],
-      'Yorkshire Terrier': ['affectionate', 'sprightly', 'tomboyish', 'brave'],
-      'Poodle': ['active', 'alert', 'intelligent', 'trainable'],
-      'Rottweiler': ['loyal', 'loving', 'confident guardian', 'calm'],
-      'Dachshund': ['friendly', 'curious', 'spunky', 'clever'],
-      'Siberian Husky': ['outgoing', 'mischievous', 'loyal', 'dignified'],
-      'Border Collie': ['smart', 'work-oriented', 'energetic', 'eager'],
-      'Australian Shepherd': ['smart', 'work-oriented', 'exuberant', 'loyal']
-    };
+    // Barkr's passionate descriptions
+    const barkrDescriptions = [
+      `Listen up. ${name} didn't get a proper description from the shelter - typical. So I'm writing one myself because someone needs to speak for the forgotten.
 
-    const traits = breedTraits[breed] || ['loving', 'loyal', 'wonderful', 'special'];
-    const trait1 = traits[0];
-    const trait2 = traits[1] || 'caring';
+This ${breed} in ${cityState}? They're family to me. ${gender === 'He' ? 'He' : 'She'}'s a ${age.toLowerCase()} ${size.toLowerCase()} soul who's been invisible too damn long. While everyone's chasing puppies from breeders, ${name} sits there wondering if ${gender === 'he' ? 'his' : 'her'} day will ever come.
 
-    // Age-specific descriptions
-    const ageDescriptions = {
-      'Baby': `This adorable puppy is just starting ${gender === 'he' ? 'his' : 'her'} journey in life and is looking for a family to grow up with. Puppies like ${name} are bundles of energy and curiosity, ready to learn and bond with their new family.`,
-      'Young': `${name} is in ${gender === 'he' ? 'his' : 'her'} prime young adult years - old enough to be past the puppy phase but still full of playful energy. This is often the perfect age for families looking for a companion who's settled but still loves adventure.`,
-      'Adult': `As an adult dog, ${name} has developed ${gender === 'he' ? 'his' : 'her'} personality and is likely house-trained and ready to settle into a routine with a loving family. Adult dogs often make the best companions because they're past the puppy phase but still have years of love to give.`,
-      'Senior': `${name} is a distinguished senior who has so much love and wisdom to share. Senior dogs are often the most grateful for a second chance and make incredibly loyal, calm companions. They're perfect for families who want a gentle, loving friend who appreciates the quiet moments.`
-    };
+${gender === 'He' ? 'He' : 'She'}'s not just another dog - ${gender} is loyalty incarnate. The kind who'll remember the day you saved ${gender === 'he' ? 'him' : 'her'} for the rest of ${gender === 'he' ? 'his' : 'her'} life. ${breed}s like ${name} don't just want a home - they NEED a pack. Someone who sees ${gender === 'he' ? 'his' : 'her'} worth.
 
-    const ageDescription = ageDescriptions[age as keyof typeof ageDescriptions] || ageDescriptions['Adult'];
+The system failed ${name}. Don't you fail ${gender === 'he' ? 'him' : 'her'} too.`,
 
-    // Size-specific activities
-    const sizeActivities = {
-      'Small': 'perfect for apartment living and loves being a lap dog',
-      'Medium': 'great for families and enjoys both indoor cuddles and outdoor adventures',
-      'Large': 'loves having space to roam and would make an excellent companion for active families',
-      'Extra Large': 'a gentle giant who needs room to stretch but gives the biggest, warmest hugs'
-    };
+      `No description from the shelter? OF COURSE NOT. They're too busy to tell you about ${name}. Lucky for ${gender === 'he' ? 'him' : 'her'}, I give a damn.
 
-    const sizeActivity = sizeActivities[size as keyof typeof sizeActivities] || sizeActivities['Medium'];
+${name} is ${age.toLowerCase()}, ${size.toLowerCase()}, and absolutely perfect for someone with half a brain to see it. This ${breed} has been sitting in ${cityState} while people scroll past looking for "cuter" options. Makes me sick.
 
-    // Health status
-    let healthNote = '';
-    if (dog.attributes?.spayed_neutered && dog.attributes?.shots_current) {
-      healthNote = ` ${name} is spayed/neutered and up to date on shots, ready to go home today.`;
-    } else if (dog.attributes?.shots_current) {
-      healthNote = ` ${name} is current on vaccinations and ready for ${gender === 'he' ? 'his' : 'her'} new home.`;
-    }
+But here's what those idiots don't know: ${name} is the one. ${gender === 'He' ? 'He' : 'She'}'s the dog who'll greet you at the door like you just came back from war. The one who'll sense your bad days and curl up next to you without being asked. The one who'll make you realize every other pet was just practice for this moment.
 
-    // Generate description
-    const descriptions = [
-      `Meet ${name}, a ${trait1} ${breed} who is ready to find ${gender === 'he' ? 'his' : 'her'} forever family in ${cityState}! ${ageDescription}
+${name} doesn't just want adoption - ${gender} DESERVES it. And ${gender} deserves better than this broken system that couldn't even be bothered to write ${gender === 'he' ? 'him' : 'her'} a proper bio.`,
 
-${name} is ${sizeActivity}. As a ${trait2} ${breed}, ${gender} would love nothing more than to be part of your daily routine - whether that's morning walks, evening cuddles, or just being your faithful companion through all of life's moments.
+      `The shelter couldn't be bothered to describe ${name}. Typical. Good thing I'm here to tell you what really matters.
 
-Every dog deserves a chance to be loved, and ${name} is no exception. ${gender === 'He' ? 'He' : 'She'} may have been overlooked by others, but we know the right family is out there.${healthNote}
+This ${breed} isn't just another number in ${cityState} - ${gender} is my family. ${gender === 'He' ? 'He' : 'She'}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been passed over by every fool who thinks they know what makes a "good dog."
 
-Could ${name} be the missing piece your family has been looking for?`,
+You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved. ${name} has all of that in spades, plus the kind of spirit that survives in a system designed to forget ${gender === 'he' ? 'him' : 'her'}.
 
-      `${name} is a wonderful ${breed} waiting patiently for someone to see how special ${gender} truly is. ${ageDescription}
+Every day ${name} waits is another day the algorithm wins. Another day the invisible stay invisible. But you? You could change everything. You could be the reason ${name} finally gets to be someone's everything instead of everyone's nothing.
 
-This ${trait1} pup has been hoping for a family who will appreciate ${gender === 'he' ? 'his' : 'her'} ${trait2} nature. ${name} is ${sizeActivity} and would thrive with a family who can provide the love and attention ${gender} deserves.
-
-Sometimes the best dogs are the ones who have been waiting the longest. ${name} has been in ${cityState}, dreaming of ${gender === 'he' ? 'his' : 'her'} forever home.${healthNote}
-
-Don't let ${name} wait any longer - ${gender} could be your new best friend!`,
-
-      `In ${cityState}, there's a ${trait1} ${breed} named ${name} who has been waiting for someone just like you. ${ageDescription}
-
-${name} embodies all the best qualities of ${gender === 'he' ? 'his' : 'her'} breed - ${trait2}, loving, and ready to be your loyal companion. ${gender === 'He' ? 'He' : 'She'} is ${sizeActivity} and would fit perfectly into the right home.
-
-The shelter staff have watched ${name} day after day, knowing that somewhere out there is a family who will see ${gender === 'he' ? 'his' : 'her'} true potential. Maybe that family is yours?${healthNote}
-
-${name} isn't just looking for a home - ${gender} is looking for a family to love unconditionally.`
+Stop scrolling. Start saving. ${name} is waiting.`
     ];
 
-    return descriptions[Math.floor(Math.random() * descriptions.length)];
+    return barkrDescriptions[Math.floor(Math.random() * barkrDescriptions.length)];
   };
 
   const getVisibilityBadgeColor = (score: number) => {
@@ -539,9 +491,22 @@ ${name} isn't just looking for a home - ${gender} is looking for a family to lov
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-blue-900 mb-4">About {dog.name}</h2>
             <div className="text-gray-700">
-              <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
-                {dog.description || generateBarkrDescription(dog)}
-              </div>
+              {dog.description ? (
+                <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
+                  {dog.description}
+                </div>
+              ) : (
+                <div>
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-lg">
+                    <p className="text-sm text-yellow-800">
+                      <strong>🧠 Note from Barkr:</strong> The shelter didn't provide a description for {dog.name}, so I wrote one myself based on what I know about {dog.gender === 'Male' ? 'him' : 'her'}. Someone needs to speak for the forgotten.
+                    </p>
+                  </div>
+                  <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
+                    {generateBarkrDescription(dog)}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

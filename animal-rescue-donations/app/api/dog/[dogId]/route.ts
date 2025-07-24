@@ -70,6 +70,8 @@ export async function GET(
       const enrichedDog = {
         ...dog,
         visibilityScore,
+        // Ensure full description is included without truncation
+        description: dog.description || null,
       };
 
       console.log("Returning enriched dog data with visibility score:", visibilityScore);
