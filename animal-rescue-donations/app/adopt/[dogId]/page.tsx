@@ -93,6 +93,96 @@ export default function DogProfilePage() {
     return lines[Math.floor(Math.random() * lines.length)];
   };
 
+  const generateBarkrDescription = (dog: Dog) => {
+    const name = dog.name;
+    const breed = dog.breeds?.primary || 'Mixed Breed';
+    const age = dog.age || 'Adult';
+    const size = dog.size || 'Medium';
+    const gender = dog.gender === 'Male' ? 'he' : 'she';
+    const cityState = dog.contact?.address?.city && dog.contact?.address?.state 
+      ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
+      : 'their current location';
+
+    // Breed-specific traits
+    const breedTraits: { [key: string]: string[] } = {
+      'Pit Bull Terrier': ['loyal', 'energetic', 'affectionate', 'strong'],
+      'Labrador Retriever': ['friendly', 'outgoing', 'active', 'loyal'],
+      'German Shepherd': ['confident', 'courageous', 'versatile', 'intelligent'],
+      'Golden Retriever': ['friendly', 'intelligent', 'devoted', 'gentle'],
+      'Chihuahua': ['charming', 'graceful', 'sassy', 'alert'],
+      'Beagle': ['amiable', 'determined', 'excitable', 'gentle'],
+      'Bulldog': ['friendly', 'courageous', 'calm', 'dignified'],
+      'Yorkshire Terrier': ['affectionate', 'sprightly', 'tomboyish', 'brave'],
+      'Poodle': ['active', 'alert', 'intelligent', 'trainable'],
+      'Rottweiler': ['loyal', 'loving', 'confident guardian', 'calm'],
+      'Dachshund': ['friendly', 'curious', 'spunky', 'clever'],
+      'Siberian Husky': ['outgoing', 'mischievous', 'loyal', 'dignified'],
+      'Border Collie': ['smart', 'work-oriented', 'energetic', 'eager'],
+      'Australian Shepherd': ['smart', 'work-oriented', 'exuberant', 'loyal']
+    };
+
+    const traits = breedTraits[breed] || ['loving', 'loyal', 'wonderful', 'special'];
+    const trait1 = traits[0];
+    const trait2 = traits[1] || 'caring';
+
+    // Age-specific descriptions
+    const ageDescriptions = {
+      'Baby': `This adorable puppy is just starting ${gender === 'he' ? 'his' : 'her'} journey in life and is looking for a family to grow up with. Puppies like ${name} are bundles of energy and curiosity, ready to learn and bond with their new family.`,
+      'Young': `${name} is in ${gender === 'he' ? 'his' : 'her'} prime young adult years - old enough to be past the puppy phase but still full of playful energy. This is often the perfect age for families looking for a companion who's settled but still loves adventure.`,
+      'Adult': `As an adult dog, ${name} has developed ${gender === 'he' ? 'his' : 'her'} personality and is likely house-trained and ready to settle into a routine with a loving family. Adult dogs often make the best companions because they're past the puppy phase but still have years of love to give.`,
+      'Senior': `${name} is a distinguished senior who has so much love and wisdom to share. Senior dogs are often the most grateful for a second chance and make incredibly loyal, calm companions. They're perfect for families who want a gentle, loving friend who appreciates the quiet moments.`
+    };
+
+    const ageDescription = ageDescriptions[age as keyof typeof ageDescriptions] || ageDescriptions['Adult'];
+
+    // Size-specific activities
+    const sizeActivities = {
+      'Small': 'perfect for apartment living and loves being a lap dog',
+      'Medium': 'great for families and enjoys both indoor cuddles and outdoor adventures',
+      'Large': 'loves having space to roam and would make an excellent companion for active families',
+      'Extra Large': 'a gentle giant who needs room to stretch but gives the biggest, warmest hugs'
+    };
+
+    const sizeActivity = sizeActivities[size as keyof typeof sizeActivities] || sizeActivities['Medium'];
+
+    // Health status
+    let healthNote = '';
+    if (dog.attributes?.spayed_neutered && dog.attributes?.shots_current) {
+      healthNote = ` ${name} is spayed/neutered and up to date on shots, ready to go home today.`;
+    } else if (dog.attributes?.shots_current) {
+      healthNote = ` ${name} is current on vaccinations and ready for ${gender === 'he' ? 'his' : 'her'} new home.`;
+    }
+
+    // Generate description
+    const descriptions = [
+      `Meet ${name}, a ${trait1} ${breed} who is ready to find ${gender === 'he' ? 'his' : 'her'} forever family in ${cityState}! ${ageDescription}
+
+${name} is ${sizeActivity}. As a ${trait2} ${breed}, ${gender} would love nothing more than to be part of your daily routine - whether that's morning walks, evening cuddles, or just being your faithful companion through all of life's moments.
+
+Every dog deserves a chance to be loved, and ${name} is no exception. ${gender === 'He' ? 'He' : 'She'} may have been overlooked by others, but we know the right family is out there.${healthNote}
+
+Could ${name} be the missing piece your family has been looking for?`,
+
+      `${name} is a wonderful ${breed} waiting patiently for someone to see how special ${gender} truly is. ${ageDescription}
+
+This ${trait1} pup has been hoping for a family who will appreciate ${gender === 'he' ? 'his' : 'her'} ${trait2} nature. ${name} is ${sizeActivity} and would thrive with a family who can provide the love and attention ${gender} deserves.
+
+Sometimes the best dogs are the ones who have been waiting the longest. ${name} has been in ${cityState}, dreaming of ${gender === 'he' ? 'his' : 'her'} forever home.${healthNote}
+
+Don't let ${name} wait any longer - ${gender} could be your new best friend!`,
+
+      `In ${cityState}, there's a ${trait1} ${breed} named ${name} who has been waiting for someone just like you. ${ageDescription}
+
+${name} embodies all the best qualities of ${gender === 'he' ? 'his' : 'her'} breed - ${trait2}, loving, and ready to be your loyal companion. ${gender === 'He' ? 'He' : 'She'} is ${sizeActivity} and would fit perfectly into the right home.
+
+The shelter staff have watched ${name} day after day, knowing that somewhere out there is a family who will see ${gender === 'he' ? 'his' : 'her'} true potential. Maybe that family is yours?${healthNote}
+
+${name} isn't just looking for a home - ${gender} is looking for a family to love unconditionally.`
+    ];
+
+    return descriptions[Math.floor(Math.random() * descriptions.length)];
+  };
+
   const getVisibilityBadgeColor = (score: number) => {
     if (score >= 80) return "bg-red-500 text-white";
     if (score >= 60) return "bg-orange-500 text-white";
@@ -446,16 +536,14 @@ export default function DogProfilePage() {
           </div>
 
           {/* Description */}
-          {dog.description && (
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">About {dog.name}</h2>
-              <div className="prose max-w-none text-gray-700">
-                <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
-                  {dog.description}
-                </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-blue-900 mb-4">About {dog.name}</h2>
+            <div className="text-gray-700">
+              <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
+                {dog.description || generateBarkrDescription(dog)}
               </div>
             </div>
-          )}
+          </div>
 
           {/* Contact Information */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
