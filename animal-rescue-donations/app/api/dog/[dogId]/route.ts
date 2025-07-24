@@ -9,10 +9,18 @@ export async function GET(
   { params }: { params: { dogId: string } }
 ) {
   try {
-    console.log("Fetching dog details for ID:", params.dogId);
+    // Debug the full request context
+    console.log("=== DOG DETAILS REQUEST DEBUG ===");
+    console.log("Full request URL:", request.url);
+    console.log("Params object:", params);
+    console.log("Raw dogId from params:", params.dogId);
+    console.log("Type of dogId:", typeof params.dogId);
+    
+    const dogId = await params.dogId; // Handle potential Promise
+    console.log("Resolved dogId:", dogId);
 
-    if (!params.dogId) {
-      console.error("No dogId provided");
+    if (!dogId) {
+      console.error("No dogId provided after resolution");
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
 
@@ -20,8 +28,9 @@ export async function GET(
     let accessToken = await getAccessToken();
     console.log("Got access token for dog details");
 
-    const apiUrl = `${PETFINDER_API_URL}/animals/${params.dogId}`;
+    const apiUrl = `${PETFINDER_API_URL}/animals/${dogId}`;
     console.log("Making request to:", apiUrl);
+    console.log("Using dogId in URL:", dogId);
 
     let response = await fetch(apiUrl, {
       headers: {
@@ -71,7 +80,8 @@ export async function GET(
     const errorText = await response.text();
     console.error(`API Error Response [${response.status}]:`, errorText);
     console.error("Request URL was:", apiUrl);
-    console.error("Dog ID was:", params.dogId);
+    console.error("Dog ID was:", dogId);
+    console.error("Original params.dogId was:", params.dogId);
     
     if (response.status === 404) {
       console.log("Dog not found:", params.dogId);
