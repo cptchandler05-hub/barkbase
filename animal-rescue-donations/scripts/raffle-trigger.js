@@ -1,5 +1,5 @@
 
-// Minute-by-minute raffle trigger task
+// Every-2-minutes raffle trigger task
 const https = require('https');
 
 const API_BASE_URL = process.env.API_BASE_URL || 'https://your-app.vercel.app'; // Update this to your actual domain
