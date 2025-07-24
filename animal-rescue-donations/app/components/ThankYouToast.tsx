@@ -87,6 +87,22 @@ export default function ThankYouToast({ imageUrl, onClose, onDownload }: ThankYo
                 height={24}
               />
             </a>
+
+            <a
+              href={`https://warpcast.com/~/compose?text=${encodeURIComponent(
+                'I just donated to help rescue dogs on BarkBase 🐾 Check it out: https://barkbase.xyz'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on Farcaster"
+            >
+              <Image
+                src="/logos/farcaster-logo.png"
+                alt="Share on Farcaster"
+                width={24}
+                height={24}
+              />
+            </a>
           </div>
         </div>
       </div>

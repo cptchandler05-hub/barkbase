@@ -232,24 +232,24 @@ export default function RafflePage() {
                 <div className="flex gap-3 mt-3 justify-start">
                   <a
                     href={`https://x.com/intent/tweet?text=${encodeURIComponent(
-                      "Win big. Save lives. Every entry helps dogs in need! 🐾 I just entered BarkBase’s 50/50 Rescue Raffle. Half the pot helps dog rescues. Enter here:"
+                      "Win big. Save lives. Every entry helps dogs in need! 🐾 I just entered BarkBase's 50/50 Rescue Raffle. Half the pot helps dog rescues. Enter here:"
                     )}&url=${encodeURIComponent(refLink)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-blue-600 transition"
+                    className="hover:opacity-80 transition"
                   >
-                    <X size={26} />
+                    <img src="/logos/x-logo.png" alt="Share on X" className="w-7 h-7" />
                   </a>
 
                   <a
                     href={`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(
-                      "🐶 BarkBase’s 50/50 Raffle helps real rescue dogs. Enter to win — I get bonus entries if you join through my link!"
+                      "🐶 BarkBase's 50/50 Raffle helps real rescue dogs. Enter to win — I get bonus entries if you join through my link!"
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-blue-400 transition"
+                    className="hover:opacity-80 transition"
                   >
-                    <SendHorizontal size={28} />
+                    <img src="/logos/telegram-logo.png" alt="Share on Telegram" className="w-7 h-7" />
                   </a>
 
                   <a
@@ -258,9 +258,20 @@ export default function RafflePage() {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-blue-700 transition"
+                    className="hover:opacity-80 transition"
                   >
-                    <Facebook size={28} />
+                    <img src="/logos/facebook-logo.png" alt="Share on Facebook" className="w-7 h-7" />
+                  </a>
+
+                  <a
+                    href={`https://warpcast.com/~/compose?text=${encodeURIComponent(
+                      "🐶 BarkBase's 50/50 Raffle helps real rescue dogs. Enter to win — I get bonus entries if you join through my link! " + refLink
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-80 transition"
+                  >
+                    <img src="/logos/farcaster-logo.png" alt="Share on Farcaster" className="w-7 h-7" />
                   </a>
                 </div>
               </div>
