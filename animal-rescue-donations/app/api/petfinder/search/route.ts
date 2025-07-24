@@ -102,10 +102,52 @@ export async function POST(req: Request) {
     console.log(`[✅ Petfinder Success] Found ${data.animals?.length || 0} dogs`);
 
     if (data.animals) {
+      // First, add visibility scores and sort
       data.animals = data.animals.map((dog: Dog) => ({
         ...dog,
         visibilityScore: calculateVisibilityScore(dog),
-        })).sort((a: Dog, b: Dog) => b.visibilityScore - a.visibilityScore);
+      })).sort((a: Dog, b: Dog) => b.visibilityScore - a.visibilityScore);
+
+      // For dogs with missing or truncated descriptions, fetch full details
+      const dogsNeedingFullDetails = data.animals.filter((dog: Dog) => 
+        !dog.description || dog.description.length < 50 || dog.description.includes('...')
+      );
+
+      console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
+
+      if (dogsNeedingFullDetails.length > 0) {
+        // Fetch full details for dogs with missing descriptions (limit to first 20 to avoid timeout)
+        const detailPromises = dogsNeedingFullDetails.slice(0, 20).map(async (dog: Dog) => {
+          try {
+            const detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            if (detailResponse.ok) {
+              const fullData = await detailResponse.json();
+              return { id: dog.id, description: fullData.animal?.description };
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch full details for dog ${dog.id}:`, error);
+          }
+          return null;
+        });
+
+        const fullDescriptions = await Promise.all(detailPromises);
+        
+        // Update the dogs with full descriptions
+        fullDescriptions.forEach(result => {
+          if (result && result.description) {
+            const dogIndex = data.animals.findIndex((dog: Dog) => dog.id === result.id);
+            if (dogIndex !== -1) {
+              data.animals[dogIndex].description = result.description;
+              console.log(`[📝 Description Updated] ${data.animals[dogIndex].name} now has full description`);
+            }
+          }
+        });
+      }
     }
 
     return NextResponse.json(data);

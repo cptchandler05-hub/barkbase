@@ -109,29 +109,29 @@ export default function DogProfilePage() {
 
     // Barkr's passionate descriptions
     const barkrDescriptions = [
-      `Listen up. ${name} didn't get a proper description from the shelter - typical. So I'm writing one myself because someone needs to speak for the forgotten.
+      `Listen up. ${name} didn't get a proper description because the rescue is drowning in work - saving lives with no time for marketing. So I'm writing one myself because someone needs to speak for the forgotten.
 
 This ${breed} in ${cityState}? They're family to me. ${pronounCap}'s a ${age.toLowerCase()} ${size.toLowerCase()} soul who's been invisible too damn long. While everyone's chasing puppies from breeders, ${name} sits there wondering if ${possessive} day will ever come.
 
-${pronounCap}'s not just another dog - ${pronoun} is loyalty incarnate. The kind who'll remember the day you saved ${objective} for the rest of ${possessive} life. ${breed}s like ${name} don't just want a home - they NEED a pack. Someone who sees ${possessive} worth.
+The rescue workers are heroes - pulling dogs from kill lists, working 16-hour days with zero budget for fancy descriptions. But ${pronounCap}'s not just another dog - ${pronoun} is loyalty incarnate. The kind who'll remember the day you saved ${objective} for the rest of ${possessive} life.
 
 The system failed ${name}. Don't you fail ${objective} too.`,
 
-      `No description from the shelter? OF COURSE NOT. They're too busy to tell you about ${name}. Lucky for ${objective}, I give a damn.
+      `No description? That's because the rescue is saving lives, not writing marketing copy. They're too busy pulling dogs from death row to craft perfect bios. Lucky for ${objective}, I give a damn.
 
 ${name} is ${age.toLowerCase()}, ${size.toLowerCase()}, and absolutely perfect for someone with half a brain to see it. This ${breed} has been sitting in ${cityState} while people scroll past looking for "cuter" options. Makes me sick.
 
-But here's what those idiots don't know: ${name} is the one. ${pronounCap}'s the dog who'll greet you at the door like you just came back from war. The one who'll sense your bad days and curl up next to you without being asked. The one who'll make you realize every other pet was just practice for this moment.
+These rescue workers are running on fumes and heart alone - no fancy marketing team, no social media budget. Just pure love and determination. But here's what people don't know: ${name} is the one. ${pronounCap}'s the dog who'll greet you at the door like you just came back from war.
 
-${name} doesn't just want adoption - ${pronoun} DESERVES it. And ${pronoun} deserves better than this broken system that couldn't even be bothered to write ${objective} a proper bio.`,
+${name} doesn't just want adoption - ${pronoun} DESERVES it. And the rescue deserves our support for keeping ${objective} alive this long.`,
 
-      `The shelter couldn't be bothered to describe ${name}. Typical. Good thing I'm here to tell you what really matters.
+      `The rescue didn't have time to describe ${name} - they're too busy saving lives with volunteer hours and donation dollars. Good thing I'm here to tell you what really matters.
 
-This ${breed} isn't just another number in ${cityState} - ${pronoun} is my family. ${pronounCap}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been passed over by every fool who thinks they know what makes a "good dog."
+Small rescues don't have marketing budgets or PR teams. They have heart, determination, and dogs like ${name} who need champions. ${pronounCap}'s ${age.toLowerCase()}, ${size.toLowerCase()}, and has been waiting while overworked volunteers juggle a hundred other emergencies.
 
-You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved. ${name} has all of that in spades, plus the kind of spirit that survives in a system designed to forget ${objective}.
+You want to know what makes a good dog? Gratitude. Loyalty. The kind of love that only comes from being saved by heroes who work for free. ${name} has all of that in spades, plus the kind of spirit that survives thanks to rescue angels.
 
-Every day ${name} waits is another day the algorithm wins. Another day the invisible stay invisible. But you? You could change everything. You could be the reason ${name} finally gets to be someone's everything instead of everyone's nothing.
+Every day ${name} waits is another day small rescues fight impossible odds. But you? You could change everything. You could be the reason ${name} finally gets to be someone's everything.
 
 Stop scrolling. Start saving. ${name} is waiting.`
     ];
