@@ -452,6 +452,21 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
     );
   }
 
+  const photos = (dog?.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+        ? dog.photos.map(photo => {
+            if (typeof photo === 'string') {
+              return { medium: photo, large: photo, small: photo };
+            } else if (photo && typeof photo === 'object') {
+              return {
+                medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+                large: photo.large || photo.medium || photo.small || '/images/barkr.png',
+                small: photo.small || photo.medium || photo.large || '/images/barkr.png'
+              };
+            }
+            return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
+          })
+        : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }];
+
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
       <div className="min-h-screen">
@@ -514,7 +529,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
             <div className="space-y-4">
               <div className="relative overflow-hidden rounded-xl">
                 <img
-                  src={dog.photos?.[currentPhotoIndex]?.large || dog.photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
+                  src={photos?.[currentPhotoIndex]?.large || photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
                   className="w-full h-80 object-contain bg-gray-100 shadow-lg"
                 />

@@ -84,18 +84,111 @@ export async function GET(
       return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
-    // Merge database data with API data for enhanced information
-    if (dbDog) {
-      dog.visibilityScore = dbDog.visibility_score;
-      dog.dbLastUpdated = dbDog.last_updated_at;
-      dog.dbCity = dbDog.city;
-      dog.dbState = dbDog.state;
-      console.log(`[✅ Merge] Added database info: visibility score ${dog.visibilityScore}`);
+    // Check database first for basic info and visibility score
+    const { data: dbDogData, error: dbError } = await import('@/lib/supabase').then(({ supabase }) => supabase
+      .from('dogs')
+      .select('*')
+      .eq('petfinder_id', params.dogId)
+      .eq('status', 'adoptable')
+      .single());
+
+    if (dbError && dbError.code !== 'PGRST116') {
+      console.error('Database error:', dbError);
+    }
+
+    if (dbDogData) {
+      console.log('Found dog in database, fetching full details from Petfinder...');
+
+      // Get full details from Petfinder API
+      let accessToken = await getAccessToken();
+      const petfinderResponse = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (petfinderResponse.ok) {
+        const petfinderData = await petfinderResponse.json();
+        const petfinderDog = petfinderData.animal;
+
+        // Merge database data (visibility score) with Petfinder data (full details)
+        dog = {
+          ...petfinderDog,
+          visibilityScore: dbDogData.visibility_score
+        };
+      } else {
+        console.log('Petfinder API failed, using database data only');
+        // Fallback to database data only - use correct field names
+        dog = {
+          id: parseInt(dbDogData.petfinder_id),
+          name: dbDogData.name,
+          breeds: {
+            primary: dbDogData.primary_breed,
+            secondary: dbDogData.secondary_breed,
+            mixed: dbDogData.is_mixed
+          },
+          age: dbDogData.age,
+          size: dbDogData.size,
+          gender: dbDogData.gender,
+          photos: Array.isArray(dbDogData.photos) ? dbDogData.photos : [],
+          contact: (typeof dbDogData.contact_info === 'object' && dbDogData.contact_info) ? dbDogData.contact_info : {
+            address: {
+              city: dbDogData.city,
+              state: dbDogData.state,
+              postcode: dbDogData.postcode
+            }
+          },
+          description: dbDogData.description,
+          url: dbDogData.url,
+          visibilityScore: dbDogData.visibility_score,
+          organization_id: dbDogData.organization_id,
+          type: dbDogData.type,
+          species: dbDogData.species,
+          colors: {
+            primary: dbDogData.primary_color,
+            secondary: dbDogData.secondary_color,
+            tertiary: dbDogData.tertiary_color
+          },
+          attributes: {
+            spayed_neutered: dbDogData.spayed_neutered,
+            house_trained: dbDogData.house_trained,
+            special_needs: dbDogData.special_needs,
+            shots_current: dbDogData.shots_current
+          },
+          environment: {
+            children: dbDogData.good_with_children,
+            dogs: dbDogData.good_with_dogs,
+            cats: dbDogData.good_with_cats
+          },
+          tags: Array.isArray(dbDogData.tags) ? dbDogData.tags : [],
+          status: dbDogData.status
+        };
+      }
     } else {
-      // Calculate visibility score if not in database
-      const { calculateVisibilityScore } = await import('@/lib/scoreVisibility');
-      dog.visibilityScore = calculateVisibilityScore(dog);
-      console.log(`[📊 Calc] Calculated visibility score: ${dog.visibilityScore}`);
+      console.log('Dog not found in database, fetching from Petfinder API only...');
+
+      // Fallback to Petfinder API only
+      let accessToken = await getAccessToken();
+      const response = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
+      }
+
+      const data = await response.json();
+      dog = {
+        ...data.animal,
+        visibilityScore: (await import('@/lib/scoreVisibility')).calculateVisibilityScore(data.animal)
+      };
     }
 
     console.log(`[✅ Success] Returning dog: ${dog.name} from ${apiSource}`);

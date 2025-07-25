@@ -210,20 +210,31 @@ export default function AdoptPage() {
           id: dog.petfinder_id,
           name: dog.name,
           breeds: { 
-            primary: dog.breed_primary, 
-            secondary: dog.breed_secondary,
-            mixed: !!dog.breed_secondary 
+            primary: dog.primary_breed, 
+            secondary: dog.secondary_breed,
+            mixed: dog.is_mixed 
           },
           age: dog.age,
           size: dog.size,
           gender: dog.gender,
-          photos: (dog.photos || []).length > 0 
-            ? dog.photos.map(url => ({ medium: url, large: url, small: url }))
+          photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+            ? dog.photos.map(photo => {
+                if (typeof photo === 'string') {
+                  return { medium: photo, large: photo, small: photo };
+                } else if (photo && typeof photo === 'object') {
+                  return {
+                    medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+                    large: photo.large || photo.medium || photo.small || '/images/barkr.png',
+                    small: photo.small || photo.medium || photo.large || '/images/barkr.png'
+                  };
+                }
+                return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
+              })
             : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
           contact: { 
             address: { 
-              city: dog.location?.split(',')[0] || 'Unknown', 
-              state: dog.location?.split(',')[1]?.trim() || 'Unknown'
+              city: dog.city || 'Unknown', 
+              state: dog.state || 'Unknown'
             }
           },
           description: dog.description,
