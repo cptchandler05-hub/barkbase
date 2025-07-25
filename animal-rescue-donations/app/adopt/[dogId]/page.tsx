@@ -59,7 +59,7 @@ export default function DogProfilePage() {
     }
   }, [dogId]);
 
-  const fetchDogDetails = async () => {
+  const fetchDogDetails = async (dogId: string | undefined, retryCount = 0) => {
     try {
       console.log("Fetching dog details for dogId:", dogId);
       console.log("Type of dogId:", typeof dogId);
@@ -86,6 +86,14 @@ export default function DogProfilePage() {
 
       console.log("Response status:", res.status);
       console.log("Response ok:", res.ok);
+
+      if (res.status === 401 && retryCount < 2) {
+        console.log("Retrying due to auth error...");
+        // Wait a moment before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        fetchDogDetails(dogId, retryCount + 1);
+        return;
+      }
 
       if (res.ok) {
         const data = await res.json();

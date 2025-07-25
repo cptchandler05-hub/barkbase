@@ -1,6 +1,7 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getAccessToken, clearTokenCache } from '@/app/api/utils/tokenManager';
+import { createClient } from '@supabase/supabase-js';
+import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
@@ -9,145 +10,126 @@ export async function GET(
   { params }: { params: { dogId: string } }
 ) {
   try {
-    console.log(`[🔍 API] Getting dog details for ID: ${params.dogId}`);
+    const dogId = params.dogId;
+    console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
 
-    if (!params.dogId) {
-      console.error(`[❌ API] No dogId provided`);
-      return NextResponse.json({ error: 'Dog ID is required' }, { status: 400 });
-    }
-
-    // First check database for basic info and visibility score
-    let dbDog = null;
-    try {
-      const { getDogById, isSupabaseAvailable } = await import('@/lib/supabase');
-
-      if (isSupabaseAvailable()) {
-        dbDog = await getDogById(params.dogId);
-        console.log(`[📊 DB] Database lookup: ${dbDog ? 'found' : 'not found'}`);
-      }
-    } catch (dbError) {
-      console.warn(`[⚠️ DB] Database error:`, dbError);
-    }
-
-    let dog = null;
-
-    // Try to fetch from Petfinder with token retry logic
+    // Always fetch full details from Petfinder API for dog detail pages
     let accessToken = await getAccessToken();
-    let attempts = 0;
-    const maxAttempts = 3;
+    if (!accessToken) {
+      console.error('[❌ Token Error] Failed to get Petfinder access token');
+      return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
+    }
 
-    while (attempts < maxAttempts) {
-      attempts++;
-      console.log(`[🔄 API] Attempt ${attempts}/${maxAttempts} for dog ${params.dogId}`);
+    const petfinderUrl = `https://api.petfinder.com/v2/animals/${dogId}`;
+    console.log('[📡 Fetching from Petfinder]:', petfinderUrl);
 
+    let response = await fetch(petfinderUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(10000)
+    });
+
+    // Retry with new token if unauthorized
+    if (response.status === 401) {
+      console.log('[🔄 Retrying] Getting new access token...');
+      accessToken = await getAccessToken(true); // Force refresh
+      if (!accessToken) {
+        console.error('[❌ Token Retry Error] Failed to get new Petfinder access token');
+        return NextResponse.json({ error: 'Authentication failed after retry' }, { status: 500 });
+      }
+
+      response = await fetch(petfinderUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+    }
+
+    if (!response.ok) {
+      console.error('[❌ Petfinder API Error]', response.status, await response.text());
+
+      // Fallback to database if Petfinder fails
       try {
-        const response = await fetch(`${PETFINDER_API_URL}/animals/${params.dogId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'User-Agent': 'BarkBase/1.0'
-          },
-          // Add timeout
-          signal: AbortSignal.timeout(10000) // 10 second timeout
-        });
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
 
-        if (response.ok) {
-          const data = await response.json();
-          dog = data.animal;
-          console.log(`[✅ API Success] Got dog: ${dog.name}`);
-          break;
-        }
+        const { data: dbDog, error: dbError } = await supabase
+          .from('dogs')
+          .select('*')
+          .eq('petfinder_id', dogId)
+          .single();
 
-        if (response.status === 404) {
-          console.log(`[❌ API] Dog ${params.dogId} not found in Petfinder`);
-          
-          // If we have database data, use that instead
-          if (dbDog) {
-            console.log(`[📊 Fallback] Using database data for dog ${params.dogId}`);
-            dog = formatDatabaseDog(dbDog);
-            break;
-          }
-          
+        if (dbError) {
+          console.error('[❌ Database fallback error]', dbError);
           return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
         }
 
-        if (response.status === 401 && attempts < maxAttempts) {
-          console.log(`[🔄 Auth] Token expired, getting fresh token (attempt ${attempts})`);
-          await clearTokenCache();
-          accessToken = await getAccessToken(true); // Force refresh
-          continue;
-        }
+        if (dbDog) {
+          const fallbackDog = {
+            id: dbDog.petfinder_id,
+            name: dbDog.name,
+            breeds: { 
+              primary: dbDog.primary_breed, 
+              secondary: dbDog.secondary_breed,
+              mixed: dbDog.is_mixed 
+            },
+            age: dbDog.age,
+            size: dbDog.size,
+            gender: dbDog.gender,
+            photos: (dbDog.photos && Array.isArray(dbDog.photos)) ? dbDog.photos : [],
+            contact: { 
+              address: { 
+                city: dbDog.city || 'Unknown', 
+                state: dbDog.state || 'Unknown'
+              }
+            },
+            description: dbDog.description || 'Description not available from rescue. Please contact them directly for more information.',
+            attributes: {
+              special_needs: dbDog.special_needs,
+              spayed_neutered: dbDog.spayed_neutered,
+              house_trained: dbDog.house_trained,
+              shots_current: dbDog.shots_current
+            },
+            colors: {
+              primary: dbDog.primary_color,
+              secondary: dbDog.secondary_color,
+              tertiary: dbDog.tertiary_color
+            },
+            environment: {
+              children: dbDog.good_with_children,
+              dogs: dbDog.good_with_dogs,
+              cats: dbDog.good_with_cats
+            }
+          };
 
-        // Log other errors but try to continue
-        const errorText = await response.text().catch(() => 'Unknown error');
-        console.error(`[❌ API] Error ${response.status}: ${errorText}`);
-        
-        if (attempts === maxAttempts) {
-          // Last attempt failed, try database fallback
-          if (dbDog) {
-            console.log(`[📊 Final Fallback] Using database data after API failure`);
-            dog = formatDatabaseDog(dbDog);
-            break;
-          }
-          throw new Error(`Petfinder API error: ${response.status}`);
-        }
+          // Calculate real visibility score
+          fallbackDog.visibilityScore = calculateVisibilityScore(fallbackDog);
 
-      } catch (fetchError) {
-        console.error(`[❌ Fetch] Request failed:`, fetchError);
-        
-        if (attempts === maxAttempts) {
-          // Last attempt failed, try database fallback
-          if (dbDog) {
-            console.log(`[📊 Final Fallback] Using database data after fetch error`);
-            dog = formatDatabaseDog(dbDog);
-            break;
-          }
-          throw fetchError;
+          return NextResponse.json({ animal: fallbackDog });
         }
-        
-        // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+      } catch (dbError) {
+        console.error('[❌ Database fallback failed]', dbError);
       }
-    }
 
-    if (!dog) {
-      console.log(`[❌ No Data] No dog data found for ${params.dogId}`);
       return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
-    // Enhance with database visibility score if available
-    if (dbDog?.visibility_score !== undefined) {
-      dog.visibilityScore = dbDog.visibility_score;
-    } else {
-      // Calculate visibility score if not in database
-      const { calculateVisibilityScore } = await import('@/lib/scoreVisibility');
-      dog.visibilityScore = calculateVisibilityScore(dog);
+    const data = await response.json();
+    const dog = data.animal;
+
+    if (!dog) {
+      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
-    // Ensure photos are properly formatted
-    if (dog.photos && Array.isArray(dog.photos)) {
-      dog.photos = dog.photos.filter(photo => photo && (photo.medium || photo.large || photo.small));
-      
-      // If no valid photos, add placeholder
-      if (dog.photos.length === 0) {
-        dog.photos = [{
-          small: '/images/barkr.png',
-          medium: '/images/barkr.png',
-          large: '/images/barkr.png',
-          full: '/images/barkr.png'
-        }];
-      }
-    } else {
-      // No photos array, add placeholder
-      dog.photos = [{
-        small: '/images/barkr.png',
-        medium: '/images/barkr.png',
-        large: '/images/barkr.png',
-        full: '/images/barkr.png'
-      }];
-    }
+    // Calculate real visibility score using the actual algorithm
+    dog.visibilityScore = calculateVisibilityScore(dog);
 
-    console.log(`[✅ Success] Returning dog: ${dog.name} with ${dog.photos.length} photos`);
     return NextResponse.json({ animal: dog });
 
   } catch (error) {

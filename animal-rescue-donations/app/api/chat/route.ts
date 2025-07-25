@@ -409,7 +409,7 @@ const urgencyTriggers = [
 
       // ✅ Ensure all cached dogs have visibilityScore before filtering
       for (const dog of updatedMemory.cachedDogs) {
-        if (dog.visibilityScore === undefined) {
+        if (dog.visibilityScore === undefined || dog.visibilityScore === null) {
           dog.visibilityScore = calculateVisibilityScore(dog);
         }
       }

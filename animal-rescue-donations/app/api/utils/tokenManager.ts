@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 
 // Token management
@@ -11,55 +10,57 @@ export async function clearTokenCache() {
   tokenExpiresAt = 0;
 }
 
-export async function getAccessToken(forceRefresh = false): Promise<string> {
-  const now = Date.now();
-  const buffer = 5 * 60 * 1000; // 5-minute buffer
-
-  // Check if we have a valid cached token and not forcing refresh
-  if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
-    console.log('🔄 Using cached Petfinder token');
-    return cachedToken;
-  }
-
-  console.log('🔑 Fetching new Petfinder access token...');
-
+export async function getAccessToken(forceRefresh = false): Promise<string | null> {
   try {
+    // Return cached token if valid and not forcing refresh
+    if (!forceRefresh && cachedToken && cachedToken.expiresAt > Date.now()) {
+      console.log('[🎫 Token Manager] Using cached token');
+      return cachedToken.accessToken;
+    }
+
+    console.log('[🎫 Token Manager] Fetching new Petfinder access token...');
+
     const response = await fetch('https://api.petfinder.com/v2/oauth2/token', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'BarkBase/1.0'
       },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: process.env.PETFINDER_CLIENT_ID!,
-        client_secret: process.env.PETFINDER_CLIENT_SECRET!,
+        client_id: process.env.PETFINDER_API_KEY!,
+        client_secret: process.env.PETFINDER_SECRET!,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Token request failed:', response.status, errorText);
-      throw new Error(`Failed to get token: ${response.status} - ${errorText}`);
+      console.error('[❌ Token Error]', response.status, errorText);
+      // Clear cached token on error
+      cachedToken = null;
+      return null;
     }
 
     const data = await response.json();
-    
+
     if (!data.access_token) {
-      throw new Error('No access token in response');
+      console.error('[❌ Token Error] No access token in response');
+      cachedToken = null;
+      return null;
     }
 
-    cachedToken = data.access_token;
-    tokenExpiresAt = now + (data.expires_in * 1000);
+    // Cache the token with expiration (subtract 10 minutes for safety)
+    cachedToken = {
+      accessToken: data.access_token,
+      expiresAt: Date.now() + (data.expires_in * 1000) - (10 * 60 * 1000),
+    };
 
-    console.log('✅ Got new Petfinder token, expires in', data.expires_in, 'seconds');
-    return cachedToken;
+    console.log('[✅ Token Manager] Got new Petfinder token, expires in', data.expires_in, 'seconds');
+    return cachedToken.accessToken;
 
   } catch (error) {
-    console.error('❌ Failed to get access token:', error);
-    // Clear cache on error
+    console.error('[❌ Token Manager Error]', error);
+    // Clear cached token on error
     cachedToken = null;
-    tokenExpiresAt = 0;
-    throw error;
+    return null;
   }
 }
