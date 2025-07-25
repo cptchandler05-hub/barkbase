@@ -214,14 +214,21 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     petfinder_id: testDog.id.toString()
   };
 
-  // Ensure no id field is present
+  // Ensure no id field is present - it should auto-increment
   if ('id' in testRecord) {
     delete testRecord.id;
     console.log('🗑️ Removed id field from record');
   }
 
-  console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
-  console.log('🔑 Record keys:', Object.keys(testRecord));
+  console.log('🧪 Test record structure (first few fields):', JSON.stringify({
+    api_source: testRecord.api_source,
+    name: testRecord.name,
+    petfinder_id: testRecord.petfinder_id,
+    primary_breed: testRecord.primary_breed,
+    city: testRecord.city,
+    state: testRecord.state
+  }, null, 2));
+  console.log('🔑 Record keys count:', Object.keys(testRecord).length);
   console.log('📊 Record has id field:', 'id' in testRecord);
 
   // First check if dog already exists by petfinder_id
@@ -231,22 +238,35 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     .eq('petfinder_id', testRecord.petfinder_id)
     .single();
 
+  if (existingError && existingError.code !== 'PGRST116') {
+    console.error('❌ Error checking for existing dog:', existingError);
+    throw new Error('Cannot check for existing dogs: ' + existingError.message);
+  }
+
   let testData, testError;
   
   if (existingTestDog) {
-    // Update existing dog
+    console.log('🔄 Updating existing dog with ID:', existingTestDog.id);
+    // Update existing dog (exclude id from update)
+    const updateRecord = { ...testRecord };
+    delete updateRecord.id; // Make sure id is not in update
+    
     const { data, error } = await supabase
       .from('dogs')
-      .update(testRecord)
+      .update(updateRecord)
       .eq('id', existingTestDog.id)
       .select();
     testData = data;
     testError = error;
   } else {
-    // Insert new dog
+    console.log('➕ Inserting new dog...');
+    // Insert new dog (id should auto-increment)
+    const insertRecord = { ...testRecord };
+    delete insertRecord.id; // Absolutely ensure no id field
+    
     const { data, error } = await supabase
       .from('dogs')
-      .insert([testRecord])
+      .insert([insertRecord])
       .select();
     testData = data;
     testError = error;
@@ -334,16 +354,14 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
           if (updatedCount === 1) console.log('✅ First dog updated successfully');
         }
       } else {
-        // Ensure no id field is present
-        if ('id' in dogRecord) {
-          delete dogRecord.id;
-          console.log('🗑️ Removed id field from record');
-        }
-
+        // Ensure no id field is present - it should auto-increment
+        const insertRecord = { ...dogRecord };
+        delete insertRecord.id; // Absolutely ensure no id field
+        
         // Insert new dog
         const { error: insertError } = await supabase
           .from('dogs')
-          .insert([dogRecord]);
+          .insert([insertRecord]);
 
         if (insertError) {
           console.warn(`⚠️ Failed to insert dog ${dogRecord.name}:`, insertError);
