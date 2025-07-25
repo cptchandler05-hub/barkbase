@@ -1,0 +1,285 @@
+🐕 Starting dog data sync...
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching dogs from: 59008
+📍 Found 100 dogs in 59008
+🔍 Fetching dogs from: 80432
+📍 Found 100 dogs in 80432
+🔍 Fetching dogs from: 32030
+📍 Found 100 dogs in 32030
+🔍 Fetching dogs from: 15009
+📍 Found 100 dogs in 15009
+🔍 Fetching dogs from: 99577
+📍 Found 100 dogs in 99577
+🔍 Fetching dogs from: 60002
+📍 Found 100 dogs in 60002
+🔍 Fetching dogs from: 63013
+📍 Found 100 dogs in 63013
+🔍 Fetching dogs from: 89002
+⚠️ Failed to fetch from 89002: API error for 89002: 502
+🔍 Fetching dogs from: 70009
+📍 Found 100 dogs in 70009
+🔍 Fetching dogs from: 48009
+📍 Found 100 dogs in 48009
+🔍 Fetching dogs from: 27007
+📍 Found 100 dogs in 27007
+🔍 Fetching dogs from: 38601
+📍 Found 100 dogs in 38601
+🔍 Fetching dogs from: 93203
+📍 Found 100 dogs in 93203
+🔍 Fetching dogs from: 46012
+📍 Found 100 dogs in 46012
+🔍 Fetching dogs from: 96709
+📍 Found 100 dogs in 96709
+🔍 Fetching dogs from: 29016
+📍 Found 100 dogs in 29016
+🔍 Fetching dogs from: 04001
+📍 Found 100 dogs in 04001
+🔍 Fetching dogs from: 05032
+📍 Found 100 dogs in 05032
+🔍 Fetching dogs from: 15006
+📍 Found 100 dogs in 15006
+🔍 Fetching dogs from: 40010
+📍 Found 100 dogs in 40010
+🔍 Fetching dogs from: 35016
+📍 Found 100 dogs in 35016
+🔍 Fetching dogs from: 71601
+📍 Found 100 dogs in 71601
+🔍 Fetching dogs from: 80425
+📍 Found 100 dogs in 80425
+🔍 Fetching dogs from: 06013
+📍 Found 100 dogs in 06013
+🔍 Fetching dogs from: 15007
+📍 Found 100 dogs in 15007
+🔍 Fetching dogs from: 66015
+📍 Found 100 dogs in 66015
+🔍 Fetching dogs from: 19702
+📍 Found 100 dogs in 19702
+🔍 Fetching dogs from: 24701
+📍 Found 100 dogs in 24701
+🔍 Fetching dogs from: 01012
+📍 Found 100 dogs in 01012
+🔍 Fetching dogs from: 55001
+📍 Found 100 dogs in 55001
+🔍 Fetching dogs from: 19710
+📍 Found 100 dogs in 19710
+🔍 Fetching dogs from: 24714
+📍 Found 100 dogs in 24714
+🔍 Fetching dogs from: 24715
+📍 Found 100 dogs in 24715
+🔍 Fetching dogs from: 59007
+📍 Found 100 dogs in 59007
+🔍 Fetching dogs from: 05030
+📍 Found 100 dogs in 05030
+🔍 Fetching dogs from: 93207
+📍 Found 100 dogs in 93207
+🔍 Fetching dogs from: 97009
+📍 Found 100 dogs in 97009
+🔍 Fetching dogs from: 15005
+📍 Found 100 dogs in 15005
+🔍 Fetching dogs from: 63005
+📍 Found 100 dogs in 63005
+🔍 Fetching dogs from: 63011
+📍 Found 100 dogs in 63011
+🔍 Fetching dogs from: 48001
+📍 Found 100 dogs in 48001
+🔍 Fetching dogs from: 84006
+📍 Found 100 dogs in 84006
+🔍 Fetching dogs from: 22032
+📍 Found 100 dogs in 22032
+🔍 Fetching dogs from: 53008
+📍 Found 100 dogs in 53008
+🔍 Fetching dogs from: 58011
+📍 Found 100 dogs in 58011
+🔍 Fetching dogs from: 66013
+📍 Found 100 dogs in 66013
+🔍 Fetching dogs from: 27006
+📍 Found 100 dogs in 27006
+🔍 Fetching dogs from: 59001
+📍 Found 100 dogs in 59001
+🔍 Fetching dogs from: 97001
+📍 Found 100 dogs in 97001
+🔍 Fetching dogs from: 15004
+📍 Found 100 dogs in 15004
+🔍 Fetching dogs from: 06018
+📍 Found 100 dogs in 06018
+🔍 Fetching dogs from: 10501
+📍 Found 100 dogs in 10501
+🔍 Fetching dogs from: 83205
+📍 Found 100 dogs in 83205
+🔍 Fetching dogs from: 80427
+📍 Found 100 dogs in 80427
+🔍 Fetching dogs from: 93204
+📍 Found 100 dogs in 93204
+🔍 Fetching dogs from: 06022
+📍 Found 100 dogs in 06022
+🔍 Fetching dogs from: 37010
+📍 Found 100 dogs in 37010
+🔍 Fetching dogs from: 29015
+📍 Found 100 dogs in 29015
+🔍 Fetching dogs from: 50003
+📍 Found 100 dogs in 50003
+🔍 Fetching dogs from: 24725
+⚠️ Failed to fetch from 24725: API error for 24725: 400
+🔍 Fetching dogs from: 53001
+📍 Found 100 dogs in 53001
+🔍 Fetching dogs from: 37011
+📍 Found 100 dogs in 37011
+🔍 Fetching dogs from: 15012
+📍 Found 100 dogs in 15012
+🔍 Fetching dogs from: 24715
+📍 Found 100 dogs in 24715
+🔍 Fetching dogs from: 19707
+📍 Found 100 dogs in 19707
+🔍 Fetching dogs from: 84008
+📍 Found 100 dogs in 84008
+🔍 Fetching dogs from: 40007
+📍 Found 100 dogs in 40007
+🔍 Fetching dogs from: 03037
+📍 Found 100 dogs in 03037
+🔍 Fetching dogs from: 22003
+📍 Found 100 dogs in 22003
+🔍 Fetching dogs from: 85607
+📍 Found 100 dogs in 85607
+🔍 Fetching dogs from: 15004
+📍 Found 100 dogs in 15004
+🔍 Fetching dogs from: 58002
+📍 Found 100 dogs in 58002
+🔍 Fetching dogs from: 15010
+📍 Found 100 dogs in 15010
+🔍 Fetching dogs from: 38611
+📍 Found 100 dogs in 38611
+🔍 Fetching dogs from: 04001
+📍 Found 100 dogs in 04001
+🔍 Fetching dogs from: Phoenix, AZ
+📍 Found 100 dogs in Phoenix, AZ
+🔍 Fetching dogs from: Philadelphia, PA
+📍 Found 100 dogs in Philadelphia, PA
+🔍 Fetching dogs from: San Antonio, TX
+📍 Found 100 dogs in San Antonio, TX
+🔍 Fetching dogs from: Chicago, IL
+📍 Found 100 dogs in Chicago, IL
+🎯 Found 3969 unique dogs total
+📝 Syncing 3969 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "petfinder_id": "77461011",
+  "name": "Dunkin",
+  "breed_primary": "German Shepherd Dog",
+  "breed_secondary": "Mixed Breed",
+  "age": "Young",
+  "gender": "Male",
+  "size": "Medium",
+  "location": "Cody, WY",
+  "organization_id": "WY57",
+  "description": "I&amp;#39;m a good boy - I love all people and try to be super well behaved! I am kind and...",
+  "photos": [
+    "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=300",
+    "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/2/?bust=1753421258&width=300"
+  ],
+  "status": "available",
+  "visibility_score": 47,
+  "last_updated": "2025-07-25T14:03:52.297Z",
+  "source": "petfinder",
+  "raw_data": {
+    "id": 77461011,
+    "organization_id": "WY57",
+    "url": "https://www.petfinder.com/dog/dunkin-77461011/wy/cody/3-dog-rescue-wy57/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+    "type": "Dog",
+    "species": "Dog",
+    "breeds": {
+      "primary": "German Shepherd Dog",
+      "secondary": "Mixed Breed",
+      "mixed": true,
+      "unknown": false
+    },
+    "colors": {
+      "primary": "Bicolor",
+      "secondary": null,
+      "tertiary": null
+    },
+    "age": "Young",
+    "gender": "Male",
+    "size": "Medium",
+    "coat": null,
+    "attributes": {
+      "spayed_neutered": false,
+      "house_trained": false,
+      "declawed": null,
+      "special_needs": false,
+      "shots_current": true
+    },
+    "environment": {
+      "children": true,
+      "dogs": true,
+      "cats": null
+    },
+    "tags": [
+      "Affectionate"
+    ],
+    "name": "Dunkin",
+    "description": "I&amp;#39;m a good boy - I love all people and try to be super well behaved! I am kind and...",
+    "organization_animal_id": "21098",
+    "photos": [
+      {
+        "small": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=100",
+        "medium": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=300",
+        "large": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=600",
+        "full": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777"
+      },
+      {
+        "small": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/2/?bust=1753421258&width=100",
+        "medium": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/2/?bust=1753421258&width=300",
+        "large": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/2/?bust=1753421258&width=600",
+        "full": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/2/?bust=1753421258"
+      }
+    ],
+    "primary_photo_cropped": {
+      "small": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=300",
+      "medium": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=450",
+      "large": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777&width=600",
+      "full": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77461011/1/?bust=1753448777"
+    },
+    "videos": [],
+    "status": "adoptable",
+    "status_changed_at": "2025-07-25T05:26:08+0000",
+    "published_at": "2025-07-25T05:26:06+0000",
+    "distance": 35.3331,
+    "contact": {
+      "email": "info@3dogrescue.com",
+      "phone": "(307) 250-3737",
+      "address": {
+        "address1": "134 Cooper Lane E.",
+        "address2": null,
+        "city": "Cody",
+        "state": "WY",
+        "postcode": "82414",
+        "country": "US"
+      }
+    },
+    "_links": {
+      "self": {
+        "href": "/v2/animals/77461011"
+      },
+      "type": {
+        "href": "/v2/types/dog"
+      },
+      "organization": {
+        "href": "/v2/organizations/wy57"
+      }
+    }
+  }
+}
+❌ DATABASE TEST FAILED: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'breed_primary' column of 'dogs' in the schema cache"
+}
+❌ Cannot proceed with sync - database structure issue
+🧹 Marking old dogs as removed...
+✅ Marked old dogs as removed
+✅ Dog sync completed successfully!
