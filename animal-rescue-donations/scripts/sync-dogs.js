@@ -134,6 +134,19 @@ async function fetchDogsFromLocation(location, accessToken) {
 async function syncDogsToDatabase(dogs, source = 'petfinder') {
   console.log(`📝 Syncing ${dogs.length} dogs to database...`);
   
+  // Test connection first
+  console.log('🔗 Testing Supabase connection...');
+  const { data: testData, error: testError } = await supabase
+    .from('dogs')
+    .select('count', { count: 'exact', head: true });
+    
+  if (testError) {
+    console.error('❌ Supabase connection failed:', testError);
+    return;
+  }
+  
+  console.log(`✅ Connected to Supabase! Current dogs in DB: ${testData || 0}`);
+  
   const syncRecord = {
     sync_date: new Date().toISOString(),
     dogs_added: 0,
@@ -144,6 +157,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   };
 
   // Insert sync record
+  console.log('📊 Creating sync record...');
   const { data: syncData, error: syncError } = await supabase
     .from('dog_syncs')
     .insert([syncRecord])
@@ -152,8 +166,11 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   if (syncError) {
     console.error('❌ Failed to create sync record:', syncError);
+    console.error('❌ Sync record data:', syncRecord);
     return;
   }
+  
+  console.log('✅ Sync record created:', syncData.id);
 
   let addedCount = 0;
   let updatedCount = 0;
@@ -200,8 +217,10 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
         if (updateError) {
           console.warn(`⚠️ Failed to update dog ${dogRecord.name}:`, updateError);
+          if (updatedCount === 0) console.error('❌ First update error details:', updateError);
         } else {
           updatedCount++;
+          if (updatedCount === 1) console.log('✅ First dog updated successfully');
         }
       } else {
         // Insert new dog
@@ -211,8 +230,13 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
         if (insertError) {
           console.warn(`⚠️ Failed to insert dog ${dogRecord.name}:`, insertError);
+          if (addedCount === 0) {
+            console.error('❌ First insert error details:', insertError);
+            console.error('❌ Sample dog record:', JSON.stringify(dogRecord, null, 2));
+          }
         } else {
           addedCount++;
+          if (addedCount === 1) console.log('✅ First dog inserted successfully');
         }
       }
     } catch (error) {
