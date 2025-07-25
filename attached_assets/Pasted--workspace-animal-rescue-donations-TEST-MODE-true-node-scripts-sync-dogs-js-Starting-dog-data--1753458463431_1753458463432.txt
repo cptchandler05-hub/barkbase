@@ -1,0 +1,97 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 68007
+📍 Found 100 dogs in 68007
+🔍 Fetching dogs from: Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "api_source": "petfinder",
+  "organization_id": "NE73",
+  "url": "https://www.petfinder.com/dog/lil-homie-77463667/ne/omaha/nebraska-humane-society-ne73/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "LIL HOMIE",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "Boxer",
+  "secondary_breed": "Mixed Breed",
+  "is_mixed": true,
+  "is_unknown_breed": false,
+  "age": "Baby",
+  "gender": "Male",
+  "size": "Small",
+  "coat": null,
+  "primary_color": null,
+  "secondary_color": null,
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": null,
+  "special_needs": null,
+  "shots_current": null,
+  "good_with_children": null,
+  "good_with_dogs": null,
+  "good_with_cats": null,
+  "description": "Lil Homie is available on a first come, first served basis. To meet this pet, please come to the shelter...",
+  "photos": [
+    {
+      "small": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463667/1/?bust=1753436320&width=100",
+      "medium": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463667/1/?bust=1753436320&width=300",
+      "large": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463667/1/?bust=1753436320&width=600",
+      "full": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463667/1/?bust=1753436320"
+    }
+  ],
+  "tags": [],
+  "contact_info": {
+    "email": "nhs@nehumanesociety.org",
+    "phone": "(402) 444-7800",
+    "address": {
+      "address1": "8929 Fort St",
+      "address2": null,
+      "city": "Omaha",
+      "state": "NE",
+      "postcode": "68134",
+      "country": "US"
+    }
+  },
+  "city": "Omaha",
+  "state": "NE",
+  "postcode": "68134",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 35,
+  "organization_animal_id": "A1615472",
+  "last_updated_at": "2025-07-25T15:46:30.995Z",
+  "created_at": "2025-07-25T15:46:30.995Z",
+  "petfinder_id": "77463667"
+}
+❌ DATABASE TEST FAILED: {
+  code: '23502',
+  details: 'Failing row contains (null, petfinder, NE73, https://www.petfinder.com/dog/lil-homie-77463667/ne/omaha/nebras..., LIL HOMIE, Dog, Dog, Boxer, Mixed Breed, t, f, Baby, Male, Small, null, null, null, null, adoptable, t, null, null, null, null, null, null, Lil Homie is available on a first come, first served basis. To m..., [{"full": "https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/7746..., [], {"email": "nhs@nehumanesociety.org", "phone": "(402) 444-7800", ..., Omaha, NE, 68134, null, null, 35, A1615472, 2025-07-25 15:46:30.995+00, 2025-07-25 15:46:30.995+00, 77463667, null).',
+  hint: null,
+  message: 'null value in column "id" of relation "dogs" violates not-null constraint'
+}
+❌ Error details: {
+  "code": "23502",
+  "details": "Failing row contains (null, petfinder, NE73, https://www.petfinder.com/dog/lil-homie-77463667/ne/omaha/nebras..., LIL HOMIE, Dog, Dog, Boxer, Mixed Breed, t, f, Baby, Male, Small, null, null, null, null, adoptable, t, null, null, null, null, null, null, Lil Homie is available on a first come, first served basis. To m..., [{\"full\": \"https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/7746..., [], {\"email\": \"nhs@nehumanesociety.org\", \"phone\": \"(402) 444-7800\", ..., Omaha, NE, 68134, null, null, 35, A1615472, 2025-07-25 15:46:30.995+00, 2025-07-25 15:46:30.995+00, 77463667, null).",
+  "hint": null,
+  "message": "null value in column \"id\" of relation \"dogs\" violates not-null constraint"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: null value in column "id" of relation "dogs" violates not-null constraint
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:229:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:491:7)
