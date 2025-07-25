@@ -99,7 +99,9 @@ export default function AdoptPage() {
           age: dog.age,
           size: dog.size,
           gender: dog.gender,
-          photos: dog.photos.map(url => ({ medium: url, large: url, small: url })),
+          photos: (dog.photos || []).length > 0 
+            ? dog.photos.map(url => ({ medium: url, large: url, small: url }))
+            : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
           contact: { 
             address: { 
               city: dog.location?.split(',')[0] || 'Unknown', 
@@ -215,7 +217,9 @@ export default function AdoptPage() {
           age: dog.age,
           size: dog.size,
           gender: dog.gender,
-          photos: dog.photos.map(url => ({ medium: url, large: url, small: url })),
+          photos: (dog.photos || []).length > 0 
+            ? dog.photos.map(url => ({ medium: url, large: url, small: url }))
+            : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
           contact: { 
             address: { 
               city: dog.location?.split(',')[0] || 'Unknown', 

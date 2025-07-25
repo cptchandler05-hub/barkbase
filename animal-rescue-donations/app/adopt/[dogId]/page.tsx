@@ -93,13 +93,26 @@ export default function DogProfilePage() {
 
         // Handle the Petfinder API response structure
         if (data.animal) {
-          // This is a direct Petfinder API response
-          setDog(data.animal);
-          console.log("Set dog from API response:", data.animal.name);
+          // This is a direct Petfinder API response - process it
+          const processedDog = {
+            ...data.animal,
+            photos: (data.animal.photos || []).length > 0 
+              ? data.animal.photos 
+              : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
+            visibilityScore: data.animal.visibilityScore || 50
+          };
+          setDog(processedDog);
+          console.log("Set dog from API response:", processedDog.name);
         } else if (data.id || data.name) {
-          // This is already formatted dog data
-          setDog(data);
-          console.log("Set dog from formatted data:", data.name);
+          // This is already formatted dog data - still process photos
+          const processedDog = {
+            ...data,
+            photos: (data.photos || []).length > 0 
+              ? data.photos 
+              : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }]
+          };
+          setDog(processedDog);
+          console.log("Set dog from formatted data:", processedDog.name);
         } else {
           console.error("Unexpected data structure:", Object.keys(data));
         }
@@ -109,16 +122,17 @@ export default function DogProfilePage() {
 
         // Handle specific error cases with retry logic
         if (res.status === 401) {
-          console.error("Authentication error - retrying once...");
+          console.error("Authentication error - retrying with fresh token...");
 
-          // Retry once after a delay for auth errors
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Wait a moment before retry
+          await new Promise(resolve => setTimeout(resolve, 500));
 
           try {
             const retryRes = await fetch(apiUrl, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache', // Force fresh request
               },
             });
 
@@ -129,8 +143,15 @@ export default function DogProfilePage() {
               console.log("Retry successful:", retryData);
 
               if (retryData.animal) {
-                setDog(retryData.animal);
-                console.log("Set dog from retry response:", retryData.animal.name);
+                // Ensure dog has photos
+                const processedDog = {
+                  ...retryData.animal,
+                  photos: (retryData.animal.photos || []).length > 0 
+                    ? retryData.animal.photos 
+                    : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }]
+                };
+                setDog(processedDog);
+                console.log("Set dog from retry response:", processedDog.name);
                 return; // Success, exit function
               }
             } else {

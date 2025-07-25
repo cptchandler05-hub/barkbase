@@ -33,31 +33,46 @@ export async function GET(
     let dog = null;
 
     if (apiSource === 'petfinder') {
-      // Fetch from Petfinder for complete details
-      const accessToken = await getAccessToken();
+      // Try to fetch from Petfinder with token retry logic
+      let accessToken = await getAccessToken();
+      let attempts = 0;
+      const maxAttempts = 2;
 
-      const response = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      while (attempts < maxAttempts) {
+        attempts++;
+        console.log(`[🔄 API] Attempt ${attempts}/${maxAttempts} for dog ${params.dogId}`);
 
-      if (!response.ok) {
+        const response = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          dog = data.animal;
+          console.log(`[✅ API Success] Got dog: ${dog.name}`);
+          break;
+        }
+
         if (response.status === 404) {
+          console.log(`[❌ API] Dog ${params.dogId} not found`);
           return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
         }
-        if (response.status === 401) {
-          console.log(`[🔄 Auth] Token expired, clearing cache`);
+
+        if (response.status === 401 && attempts < maxAttempts) {
+          console.log(`[🔄 Auth] Token expired, getting fresh token (attempt ${attempts})`);
           const { clearTokenCache } = await import('@/app/api/utils/tokenManager');
           await clearTokenCache();
-          return NextResponse.json({ error: 'Authentication failed' }, { status: 401 });
+          accessToken = await getAccessToken(true); // Force refresh
+          continue;
         }
+
+        // If we get here, it's an error we can't retry
+        console.error(`[❌ API] Failed after ${attempts} attempts: ${response.status}`);
         throw new Error(`Petfinder API error: ${response.status}`);
       }
-
-      const data = await response.json();
-      dog = data.animal;
     } else if (apiSource === 'rescuegroups') {
       // TODO: Implement RescueGroups API call
       console.log(`[🚧 TODO] RescueGroups API not yet implemented`);
@@ -65,6 +80,7 @@ export async function GET(
     }
 
     if (!dog) {
+      console.log(`[❌ No Data] No dog data found for ${params.dogId}`);
       return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
@@ -77,7 +93,7 @@ export async function GET(
       console.log(`[✅ Merge] Added database info: visibility score ${dog.visibilityScore}`);
     } else {
       // Calculate visibility score if not in database
-      const { calculateVisibilityScore } = await import('@/app/api/utils/visibilityScore');
+      const { calculateVisibilityScore } = await import('@/lib/scoreVisibility');
       dog.visibilityScore = calculateVisibilityScore(dog);
       console.log(`[📊 Calc] Calculated visibility score: ${dog.visibilityScore}`);
     }
