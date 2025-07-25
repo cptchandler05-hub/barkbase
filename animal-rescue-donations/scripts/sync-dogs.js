@@ -1,4 +1,3 @@
-
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
 
@@ -19,14 +18,14 @@ let tokenExpiresAt = 0;
 async function getAccessToken() {
   const now = Date.now();
   const buffer = 5 * 60 * 1000; // 5-minute buffer
-  
+
   if (cachedToken && now < (tokenExpiresAt - buffer)) {
     console.log('🔄 Using cached Petfinder token');
     return cachedToken;
   }
 
   console.log('🔑 Fetching new Petfinder access token...');
-  
+
   const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -44,7 +43,7 @@ async function getAccessToken() {
   const data = await res.json();
   cachedToken = data.access_token;
   tokenExpiresAt = now + (data.expires_in * 1000);
-  
+
   console.log('✅ Got new Petfinder token');
   return cachedToken;
 }
@@ -52,32 +51,32 @@ async function getAccessToken() {
 async function rateLimitedDelay() {
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
-  
+
   if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
     const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
     await new Promise(resolve => setTimeout(resolve, waitTime));
   }
-  
+
   lastRequestTime = Date.now();
 }
 
 function calculateVisibilityScore(dog) {
   let score = 0;
-  
+
   // Photo scoring (0-40 points)
   const photoCount = dog.photos?.length || 0;
   if (photoCount === 0) score += 0;
   else if (photoCount === 1) score += 10;
   else if (photoCount === 2) score += 20;
   else if (photoCount >= 3) score += 40;
-  
+
   // Description scoring (0-30 points)
   const description = dog.description || '';
   if (description.length === 0) score += 0;
   else if (description.length < 50) score += 5;
   else if (description.length < 150) score += 15;
   else score += 30;
-  
+
   // Age scoring (0-20 points) - puppies get lower scores to balance visibility
   switch (dog.age?.toLowerCase()) {
     case 'baby':
@@ -86,7 +85,7 @@ function calculateVisibilityScore(dog) {
     case 'senior': score += 15; break;
     default: score += 10;
   }
-  
+
   // Size scoring (0-10 points) - larger dogs often overlooked
   switch (dog.size?.toLowerCase()) {
     case 'small': score += 5; break;
@@ -95,15 +94,15 @@ function calculateVisibilityScore(dog) {
     case 'extra large': score += 10; break;
     default: score += 5;
   }
-  
+
   return Math.max(0, Math.min(100, score));
 }
 
 async function fetchDogsFromLocation(location, accessToken) {
   await rateLimitedDelay();
-  
+
   console.log(`🔍 Fetching dogs from: ${location}`);
-  
+
   const params = new URLSearchParams({
     type: 'dog',
     status: 'adoptable',
@@ -133,20 +132,20 @@ async function fetchDogsFromLocation(location, accessToken) {
 
 async function syncDogsToDatabase(dogs, source = 'petfinder') {
   console.log(`📝 Syncing ${dogs.length} dogs to database...`);
-  
+
   // Test connection first
   console.log('🔗 Testing Supabase connection...');
   const { data: testData, error: testError } = await supabase
     .from('dogs')
     .select('count', { count: 'exact', head: true });
-    
+
   if (testError) {
     console.error('❌ Supabase connection failed:', testError);
     return;
   }
-  
+
   console.log(`✅ Connected to Supabase! Current dogs in DB: ${testData || 0}`);
-  
+
   const syncRecord = {
     sync_date: new Date().toISOString(),
     dogs_added: 0,
@@ -166,27 +165,49 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   // Test with first dog only to verify database structure
   console.log('🧪 Testing database insertion with first dog...');
   const testDog = dogs[0];
-  
+
   const testRecord = {
-    petfinder_id: testDog.id.toString(),
+    api_source: source,
+    organization_id: testDog.organization_id || '',
+    organization_animal_id: testDog.id.toString(),
+    url: testDog.url || '',
     name: testDog.name || 'Test Dog',
-    breed_primary: testDog.breeds?.primary || 'Mixed Breed',
-    breed_secondary: testDog.breeds?.secondary || null,
+    type: 'Dog',
+    species: testDog.species || 'Dog',
+    primary_breed: testDog.breeds?.primary || 'Mixed Breed',
+    secondary_breed: testDog.breeds?.secondary || null,
+    is_mixed: testDog.breeds?.mixed || false,
+    is_unknown_breed: testDog.breeds?.unknown || false,
     age: testDog.age || 'Unknown',
     gender: testDog.gender || 'Unknown',
     size: testDog.size || 'Unknown',
-    location: `${testDog.contact?.address?.city || ''}, ${testDog.contact?.address?.state || ''}`.trim(),
-    organization_id: testDog.organization_id || '',
+    coat: testDog.coat || null,
+    primary_color: testDog.colors?.primary || null,
+    secondary_color: testDog.colors?.secondary || null,
+    tertiary_color: testDog.colors?.tertiary || null,
+    status: testDog.status || 'adoptable',
+    spayed_neutered: testDog.attributes?.spayed_neutered || null,
+    house_trained: testDog.attributes?.house_trained || null,
+    special_needs: testDog.attributes?.special_needs || null,
+    shots_current: testDog.attributes?.shots_current || null,
+    good_with_children: testDog.environment?.children || null,
+    good_with_dogs: testDog.environment?.dogs || null,
+    good_with_cats: testDog.environment?.cats || null,
     description: testDog.description || null,
-    photos: testDog.photos?.map(photo => photo.large || photo.medium || photo.small) || [],
-    status: 'available',
+    photos: testDog.photos || [],
+    tags: testDog.tags || [],
+    contact_info: testDog.contact || {},
+    city: testDog.contact?.address?.city || null,
+    state: testDog.contact?.address?.state || null,
+    postcode: testDog.contact?.address?.postcode || null,
+    latitude: null,
+    longitude: null,
     visibility_score: calculateVisibilityScore(testDog),
-    last_updated_at: new Date().toISOString(),
-    source: source
+    last_updated_at: new Date().toISOString()
   };
 
   console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
-  
+
   const { data: testData, error: testError } = await supabase
     .from('dogs')
     .insert([testRecord])
@@ -204,29 +225,50 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
-        petfinder_id: dog.id.toString(),
+        api_source: source,
+        organization_id: dog.organization_id || '',
+        organization_animal_id: dog.id.toString(),
+        url: dog.url || '',
         name: dog.name || 'Unknown',
-        breed_primary: dog.breeds?.primary || 'Mixed Breed',
-        breed_secondary: dog.breeds?.secondary || null,
+        type: 'Dog',
+        species: dog.species || 'Dog',
+        primary_breed: dog.breeds?.primary || 'Mixed Breed',
+        secondary_breed: dog.breeds?.secondary || null,
+        is_mixed: dog.breeds?.mixed || false,
+        is_unknown_breed: dog.breeds?.unknown || false,
         age: dog.age || 'Unknown',
         gender: dog.gender || 'Unknown',
         size: dog.size || 'Unknown',
-        location: `${dog.contact?.address?.city || ''}, ${dog.contact?.address?.state || ''}`.trim(),
-        organization_id: dog.organization_id || '',
+        coat: dog.coat || null,
+        primary_color: dog.colors?.primary || null,
+        secondary_color: dog.colors?.secondary || null,
+        tertiary_color: dog.colors?.tertiary || null,
+        status: dog.status || 'adoptable',
+        spayed_neutered: dog.attributes?.spayed_neutered || null,
+        house_trained: dog.attributes?.house_trained || null,
+        special_needs: dog.attributes?.special_needs || null,
+        shots_current: dog.attributes?.shots_current || null,
+        good_with_children: dog.environment?.children || null,
+        good_with_dogs: dog.environment?.dogs || null,
+        good_with_cats: dog.environment?.cats || null,
         description: dog.description || null,
-        photos: dog.photos?.map(photo => photo.large || photo.medium || photo.small) || [],
-        status: 'available',
+        photos: dog.photos || [],
+        tags: dog.tags || [],
+        contact_info: dog.contact || {},
+        city: dog.contact?.address?.city || null,
+        state: dog.contact?.address?.state || null,
+        postcode: dog.contact?.address?.postcode || null,
+        latitude: null,
+        longitude: null,
         visibility_score: calculateVisibilityScore(dog),
-        last_updated_at: new Date().toISOString(),
-        source: source,
-        raw_data: dog
+        last_updated_at: new Date().toISOString()
       };
 
       // Check if dog already exists
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
         .select('id, last_updated_at')
-        .eq('petfinder_id', dogRecord.petfinder_id)
+        .eq('organization_animal_id', dogRecord.organization_animal_id)
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
@@ -272,7 +314,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
               photos_length: dogRecord.photos.length,
               description_length: dogRecord.description?.length || 0
             }, null, 2));
-            
+
             // Stop processing on first error to avoid wasting API quota
             console.error('❌ Stopping sync due to database error');
             return;
@@ -302,7 +344,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
 async function markRemovedDogs() {
   console.log('🧹 Marking old dogs as removed...');
-  
+
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
@@ -321,25 +363,25 @@ async function markRemovedDogs() {
 
 async function main() {
   console.log('🐕 Starting dog data sync...');
-  
+
   try {
     const accessToken = await getAccessToken();
-    
+
     // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
     const locations = [];
-    
+
     // Add 75 random rural ZIPs each run for comprehensive coverage
     for (let i = 0; i < 75; i++) {
       locations.push(getRandomRuralZip());
     }
-    
+
     // Add major cities for comparison/balance (~10% of searches)
     const majorCities = [
       'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
       'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA',
       'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'Dallas, TX'
     ];
-    
+
     // Add 8 random major cities
     for (let i = 0; i < 8; i++) {
       const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
@@ -349,13 +391,13 @@ async function main() {
     }
 
     let allDogs = [];
-    
+
     for (const location of locations) {
       try {
         const dogs = await fetchDogsFromLocation(location, accessToken);
         allDogs = allDogs.concat(dogs);
         console.log(`📍 Found ${dogs.length} dogs in ${location}`);
-        
+
         // Add delay between locations to be respectful
         await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (error) {
@@ -376,7 +418,7 @@ async function main() {
     }
 
     console.log('✅ Dog sync completed successfully!');
-    
+
   } catch (error) {
     console.error('❌ Dog sync failed:', error);
     process.exit(1);
