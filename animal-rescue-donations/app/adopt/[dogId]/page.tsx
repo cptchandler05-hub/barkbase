@@ -62,6 +62,8 @@ export default function DogProfilePage() {
   const fetchDogDetails = async () => {
     try {
       console.log("Fetching dog details for dogId:", dogId);
+      console.log("Type of dogId:", typeof dogId);
+      console.log("dogId is truthy:", !!dogId);
       
       if (!dogId) {
         console.error("No dogId available");
@@ -72,7 +74,16 @@ export default function DogProfilePage() {
       const apiUrl = `/api/dog/${dogId}`;
       console.log("Making request to:", apiUrl);
       
-      const res = await fetch(apiUrl);
+      // Add a small delay to avoid overwhelming the API
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      const res = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
       console.log("Response status:", res.status);
       console.log("Response ok:", res.ok);
       
@@ -96,12 +107,46 @@ export default function DogProfilePage() {
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch dog details:", res.status, errorData);
         
+        // Handle specific error cases with retry logic
+        if (res.status === 401) {
+          console.error("Authentication error - retrying once...");
+          
+          // Retry once after a delay for auth errors
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          try {
+            const retryRes = await fetch(apiUrl, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            
+            console.log("Retry response status:", retryRes.status);
+            
+            if (retryRes.ok) {
+              const retryData = await retryRes.json();
+              console.log("Retry successful:", retryData);
+              
+              if (retryData.animal) {
+                setDog(retryData.animal);
+                console.log("Set dog from retry response:", retryData.animal.name);
+                return; // Success, exit function
+              }
+            } else {
+              console.error("Retry also failed:", retryRes.status);
+            }
+          } catch (retryError) {
+            console.error("Retry attempt failed:", retryError);
+          }
+        }
+        
         if (res.status === 404) {
           console.error("Dog not found - may have been adopted");
-        } else if (res.status === 401) {
-          console.error("Authentication error - API credentials may be invalid");
+        } else if (res.status === 429) {
+          console.error("Rate limited - too many requests");
         } else {
-          console.error("API error:", errorData.details);
+          console.error("API error:", errorData.details || errorData.error);
         }
       }
     } catch (error) {
