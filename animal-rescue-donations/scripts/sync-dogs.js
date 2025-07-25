@@ -173,7 +173,6 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   const testDog = dogs[0];
 
   const testRecord = {
-    petfinder_id: testDog.id.toString(),
     api_source: 'petfinder',
     organization_id: testDog.organization_id || '',
     url: testDog.url || '',
@@ -194,6 +193,8 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     status: 'adoptable',
     spayed_neutered: testDog.attributes?.spayed_neutered || null,
     house_trained: testDog.attributes?.house_trained || null,
+    special_needs: testDog.attributes?.special_needs || null,
+    shots_current: testDog.attributes?.shots_current || null,
     good_with_children: testDog.environment?.children || null,
     good_with_dogs: testDog.environment?.dogs || null,
     good_with_cats: testDog.environment?.cats || null,
@@ -232,7 +233,6 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
-        petfinder_id: dog.id.toString(),
         api_source: 'petfinder',
         organization_id: dog.organization_id || '',
         url: dog.url || '',
@@ -253,6 +253,8 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         status: 'adoptable',
         spayed_neutered: dog.attributes?.spayed_neutered || null,
         house_trained: dog.attributes?.house_trained || null,
+        special_needs: dog.attributes?.special_needs || null,
+        shots_current: dog.attributes?.shots_current || null,
         good_with_children: dog.environment?.children || null,
         good_with_dogs: dog.environment?.dogs || null,
         good_with_cats: dog.environment?.cats || null,
@@ -270,11 +272,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         last_updated_at: new Date().toISOString()
       };
 
-      // Check if dog already exists
+      // Check if dog already exists - need to match on organization_id + organization_animal_id or other unique field
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
-        .select('id, last_updated')
-        .eq('petfinder_id', dogRecord.petfinder_id)
+        .select('id, last_updated_at')
+        .eq('organization_id', dogRecord.organization_id)
+        .eq('organization_animal_id', dogRecord.organization_animal_id || dog.id.toString())
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
