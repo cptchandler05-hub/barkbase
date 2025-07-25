@@ -10,7 +10,7 @@ channel = "stable-24_11"
 NEXT_TELEMETRY_DISABLED = "1"
 
 [deployment]
-run = ["sh", "-c", "node scripts/daily-dog-sync.js"]
+run = ["sh", "-c", "TASK_TYPE=all node scripts/cron-tasks.js"]
 deploymentTarget = "scheduled"
 
 [[ports]]
