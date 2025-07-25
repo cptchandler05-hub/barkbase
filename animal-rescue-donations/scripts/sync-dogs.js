@@ -31,8 +31,8 @@ async function getAccessToken() {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'client_credentials',
-      client_id: process.env.PETFINDER_CLIENT_ID,
-      client_secret: process.env.PETFINDER_CLIENT_SECRET,
+      client_id: process.env.PETFINDER_ID,
+      client_secret: process.env.PETFINDER_SECRET,
     }),
   });
 
@@ -374,8 +374,8 @@ async function validateEnvironment() {
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY', 
-    'PETFINDER_CLIENT_ID',
-    'PETFINDER_CLIENT_SECRET'
+    'PETFINDER_ID',
+    'PETFINDER_SECRET'
   ];
   
   const missing = required.filter(key => !process.env[key]);
