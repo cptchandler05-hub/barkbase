@@ -1,0 +1,75 @@
+-- Create dogs table
+CREATE TABLE dogs (
+  id BIGINT PRIMARY KEY,
+  api_source TEXT NOT NULL CHECK (api_source IN ('petfinder', 'rescuegroups')),
+  organization_id TEXT,
+  url TEXT,
+  name TEXT NOT NULL,
+  type TEXT DEFAULT 'Dog',
+  species TEXT DEFAULT 'Dog',
+  
+  -- Breed information
+  primary_breed TEXT,
+  secondary_breed TEXT,
+  is_mixed BOOLEAN DEFAULT false,
+  is_unknown_breed BOOLEAN DEFAULT false,
+  
+  -- Physical attributes
+  age TEXT,
+  gender TEXT,
+  size TEXT,
+  coat TEXT,
+  primary_color TEXT,
+  secondary_color TEXT,
+  tertiary_color TEXT,
+  
+  -- Status and attributes
+  status TEXT DEFAULT 'adoptable',
+  spayed_neutered BOOLEAN,
+  house_trained BOOLEAN,
+  special_needs BOOLEAN,
+  shots_current BOOLEAN,
+  
+  -- Environment compatibility
+  good_with_children BOOLEAN,
+  good_with_dogs BOOLEAN,
+  good_with_cats BOOLEAN,
+  
+  -- Description and photos
+  description TEXT,
+  photos JSONB, -- Store array of photo URLs
+  tags JSONB,   -- Store array of personality tags
+  
+  -- Contact information
+  contact_info JSONB, -- Store address, phone, email
+  
+  -- Location for searching
+  city TEXT,
+  state TEXT,
+  postcode TEXT,
+  latitude DECIMAL,
+  longitude DECIMAL,
+  
+  -- Visibility scoring
+  visibility_score INTEGER DEFAULT 0,
+  
+  -- Metadata
+  organization_animal_id TEXT,
+  last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  -- Add indexes for fast searching
+  UNIQUE(id, api_source)
+);
+
+-- Create indexes for fast queries
+CREATE INDEX idx_dogs_visibility_score ON dogs(visibility_score DESC);
+CREATE INDEX idx_dogs_location ON dogs(state, city);
+CREATE INDEX idx_dogs_breed ON dogs(primary_breed);
+CREATE INDEX idx_dogs_size ON dogs(size);
+CREATE INDEX idx_dogs_age ON dogs(age);
+CREATE INDEX idx_dogs_status ON dogs(status);
+CREATE INDEX idx_dogs_last_updated ON dogs(last_updated_at);
+
+-- Create composite index for common searches
+CREATE INDEX idx_dogs_search ON dogs(status, state, primary_breed, visibility_score DESC);
