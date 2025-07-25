@@ -209,7 +209,8 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     longitude: testDog.contact?.address?.longitude || null,
     visibility_score: calculateVisibilityScore(testDog),
     organization_animal_id: testDog.organization_animal_id || null,
-    last_updated_at: new Date().toISOString()
+    last_updated_at: new Date().toISOString(),
+    created_at: new Date().toISOString()
   };
 
   console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
@@ -269,7 +270,8 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         longitude: dog.contact?.address?.longitude || null,
         visibility_score: calculateVisibilityScore(dog),
         organization_animal_id: dog.organization_animal_id || null,
-        last_updated_at: new Date().toISOString()
+        last_updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
       };
 
       // Check if dog already exists - need to match on organization_id + organization_animal_id or other unique field
