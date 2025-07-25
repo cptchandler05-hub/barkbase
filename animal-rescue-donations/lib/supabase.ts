@@ -10,6 +10,7 @@ if (!supabaseUrl || !supabaseKey) {
     url: !!supabaseUrl,
     key: !!supabaseKey
   });
+  throw new Error('Missing required Supabase environment variables');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

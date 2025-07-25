@@ -304,11 +304,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
             console.error('❌ Sample dog record:', JSON.stringify({
               petfinder_id: dogRecord.petfinder_id,
               name: dogRecord.name,
-              breed_primary: dogRecord.breed_primary,
+              primary_breed: dogRecord.primary_breed,
               age: dogRecord.age,
               gender: dogRecord.gender,
               size: dogRecord.size,
-              location: dogRecord.location,
+              city: dogRecord.city,
+              state: dogRecord.state,
               photos_length: dogRecord.photos.length,
               description_length: dogRecord.description?.length || 0
             }, null, 2));
