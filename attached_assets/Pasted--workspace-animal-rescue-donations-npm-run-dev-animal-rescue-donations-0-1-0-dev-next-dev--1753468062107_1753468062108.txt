@@ -1,0 +1,152 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 9s (7600 modules)
+ GET /adopt 200 in 9564ms
+ ✓ Compiled in 859ms (3706 modules)
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1140ms (4014 modules)
+[🔍 /api/petfinder/search] Starting search request
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: '', breed: '' }
+[🐾 /api/petfinder/search hit]
+🔑 Fetching new Petfinder access token...
+✅ Petfinder credentials found
+[📋 Raw Input] { location: '', breed: '' }
+[🐾 /api/petfinder/search hit]
+[⏳ Rate Limiting] Waiting 993ms before request
+ HEAD /adopt 200 in 1462ms
+✅ Successfully obtained new Petfinder token
+   Token expires in: 3600 seconds
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100
+🔄 Using cached Petfinder token
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100
+[✅ Petfinder Success] Found 100 dogs
+[🔍 Full Details Needed] 100 dogs need full descriptions
+[🔍 Full Details] Processing 3 dogs sequentially
+[✅ Petfinder Success] Found 100 dogs
+[🔍 Full Details Needed] 100 dogs need full descriptions
+[🔍 Full Details] Processing 3 dogs sequentially
+[✅ Descriptions Updated] 0/3 dogs got full descriptions
+ POST /api/petfinder/search 200 in 6579ms
+[✅ Descriptions Updated] 0/3 dogs got full descriptions
+ POST /api/petfinder/search 200 in 6953ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 2.1s (7594 modules)
+ GET /adopt/77473440 200 in 3193ms
+ ✓ Compiled /api/dog/[dogId] in 379ms (3930 modules)
+ HEAD /adopt/77473440 200 in 344ms
+[🐕 Dog Details] Fetching details for dogId: 77473440
+[🐕 Dog Details] Type of dogId: string
+[🐕 Dog Details] dogId is truthy: true
+[🐕 Dog Details] Validated numeric dogId: 77473440
+🔑 Fetching new Petfinder access token...
+✅ Petfinder credentials found
+✅ Successfully obtained new Petfinder token
+   Token expires in: 3600 seconds
+[📡 API Request] https://api.petfinder.com/v2/animals/77473440
+API response status: 401
+Got 401, trying with fresh token...
+🔄 Force refreshing token as requested
+🔑 Fetching new Petfinder access token...
+✅ Petfinder credentials found
+✅ Successfully obtained new Petfinder token
+   Token expires in: 3600 seconds
+Retry API response status: 401
+[❌ API Error] 401: {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Response Headers]: {
+  connection: 'keep-alive',
+  'content-length': '118',
+  'content-type': 'application/problem+json',
+  date: 'Fri, 25 Jul 2025 18:26:57 GMT',
+  via: '1.1 29a825d8a219984d47bec4350779b558.cloudfront.net (CloudFront)',
+  'x-amz-apigw-id': 'ORzh1EMPIAMEtjQ=',
+  'x-amz-cf-id': 'HA_qnRXXByfV6qOntqqswOJ6DKKgEvUrQcqze_FLwGSPxGknJHPRDQ==',
+  'x-amz-cf-pop': 'SEA19-C3',
+  'x-amzn-errortype': 'UnauthorizedException',
+  'x-amzn-requestid': 'f954f17a-34fd-4894-a432-134f47759ba0',
+  'x-cache': 'Error from cloudfront'
+}
+[❌ Request URL]: https://api.petfinder.com/v2/animals/77473440
+ ⨯ ReferenceError: dogId is not defined
+    at GET (webpack-internal:///(rsc)/./app/api/dog/[dogId]/route.ts:106:48)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+ GET /api/dog/77473440 500 in 2343ms
+[🐕 Dog Details] Fetching details for dogId: 77473440
+[🐕 Dog Details] Type of dogId: string
+[🐕 Dog Details] dogId is truthy: true
+[🐕 Dog Details] Validated numeric dogId: 77473440
+🔄 Using cached Petfinder token
+[📡 API Request] https://api.petfinder.com/v2/animals/77473440
+API response status: 401
+Got 401, trying with fresh token...
+🔄 Force refreshing token as requested
+🔑 Fetching new Petfinder access token...
+✅ Petfinder credentials found
+✅ Successfully obtained new Petfinder token
+   Token expires in: 3600 seconds
+Retry API response status: 401
+[❌ API Error] 401: {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Response Headers]: {
+  connection: 'keep-alive',
+  'content-length': '118',
+  'content-type': 'application/problem+json',
+  date: 'Fri, 25 Jul 2025 18:26:59 GMT',
+  via: '1.1 29a825d8a219984d47bec4350779b558.cloudfront.net (CloudFront)',
+  'x-amz-apigw-id': 'ORziFE4ioAMETIg=',
+  'x-amz-cf-id': 'ZeHTmhDMRjqvZ9fRfmZYA4hqE-E0Qo5J33yMPl8m9EW880tLmjy3yg==',
+  'x-amz-cf-pop': 'SEA19-C3',
+  'x-amzn-errortype': 'UnauthorizedException',
+  'x-amzn-requestid': '5c43807d-bd53-4d14-b8a4-67b47f0c6475',
+  'x-cache': 'Error from cloudfront'
+}
+[❌ Request URL]: https://api.petfinder.com/v2/animals/77473440
+ ⨯ ReferenceError: dogId is not defined
+    at GET (webpack-internal:///(rsc)/./app/api/dog/[dogId]/route.ts:106:48)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+ GET /api/dog/77473440 500 in 1499ms
