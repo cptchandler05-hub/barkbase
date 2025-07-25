@@ -1,0 +1,138 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 46012
+📍 Found 100 dogs in 46012
+🔍 Fetching dogs from: Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "api_source": "petfinder",
+  "organization_id": "KY470",
+  "url": "https://www.petfinder.com/dog/abner-77470935/ky/fort-thomas/lucky-tales-rescue-inc-ky470/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "Abner",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "Miniature Schnauzer",
+  "secondary_breed": "Dachshund",
+  "is_mixed": true,
+  "is_unknown_breed": false,
+  "age": "Young",
+  "gender": "Male",
+  "size": "Small",
+  "coat": "Wire",
+  "primary_color": "Bicolor",
+  "secondary_color": null,
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": null,
+  "special_needs": null,
+  "shots_current": true,
+  "good_with_children": true,
+  "good_with_dogs": true,
+  "good_with_cats": null,
+  "description": "Meet Abner! He is a one year-old schnauzer dachshund mix. We’re not quite sure what else he’s mixed with, but...",
+  "photos": [
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/52351aa7-5ff0-4443-bd12-439ce36237ac.jpg?versionId=6MJfuVgEa.LL1RVdrYdmib._AQGQB3m.&bust=1753450579&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/52351aa7-5ff0-4443-bd12-439ce36237ac.jpg?versionId=6MJfuVgEa.LL1RVdrYdmib._AQGQB3m.&bust=1753450579&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/52351aa7-5ff0-4443-bd12-439ce36237ac.jpg?versionId=6MJfuVgEa.LL1RVdrYdmib._AQGQB3m.&bust=1753450579&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/52351aa7-5ff0-4443-bd12-439ce36237ac.jpg?versionId=6MJfuVgEa.LL1RVdrYdmib._AQGQB3m.&bust=1753450579"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/3041f6b2-6091-4c08-97ae-1ffe7920ce4a.jpg?versionId=sltMEMX3lC1X_FQKVbGH38y.GzYPYCwU&bust=1753450689&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/3041f6b2-6091-4c08-97ae-1ffe7920ce4a.jpg?versionId=sltMEMX3lC1X_FQKVbGH38y.GzYPYCwU&bust=1753450689&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/3041f6b2-6091-4c08-97ae-1ffe7920ce4a.jpg?versionId=sltMEMX3lC1X_FQKVbGH38y.GzYPYCwU&bust=1753450689&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/3041f6b2-6091-4c08-97ae-1ffe7920ce4a.jpg?versionId=sltMEMX3lC1X_FQKVbGH38y.GzYPYCwU&bust=1753450689"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/78113908-a575-465d-beab-97e42122c32b.jpg?versionId=.WbOuwPyeuVlrAriHB0hsSBf3rgdcurE&bust=1753450689&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/78113908-a575-465d-beab-97e42122c32b.jpg?versionId=.WbOuwPyeuVlrAriHB0hsSBf3rgdcurE&bust=1753450689&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/78113908-a575-465d-beab-97e42122c32b.jpg?versionId=.WbOuwPyeuVlrAriHB0hsSBf3rgdcurE&bust=1753450689&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/78113908-a575-465d-beab-97e42122c32b.jpg?versionId=.WbOuwPyeuVlrAriHB0hsSBf3rgdcurE&bust=1753450689"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/7b0e6430-caab-4469-9ec4-8f965cf8282c.jpg?versionId=4CeO8UDY0E9guM7JXtlMK9XxB8ihWpeZ&bust=1753450689&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/7b0e6430-caab-4469-9ec4-8f965cf8282c.jpg?versionId=4CeO8UDY0E9guM7JXtlMK9XxB8ihWpeZ&bust=1753450689&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/7b0e6430-caab-4469-9ec4-8f965cf8282c.jpg?versionId=4CeO8UDY0E9guM7JXtlMK9XxB8ihWpeZ&bust=1753450689&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-2a7f-4201-a0e7-bc68047aed2f/image/7b0e6430-caab-4469-9ec4-8f965cf8282c.jpg?versionId=4CeO8UDY0E9guM7JXtlMK9XxB8ihWpeZ&bust=1753450689"
+    }
+  ],
+  "tags": [],
+  "contact_info": {
+    "email": "luckytalesrescue@gmail.com",
+    "phone": null,
+    "address": {
+      "address1": "PO Box 315",
+      "address2": null,
+      "city": "Fort Thomas",
+      "state": "KY",
+      "postcode": "41075",
+      "country": "US"
+    }
+  },
+  "city": "Fort Thomas",
+  "state": "KY",
+  "postcode": "41075",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 65,
+  "organization_animal_id": null,
+  "last_updated_at": "2025-07-25T16:00:31.611Z",
+  "created_at": "2025-07-25T16:00:31.611Z",
+  "petfinder_id": "77470935"
+}
+🔑 Record keys: [
+  'api_source',         'organization_id',
+  'url',                'name',
+  'type',               'species',
+  'primary_breed',      'secondary_breed',
+  'is_mixed',           'is_unknown_breed',
+  'age',                'gender',
+  'size',               'coat',
+  'primary_color',      'secondary_color',
+  'tertiary_color',     'status',
+  'spayed_neutered',    'house_trained',
+  'special_needs',      'shots_current',
+  'good_with_children', 'good_with_dogs',
+  'good_with_cats',     'description',
+  'photos',             'tags',
+  'contact_info',       'city',
+  'state',              'postcode',
+  'latitude',           'longitude',
+  'visibility_score',   'organization_animal_id',
+  'last_updated_at',    'created_at',
+  'petfinder_id'
+]
+📊 Record has id field: false
+❌ DATABASE TEST FAILED: {
+  code: '23502',
+  details: 'Failing row contains (null, petfinder, KY470, https://www.petfinder.com/dog/abner-77470935/ky/fort-thomas/luck..., Abner, Dog, Dog, Miniature Schnauzer, Dachshund, t, f, Young, Male, Small, Wire, Bicolor, null, null, adoptable, t, null, null, t, t, t, null, Meet Abner! He is a one year-old schnauzer dachshund mix. We’r..., [{"full": "https://dbw3zep4prcju.cloudfront.net/animal/87445046-..., [], {"email": "luckytalesrescue@gmail.com", "phone": null, "address"..., Fort Thomas, KY, 41075, null, null, 65, null, 2025-07-25 16:00:31.611+00, 2025-07-25 16:00:31.611+00, 77470935, null).',
+  hint: null,
+  message: 'null value in column "id" of relation "dogs" violates not-null constraint'
+}
+❌ Error details: {
+  "code": "23502",
+  "details": "Failing row contains (null, petfinder, KY470, https://www.petfinder.com/dog/abner-77470935/ky/fort-thomas/luck..., Abner, Dog, Dog, Miniature Schnauzer, Dachshund, t, f, Young, Male, Small, Wire, Bicolor, null, null, adoptable, t, null, null, t, t, t, null, Meet Abner! He is a one year-old schnauzer dachshund mix. We’r..., [{\"full\": \"https://dbw3zep4prcju.cloudfront.net/animal/87445046-..., [], {\"email\": \"luckytalesrescue@gmail.com\", \"phone\": null, \"address\"..., Fort Thomas, KY, 41075, null, null, 65, null, 2025-07-25 16:00:31.611+00, 2025-07-25 16:00:31.611+00, 77470935, null).",
+  "hint": null,
+  "message": "null value in column \"id\" of relation \"dogs\" violates not-null constraint"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: null value in column "id" of relation "dogs" violates not-null constraint
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:260:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:527:7)
