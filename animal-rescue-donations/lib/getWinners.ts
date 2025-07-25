@@ -1,32 +1,45 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Check if both URL and key are defined
+const isSupabaseConfigured = !!(supabaseUrl && supabaseKey);
+
+// Conditionally create the Supabase client
+const supabase = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseKey!)
+  : null;
+
+// Helper function to check Supabase availability
+export const isSupabaseAvailable = () => isSupabaseConfigured;
 
 export async function getWinners() {
   try {
-    const { data, error } = await supabase
-      .from("winners")
-      .select("*")
-      .order("timestamp", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching winners:", error);
+    // Return empty array if Supabase is not configured
+    if (!isSupabaseAvailable() || !supabase) {
+      console.log('Supabase not available, returning empty winners list');
       return [];
     }
 
-    console.log("Raw Supabase data:", data); // Debug log
-    
-    // Ensure data is in the expected format
+    const { data, error } = await supabase
+      .from('winners')
+      .select('address, amount, timestamp') // Selecting the correct columns
+      .order('timestamp', { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error('Error fetching winners from Supabase:', error);
+      return [];
+    }
+
     return data?.map(winner => ({
       address: winner.address,
-      amount: winner.amount?.toString() || '0',
+      amount: winner.amount?.toString() || '0', // Ensure amount is a string
       timestamp: winner.timestamp
     })) || [];
   } catch (error) {
-    console.error("Exception in getWinners:", error);
+    console.error('Error in getWinners:', error);
     return [];
   }
 }
