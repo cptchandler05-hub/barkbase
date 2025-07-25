@@ -2,8 +2,15 @@
 import { createClient } from '@supabase/supabase-js';
 import { Dog, DogSync } from './database.types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase environment variables:', {
+    url: !!supabaseUrl,
+    key: !!supabaseKey
+  });
+}
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -12,7 +19,7 @@ export async function getAllDogs(limit = 100, offset = 0) {
   const { data, error } = await supabase
     .from('dogs')
     .select('*')
-    .eq('status', 'available')
+    .eq('status', 'adoptable')
     .order('visibility_score', { ascending: false })
     .range(offset, offset + limit - 1);
     
@@ -24,15 +31,15 @@ export async function searchDogs(location?: string, breed?: string, limit = 100)
   let query = supabase
     .from('dogs')
     .select('*')
-    .eq('status', 'available')
+    .eq('status', 'adoptable')
     .order('visibility_score', { ascending: false });
     
   if (location) {
-    query = query.ilike('location', `%${location}%`);
+    query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
   }
   
   if (breed) {
-    query = query.or(`breed_primary.ilike.%${breed}%,breed_secondary.ilike.%${breed}%`);
+    query = query.or(`primary_breed.ilike.%${breed}%,secondary_breed.ilike.%${breed}%`);
   }
   
   const { data, error } = await query.limit(limit);
