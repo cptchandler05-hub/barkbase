@@ -200,89 +200,19 @@ export async function POST(req: Request) {
         visibilityScore: calculateVisibilityScore(dog),
       })).sort((a: Dog, b: Dog) => b.visibilityScore - a.visibilityScore);
 
-      // For dogs with missing or truncated descriptions, fetch full details
+      // TEMPORARILY DISABLED: Full details fetching to test Dog ID page issues
+      // The bulk API calls may be causing rate limiting that interferes with individual dog requests
+      console.log(`[⚠️ Full Details Disabled] Skipping full description fetching to avoid rate limits`);
+
+      // For dogs with missing descriptions, we'll let the Dog ID page handle individual requests
       const dogsNeedingFullDetails = data.animals.filter((dog: Dog) => 
         !dog.description || 
         dog.description.length < 100 || 
         dog.description.includes('...') ||
-        dog.description.includes('..') ||
         dog.description.trim().endsWith('...')
       );
 
-      console.log(`[🔍 Full Details Needed] ${dogsNeedingFullDetails.length} dogs need full descriptions`);
-
-      if (dogsNeedingFullDetails.length > 0) {
-        // Further reduce concurrent requests - only fetch details for first 3 dogs to avoid rate limits
-        const dogsToUpdate = dogsNeedingFullDetails.slice(0, 3);
-        console.log(`[🔍 Full Details] Processing ${dogsToUpdate.length} dogs sequentially`);
-
-        let updatedCount = 0;
-
-        // Process dogs sequentially with longer delays to avoid rate limits
-        for (let i = 0; i < dogsToUpdate.length; i++) {
-          const dog = dogsToUpdate[i];
-
-          try {
-            // Add longer delay between each request
-            if (i > 0) {
-              await new Promise(resolve => setTimeout(resolve, 1000)); // Increased to 1 second
-            }
-
-            let detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-              },
-            });
-
-            // Handle rate limit specifically
-            if (detailResponse.status === 429) {
-              console.warn(`[⚠️ Rate Limited] Skipping remaining detail fetches`);
-              break;
-            }
-
-            // If we get 401, try once with fresh token
-            if (detailResponse.status === 401) {
-              console.log(`[🔄 Token Refresh] Retrying dog ${dog.id} with fresh token`);
-              const freshToken = await getAccessToken(true);
-              await new Promise(resolve => setTimeout(resolve, 500)); // Wait before retry
-              detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
-                headers: {
-                  Authorization: `Bearer ${freshToken}`,
-                  'Content-Type': 'application/json',
-                },
-              });
-            }
-
-            if (detailResponse.ok) {
-              const fullData = await detailResponse.json();
-              const fullDescription = fullData.animal?.description;
-
-              if (fullDescription && fullDescription.length > 50 && !fullDescription.includes('...')) {
-                console.log(`[📝 Full Description Retrieved] ${dog.name}: ${fullDescription.length} chars`);
-
-                // Update the dog directly in the array
-                const dogIndex = data.animals.findIndex((d: Dog) => d.id === dog.id);
-                if (dogIndex !== -1) {
-                  data.animals[dogIndex].description = fullDescription;
-                  updatedCount++;
-                }
-              }
-            } else {
-              console.warn(`[⚠️ Detail API Error] Dog ${dog.id}: ${detailResponse.status}`);
-              // If we hit rate limit on detail requests, stop trying
-              if (detailResponse.status === 429) {
-                console.warn(`[⚠️ Rate Limited on Details] Stopping detail fetches`);
-                break;
-              }
-            }
-          } catch (error) {
-            console.warn(`[❌ Failed Detail Fetch] Dog ${dog.id}:`, error);
-          }
-        }
-
-        console.log(`[✅ Descriptions Updated] ${updatedCount}/${dogsToUpdate.length} dogs got full descriptions`);
-      }
+      console.log(`[📊 Stats] ${dogsNeedingFullDetails.length}/${data.animals.length} dogs have incomplete descriptions`);
     }
 
     return NextResponse.json(data);
