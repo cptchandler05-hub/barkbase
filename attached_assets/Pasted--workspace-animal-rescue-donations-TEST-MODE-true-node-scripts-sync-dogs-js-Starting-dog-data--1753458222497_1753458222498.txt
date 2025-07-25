@@ -1,0 +1,103 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 48001
+📍 Found 100 dogs in 48001
+🔍 Fetching dogs from: Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "petfinder_id": "77471722",
+  "api_source": "petfinder",
+  "organization_id": "MI513",
+  "url": "https://www.petfinder.com/dog/cotton-77471722/mi/detroit/what-we-do-for-the-love-of-pets-mi513/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "Cotton",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "Maltipoo",
+  "secondary_breed": null,
+  "is_mixed": true,
+  "is_unknown_breed": false,
+  "age": "Senior",
+  "gender": "Male",
+  "size": "Small",
+  "coat": "Medium",
+  "primary_color": "White / Cream",
+  "secondary_color": null,
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": true,
+  "special_needs": null,
+  "shots_current": true,
+  "good_with_children": null,
+  "good_with_dogs": true,
+  "good_with_cats": null,
+  "description": "Owner surrender because has to relocated. He is quiet laid back. Would well in a quiet family with no small...",
+  "photos": [
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/42b1b3b1-5411-4e9c-80be-6b404b79e4a6.jpg?versionId=RHFeRtO1B28uGTlcDRC_YTehqbgBI3UL&bust=1753456811&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/42b1b3b1-5411-4e9c-80be-6b404b79e4a6.jpg?versionId=RHFeRtO1B28uGTlcDRC_YTehqbgBI3UL&bust=1753456811&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/42b1b3b1-5411-4e9c-80be-6b404b79e4a6.jpg?versionId=RHFeRtO1B28uGTlcDRC_YTehqbgBI3UL&bust=1753456811&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/42b1b3b1-5411-4e9c-80be-6b404b79e4a6.jpg?versionId=RHFeRtO1B28uGTlcDRC_YTehqbgBI3UL&bust=1753456811"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/11bbdb74-c6e6-489d-8966-ea96c9291d53.jpg?versionId=_G4tNwkPhf8rhqTURtPXbg_rbuZkRqPv&bust=1753456811&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/11bbdb74-c6e6-489d-8966-ea96c9291d53.jpg?versionId=_G4tNwkPhf8rhqTURtPXbg_rbuZkRqPv&bust=1753456811&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/11bbdb74-c6e6-489d-8966-ea96c9291d53.jpg?versionId=_G4tNwkPhf8rhqTURtPXbg_rbuZkRqPv&bust=1753456811&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-a9ab-41bc-a8de-1fc5465215f3/image/11bbdb74-c6e6-489d-8966-ea96c9291d53.jpg?versionId=_G4tNwkPhf8rhqTURtPXbg_rbuZkRqPv&bust=1753456811"
+    }
+  ],
+  "tags": [],
+  "contact_info": {
+    "email": "reedpat620@yahoo.com",
+    "phone": "(313) 671-4134",
+    "address": {
+      "address1": null,
+      "address2": null,
+      "city": "Detroit",
+      "state": "MI",
+      "postcode": "48221",
+      "country": "US"
+    }
+  },
+  "city": "Detroit",
+  "state": "MI",
+  "postcode": "48221",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 55,
+  "organization_animal_id": null,
+  "last_updated_at": "2025-07-25T15:42:39.927Z",
+  "created_at": "2025-07-25T15:42:39.927Z"
+}
+❌ DATABASE TEST FAILED: {
+  code: '23502',
+  details: 'Failing row contains (null, petfinder, MI513, https://www.petfinder.com/dog/cotton-77471722/mi/detroit/what-we..., Cotton, Dog, Dog, Maltipoo, null, t, f, Senior, Male, Small, Medium, White / Cream, null, null, adoptable, t, t, null, t, null, t, null, Owner surrender because has to relocated. He is quiet laid back...., [{"full": "https://dbw3zep4prcju.cloudfront.net/animal/d1270252-..., [], {"email": "reedpat620@yahoo.com", "phone": "(313) 671-4134", "ad..., Detroit, MI, 48221, null, null, 55, null, 2025-07-25 15:42:39.927+00, 2025-07-25 15:42:39.927+00, 77471722, null).',
+  hint: null,
+  message: 'null value in column "id" of relation "dogs" violates not-null constraint'
+}
+❌ Error details: {
+  "code": "23502",
+  "details": "Failing row contains (null, petfinder, MI513, https://www.petfinder.com/dog/cotton-77471722/mi/detroit/what-we..., Cotton, Dog, Dog, Maltipoo, null, t, f, Senior, Male, Small, Medium, White / Cream, null, null, adoptable, t, t, null, t, null, t, null, Owner surrender because has to relocated. He is quiet laid back...., [{\"full\": \"https://dbw3zep4prcju.cloudfront.net/animal/d1270252-..., [], {\"email\": \"reedpat620@yahoo.com\", \"phone\": \"(313) 671-4134\", \"ad..., Detroit, MI, 48221, null, null, 55, null, 2025-07-25 15:42:39.927+00, 2025-07-25 15:42:39.927+00, 77471722, null).",
+  "hint": null,
+  "message": "null value in column \"id\" of relation \"dogs\" violates not-null constraint"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: null value in column "id" of relation "dogs" violates not-null constraint
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:229:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:491:7)
