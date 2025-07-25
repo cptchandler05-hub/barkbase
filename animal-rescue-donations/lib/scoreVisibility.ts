@@ -3,8 +3,13 @@ export function calculateVisibilityScore(dog: any): number {
 
   // Days listed
   if (dog.published_at) {
-    const daysListed = Math.floor((Date.now() - new Date(dog.published_at).getTime()) / (1000 * 60 * 60 * 24));
-    score += daysListed;
+    const publishedDate = new Date(dog.published_at);
+    if (!isNaN(publishedDate.getTime())) {
+      const daysListed = Math.floor((Date.now() - publishedDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (!isNaN(daysListed) && daysListed >= 0) {
+        score += daysListed;
+      }
+    }
   }
 
   // Photo penalty
@@ -100,5 +105,7 @@ export function calculateVisibilityScore(dog: any): number {
   // House training status
   if (attributes.house_trained === false) score += 7;
 
-  return score;
+  // Ensure we always return a valid number
+  const finalScore = Math.max(0, score);
+  return isNaN(finalScore) ? 0 : finalScore;
 }

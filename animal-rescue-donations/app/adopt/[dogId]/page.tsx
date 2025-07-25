@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +5,7 @@ import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdo
 import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
+import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 
 interface Dog {
   id: string;
@@ -47,7 +47,7 @@ export default function DogProfilePage() {
   const params = useParams();
   const router = useRouter();
   const dogId = Array.isArray(params.dogId) ? params.dogId[0] : params.dogId;
-  
+
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -64,33 +64,33 @@ export default function DogProfilePage() {
       console.log("Fetching dog details for dogId:", dogId);
       console.log("Type of dogId:", typeof dogId);
       console.log("dogId is truthy:", !!dogId);
-      
+
       if (!dogId) {
         console.error("No dogId available");
         setLoading(false);
         return;
       }
-      
+
       const apiUrl = `/api/dog/${dogId}`;
       console.log("Making request to:", apiUrl);
-      
+
       // Add a small delay to avoid overwhelming the API
       await new Promise(resolve => setTimeout(resolve, 200));
-      
+
       const res = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       console.log("Response status:", res.status);
       console.log("Response ok:", res.ok);
-      
+
       if (res.ok) {
         const data = await res.json();
         console.log("Successfully fetched dog data:", data);
-        
+
         // Handle the Petfinder API response structure
         if (data.animal) {
           // This is a direct Petfinder API response
@@ -106,14 +106,14 @@ export default function DogProfilePage() {
       } else {
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch dog details:", res.status, errorData);
-        
+
         // Handle specific error cases with retry logic
         if (res.status === 401) {
           console.error("Authentication error - retrying once...");
-          
+
           // Retry once after a delay for auth errors
           await new Promise(resolve => setTimeout(resolve, 1000));
-          
+
           try {
             const retryRes = await fetch(apiUrl, {
               method: 'GET',
@@ -121,13 +121,13 @@ export default function DogProfilePage() {
                 'Content-Type': 'application/json',
               },
             });
-            
+
             console.log("Retry response status:", retryRes.status);
-            
+
             if (retryRes.ok) {
               const retryData = await retryRes.json();
               console.log("Retry successful:", retryData);
-              
+
               if (retryData.animal) {
                 setDog(retryData.animal);
                 console.log("Set dog from retry response:", retryData.animal.name);
@@ -140,7 +140,7 @@ export default function DogProfilePage() {
             console.error("Retry attempt failed:", retryError);
           }
         }
-        
+
         if (res.status === 404) {
           console.error("Dog not found - may have been adopted");
         } else if (res.status === 429) {
@@ -192,7 +192,7 @@ export default function DogProfilePage() {
     // Create a truly unique seed using dog ID, name hash, and current timestamp
     const nameHash = dog.name.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
     const uniqueSeed = parseInt(dog.id) + nameHash;
-    
+
     // Generate multiple random values for different sections using consistent seed
     const r1 = ((uniqueSeed * 1741) % 9973) / 9973; // Opening hook
     const r2 = ((uniqueSeed * 2659) % 7919) / 7919; // Personal story  
@@ -231,31 +231,31 @@ export default function DogProfilePage() {
 
     // CHARACTER DEEP DIVES - Based on actual data but with Barkr's insight
     const characterAssessments = [];
-    
+
     // Build character based on actual attributes
     if (dog.attributes?.house_trained) {
       characterAssessments.push(`House trained? ${pronounCap} has more discipline than most humans. Ready for YOUR couch, not concrete floors.`);
     }
-    
+
     if (dog.environment?.children) {
       characterAssessments.push(`Kid-tested, kid-approved. ${name} knows gentle from rough, patient from frantic. ${pronounCap} gets children.`);
     }
-    
+
     if (dog.environment?.dogs) {
       characterAssessments.push(`Pack-social. ${name} doesn't need to be alpha, doesn't need to be omega. Just needs to belong.`);
     }
-    
+
     if (dog.attributes?.spayed_neutered) {
       characterAssessments.push(`Already fixed and ready. No drama, no surprises. ${name} won't add to the overpopulation crisis.`);
     }
-    
+
     // Age-based character insights
     if (age === 'Senior') {
       characterAssessments.push(`Senior wisdom wrapped in gray muzzle. ${name} knows what matters: routine, comfort, unconditional love.`);
     } else if (age === 'Baby' || age === 'Young') {
       characterAssessments.push(`Young soul, old trauma. ${name} bounces back faster than adults because ${pronoun} hasn't given up on humans yet.`);
     }
-    
+
     // Breed-specific insights
     if (breed.toLowerCase().includes('pit')) {
       characterAssessments.push(`Pit bull loyalty runs deeper than breed discrimination. ${name} will die for you. Literally die for you.`);
@@ -264,7 +264,7 @@ export default function DogProfilePage() {
     } else if (breed.toLowerCase().includes('chihuahua')) {
       characterAssessments.push(`Small dog, massive personality. ${name} doesn't know ${pronoun}'s tiny. Acts like a wolf, loves like a lamb.`);
     }
-    
+
     // Default if no specific traits
     if (characterAssessments.length === 0) {
       characterAssessments.push(`${name} is what happens when pure love gets forgotten by busy humans. Still pure. Still loving. Still waiting.`);
@@ -504,7 +504,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                   {getVisibilityLabel(dog.visibilityScore || 0)}
                 </div>
               </div>
-              
+
               {/* Photo Thumbnails */}
               {dog.photos && dog.photos.length > 1 && (
                 <div className="space-y-2">
@@ -615,7 +615,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                           ✉️ Email: {dog.contact.email}
                         </a>
                       )}
-                      
+
                       {/* Petfinder verification link - required for legal compliance */}
                       {dog.url && (
                         <a
@@ -627,7 +627,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                           ✅ Verified on Petfinder
                         </a>
                       )}
-                      
+
                     </div>
                   </div>
                 ) : (
@@ -648,7 +648,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                   >
                     📤 Share {dog.name}'s Story
                   </button>
-                  
+
                   {showShareOptions && (
                     <div className="absolute top-full mt-2 left-0 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-10">
                       <div className="grid grid-cols-4 gap-2">
@@ -739,7 +739,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                   </p>
                 </div>
               )}
-              
+
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">📞 Contact</h4>
                 {dog.contact?.phone && (
@@ -750,7 +750,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 )}
               </div>
             </div>
-            
+
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800">
                 💡 <strong>Ready to adopt?</strong> Contact the rescue directly using the information above for the fastest response about {dog.name}.
