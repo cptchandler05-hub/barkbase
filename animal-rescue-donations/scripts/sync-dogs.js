@@ -1,6 +1,6 @@
 
 const { createClient } = require('@supabase/supabase-js');
-const { getRandomRuralZip } = require('../lib/utils.ts');
+const { getRandomRuralZip } = require('../lib/utils.js');
 
 // Initialize Supabase client
 const supabase = createClient(
