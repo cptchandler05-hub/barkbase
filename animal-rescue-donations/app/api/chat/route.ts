@@ -786,17 +786,7 @@ const urgencyTriggers = [
               dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
             }
 
-            const { data: dbDogs, error: dbError } = await supabase
-                .from('dogs')
-                .select('*')
-                .eq('status', 'adoptable')
-                .limit(100);
-
-              if (updatedMemory.breed) {
-                dbQuery = dbQuery.ilike('primary_breed', `%${updatedMemory.breed}%`);
-              }
-
-              const { data: dbDogs, error: dbError } = await dbQuery;
+            const { data: dbDogs, error: dbError } = await dbQuery;
 
               if (dbDogs && dbDogs.length > 0) {
                 console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
@@ -838,6 +828,8 @@ const urgencyTriggers = [
                 }));
                 allDogs = allDogs.concat(formattedDbDogs);
               }
+            } catch (dbError) {
+              console.log('[⚠️ Database Error]', dbError);
             }
 
             // If we need more dogs or no breed specified, search Petfinder
