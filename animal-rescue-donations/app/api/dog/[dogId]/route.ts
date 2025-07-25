@@ -12,10 +12,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ dogId: string }> | { dogId: string } }
 ) {
+  let dogId: string;
   try {
     // Handle both Promise and direct params
     const resolvedParams = await params;
-    const dogId = resolvedParams.dogId;
+    dogId = resolvedParams.dogId;
     
     console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
     console.log(`[🐕 Dog Details] Type of dogId: ${typeof dogId}`);
@@ -46,15 +47,40 @@ export async function GET(
     
     lastDogRequestTime = Date.now();
 
-    // Get cached token first, same as search endpoint
-    let accessToken = await getAccessToken();
-    console.log(`[🔑 Token Check] Token length: ${accessToken ? accessToken.length : 'null'}`);
-    console.log(`[🔑 Token Check] Token starts with: ${accessToken ? accessToken.substring(0, 10) + '...' : 'null'}`);
-
-    // Check if we have the required environment variables
+    // Check if we have the required environment variables first
     const hasClientId = !!process.env.PETFINDER_CLIENT_ID;
     const hasClientSecret = !!process.env.PETFINDER_CLIENT_SECRET;
     console.log(`[🔧 Env Check] Has CLIENT_ID: ${hasClientId}, Has CLIENT_SECRET: ${hasClientSecret}`);
+
+    if (!hasClientId || !hasClientSecret) {
+      console.error(`[❌ Config Error] Missing Petfinder API credentials`);
+      return NextResponse.json({ 
+        error: "API configuration error",
+        details: "Missing Petfinder API credentials"
+      }, { status: 500 });
+    }
+
+    // Get cached token first, same as search endpoint
+    let accessToken;
+    try {
+      accessToken = await getAccessToken();
+      console.log(`[🔑 Token Check] Token length: ${accessToken ? accessToken.length : 'null'}`);
+      console.log(`[🔑 Token Check] Token starts with: ${accessToken ? accessToken.substring(0, 10) + '...' : 'null'}`);
+    } catch (tokenError) {
+      console.error(`[❌ Token Error] Failed to get access token:`, tokenError);
+      return NextResponse.json({ 
+        error: "Authentication failed",
+        details: "Could not obtain API access token"
+      }, { status: 500 });
+    }
+
+    if (!accessToken) {
+      console.error(`[❌ Token Error] No access token available`);
+      return NextResponse.json({ 
+        error: "Authentication failed",
+        details: "No access token available"
+      }, { status: 500 });
+    }
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${numericDogId}`;
     console.log(`[📡 API Request] ${apiUrl}`);
@@ -139,7 +165,7 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`[❌ Dog Details Error] ${resolvedParams.dogId}:`, error);
+    console.error(`[❌ Dog Details Error] ${dogId || 'unknown'}:`, error);
     console.error(`[❌ Error Type]:`, typeof error);
     console.error(`[❌ Error Stack]:`, error instanceof Error ? error.stack : 'No stack trace');
     
@@ -154,7 +180,8 @@ export async function GET(
         error: "Failed to fetch dog details",
         details: error instanceof Error ? error.message : String(error),
         errorType: typeof error,
-        errorName: error instanceof Error ? error.name : 'Unknown'
+        errorName: error instanceof Error ? error.name : 'Unknown',
+        dogId: dogId || 'unknown'
       },
       { status: 500 }
     );

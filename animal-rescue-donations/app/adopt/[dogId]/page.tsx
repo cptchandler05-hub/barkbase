@@ -59,7 +59,7 @@ export default function DogProfilePage() {
     }
   }, [dogId]);
 
-  const fetchDogDetails = async () => {
+  const fetchDogDetails = async (retryCount = 0) => {
     try {
       console.log("Fetching dog details for dogId:", dogId);
       console.log("Type of dogId:", typeof dogId);
@@ -79,18 +79,57 @@ export default function DogProfilePage() {
       console.log("Response ok:", res.ok);
       
       if (res.ok) {
-        const dog = await res.json();
-        console.log("Successfully fetched dog:", dog?.name || 'No name');
-        console.log("Full dog object keys:", Object.keys(dog || {}));
-        setDog(dog);
+        const data = await res.json();
+        console.log("Successfully fetched dog data:", data);
+        
+        // Handle the Petfinder API response structure
+        if (data.animal) {
+          // This is a direct Petfinder API response
+          setDog(data.animal);
+          console.log("Set dog from API response:", data.animal.name);
+        } else if (data.id || data.name) {
+          // This is already formatted dog data
+          setDog(data);
+          console.log("Set dog from formatted data:", data.name);
+        } else {
+          console.error("Unexpected data structure:", Object.keys(data));
+        }
       } else {
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch dog details:", res.status, errorData);
         console.error("Error response body:", errorData);
+        
+        // For debugging: log the specific error
+        if (res.status === 401) {
+          console.error("Authentication error - token issue");
+          // Retry once for auth errors
+          if (retryCount < 1) {
+            console.log("Retrying due to auth error...");
+            setTimeout(() => fetchDogDetails(retryCount + 1), 1000);
+            return;
+          }
+        } else if (res.status === 404) {
+          console.error("Dog not found - may have been adopted");
+        } else if (res.status === 500) {
+          console.error("Server error:", errorData.details);
+          // Retry once for server errors
+          if (retryCount < 1) {
+            console.log("Retrying due to server error...");
+            setTimeout(() => fetchDogDetails(retryCount + 1), 2000);
+            return;
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching dog details:", error);
       console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
+      
+      // Retry once for network errors
+      if (retryCount < 1) {
+        console.log("Retrying due to network error...");
+        setTimeout(() => fetchDogDetails(retryCount + 1), 1500);
+        return;
+      }
     } finally {
       setLoading(false);
     }
