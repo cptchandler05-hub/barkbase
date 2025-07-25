@@ -11,7 +11,7 @@ async function testInsert() {
   
   // Simple test record with minimal required fields
   const testRecord = {
-    api_source: 'test',
+    api_source: 'petfinder',
     organization_id: 'TEST123',
     url: 'https://test.com',
     name: 'Test Dog',
