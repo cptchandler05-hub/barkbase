@@ -174,7 +174,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         photos: dog.photos?.map(photo => photo.large || photo.medium || photo.small) || [],
         status: 'available',
         visibility_score: calculateVisibilityScore(dog),
-        last_updated: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
         source: source,
         raw_data: dog
       };
@@ -182,7 +182,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
       // Check if dog already exists
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
-        .select('id, last_updated')
+        .select('id, last_updated_at')
         .eq('petfinder_id', dogRecord.petfinder_id)
         .single();
 
@@ -242,7 +242,7 @@ async function markRemovedDogs() {
   const { error } = await supabase
     .from('dogs')
     .update({ status: 'removed' })
-    .lt('last_updated', threeDaysAgo.toISOString())
+    .lt('last_updated_at', threeDaysAgo.toISOString())
     .eq('status', 'available');
 
   if (error) {
