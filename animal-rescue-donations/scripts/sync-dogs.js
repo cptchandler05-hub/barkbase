@@ -173,7 +173,6 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   const testDog = dogs[0];
 
   const testRecord = {
-    petfinder_id: testDog.id.toString(), // Add the missing petfinder_id field
     api_source: 'petfinder',
     organization_id: testDog.organization_id || '',
     url: testDog.url || '',
@@ -211,7 +210,8 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     visibility_score: calculateVisibilityScore(testDog),
     organization_animal_id: testDog.organization_animal_id || null,
     last_updated_at: new Date().toISOString(),
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    petfinder_id: testDog.id.toString()
   };
 
   console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
@@ -235,7 +235,6 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
-        petfinder_id: dog.id.toString(), // Add the missing petfinder_id field
         api_source: 'petfinder',
         organization_id: dog.organization_id || '',
         url: dog.url || '',
@@ -269,11 +268,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         state: dog.contact?.address?.state || 'Unknown',
         postcode: dog.contact?.address?.postcode || null,
         latitude: dog.contact?.address?.latitude || null,
-        longitude: dog.content?.address?.longitude || null,
+        longitude: dog.contact?.address?.longitude || null,
         visibility_score: calculateVisibilityScore(dog),
         organization_animal_id: dog.organization_animal_id || null,
         last_updated_at: new Date().toISOString(),
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        petfinder_id: dog.id.toString()
       };
 
       // Check if dog already exists - need to match on organization_id + organization_animal_id or other unique field
