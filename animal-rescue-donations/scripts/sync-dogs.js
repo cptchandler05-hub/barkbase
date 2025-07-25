@@ -261,19 +261,20 @@ async function main() {
     // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
     const locations = [];
     
-    // Add 50 random rural ZIPs each run for comprehensive coverage
-    for (let i = 0; i < 50; i++) {
+    // Add 75 random rural ZIPs each run for comprehensive coverage
+    for (let i = 0; i < 75; i++) {
       locations.push(getRandomRuralZip());
     }
     
-    // Add a few major cities for comparison/balance (10% of searches)
+    // Add major cities for comparison/balance (~10% of searches)
     const majorCities = [
       'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-      'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA'
+      'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA',
+      'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'Dallas, TX'
     ];
     
-    // Add 5 random major cities
-    for (let i = 0; i < 5; i++) {
+    // Add 8 random major cities
+    for (let i = 0; i < 8; i++) {
       const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
       if (!locations.includes(randomCity)) {
         locations.push(randomCity);
