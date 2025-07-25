@@ -48,9 +48,17 @@ export async function GET(
 
     // Get cached token first, same as search endpoint
     let accessToken = await getAccessToken();
+    console.log(`[🔑 Token Check] Token length: ${accessToken ? accessToken.length : 'null'}`);
+    console.log(`[🔑 Token Check] Token starts with: ${accessToken ? accessToken.substring(0, 10) + '...' : 'null'}`);
+
+    // Check if we have the required environment variables
+    const hasClientId = !!process.env.PETFINDER_CLIENT_ID;
+    const hasClientSecret = !!process.env.PETFINDER_CLIENT_SECRET;
+    console.log(`[🔧 Env Check] Has CLIENT_ID: ${hasClientId}, Has CLIENT_SECRET: ${hasClientSecret}`);
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${numericDogId}`;
     console.log(`[📡 API Request] ${apiUrl}`);
+    console.log(`[📡 Headers] Authorization: Bearer ${accessToken ? accessToken.substring(0, 20) + '...' : 'null'}`);
 
     let response = await fetch(apiUrl, {
       headers: {
@@ -60,6 +68,7 @@ export async function GET(
     });
 
     console.log("API response status:", response.status);
+    console.log("API response headers:", Object.fromEntries(response.headers.entries()));
 
     // Handle rate limit specifically
     if (response.status === 429) {
@@ -102,6 +111,24 @@ export async function GET(
       console.error(`[❌ Response Headers]:`, Object.fromEntries(response.headers.entries()));
       console.error(`[❌ Request URL]:`, apiUrl);
 
+      // Handle specific error cases
+      if (response.status === 404) {
+        console.error(`[❌ Dog Not Found] Dog ID ${numericDogId} does not exist in Petfinder`);
+        return NextResponse.json({ 
+          error: "Dog not found",
+          details: `Dog with ID ${numericDogId} was not found in Petfinder. The dog may have been adopted or the listing removed.`
+        }, { status: 404 });
+      }
+
+      if (response.status === 401) {
+        console.error(`[❌ Auth Failed] Petfinder API credentials appear to be invalid`);
+        console.error(`[❌ Token Info] Token: ${accessToken ? accessToken.substring(0, 20) + '...' : 'null'}`);
+        return NextResponse.json({ 
+          error: "Authentication failed",
+          details: "Unable to authenticate with Petfinder API. Please check API credentials."
+        }, { status: 401 });
+      }
+
       // For other errors, throw error with more details
       throw new Error(`Petfinder API error: ${response.status} - ${errorText} - URL: ${apiUrl}`);
     }
@@ -112,7 +139,7 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`[❌ Dog Details Error] ${dogId}:`, error);
+    console.error(`[❌ Dog Details Error] ${resolvedParams.dogId}:`, error);
     console.error(`[❌ Error Type]:`, typeof error);
     console.error(`[❌ Error Stack]:`, error instanceof Error ? error.stack : 'No stack trace');
     
