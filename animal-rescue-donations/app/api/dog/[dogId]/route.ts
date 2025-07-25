@@ -18,11 +18,22 @@ export async function GET(
     const dogId = resolvedParams.dogId;
     
     console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
+    console.log(`[🐕 Dog Details] Type of dogId: ${typeof dogId}`);
+    console.log(`[🐕 Dog Details] dogId is truthy: ${!!dogId}`);
 
     if (!dogId) {
       console.error("No dogId provided after resolution");
       return NextResponse.json({ error: "Dog ID is required" }, { status: 400 });
     }
+
+    // Validate that dogId is numeric (Petfinder expects numeric IDs)
+    const numericDogId = parseInt(dogId);
+    if (isNaN(numericDogId)) {
+      console.error(`[❌ Invalid Dog ID] ${dogId} is not a valid numeric ID`);
+      return NextResponse.json({ error: "Dog ID must be numeric" }, { status: 400 });
+    }
+
+    console.log(`[🐕 Dog Details] Validated numeric dogId: ${numericDogId}`);
 
     // Rate limiting for dog detail requests
     const now = Date.now();
@@ -38,7 +49,7 @@ export async function GET(
     // Get cached token first, same as search endpoint
     let accessToken = await getAccessToken();
 
-    const apiUrl = `${PETFINDER_API_URL}/animals/${dogId}`;
+    const apiUrl = `${PETFINDER_API_URL}/animals/${numericDogId}`;
     console.log(`[📡 API Request] ${apiUrl}`);
 
     let response = await fetch(apiUrl, {
@@ -88,9 +99,11 @@ export async function GET(
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[❌ API Error] ${response.status}:`, errorText);
+      console.error(`[❌ Response Headers]:`, Object.fromEntries(response.headers.entries()));
+      console.error(`[❌ Request URL]:`, apiUrl);
 
-      // For other errors, throw error
-      throw new Error(`Petfinder API error: ${response.status} - ${errorText}`);
+      // For other errors, throw error with more details
+      throw new Error(`Petfinder API error: ${response.status} - ${errorText} - URL: ${apiUrl}`);
     }
 
     const data = await response.json();
@@ -99,12 +112,22 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error(`[❌ Dog Details Error] ${dogId}:`, error instanceof Error ? error.message : error);
+    console.error(`[❌ Dog Details Error] ${dogId}:`, error);
+    console.error(`[❌ Error Type]:`, typeof error);
+    console.error(`[❌ Error Stack]:`, error instanceof Error ? error.stack : 'No stack trace');
+    
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error(`[❌ Error Name]:`, error.name);
+      console.error(`[❌ Error Message]:`, error.message);
+    }
 
     return NextResponse.json(
       { 
         error: "Failed to fetch dog details",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : String(error),
+        errorType: typeof error,
+        errorName: error instanceof Error ? error.name : 'Unknown'
       },
       { status: 500 }
     );
