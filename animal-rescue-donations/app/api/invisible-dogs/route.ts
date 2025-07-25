@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import { getRandomRuralZip } from '@/lib/utils';
@@ -57,7 +56,7 @@ export async function POST(req: Request) {
         console.error('[❌ Database Error]', dbError);
       } else if (dbDogs && dbDogs.length > 0) {
         console.log(`[📊 Database] Found ${dbDogs.length} dogs in database`);
-        
+
         // Convert database dogs to expected format and calculate real visibility scores
         const formattedDogs = dbDogs.map(dog => ({
           id: dog.petfinder_id,

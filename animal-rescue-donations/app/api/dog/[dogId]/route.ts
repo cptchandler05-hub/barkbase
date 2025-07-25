@@ -6,11 +6,24 @@ import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { dogId: string } }
 ) {
+  // Handle both sync and async params
+  const resolvedParams = await Promise.resolve(params);
+  const { dogId } = resolvedParams;
+
+  console.log('[🐕 Dog API] Raw params:', resolvedParams);
+  console.log('[🐕 Dog API] Extracted dogId:', dogId);
+
+  if (!dogId || dogId === 'undefined') {
+    console.error('[❌ Dog API] No valid dogId provided. Received:', dogId);
+    return NextResponse.json({ error: 'Dog ID is required' }, { status: 400 });
+  }
+
+  console.log('[🐕 Dog API] Fetching dog details for ID:', dogId);
+
   try {
-    const dogId = params.dogId;
     console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
 
     // Always fetch full details from Petfinder API for dog detail pages

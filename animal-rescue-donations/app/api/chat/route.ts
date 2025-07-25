@@ -735,7 +735,6 @@ const urgencyTriggers = [
 
       let reply: string;
 
-```
       if (!updatedMemory.hasSeenResults) {
         // ✅ First time seeing results - show visibility explanation
         reply = `🐾 **How I Rank Dogs:**
