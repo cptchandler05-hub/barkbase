@@ -39,23 +39,22 @@ export async function POST(req: Request) {
   try {
     console.log('[👻 /api/invisible-dogs] Fetching most invisible dogs');
 
-    // First try to get dogs from the database
-    try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
+    // Always try database first for invisible dogs
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
+    try {
+      console.log('[📊 Database] Checking database for invisible dogs...');
       const { data: dbDogs, error: dbError } = await supabase
         .from('dogs')
         .select('*')
         .eq('status', 'adoptable')
         .limit(100);
 
-      if (dbError) {
-        console.error('[❌ Database Error]', dbError);
-      } else if (dbDogs && dbDogs.length > 0) {
-        console.log(`[📊 Database] Found ${dbDogs.length} dogs in database`);
+      if (!dbError && dbDogs && dbDogs.length > 0) {
+        console.log(`[📊 Database] Found ${dbDogs.length} dogs in database - using database first`);
 
         // Convert database dogs to expected format and calculate real visibility scores
         const formattedDogs = dbDogs.map(dog => {
@@ -107,7 +106,6 @@ export async function POST(req: Request) {
 
           // Always calculate the real visibility score using the proper algorithm
           formattedDog.visibilityScore = calculateVisibilityScore(formattedDog);
-          console.log(`[🔢 Score] ${formattedDog.name}: ${formattedDog.visibilityScore}`);
           
           return formattedDog;
         });
@@ -144,7 +142,7 @@ export async function POST(req: Request) {
 
         const reply = `👻 **The Most Invisible Dogs Right Now**
 
-These are the most overlooked dogs from our rescue network—the ones with the highest scores = the most invisible.
+These are the most overlooked dogs from our rescue network—the ones with the highest visibility scores = the most invisible.
 
 They've been waiting the longest, have the fewest photos, or carry the traits that algorithms ignore. But not anymore.
 
@@ -155,9 +153,13 @@ ${dogList}
         return NextResponse.json({
           content: reply,
         });
+      } else {
+        console.log('[📊 Database] No dogs in database or error, falling back to Petfinder');
+        if (dbError) console.error('[❌ Database Error]', dbError);
       }
     } catch (dbError) {
-      console.error('[❌ Database fallback error]', dbError);
+      console.error('[❌ Database connection error]', dbError);
+      console.log('[📡 Petfinder] Database unavailable, using Petfinder API as fallback');
     }
 
     // Fallback to Petfinder API if database is empty or unavailable

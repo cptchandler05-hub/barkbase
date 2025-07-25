@@ -402,17 +402,56 @@ const urgencyTriggers = [
       console.log('[🐾 More Request] Processing more dogs request');
       console.log('[🐾 Memory Check] Cached dogs count:', updatedMemory.cachedDogs?.length || 0);
       console.log('[🐾 Memory Check] Seen dogs count:', updatedMemory.seenDogIds?.length || 0);
+      console.log('[🐾 Memory Check] Location:', updatedMemory.location);
+      console.log('[🐾 Memory Check] Breed:', updatedMemory.breed);
 
-      // 🧠 Check if we have cached dogs - if not, something went wrong with memory
+      // If no cached dogs, try to fetch fresh ones using memory location/breed
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
-        console.log('[❌ No Cache] No cached dogs available');
-        return NextResponse.json({
-          content: `Hmm… I don't have any more dogs cached right now 🐶. Try a new search or say a breed + location again.`,
-          memory: updatedMemory,
-        });
+        console.log('[🔄 No Cache] Refetching dogs from memory context');
+        
+        if (updatedMemory.location && (updatedMemory.breed || !updatedMemory.breed)) {
+          const origin = req.headers.get('origin') || 'http://localhost:3000';
+          
+          try {
+            const searchRes = await fetch(`${origin}/api/petfinder/search`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                location: updatedMemory.location,
+                breed: updatedMemory.breed || '',
+              }),
+            });
+
+            if (searchRes.ok) {
+              const searchData = await searchRes.json();
+              const fetchedDogs = searchData.animals || [];
+              
+              // Calculate and assign visibility scores
+              for (const dog of fetchedDogs) {
+                dog.visibilityScore = calculateVisibilityScore(dog);
+              }
+              
+              // Sort by visibility score (highest first)
+              fetchedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+              
+              updatedMemory.cachedDogs = fetchedDogs;
+              console.log('[✅ Refetch] Successfully refetched', fetchedDogs.length, 'dogs');
+            }
+          } catch (error) {
+            console.error('[❌ Refetch Error]', error);
+          }
+        }
+        
+        // If still no cached dogs after refetch
+        if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
+          return NextResponse.json({
+            content: `I need to search fresh for more dogs 🐶. What breed and location should I search again?`,
+            memory: { ...updatedMemory, cachedDogs: [], seenDogIds: [], hasSeenResults: false },
+          });
+        }
       }
 
-      // ✅ Ensure all cached dogs have visibilityScore before filtering
+      // ✅ Ensure all cached dogs have proper visibility scores
       for (const dog of updatedMemory.cachedDogs) {
         if (dog.visibilityScore === undefined || dog.visibilityScore === null) {
           dog.visibilityScore = calculateVisibilityScore(dog);
@@ -427,26 +466,27 @@ const urgencyTriggers = [
       );
 
       console.log('[🐾 Filter Check] Unseen dogs count:', unseenDogs.length);
+      console.log('[🐾 Filter Check] Total cached dogs:', updatedMemory.cachedDogs.length);
 
       const moreDogs = unseenDogs.slice(0, 10);
 
       if (moreDogs.length === 0) {
         console.log('[🐾 No More] All cached dogs have been shown');
         return NextResponse.json({
-          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [**Adoption Page**](/adopt) to see more!`,
+          content: `I've shown you all ${updatedMemory.cachedDogs.length} dogs I found. 🐾 Try a new search with different criteria, or check the [**Adoption Page**](/adopt) for more options!`,
           memory: updatedMemory,
         });
       }
 
-      // ✅ Add shown dogs to seen list *immediately*
+      // ✅ Add shown dogs to seen list
       if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
       updatedMemory.seenDogIds.push(...moreDogs.map((d: Dog) => d.id));
       if (updatedMemory.seenDogIds.length > 200) {
         updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
       }
-      updatedMemory.hasSeenResults = true;
 
       console.log('[🐾 Showing] Displaying', moreDogs.length, 'more dogs');
+      console.log('[🐾 Updated] New seen count:', updatedMemory.seenDogIds.length);
 
       const dogListParts: string[] = [];
 
@@ -460,7 +500,8 @@ const urgencyTriggers = [
         const state = dog.contact?.address?.state || '';
         const description = dog.description || 'No description yet.';
 
-        const visibilityScore = dog.visibilityScore || 0;
+        // Use the calculated visibility score
+        const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
 
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
@@ -476,7 +517,7 @@ const urgencyTriggers = [
       const dogList = dogListParts.join('\n\n---\n\n');
 
       return NextResponse.json({
-        content: `🐕 More pups coming your way:\n\n${dogList}\n\nKeep 'em coming if you want to see more. 🐾`,
+        content: `🐕 More pups coming your way:\n\n${dogList}\n\nKeep asking for more if you want to see all ${updatedMemory.cachedDogs.length - updatedMemory.seenDogIds.length} remaining dogs! 🐾`,
         memory: updatedMemory,
       });
     }
@@ -723,8 +764,9 @@ const urgencyTriggers = [
         const city = dog.contact?.address?.city || 'Unknown city';
         const state = dog.contact?.address?.state || '';
         const description = dog.description || 'No description yet.';
+        
+        // Always calculate the real visibility score using the algorithm
         const visibilityScore = calculateVisibilityScore(dog);
-
         dog.visibilityScore = visibilityScore;
 
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
