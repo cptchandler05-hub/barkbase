@@ -173,6 +173,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   const testDog = dogs[0];
 
   const testRecord = {
+    petfinder_id: testDog.id.toString(), // Add the missing petfinder_id field
     api_source: 'petfinder',
     organization_id: testDog.organization_id || '',
     url: testDog.url || '',
@@ -234,6 +235,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
+        petfinder_id: dog.id.toString(), // Add the missing petfinder_id field
         api_source: 'petfinder',
         organization_id: dog.organization_id || '',
         url: dog.url || '',
