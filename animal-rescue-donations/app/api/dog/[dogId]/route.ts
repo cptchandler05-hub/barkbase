@@ -31,6 +31,69 @@ export async function GET(
 
     console.log(`[🐕 Dog Details] Processing numeric dogId: ${numericDogId}`);
 
+    // First try to get dog from Supabase database
+    try {
+      console.log(`[💾 Database] Checking database for dog ${numericDogId}`);
+      const { getDogById } = await import('@/lib/supabase');
+      const dbDog = await getDogById(dogId);
+      
+      if (dbDog) {
+        console.log(`[✅ Database Hit] Found dog ${dbDog.name} in database`);
+        
+        // Convert database dog to Petfinder API format
+        const formattedDog = {
+          animal: {
+            id: parseInt(dbDog.petfinder_id),
+            organization_id: dbDog.organization_id,
+            name: dbDog.name,
+            breeds: {
+              primary: dbDog.breed_primary,
+              secondary: dbDog.breed_secondary,
+              mixed: !!dbDog.breed_secondary
+            },
+            age: dbDog.age,
+            gender: dbDog.gender,
+            size: dbDog.size,
+            description: dbDog.description,
+            photos: dbDog.photos.map(url => ({ 
+              small: url, 
+              medium: url, 
+              large: url, 
+              full: url 
+            })),
+            contact: {
+              address: {
+                city: dbDog.location?.split(',')[0] || '',
+                state: dbDog.location?.split(',')[1]?.trim() || ''
+              },
+              phone: dbDog.contact_info?.phone || '',
+              email: dbDog.contact_info?.email || ''
+            },
+            url: dbDog.url,
+            visibilityScore: dbDog.visibility_score,
+            attributes: {
+              spayed_neutered: dbDog.spayed_neutered,
+              house_trained: dbDog.house_trained,
+              special_needs: dbDog.special_needs,
+              shots_current: dbDog.shots_current
+            },
+            environment: {
+              children: dbDog.good_with_children,
+              dogs: dbDog.good_with_dogs,
+              cats: dbDog.good_with_cats
+            }
+          }
+        };
+        
+        return NextResponse.json(formattedDog);
+      }
+      
+      console.log(`[💾 Database] Dog ${numericDogId} not found in database, trying Petfinder API`);
+    } catch (dbError) {
+      console.warn(`[⚠️ Database Error] Database lookup failed for dog ${numericDogId}:`, dbError);
+      console.log(`[🔄 Fallback] Continuing with Petfinder API`);
+    }
+
     // Get fresh access token for dog details
     let accessToken;
     try {

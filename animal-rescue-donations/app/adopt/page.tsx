@@ -1,22 +1,23 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdownDisconnect } from "@coinbase/onchainkit/wallet";
 import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
+import { getAllDogs, searchDogs } from '@/lib/supabase';
 
 interface Dog {
   id: string;
   name: string;
-  breeds: { primary: string; mixed: boolean };
+  breeds: { primary: string; mixed: boolean, secondary?:string };
   age: string;
   size: string;
-  photos: { medium: string }[];
+  photos: { medium: string, large?: string, small?: string }[];
   contact: { address: { city: string; state: string } };
   description: string;
   url: string;
   visibilityScore: number;
+  gender?: string;
 }
 
 export default function AdoptPage() {
@@ -35,12 +36,12 @@ export default function AdoptPage() {
   // Auto-load most invisible dogs on page load, but preserve state if returning from dog page
   useEffect(() => {
     const savedState = sessionStorage.getItem('adoptPageState');
-    
+
     if (savedState) {
       try {
         const state = JSON.parse(savedState);
         console.log('Restoring saved adoption page state:', state);
-        
+
         // Restore all state
         setDogs(state.dogs || []);
         setSearchLocation(state.searchLocation || "");
@@ -49,7 +50,7 @@ export default function AdoptPage() {
         setSearchAge(state.searchAge || "");
         setHasSearched(state.hasSearched || false);
         setCurrentPage(state.currentPage || 1);
-        
+
         // Clear the saved state after restoring
         sessionStorage.removeItem('adoptPageState');
       } catch (error) {
@@ -75,13 +76,83 @@ export default function AdoptPage() {
 
   const handleShowMostInvisible = async () => {
     setLoading(true);
-    setHasSearched(false);
+    setHasSearched(true);
     setCurrentPage(1);
+
     try {
-      // Fetch from a random rural location directly
-      await fetchDogsFromRuralArea();
+      console.log("Fetching most invisible dogs from database...");
+
+      // First try to get dogs from Supabase dogs table
+      const dbDogs = await getAllDogs(50); // Get top 50 most invisible
+      console.log("Fetched dogs from database:", dbDogs?.length || 0);
+
+      if (dbDogs && dbDogs.length > 0) {
+        // Convert database dogs to expected format
+        const formattedDogs = dbDogs.map(dog => ({
+          id: dog.petfinder_id,
+          name: dog.name,
+          breeds: { 
+            primary: dog.breed_primary, 
+            secondary: dog.breed_secondary,
+            mixed: !!dog.breed_secondary 
+          },
+          age: dog.age,
+          size: dog.size,
+          gender: dog.gender,
+          photos: dog.photos.map(url => ({ medium: url, large: url, small: url })),
+          contact: { 
+            address: { 
+              city: dog.location?.split(',')[0] || 'Unknown', 
+              state: dog.location?.split(',')[1]?.trim() || 'Unknown'
+            }
+          },
+          description: dog.description,
+          url: dog.url,
+          visibilityScore: dog.visibility_score
+        }));
+
+        setDogs(formattedDogs);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback to Petfinder API for most invisible dogs
+      console.log("No dogs in database, falling back to Petfinder API");
+      const res = await fetch('/api/invisible-dogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Extract dogs from the markdown content - this is a simplified approach
+        setDogs([]); // For now, show empty as the API returns markdown
+      }
     } catch (error) {
       console.error("Error fetching invisible dogs:", error);
+
+      // Final fallback - fetch some dogs from Petfinder
+      try {
+        console.log("Final fallback: fetching from Petfinder search API");
+        const res = await fetch('/api/petfinder/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            location: "10001", // Default to NYC area
+            breed: "" 
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.animals) {
+            setDogs(data.animals.slice(0, 20)); // Limit to 20 dogs
+          }
+        }
+      } catch (fallbackError) {
+        console.error("Fallback search failed:", fallbackError);
+      }
     } finally {
       setLoading(false);
     }
@@ -110,17 +181,78 @@ export default function AdoptPage() {
   };
 
   const handleSearch = async () => {
+    if (!searchLocation.trim()) {
+      alert("Please enter a location to search.");
+      return;
+    }
+
     setLoading(true);
     setHasSearched(true);
     setCurrentPage(1);
 
     try {
-      const res = await fetch("/api/petfinder/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          location: searchLocation.trim() || "", // Empty string will trigger rural fallback
-          breed: searchBreed || ""
+      console.log("Searching dogs table first for:", { location: searchLocation, breed: searchBreed });
+
+      // First try Supabase dogs table
+      const dbDogs = await searchDogs(
+        searchLocation.trim(), 
+        searchBreed.trim() || undefined, 
+        100
+      );
+
+      if (dbDogs && dbDogs.length > 0) {
+        console.log(`Found ${dbDogs.length} dogs in database`);
+
+        // Convert database dogs to expected format
+        let formattedDogs = dbDogs.map(dog => ({
+          id: dog.petfinder_id,
+          name: dog.name,
+          breeds: { 
+            primary: dog.breed_primary, 
+            secondary: dog.breed_secondary,
+            mixed: !!dog.breed_secondary 
+          },
+          age: dog.age,
+          size: dog.size,
+          gender: dog.gender,
+          photos: dog.photos.map(url => ({ medium: url, large: url, small: url })),
+          contact: { 
+            address: { 
+              city: dog.location?.split(',')[0] || 'Unknown', 
+              state: dog.location?.split(',')[1]?.trim() || 'Unknown'
+            }
+          },
+          description: dog.description,
+          url: dog.url,
+          visibilityScore: dog.visibility_score
+        }));
+
+        // Apply additional filters
+        if (searchSize) {
+          formattedDogs = formattedDogs.filter((dog: Dog) => 
+            dog.size?.toLowerCase() === searchSize.toLowerCase()
+          );
+        }
+
+        if (searchAge) {
+          formattedDogs = formattedDogs.filter((dog: Dog) => 
+            dog.age?.toLowerCase() === searchAge.toLowerCase()
+          );
+        }
+
+        setDogs(formattedDogs);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback to Petfinder API if no dogs in database
+      console.log("No dogs found in database, falling back to Petfinder API");
+      const res = await fetch('/api/petfinder/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          location: searchLocation.trim(),
+          breed: searchBreed.trim() || null
         }),
       });
 
@@ -129,19 +261,19 @@ export default function AdoptPage() {
         if (data.animals) {
           // Filter by size and age if specified
           let filteredDogs = data.animals;
-          
+
           if (searchSize) {
             filteredDogs = filteredDogs.filter((dog: Dog) => 
               dog.size?.toLowerCase() === searchSize.toLowerCase()
             );
           }
-          
+
           if (searchAge) {
             filteredDogs = filteredDogs.filter((dog: Dog) => 
               dog.age?.toLowerCase() === searchAge.toLowerCase()
             );
           }
-          
+
           setDogs(filteredDogs);
         }
       } else {
@@ -273,7 +405,7 @@ export default function AdoptPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Breed (Optional)
@@ -329,7 +461,7 @@ export default function AdoptPage() {
                 {loading ? "Searching..." : "Search"}
               </button>
             </div>
-            
+
             <p className="text-sm text-gray-600 mt-4">
               📍 If you don't enter a location, we'll search rural areas where help is needed most.
             </p>
@@ -388,7 +520,7 @@ export default function AdoptPage() {
                         {getVisibilityLabel(dog.visibilityScore)}
                       </div>
                     </div>
-                    
+
                     <div className="p-4">
                       <h3 className="text-lg font-bold text-blue-900 mb-1">{dog.name}</h3>
                       <p className="text-sm text-gray-600 mb-2">
@@ -397,7 +529,7 @@ export default function AdoptPage() {
                       <p className="text-sm text-gray-500 mb-3">
                         📍 {dog.contact?.address?.city}, {dog.contact?.address?.state}
                       </p>
-                      
+
                       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-2 mb-3">
                         <p className="text-xs italic text-yellow-800">
                           "{getBarkrLine(dog.name, dog.visibilityScore)}"
@@ -506,11 +638,11 @@ export default function AdoptPage() {
                   >
                     Previous
                   </button>
-                  
+
                   <span className="px-4 py-2 text-gray-700">
                     Page {currentPage} of {totalPages}
                   </span>
-                  
+
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
