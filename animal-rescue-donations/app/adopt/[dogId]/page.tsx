@@ -59,11 +59,9 @@ export default function DogProfilePage() {
     }
   }, [dogId]);
 
-  const fetchDogDetails = async (retryCount = 0) => {
+  const fetchDogDetails = async () => {
     try {
       console.log("Fetching dog details for dogId:", dogId);
-      console.log("Type of dogId:", typeof dogId);
-      console.log("dogId is truthy:", !!dogId);
       
       if (!dogId) {
         console.error("No dogId available");
@@ -97,39 +95,17 @@ export default function DogProfilePage() {
       } else {
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch dog details:", res.status, errorData);
-        console.error("Error response body:", errorData);
         
-        // For debugging: log the specific error
-        if (res.status === 401) {
-          console.error("Authentication error - token issue");
-          // Retry once for auth errors
-          if (retryCount < 1) {
-            console.log("Retrying due to auth error...");
-            setTimeout(() => fetchDogDetails(retryCount + 1), 1000);
-            return;
-          }
-        } else if (res.status === 404) {
+        if (res.status === 404) {
           console.error("Dog not found - may have been adopted");
-        } else if (res.status === 500) {
-          console.error("Server error:", errorData.details);
-          // Retry once for server errors
-          if (retryCount < 1) {
-            console.log("Retrying due to server error...");
-            setTimeout(() => fetchDogDetails(retryCount + 1), 2000);
-            return;
-          }
+        } else if (res.status === 401) {
+          console.error("Authentication error - API credentials may be invalid");
+        } else {
+          console.error("API error:", errorData.details);
         }
       }
     } catch (error) {
       console.error("Error fetching dog details:", error);
-      console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
-      
-      // Retry once for network errors
-      if (retryCount < 1) {
-        console.log("Retrying due to network error...");
-        setTimeout(() => fetchDogDetails(retryCount + 1), 1500);
-        return;
-      }
     } finally {
       setLoading(false);
     }

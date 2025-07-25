@@ -1,26 +1,20 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getAccessToken } from '@/app/api/utils/tokenManager';
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
-
-// Rate limiting for individual dog requests
-let lastDogRequestTime = 0;
-const MIN_DOG_REQUEST_INTERVAL = 500; // 500ms between dog detail requests
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ dogId: string }> | { dogId: string } }
 ) {
   let dogId: string;
+
   try {
     // Handle both Promise and direct params
     const resolvedParams = await params;
     dogId = resolvedParams.dogId;
-    
+
     console.log(`[🐕 Dog Details] Fetching details for dogId: ${dogId}`);
-    console.log(`[🐕 Dog Details] Type of dogId: ${typeof dogId}`);
-    console.log(`[🐕 Dog Details] dogId is truthy: ${!!dogId}`);
 
     if (!dogId) {
       console.error("No dogId provided after resolution");
@@ -36,36 +30,11 @@ export async function GET(
 
     console.log(`[🐕 Dog Details] Validated numeric dogId: ${numericDogId}`);
 
-    // Rate limiting for dog detail requests
-    const now = Date.now();
-    const timeSinceLastRequest = now - lastDogRequestTime;
-    if (timeSinceLastRequest < MIN_DOG_REQUEST_INTERVAL) {
-      const waitTime = MIN_DOG_REQUEST_INTERVAL - timeSinceLastRequest;
-      console.log(`[⏳ Dog Detail Rate Limiting] Waiting ${waitTime}ms`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-    }
-    
-    lastDogRequestTime = Date.now();
-
-    // Check if we have the required environment variables first
-    const hasClientId = !!process.env.PETFINDER_CLIENT_ID;
-    const hasClientSecret = !!process.env.PETFINDER_CLIENT_SECRET;
-    console.log(`[🔧 Env Check] Has CLIENT_ID: ${hasClientId}, Has CLIENT_SECRET: ${hasClientSecret}`);
-
-    if (!hasClientId || !hasClientSecret) {
-      console.error(`[❌ Config Error] Missing Petfinder API credentials`);
-      return NextResponse.json({ 
-        error: "API configuration error",
-        details: "Missing Petfinder API credentials"
-      }, { status: 500 });
-    }
-
-    // Get cached token first, same as search endpoint
+    // Get access token
     let accessToken;
     try {
       accessToken = await getAccessToken();
-      console.log(`[🔑 Token Check] Token length: ${accessToken ? accessToken.length : 'null'}`);
-      console.log(`[🔑 Token Check] Token starts with: ${accessToken ? accessToken.substring(0, 10) + '...' : 'null'}`);
+      console.log(`[🔑 Token Check] Got token for dog ${numericDogId}`);
     } catch (tokenError) {
       console.error(`[❌ Token Error] Failed to get access token:`, tokenError);
       return NextResponse.json({ 
@@ -84,8 +53,8 @@ export async function GET(
 
     const apiUrl = `${PETFINDER_API_URL}/animals/${numericDogId}`;
     console.log(`[📡 API Request] ${apiUrl}`);
-    console.log(`[📡 Headers] Authorization: Bearer ${accessToken ? accessToken.substring(0, 20) + '...' : 'null'}`);
 
+    // Make the API request
     let response = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -93,49 +62,47 @@ export async function GET(
       },
     });
 
-    console.log("API response status:", response.status);
-    console.log("API response headers:", Object.fromEntries(response.headers.entries()));
+    console.log(`[📡 Response] Status: ${response.status} for dog ${numericDogId}`);
 
     // Handle rate limit specifically
     if (response.status === 429) {
       console.log("Rate limit exceeded for dog details");
       return NextResponse.json({ 
         error: "Rate limit exceeded - please try again later",
-        retryAfter: 300 // 5 minutes
+        retryAfter: 300
       }, { status: 429 });
     }
 
-    // If we get 401, retry once with a fresh token
+    // If we get 401, retry ONCE with a fresh token
     if (response.status === 401) {
-      console.log("Got 401, trying with fresh token...");
-      accessToken = await getAccessToken(true);
-      
-      // Wait a bit before retrying to avoid rapid successive calls
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      response = await fetch(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log("Retry API response status:", response.status);
-      
-      // Check rate limit again after retry
-      if (response.status === 429) {
-        console.log("Rate limit exceeded on retry for dog details");
+      console.log(`[🔄 Auth Retry] Got 401 for dog ${numericDogId}, trying with fresh token...`);
+
+      try {
+        accessToken = await getAccessToken(true); // Force refresh
+
+        // Wait a bit before retrying
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        response = await fetch(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log(`[🔄 Retry Response] Status: ${response.status} for dog ${numericDogId}`);
+      } catch (retryError) {
+        console.error(`[❌ Retry Failed] Error during retry for dog ${numericDogId}:`, retryError);
         return NextResponse.json({ 
-          error: "Rate limit exceeded - please try again later",
-          retryAfter: 300
-        }, { status: 429 });
+          error: "Authentication failed after retry",
+          details: "Unable to authenticate with Petfinder API"
+        }, { status: 401 });
       }
     }
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[❌ API Error] ${response.status}:`, errorText);
-      console.error(`[❌ Response Headers]:`, Object.fromEntries(response.headers.entries()));
-      console.error(`[❌ Request URL]:`, apiUrl);
+      console.error(`[❌ API Error] ${response.status} for dog ${numericDogId}:`, errorText);
 
       // Handle specific error cases
       if (response.status === 404) {
@@ -147,16 +114,19 @@ export async function GET(
       }
 
       if (response.status === 401) {
-        console.error(`[❌ Auth Failed] Petfinder API credentials appear to be invalid`);
-        console.error(`[❌ Token Info] Token: ${accessToken ? accessToken.substring(0, 20) + '...' : 'null'}`);
+        console.error(`[❌ Auth Failed] Still getting 401 after retry for dog ${numericDogId}`);
         return NextResponse.json({ 
           error: "Authentication failed",
-          details: "Unable to authenticate with Petfinder API. Please check API credentials."
+          details: "Unable to authenticate with Petfinder API even after retry"
         }, { status: 401 });
       }
 
-      // For other errors, throw error with more details
-      throw new Error(`Petfinder API error: ${response.status} - ${errorText} - URL: ${apiUrl}`);
+      // For other errors
+      return NextResponse.json({ 
+        error: "Failed to fetch dog details",
+        details: `Petfinder API error: ${response.status}`,
+        dogId: numericDogId
+      }, { status: response.status });
     }
 
     const data = await response.json();
@@ -166,21 +136,11 @@ export async function GET(
 
   } catch (error) {
     console.error(`[❌ Dog Details Error] ${dogId || 'unknown'}:`, error);
-    console.error(`[❌ Error Type]:`, typeof error);
-    console.error(`[❌ Error Stack]:`, error instanceof Error ? error.stack : 'No stack trace');
-    
-    // Log more details about the error
-    if (error instanceof Error) {
-      console.error(`[❌ Error Name]:`, error.name);
-      console.error(`[❌ Error Message]:`, error.message);
-    }
 
     return NextResponse.json(
       { 
         error: "Failed to fetch dog details",
         details: error instanceof Error ? error.message : String(error),
-        errorType: typeof error,
-        errorName: error instanceof Error ? error.name : 'Unknown',
         dogId: dogId || 'unknown'
       },
       { status: 500 }
