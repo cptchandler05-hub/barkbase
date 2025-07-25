@@ -408,40 +408,102 @@ const urgencyTriggers = [
       // If no cached dogs, try to fetch fresh ones using memory location/breed
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
         console.log('[🔄 No Cache] Refetching dogs from memory context');
-        
+
         if (updatedMemory.location && (updatedMemory.breed || !updatedMemory.breed)) {
           const origin = req.headers.get('origin') || 'http://localhost:3000';
-          
-          try {
-            const searchRes = await fetch(`${origin}/api/petfinder/search`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                location: updatedMemory.location,
-                breed: updatedMemory.breed || '',
-              }),
-            });
+          const baseUrl = origin;
 
-            if (searchRes.ok) {
-              const searchData = await searchRes.json();
-              const fetchedDogs = searchData.animals || [];
-              
-              // Calculate and assign visibility scores
-              for (const dog of fetchedDogs) {
-                dog.visibilityScore = calculateVisibilityScore(dog);
+          try {
+             // Try to refetch dogs from database first, then Petfinder
+            
+              // First try database
+              const { data: dbDogs, error: dbError } = await supabase
+                .from('dogs')
+                .select('*')
+                .eq('status', 'adoptable')
+                .ilike('primary_breed', `%${updatedMemory.breed}%`)
+                .limit(100);
+
+              let allDogs: Dog[] = [];
+
+              if (dbDogs && dbDogs.length > 0) {
+                const formattedDbDogs = dbDogs.map(dog => ({
+                  id: dog.petfinder_id,
+                  name: dog.name,
+                  breeds: { 
+                    primary: dog.primary_breed, 
+                    secondary: dog.secondary_breed,
+                    mixed: dog.is_mixed 
+                  },
+                  age: dog.age,
+                  size: dog.size,
+                  gender: dog.gender,
+                  photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+                    ? dog.photos.map(photo => {
+                        if (typeof photo === 'string') {
+                          return { medium: photo };
+                        } else if (photo && typeof photo === 'object') {
+                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                        }
+                        return { medium: '/images/barkr.png' };
+                      })
+                    : [{ medium: '/images/barkr.png' }],
+                  contact: { 
+                    address: { 
+                      city: dog.city || 'Unknown', 
+                      state: dog.state || 'Unknown'
+                    }
+                  },
+                  description: dog.description,
+                  attributes: {
+                    special_needs: dog.special_needs,
+                    spayed_neutered: dog.spayed_neutered,
+                    house_trained: dog.house_trained,
+                    shots_current: dog.shots_current
+                  },
+                  visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+                }));
+                allDogs = allDogs.concat(formattedDbDogs);
               }
-              
-              // Sort by visibility score (highest first)
-              fetchedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
-              
-              updatedMemory.cachedDogs = fetchedDogs;
-              console.log('[✅ Refetch] Successfully refetched', fetchedDogs.length, 'dogs');
-            }
+
+              // If we need more dogs or database had none, fetch from Petfinder
+              if (allDogs.length < 50) {
+                const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    location: updatedMemory.location,
+                    breed: updatedMemory.breed || '',
+                  }),
+                });
+
+                if (searchRes.ok) {
+                  const searchData = await searchRes.json();
+                  const fetchedDogs = searchData.animals || [];
+
+                  // Calculate and assign visibility scores
+                  for (const dog of fetchedDogs) {
+                    dog.visibilityScore = calculateVisibilityScore(dog);
+                  }
+
+                  allDogs = allDogs.concat(fetchedDogs);
+                }
+              }
+
+              // Remove duplicates and sort by visibility score
+              const uniqueDogs = allDogs.filter((dog, index, self) => 
+                index === self.findIndex(d => d.id === dog.id)
+              );
+              uniqueDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+
+              updatedMemory.cachedDogs = uniqueDogs;
+              console.log('[✅ Refetch] Successfully refetched', uniqueDogs.length, 'dogs');
+            
           } catch (error) {
             console.error('[❌ Refetch Error]', error);
           }
         }
-        
+
         // If still no cached dogs after refetch
         if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
           return NextResponse.json({
@@ -676,58 +738,169 @@ const urgencyTriggers = [
       console.log('[🔍 Petfinder Params]', { location: searchLocation, breed: fullBreed });
 
       const origin = req.headers.get('origin') || 'http://localhost:3000';
-
+      const baseUrl = origin;
       let allDogs: Dog[] = [];
 
       // ✅ Check if we need to fetch new dogs from API
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
-        const searchRes = await fetch(`${origin}/api/petfinder/search`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            location: searchLocation ?? '',
-            breed: fullBreed ?? '',
-          }),
-        });
+         try {
+            // First search database
+            if (updatedMemory.breed) {
+              console.log('[🗄️ Database] Searching database for', updatedMemory.breed);
+              const { data: dbDogs, error: dbError } = await supabase
+                .from('dogs')
+                .select('*')
+                .eq('status', 'adoptable')
+                .ilike('primary_breed', `%${updatedMemory.breed}%`)
+                .limit(100);
 
-        if (!searchRes.ok) {
-          const err = await searchRes.json();
-          console.error('[❌ Barkr] Petfinder error:', searchRes.status);
+              if (dbDogs && dbDogs.length > 0) {
+                console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
+                const formattedDbDogs = dbDogs.map(dog => ({
+                  id: dog.petfinder_id,
+                  name: dog.name,
+                  breeds: { 
+                    primary: dog.primary_breed, 
+                    secondary: dog.secondary_breed,
+                    mixed: dog.is_mixed 
+                  },
+                  age: dog.age,
+                  size: dog.size,
+                  gender: dog.gender,
+                  photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+                    ? dog.photos.map(photo => {
+                        if (typeof photo === 'string') {
+                          return { medium: photo };
+                        } else if (photo && typeof photo === 'object') {
+                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                        }
+                        return { medium: '/images/barkr.png' };
+                      })
+                    : [{ medium: '/images/barkr.png' }],
+                  contact: { 
+                    address: { 
+                      city: dog.city || 'Unknown', 
+                      state: dog.state || 'Unknown'
+                    }
+                  },
+                  description: dog.description,
+                  attributes: {
+                    special_needs: dog.special_needs,
+                    spayed_neutered: dog.spayed_neutered,
+                    house_trained: dog.house_trained,
+                    shots_current: dog.shots_current
+                  },
+                  visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+                }));
+                allDogs = allDogs.concat(formattedDbDogs);
+              }
+            }
 
-          if (err.invalidLocation) {
+            // If we need more dogs or no breed specified, search Petfinder
+            if (allDogs.length < 50 || !updatedMemory.breed) {
+              console.log('[🔍 Petfinder] Searching Petfinder API...');
+              const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  location: searchLocation ?? '',
+                  breed: fullBreed ?? '',
+                }),
+              });
+          
+              if (searchRes.ok) {
+                const searchData = await searchRes.json();
+                const petfinderDogs = searchData.animals || [];
+                console.log('[✅ Petfinder] Found', petfinderDogs.length, 'dogs from Petfinder');
+          
+                // Calculate visibility scores for Petfinder dogs
+                for (const dog of petfinderDogs) {
+                  dog.visibilityScore = calculateVisibilityScore(dog);
+                }
+          
+                allDogs = allDogs.concat(petfinderDogs);
+              }
+            }
+          
+            // Remove duplicates and sort by visibility score
+            const uniqueDogs = allDogs.filter((dog, index, self) => 
+              index === self.findIndex(d => d.id === dog.id)
+            );
+          
+            if (uniqueDogs.length === 0) {
+              return NextResponse.json({
+                content: `I searched near **${updatedMemory.location}** for **${updatedMemory.breed}s** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
+                memory: updatedMemory,
+              });
+            }
+          
+            // Sort by visibility score (highest first - most invisible)
+            uniqueDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+          
+            // Cache all dogs, show first 10
+            updatedMemory.cachedDogs = uniqueDogs;
+            const dogsToShow = uniqueDogs.slice(0, 10);
+            updatedMemory.seenDogIds = dogsToShow.map((dog: Dog) => dog.id);
+            updatedMemory.hasSeenResults = true;
+          
+            console.log('[✅ Search Complete] Total unique dogs:', uniqueDogs.length, 'Showing:', dogsToShow.length);
+            console.log('[📊 Scores] Sample scores:', dogsToShow.slice(0, 3).map(d => `${d.name}: ${d.visibilityScore}`));
+          
+            // Function to create dog response with visibility scores
+            function createDogResponse(dogs: Dog[], memory: any): string {
+              const dogListParts: string[] = [];
+          
+              for (const dog of dogs) {
+                const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
+                const name = dog.name;
+                const breed = dog.breeds?.primary || 'Mixed';
+                const age = dog.age || 'Unknown age';
+                const size = dog.size || 'Unknown size';
+                const city = dog.contact?.address?.city || 'Unknown city';
+                const state = dog.contact?.address?.state || '';
+                const description = dog.description || 'No description yet.';
+          
+                // Always calculate the real visibility score using the algorithm
+                const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
+                dog.visibilityScore = visibilityScore;
+          
+                const compositeScore = `**Visibility Score: ${visibilityScore}**`;
+                const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
+          
+                const dogUrl = `/adopt/${dog.id}`;
+                const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
+          
+                const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
+          
+                dogListParts.push(dogMarkdown);
+              }
+          
+              const dogList = dogListParts.join('\n\n---\n\n\n');
+          
+              let reply: string;
+              if (!memory.hasSeenResults) {
+                // ✅ First time seeing results - show visibility explanation
+                reply = `🐾 **How I Rank Dogs:**\n\nMost platforms boost the dogs that already get attention.\n\nI do the opposite.\n\nI built a signal for the invisible ones—the long-overlooked, underpromoted, unchosen.\n\n**High score = high invisibility.** That's who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that's because they don't have one of their own.\n\n🐕 Here's what I dug up from shelters near **${memory.location}**:\n\n${dogList}\n\n💡 Ask for more dogs anytime. I'll keep digging. 🧡`;
+                memory.hasSeenResults = true; // Mark that user has now seen results
+              } else {
+                reply = `🐕 Here's what I dug up from shelters near **${memory.location}**:\n\n${dogList}`; // Subsequent requests - simpler reply
+              }
+          
+              return reply;
+            }
+
             return NextResponse.json({
-              content: `That location didn't work 🐾. Can you give me a ZIP code or a full city and state like "Austin, TX" or "Brooklyn, NY"?`,
+              content: createDogResponse(dogsToShow, updatedMemory),
+              memory: updatedMemory,
+            });
+          
+          } catch (error) {
+            console.error('[❌ Search Error]', error);
+            return NextResponse.json({
+              content: `Sorry, I'm having trouble searching right now. Can you try again? 🐾`,
               memory: updatedMemory,
             });
           }
-
-          return NextResponse.json({
-            content: `I couldn't fetch dogs right now — the rescue database might be playing hide and seek 🐶. Hang tight.`,
-            memory: updatedMemory,
-          });
-        }
-
-        const searchData = await searchRes.json();
-        const fetchedDogs = searchData.animals || [];
-
-        if (fetchedDogs.length === 0) {
-          return NextResponse.json({
-            content: `I searched near **${searchLocation}** for **${fullBreed || 'dogs'}** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
-            memory: updatedMemory,
-          });
-        }
-
-        // ✅ Assign visibility scores to all fetched dogs
-        for (const dog of fetchedDogs) {
-          dog.visibilityScore = calculateVisibilityScore(dog);
-        }
-
-        // ✅ Sort all dogs by visibility score (highest first - most invisible)
-        fetchedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
-
-        // ✅ Cache all sorted dogs
-        allDogs = fetchedDogs;
-        updatedMemory.cachedDogs = fetchedDogs;
       } else {
         // Use cached dogs
         allDogs = updatedMemory.cachedDogs || [];
@@ -764,7 +937,7 @@ const urgencyTriggers = [
         const city = dog.contact?.address?.city || 'Unknown city';
         const state = dog.contact?.address?.state || '';
         const description = dog.description || 'No description yet.';
-        
+
         // Always calculate the real visibility score using the algorithm
         const visibilityScore = calculateVisibilityScore(dog);
         dog.visibilityScore = visibilityScore;
