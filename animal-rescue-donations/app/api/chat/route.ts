@@ -417,12 +417,22 @@ const urgencyTriggers = [
              // Try to refetch dogs from database first, then Petfinder
             
               // First try database
-              const { data: dbDogs, error: dbError } = await supabase
+              const supabase = createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.SUPABASE_SERVICE_ROLE_KEY!
+              );
+              
+              let dbQuery = supabase
                 .from('dogs')
                 .select('*')
                 .eq('status', 'adoptable')
-                .ilike('primary_breed', `%${updatedMemory.breed}%`)
                 .limit(100);
+
+              if (updatedMemory.breed) {
+                dbQuery = dbQuery.ilike('primary_breed', `%${updatedMemory.breed}%`);
+              }
+
+              const { data: dbDogs, error: dbError } = await dbQuery;
 
               let allDogs: Dog[] = [];
 
@@ -745,6 +755,11 @@ const urgencyTriggers = [
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
          try {
             // First search database
+            const supabase = createClient(
+              process.env.NEXT_PUBLIC_SUPABASE_URL!,
+              process.env.SUPABASE_SERVICE_ROLE_KEY!
+            );
+            
             if (updatedMemory.breed) {
               console.log('[🗄️ Database] Searching database for', updatedMemory.breed);
               const { data: dbDogs, error: dbError } = await supabase
