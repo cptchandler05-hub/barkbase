@@ -269,7 +269,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         state: dog.contact?.address?.state || 'Unknown',
         postcode: dog.contact?.address?.postcode || null,
         latitude: dog.contact?.address?.latitude || null,
-        longitude: dog.contact?.address?.longitude || null,
+        longitude: dog.content?.address?.longitude || null,
         visibility_score: calculateVisibilityScore(dog),
         organization_animal_id: dog.organization_animal_id || null,
         last_updated_at: new Date().toISOString(),
