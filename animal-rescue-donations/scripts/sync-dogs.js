@@ -164,12 +164,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   // Test with first dog only to verify database structure
   console.log('🧪 Testing database insertion with first dog...');
-  
+
   if (dogs.length === 0) {
     console.log('⚠️ No dogs to sync');
     return;
   }
-  
+
   const testDog = dogs[0];
 
   const testRecord = {
@@ -214,11 +214,23 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     petfinder_id: testDog.id.toString()
   };
 
-  console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
+  // Ensure no id field is present
+  if ('id' in testRecord) {
+    delete testRecord.id;
+    console.log('🗑️ Removed id field from record');
+  }
 
+  console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
+  console.log('🔑 Record keys:', Object.keys(testRecord));
+  console.log('📊 Record has id field:', 'id' in testRecord);
+
+  // Use upsert with petfinder_id as the conflict resolution key
   const { data: testData, error: testError } = await supabase
     .from('dogs')
-    .insert([testRecord])
+    .upsert([testRecord], { 
+      onConflict: 'petfinder_id',
+      ignoreDuplicates: false 
+    })
     .select();
 
   if (testError) {
@@ -304,10 +316,19 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
           if (updatedCount === 1) console.log('✅ First dog updated successfully');
         }
       } else {
+        // Ensure no id field is present
+        if ('id' in dogRecord) {
+          delete dogRecord.id;
+          console.log('🗑️ Removed id field from record');
+        }
+
         // Insert new dog
         const { error: insertError } = await supabase
           .from('dogs')
-          .insert([dogRecord]);
+          .upsert([dogRecord], {
+            onConflict: 'petfinder_id',
+            ignoreDuplicates: false
+          })
 
         if (insertError) {
           console.warn(`⚠️ Failed to insert dog ${dogRecord.name}:`, insertError);
@@ -377,27 +398,27 @@ async function markRemovedDogs() {
 
 async function validateEnvironment() {
   console.log('🔍 Validating environment variables...');
-  
+
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY', 
     'PETFINDER_CLIENT_ID',
     'PETFINDER_CLIENT_SECRET'
   ];
-  
+
   const missing = required.filter(key => !process.env[key]);
-  
+
   if (missing.length > 0) {
     console.error('❌ Missing required environment variables:', missing);
     throw new Error(`Missing environment variables: ${missing.join(', ')}`);
   }
-  
+
   console.log('✅ All environment variables present');
 }
 
 async function testDatabaseConnection() {
   console.log('🔗 Testing Supabase connection...');
-  
+
   try {
     const { data, error } = await supabase
       .from('dogs')
@@ -418,10 +439,10 @@ async function testDatabaseConnection() {
 
 async function main() {
   console.log('🐕 Starting dog data sync...');
-  
+
   // Check for test mode environment variable
   const testMode = process.env.TEST_MODE === 'true';
-  
+
   if (testMode) {
     console.log('🧪 RUNNING IN TEST MODE - Limited API calls');
   }
@@ -429,10 +450,10 @@ async function main() {
   try {
     // Validate environment before making any API calls
     await validateEnvironment();
-    
+
     // Test database connection before fetching from Petfinder
     await testDatabaseConnection();
-    
+
     const accessToken = await getAccessToken();
 
     // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
