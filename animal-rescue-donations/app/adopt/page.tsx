@@ -487,10 +487,7 @@ export default function AdoptPage() {
                               style={{display: 'none'}}
                             >
                               F
-                            </div>ad on adoption page');
-                                e.currentTarget.outerHTML = '<div class="w-4 h-4 bg-purple-600 rounded flex items-center justify-center"><span class="text-white font-bold text-xs">F</span></div>';
-                              }}
-                            />
+                            </div>
                           </button>
                         </div>
                       </div>
