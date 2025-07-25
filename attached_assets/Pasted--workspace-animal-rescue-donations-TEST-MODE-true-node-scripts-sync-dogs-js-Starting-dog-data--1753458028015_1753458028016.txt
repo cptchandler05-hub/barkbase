@@ -1,0 +1,129 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 04009
+📍 Found 100 dogs in 04009
+🔍 Fetching dogs from: Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "petfinder_id": "77471798",
+  "api_source": "petfinder",
+  "organization_id": "TX2831",
+  "url": "https://www.petfinder.com/dog/sugar-77471798/me/portland/gsd-rescue-and-hcec-tx2831/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "Sugar",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "German Shepherd Dog",
+  "secondary_breed": null,
+  "is_mixed": false,
+  "is_unknown_breed": false,
+  "age": "Young",
+  "gender": "Female",
+  "size": "Medium",
+  "coat": null,
+  "primary_color": null,
+  "secondary_color": null,
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": true,
+  "special_needs": null,
+  "shots_current": true,
+  "good_with_children": true,
+  "good_with_dogs": true,
+  "good_with_cats": true,
+  "description": "Meet Sugar! \n\n8 months old | 47 lbs | German Shepherd\n\nSugar was surrendered by her previous owner who didn’t...",
+  "photos": [
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/f948d27b-e440-40aa-9063-d483a6e2e55c.jpeg?versionId=hvwdZUnj5KJaEwSUfC8.riYTDXFRbdHP&bust=1753457412&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/f948d27b-e440-40aa-9063-d483a6e2e55c.jpeg?versionId=hvwdZUnj5KJaEwSUfC8.riYTDXFRbdHP&bust=1753457412&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/f948d27b-e440-40aa-9063-d483a6e2e55c.jpeg?versionId=hvwdZUnj5KJaEwSUfC8.riYTDXFRbdHP&bust=1753457412&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/f948d27b-e440-40aa-9063-d483a6e2e55c.jpeg?versionId=hvwdZUnj5KJaEwSUfC8.riYTDXFRbdHP&bust=1753457412"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/a929b61e-eac7-4860-b65e-e7c0e84859d0.jpeg?versionId=x.y9oGlR7DkVOxMU9Aplh08tbGJaOIEg&bust=1753457413&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/a929b61e-eac7-4860-b65e-e7c0e84859d0.jpeg?versionId=x.y9oGlR7DkVOxMU9Aplh08tbGJaOIEg&bust=1753457413&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/a929b61e-eac7-4860-b65e-e7c0e84859d0.jpeg?versionId=x.y9oGlR7DkVOxMU9Aplh08tbGJaOIEg&bust=1753457413&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/a929b61e-eac7-4860-b65e-e7c0e84859d0.jpeg?versionId=x.y9oGlR7DkVOxMU9Aplh08tbGJaOIEg&bust=1753457413"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/14c69543-7c0b-43a8-a394-501fcec88c0b.jpeg?versionId=zOlFzivW6FyvM0ocSzXbvj44F5jIQ4fj&bust=1753457414&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/14c69543-7c0b-43a8-a394-501fcec88c0b.jpeg?versionId=zOlFzivW6FyvM0ocSzXbvj44F5jIQ4fj&bust=1753457414&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/14c69543-7c0b-43a8-a394-501fcec88c0b.jpeg?versionId=zOlFzivW6FyvM0ocSzXbvj44F5jIQ4fj&bust=1753457414&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/14c69543-7c0b-43a8-a394-501fcec88c0b.jpeg?versionId=zOlFzivW6FyvM0ocSzXbvj44F5jIQ4fj&bust=1753457414"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/3e2ecef3-edf2-49bf-abdd-44af09c50685.jpeg?versionId=zYmIxCfwPs1vGSEos4Rmy1qYre3eiqtV&bust=1753457413&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/3e2ecef3-edf2-49bf-abdd-44af09c50685.jpeg?versionId=zYmIxCfwPs1vGSEos4Rmy1qYre3eiqtV&bust=1753457413&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/3e2ecef3-edf2-49bf-abdd-44af09c50685.jpeg?versionId=zYmIxCfwPs1vGSEos4Rmy1qYre3eiqtV&bust=1753457413&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/3e2ecef3-edf2-49bf-abdd-44af09c50685.jpeg?versionId=zYmIxCfwPs1vGSEos4Rmy1qYre3eiqtV&bust=1753457413"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/05173837-3c58-480c-8d2d-8eeb2b7757e4.jpeg?versionId=r3M4IFxGj.byDhVEo4IPZR92UfDfXwX1&bust=1753457413&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/05173837-3c58-480c-8d2d-8eeb2b7757e4.jpeg?versionId=r3M4IFxGj.byDhVEo4IPZR92UfDfXwX1&bust=1753457413&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/05173837-3c58-480c-8d2d-8eeb2b7757e4.jpeg?versionId=r3M4IFxGj.byDhVEo4IPZR92UfDfXwX1&bust=1753457413&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-77ef-45d2-a4bc-826186535117/image/05173837-3c58-480c-8d2d-8eeb2b7757e4.jpeg?versionId=r3M4IFxGj.byDhVEo4IPZR92UfDfXwX1&bust=1753457413"
+    }
+  ],
+  "tags": [
+    "Friendly",
+    "Loves",
+    "Affectionate"
+  ],
+  "contact_info": {
+    "email": null,
+    "phone": "(405) 202-2932",
+    "address": {
+      "address1": null,
+      "address2": null,
+      "city": "Portland",
+      "state": "ME",
+      "postcode": "04103",
+      "country": "US"
+    }
+  },
+  "city": "Portland",
+  "state": "ME",
+  "postcode": "04103",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 67,
+  "organization_animal_id": null,
+  "last_updated_at": "2025-07-25T15:39:17.012Z",
+  "created_at": "2025-07-25T15:39:17.012Z"
+}
+❌ DATABASE TEST FAILED: {
+  code: '23502',
+  details: 'Failing row contains (null, petfinder, TX2831, https://www.petfinder.com/dog/sugar-77471798/me/portland/gsd-res..., Sugar, Dog, Dog, German Shepherd Dog, null, f, f, Young, Female, Medium, null, null, null, null, adoptable, t, t, null, t, t, t, t, Meet Sugar! \n' +
+    '\n' +
+    '8 months old | 47 lbs | German Shepherd\n' +
+    '\n' +
+    'Sugar was..., [{"full": "https://dbw3zep4prcju.cloudfront.net/animal/a5552613-..., ["Friendly", "Loves", "Affectionate"], {"email": null, "phone": "(405) 202-2932", "address": {"city": "..., Portland, ME, 04103, null, null, 67, null, 2025-07-25 15:39:17.012+00, 2025-07-25 15:39:17.012+00, 77471798, null).',
+  hint: null,
+  message: 'null value in column "id" of relation "dogs" violates not-null constraint'
+}
+❌ Error details: {
+  "code": "23502",
+  "details": "Failing row contains (null, petfinder, TX2831, https://www.petfinder.com/dog/sugar-77471798/me/portland/gsd-res..., Sugar, Dog, Dog, German Shepherd Dog, null, f, f, Young, Female, Medium, null, null, null, null, adoptable, t, t, null, t, t, t, t, Meet Sugar! \n\n8 months old | 47 lbs | German Shepherd\n\nSugar was..., [{\"full\": \"https://dbw3zep4prcju.cloudfront.net/animal/a5552613-..., [\"Friendly\", \"Loves\", \"Affectionate\"], {\"email\": null, \"phone\": \"(405) 202-2932\", \"address\": {\"city\": \"..., Portland, ME, 04103, null, null, 67, null, 2025-07-25 15:39:17.012+00, 2025-07-25 15:39:17.012+00, 77471798, null).",
+  "hint": null,
+  "message": "null value in column \"id\" of relation \"dogs\" violates not-null constraint"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: null value in column "id" of relation "dogs" violates not-null constraint
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:229:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:491:7)
