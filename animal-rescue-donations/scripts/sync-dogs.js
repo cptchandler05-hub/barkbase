@@ -1,10 +1,10 @@
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
 
-// Initialize Supabase client
+// Initialize Supabase client with service key for database operations
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 // Rate limiting variables
