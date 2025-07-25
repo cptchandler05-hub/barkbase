@@ -156,26 +156,9 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     status: 'in_progress'
   };
 
-  // Insert sync record
-  console.log('📊 Creating sync record...');
-  const { data: syncData, error: syncError } = await supabase
-    .from('dog_syncs')
-    .insert([syncRecord])
-    .select()
-    .single();
-
-  if (syncError) {
-    console.error('❌ Failed to create sync record:', syncError);
-    console.error('❌ Error code:', syncError.code);
-    console.error('❌ Error message:', syncError.message);
-    console.error('❌ Error details:', syncError.details);
-    console.error('❌ Sync record data:', JSON.stringify(syncRecord, null, 2));
-    
-    // Continue without sync record for debugging
-    console.log('⚠️ Continuing without sync record for debugging...');
-  } else {
-    console.log('✅ Sync record created:', syncData?.id);
-  }
+  // Skip sync record for now - focus on dog insertion
+  console.log('⚠️ Skipping sync record creation - testing direct dog insertion');
+  const syncData = { id: 'test-sync' };
 
   let addedCount = 0;
   let updatedCount = 0;
