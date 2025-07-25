@@ -786,7 +786,7 @@ const urgencyTriggers = [
               dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
             }
 
-            const { data: dbDogs, error: dbError } = await dbQuery;
+            const { data: dbDogs, error: dbError } = await supabase
                 .from('dogs')
                 .select('*')
                 .eq('status', 'adoptable')
