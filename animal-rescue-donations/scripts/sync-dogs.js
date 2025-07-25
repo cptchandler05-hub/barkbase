@@ -135,16 +135,16 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   // Test connection first
   console.log('🔗 Testing Supabase connection...');
-  const { data: testData, error: testError } = await supabase
+  const { data: connectionData, error: connectionError } = await supabase
     .from('dogs')
     .select('count', { count: 'exact', head: true });
 
-  if (testError) {
-    console.error('❌ Supabase connection failed:', testError);
+  if (connectionError) {
+    console.error('❌ Supabase connection failed:', connectionError);
     return;
   }
 
-  console.log(`✅ Connected to Supabase! Current dogs in DB: ${testData || 0}`);
+  console.log(`✅ Connected to Supabase! Current dogs in DB: ${connectionData || 0}`);
 
   const syncRecord = {
     sync_date: new Date().toISOString(),
