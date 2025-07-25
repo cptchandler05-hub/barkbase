@@ -16,7 +16,9 @@ export async function POST(req: Request) {
   console.log('[🔍 /api/petfinder/search] Starting search request');
 
   try {
-    const { location: rawLocation, breed: rawBreed } = await req.json();
+    // Parse request body only once
+    const requestBody = await req.json();
+    const { location: rawLocation, breed: rawBreed } = requestBody;
     console.log('[📋 Raw Input]', { location: rawLocation, breed: rawBreed });
 
     // 🔥 Try database first if we have a valid location/breed
@@ -87,7 +89,8 @@ export async function POST(req: Request) {
     requestCount++;
     lastRequestTime = Date.now();
 
-    let { location, breed } = await req.json();
+    // Use the already parsed request body
+    let { location, breed } = requestBody;
 
     // 🧼 Trim and normalize user input
     location = typeof location === 'string' ? location.trim().toLowerCase() : '';
