@@ -1,59 +1,65 @@
-let tokenCache: TokenCache | null = null;
 
-export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
-  // Check if we have a valid cached token (unless forcing refresh)
-  if (!forceRefresh && tokenCache && tokenCache.expiresAt > Date.now()) {
-    console.log('[🔑 Token] Using cached token');
-    return tokenCache.token;
+import { NextResponse } from 'next/server';
+
+// Token management
+let cachedToken: string | null = null;
+let tokenExpiresAt: number = 0;
+
+export async function clearTokenCache() {
+  console.log('🧹 Clearing token cache');
+  cachedToken = null;
+  tokenExpiresAt = 0;
+}
+
+export async function getAccessToken(forceRefresh = false): Promise<string> {
+  const now = Date.now();
+  const buffer = 5 * 60 * 1000; // 5-minute buffer
+
+  // Check if we have a valid cached token and not forcing refresh
+  if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
+    console.log('🔄 Using cached Petfinder token');
+    return cachedToken;
   }
 
-  console.log(`[🔑 Token] Fetching new token ${forceRefresh ? '(forced refresh)' : ''}`);
-
-  const clientId = process.env.PETFINDER_CLIENT_ID;
-  const clientSecret = process.env.PETFINDER_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    console.error('[🔑 Token] Missing credentials');
-    throw new Error('Petfinder API credentials not configured');
-  }
+  console.log('🔑 Fetching new Petfinder access token...');
 
   try {
     const response = await fetch('https://api.petfinder.com/v2/oauth2/token', {
       method: 'POST',
-      headers: {
+      headers: { 
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'BarkBase/1.0'
       },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: clientId,
-        client_secret: clientSecret,
+        client_id: process.env.PETFINDER_CLIENT_ID!,
+        client_secret: process.env.PETFINDER_CLIENT_SECRET!,
       }),
     });
 
     if (!response.ok) {
-      console.error(`[🔑 Token] Auth failed: ${response.status}`);
-      throw new Error(`Failed to get access token: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Token request failed:', response.status, errorText);
+      throw new Error(`Failed to get token: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    if (!data.access_token) {
+      throw new Error('No access token in response');
+    }
 
-    // Cache the token (expires in 1 hour, we'll refresh 5 minutes early)
-    tokenCache = {
-      token: data.access_token,
-      expiresAt: Date.now() + (data.expires_in - 300) * 1000, // 5 minutes early
-    };
+    cachedToken = data.access_token;
+    tokenExpiresAt = now + (data.expires_in * 1000);
 
-    console.log('[🔑 Token] New token cached');
-    return data.access_token;
+    console.log('✅ Got new Petfinder token, expires in', data.expires_in, 'seconds');
+    return cachedToken;
+
   } catch (error) {
-    // Clear any bad cached token
-    tokenCache = null;
-    console.error('[🔑 Token] Error getting token:', error);
+    console.error('❌ Failed to get access token:', error);
+    // Clear cache on error
+    cachedToken = null;
+    tokenExpiresAt = 0;
     throw error;
   }
-}
-
-export async function clearTokenCache(): Promise<void> {
-  tokenCache = null;
-  console.log('[🔑 Token] Cache cleared');
 }

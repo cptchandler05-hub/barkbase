@@ -1,5 +1,6 @@
+
 import { NextRequest, NextResponse } from 'next/server';
-import { getAccessToken } from '@/app/api/utils/tokenManager';
+import { getAccessToken, clearTokenCache } from '@/app/api/utils/tokenManager';
 
 const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
@@ -9,6 +10,11 @@ export async function GET(
 ) {
   try {
     console.log(`[🔍 API] Getting dog details for ID: ${params.dogId}`);
+
+    if (!params.dogId) {
+      console.error(`[❌ API] No dogId provided`);
+      return NextResponse.json({ error: 'Dog ID is required' }, { status: 400 });
+    }
 
     // First check database for basic info and visibility score
     let dbDog = null;
@@ -23,30 +29,26 @@ export async function GET(
       console.warn(`[⚠️ DB] Database error:`, dbError);
     }
 
-    // Determine which API to use based on database info
-    let apiSource = 'petfinder'; // default
-    if (dbDog?.api_source) {
-      apiSource = dbDog.api_source;
-      console.log(`[📡 API] Using API source: ${apiSource}`);
-    }
-
     let dog = null;
 
-    if (apiSource === 'petfinder') {
-      // Try to fetch from Petfinder with token retry logic
-      let accessToken = await getAccessToken();
-      let attempts = 0;
-      const maxAttempts = 2;
+    // Try to fetch from Petfinder with token retry logic
+    let accessToken = await getAccessToken();
+    let attempts = 0;
+    const maxAttempts = 3;
 
-      while (attempts < maxAttempts) {
-        attempts++;
-        console.log(`[🔄 API] Attempt ${attempts}/${maxAttempts} for dog ${params.dogId}`);
+    while (attempts < maxAttempts) {
+      attempts++;
+      console.log(`[🔄 API] Attempt ${attempts}/${maxAttempts} for dog ${params.dogId}`);
 
-        const response = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
+      try {
+        const response = await fetch(`${PETFINDER_API_URL}/animals/${params.dogId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
+            'User-Agent': 'BarkBase/1.0'
           },
+          // Add timeout
+          signal: AbortSignal.timeout(10000) // 10 second timeout
         });
 
         if (response.ok) {
@@ -57,26 +59,55 @@ export async function GET(
         }
 
         if (response.status === 404) {
-          console.log(`[❌ API] Dog ${params.dogId} not found`);
+          console.log(`[❌ API] Dog ${params.dogId} not found in Petfinder`);
+          
+          // If we have database data, use that instead
+          if (dbDog) {
+            console.log(`[📊 Fallback] Using database data for dog ${params.dogId}`);
+            dog = formatDatabaseDog(dbDog);
+            break;
+          }
+          
           return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
         }
 
         if (response.status === 401 && attempts < maxAttempts) {
           console.log(`[🔄 Auth] Token expired, getting fresh token (attempt ${attempts})`);
-          const { clearTokenCache } = await import('@/app/api/utils/tokenManager');
           await clearTokenCache();
           accessToken = await getAccessToken(true); // Force refresh
           continue;
         }
 
-        // If we get here, it's an error we can't retry
-        console.error(`[❌ API] Failed after ${attempts} attempts: ${response.status}`);
-        throw new Error(`Petfinder API error: ${response.status}`);
+        // Log other errors but try to continue
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error(`[❌ API] Error ${response.status}: ${errorText}`);
+        
+        if (attempts === maxAttempts) {
+          // Last attempt failed, try database fallback
+          if (dbDog) {
+            console.log(`[📊 Final Fallback] Using database data after API failure`);
+            dog = formatDatabaseDog(dbDog);
+            break;
+          }
+          throw new Error(`Petfinder API error: ${response.status}`);
+        }
+
+      } catch (fetchError) {
+        console.error(`[❌ Fetch] Request failed:`, fetchError);
+        
+        if (attempts === maxAttempts) {
+          // Last attempt failed, try database fallback
+          if (dbDog) {
+            console.log(`[📊 Final Fallback] Using database data after fetch error`);
+            dog = formatDatabaseDog(dbDog);
+            break;
+          }
+          throw fetchError;
+        }
+        
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
       }
-    } else if (apiSource === 'rescuegroups') {
-      // TODO: Implement RescueGroups API call
-      console.log(`[🚧 TODO] RescueGroups API not yet implemented`);
-      return NextResponse.json({ error: 'RescueGroups API not yet implemented' }, { status: 501 });
     }
 
     if (!dog) {
@@ -84,114 +115,39 @@ export async function GET(
       return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
-    // Check database first for basic info and visibility score
-    const { data: dbDogData, error: dbError } = await import('@/lib/supabase').then(({ supabase }) => supabase
-      .from('dogs')
-      .select('*')
-      .eq('petfinder_id', params.dogId)
-      .eq('status', 'adoptable')
-      .single());
-
-    if (dbError && dbError.code !== 'PGRST116') {
-      console.error('Database error:', dbError);
+    // Enhance with database visibility score if available
+    if (dbDog?.visibility_score !== undefined) {
+      dog.visibilityScore = dbDog.visibility_score;
+    } else {
+      // Calculate visibility score if not in database
+      const { calculateVisibilityScore } = await import('@/lib/scoreVisibility');
+      dog.visibilityScore = calculateVisibilityScore(dog);
     }
 
-    if (dbDogData) {
-      console.log('Found dog in database, fetching full details from Petfinder...');
-
-      // Get full details from Petfinder API
-      let accessToken = await getAccessToken();
-      const petfinderResponse = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (petfinderResponse.ok) {
-        const petfinderData = await petfinderResponse.json();
-        const petfinderDog = petfinderData.animal;
-
-        // Merge database data (visibility score) with Petfinder data (full details)
-        dog = {
-          ...petfinderDog,
-          visibilityScore: dbDogData.visibility_score
-        };
-      } else {
-        console.log('Petfinder API failed, using database data only');
-        // Fallback to database data only - use correct field names
-        dog = {
-          id: parseInt(dbDogData.petfinder_id),
-          name: dbDogData.name,
-          breeds: {
-            primary: dbDogData.primary_breed,
-            secondary: dbDogData.secondary_breed,
-            mixed: dbDogData.is_mixed
-          },
-          age: dbDogData.age,
-          size: dbDogData.size,
-          gender: dbDogData.gender,
-          photos: Array.isArray(dbDogData.photos) ? dbDogData.photos : [],
-          contact: (typeof dbDogData.contact_info === 'object' && dbDogData.contact_info) ? dbDogData.contact_info : {
-            address: {
-              city: dbDogData.city,
-              state: dbDogData.state,
-              postcode: dbDogData.postcode
-            }
-          },
-          description: dbDogData.description,
-          url: dbDogData.url,
-          visibilityScore: dbDogData.visibility_score,
-          organization_id: dbDogData.organization_id,
-          type: dbDogData.type,
-          species: dbDogData.species,
-          colors: {
-            primary: dbDogData.primary_color,
-            secondary: dbDogData.secondary_color,
-            tertiary: dbDogData.tertiary_color
-          },
-          attributes: {
-            spayed_neutered: dbDogData.spayed_neutered,
-            house_trained: dbDogData.house_trained,
-            special_needs: dbDogData.special_needs,
-            shots_current: dbDogData.shots_current
-          },
-          environment: {
-            children: dbDogData.good_with_children,
-            dogs: dbDogData.good_with_dogs,
-            cats: dbDogData.good_with_cats
-          },
-          tags: Array.isArray(dbDogData.tags) ? dbDogData.tags : [],
-          status: dbDogData.status
-        };
+    // Ensure photos are properly formatted
+    if (dog.photos && Array.isArray(dog.photos)) {
+      dog.photos = dog.photos.filter(photo => photo && (photo.medium || photo.large || photo.small));
+      
+      // If no valid photos, add placeholder
+      if (dog.photos.length === 0) {
+        dog.photos = [{
+          small: '/images/barkr.png',
+          medium: '/images/barkr.png',
+          large: '/images/barkr.png',
+          full: '/images/barkr.png'
+        }];
       }
     } else {
-      console.log('Dog not found in database, fetching from Petfinder API only...');
-
-      // Fallback to Petfinder API only
-      let accessToken = await getAccessToken();
-      const response = await fetch(`https://api.petfinder.com/v2/animals/${params.dogId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-        return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
-      }
-
-      const data = await response.json();
-      dog = {
-        ...data.animal,
-        visibilityScore: (await import('@/lib/scoreVisibility')).calculateVisibilityScore(data.animal)
-      };
+      // No photos array, add placeholder
+      dog.photos = [{
+        small: '/images/barkr.png',
+        medium: '/images/barkr.png',
+        large: '/images/barkr.png',
+        full: '/images/barkr.png'
+      }];
     }
 
-    console.log(`[✅ Success] Returning dog: ${dog.name} from ${apiSource}`);
+    console.log(`[✅ Success] Returning dog: ${dog.name} with ${dog.photos.length} photos`);
     return NextResponse.json({ animal: dog });
 
   } catch (error) {
@@ -201,4 +157,66 @@ export async function GET(
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
+}
+
+// Helper function to format database dog data
+function formatDatabaseDog(dbDog: any) {
+  return {
+    id: parseInt(dbDog.petfinder_id),
+    name: dbDog.name,
+    breeds: {
+      primary: dbDog.primary_breed,
+      secondary: dbDog.secondary_breed,
+      mixed: dbDog.is_mixed
+    },
+    age: dbDog.age,
+    size: dbDog.size,
+    gender: dbDog.gender,
+    photos: Array.isArray(dbDog.photos) && dbDog.photos.length > 0 
+      ? dbDog.photos.map(photo => {
+          if (typeof photo === 'string') {
+            return { medium: photo, large: photo, small: photo, full: photo };
+          } else if (photo && typeof photo === 'object') {
+            return {
+              medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+              large: photo.large || photo.medium || photo.small || '/images/barkr.png',
+              small: photo.small || photo.medium || photo.large || '/images/barkr.png',
+              full: photo.full || photo.large || photo.medium || '/images/barkr.png'
+            };
+          }
+          return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png', full: '/images/barkr.png' };
+        })
+      : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png', full: '/images/barkr.png' }],
+    contact: (typeof dbDog.contact_info === 'object' && dbDog.contact_info) ? dbDog.contact_info : {
+      address: {
+        city: dbDog.city,
+        state: dbDog.state,
+        postcode: dbDog.postcode
+      }
+    },
+    description: dbDog.description,
+    url: dbDog.url,
+    visibilityScore: dbDog.visibility_score || 50,
+    organization_id: dbDog.organization_id,
+    type: dbDog.type,
+    species: dbDog.species,
+    colors: {
+      primary: dbDog.primary_color,
+      secondary: dbDog.secondary_color,
+      tertiary: dbDog.tertiary_color
+    },
+    attributes: {
+      spayed_neutered: dbDog.spayed_neutered,
+      house_trained: dbDog.house_trained,
+      special_needs: dbDog.special_needs,
+      shots_current: dbDog.shots_current
+    },
+    environment: {
+      children: dbDog.good_with_children,
+      dogs: dbDog.good_with_dogs,
+      cats: dbDog.good_with_cats
+    },
+    tags: Array.isArray(dbDog.tags) ? dbDog.tags : [],
+    status: dbDog.status
+  };
 }
