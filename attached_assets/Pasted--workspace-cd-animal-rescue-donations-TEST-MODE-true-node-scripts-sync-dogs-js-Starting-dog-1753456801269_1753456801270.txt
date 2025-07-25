@@ -1,0 +1,125 @@
+~/workspace$ cd animal-rescue-donations && TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 57005
+📍 Found 100 dogs in 57005
+🔍 Fetching dogs from: Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "api_source": "petfinder",
+  "organization_id": "SD14",
+  "url": "https://www.petfinder.com/dog/camry-77471457/sd/huron/beadle-county-humane-society-sd14/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "Camry",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "Siberian Husky",
+  "secondary_breed": null,
+  "is_mixed": false,
+  "is_unknown_breed": false,
+  "age": "Adult",
+  "gender": "Female",
+  "size": "Medium",
+  "coat": "Short",
+  "primary_color": "Red / Chestnut / Orange",
+  "secondary_color": "White / Cream",
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": true,
+  "special_needs": null,
+  "shots_current": true,
+  "good_with_children": null,
+  "good_with_dogs": null,
+  "good_with_cats": null,
+  "description": "Meet Camry, a beautiful adult dog with lots of love to give! Camry is an affectionate and friendly dog who...",
+  "photos": [
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/82db41a7-05aa-47f9-b90d-c14ac23c404f.jpg?versionId=MI36bCZr8So1VnpjaHaK2ILxVmKjzqou&bust=1753454772&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/82db41a7-05aa-47f9-b90d-c14ac23c404f.jpg?versionId=MI36bCZr8So1VnpjaHaK2ILxVmKjzqou&bust=1753454772&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/82db41a7-05aa-47f9-b90d-c14ac23c404f.jpg?versionId=MI36bCZr8So1VnpjaHaK2ILxVmKjzqou&bust=1753454772&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/82db41a7-05aa-47f9-b90d-c14ac23c404f.jpg?versionId=MI36bCZr8So1VnpjaHaK2ILxVmKjzqou&bust=1753454772"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/60039f2b-4abd-4fb9-8a58-7ecaf51d6bf2.jpg?versionId=wFdnUiDmKC1HyOjQoNZPSGx5dTcKaSk0&bust=1753454776&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/60039f2b-4abd-4fb9-8a58-7ecaf51d6bf2.jpg?versionId=wFdnUiDmKC1HyOjQoNZPSGx5dTcKaSk0&bust=1753454776&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/60039f2b-4abd-4fb9-8a58-7ecaf51d6bf2.jpg?versionId=wFdnUiDmKC1HyOjQoNZPSGx5dTcKaSk0&bust=1753454776&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/60039f2b-4abd-4fb9-8a58-7ecaf51d6bf2.jpg?versionId=wFdnUiDmKC1HyOjQoNZPSGx5dTcKaSk0&bust=1753454776"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/b1b712c5-4c96-4cdc-b235-eefee15910d2.jpg?versionId=YfWImLGDsI4oJs5fvLXB7a8XwT7Vjc3e&bust=1753454781&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/b1b712c5-4c96-4cdc-b235-eefee15910d2.jpg?versionId=YfWImLGDsI4oJs5fvLXB7a8XwT7Vjc3e&bust=1753454781&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/b1b712c5-4c96-4cdc-b235-eefee15910d2.jpg?versionId=YfWImLGDsI4oJs5fvLXB7a8XwT7Vjc3e&bust=1753454781&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/b1b712c5-4c96-4cdc-b235-eefee15910d2.jpg?versionId=YfWImLGDsI4oJs5fvLXB7a8XwT7Vjc3e&bust=1753454781"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/6db7d101-3119-4508-80f3-e6852109510a.jpg?versionId=QyyGn5rvmu1c9MFV9ETANNhB8zEyBhpU&bust=1753454806&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/6db7d101-3119-4508-80f3-e6852109510a.jpg?versionId=QyyGn5rvmu1c9MFV9ETANNhB8zEyBhpU&bust=1753454806&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/6db7d101-3119-4508-80f3-e6852109510a.jpg?versionId=QyyGn5rvmu1c9MFV9ETANNhB8zEyBhpU&bust=1753454806&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/6db7d101-3119-4508-80f3-e6852109510a.jpg?versionId=QyyGn5rvmu1c9MFV9ETANNhB8zEyBhpU&bust=1753454806"
+    },
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/abaf0f97-e660-4889-a143-f2c8d8c8a153.jpg?versionId=56uJw0n.1u0DUFCLEHx7Ot6vAlaAz3dC&bust=1753454815&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/abaf0f97-e660-4889-a143-f2c8d8c8a153.jpg?versionId=56uJw0n.1u0DUFCLEHx7Ot6vAlaAz3dC&bust=1753454815&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/abaf0f97-e660-4889-a143-f2c8d8c8a153.jpg?versionId=56uJw0n.1u0DUFCLEHx7Ot6vAlaAz3dC&bust=1753454815&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-fbde-403e-a630-d97738a09764/image/abaf0f97-e660-4889-a143-f2c8d8c8a153.jpg?versionId=56uJw0n.1u0DUFCLEHx7Ot6vAlaAz3dC&bust=1753454815"
+    }
+  ],
+  "tags": [
+    "Affectionate",
+    "Athletic",
+    "Friendly",
+    "Playful"
+  ],
+  "contact_info": {
+    "email": "bchs@santel.net",
+    "phone": "(605) 352-8955",
+    "address": {
+      "address1": "5063 Dakota Avenue South",
+      "address2": null,
+      "city": "Huron",
+      "state": "SD",
+      "postcode": "57350",
+      "country": "US"
+    }
+  },
+  "city": "Huron",
+  "state": "SD",
+  "postcode": "57350",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 82,
+  "organization_animal_id": "7-22-25 2",
+  "last_updated_at": "2025-07-25T15:17:25.124Z",
+  "created_at": "2025-07-25T15:17:25.124Z"
+}
+❌ DATABASE TEST FAILED: {
+  code: '23502',
+  details: 'Failing row contains (null, petfinder, SD14, https://www.petfinder.com/dog/camry-77471457/sd/huron/beadle-cou..., Camry, Dog, Dog, Siberian Husky, null, f, f, Adult, Female, Medium, Short, Red / Chestnut / Orange, White / Cream, null, adoptable, t, t, null, t, null, null, null, Meet Camry, a beautiful adult dog with lots of love to give! Cam..., [{"full": "https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-..., ["Affectionate", "Athletic", "Friendly", "Playful"], {"email": "bchs@santel.net", "phone": "(605) 352-8955", "address..., Huron, SD, 57350, null, null, 82, 7-22-25 2, 2025-07-25 15:17:25.124+00, 2025-07-25 15:17:25.124+00).',
+  hint: null,
+  message: 'null value in column "id" of relation "dogs" violates not-null constraint'
+}
+❌ Error details: {
+  "code": "23502",
+  "details": "Failing row contains (null, petfinder, SD14, https://www.petfinder.com/dog/camry-77471457/sd/huron/beadle-cou..., Camry, Dog, Dog, Siberian Husky, null, f, f, Adult, Female, Medium, Short, Red / Chestnut / Orange, White / Cream, null, adoptable, t, t, null, t, null, null, null, Meet Camry, a beautiful adult dog with lots of love to give! Cam..., [{\"full\": \"https://dbw3zep4prcju.cloudfront.net/animal/8ef15db7-..., [\"Affectionate\", \"Athletic\", \"Friendly\", \"Playful\"], {\"email\": \"bchs@santel.net\", \"phone\": \"(605) 352-8955\", \"address..., Huron, SD, 57350, null, null, 82, 7-22-25 2, 2025-07-25 15:17:25.124+00, 2025-07-25 15:17:25.124+00).",
+  "hint": null,
+  "message": "null value in column \"id\" of relation \"dogs\" violates not-null constraint"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: null value in column "id" of relation "dogs" violates not-null constraint
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:228:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:489:7)
