@@ -1,27 +1,29 @@
-
 import { NextResponse } from 'next/server';
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabase, isSupabaseAvailable } from '../../../lib/supabase';
 
 export async function GET() {
   try {
     console.log("🧪 Testing Supabase connection...");
-    
+
+    if (!isSupabaseAvailable() || !supabase) {
+      return NextResponse.json({ 
+        success: false, 
+        error: "Supabase is not configured",
+        step: "configuration" 
+      });
+    }
+
     // Test 1: Insert a test record
     const testRecord = {
       address: "0xTEST123456789",
       amount: 0.001,
       timestamp: new Date().toISOString()
     };
-    
+
     const { data: insertData, error: insertError } = await supabase
       .from("winners")
       .insert([testRecord]);
-      
+
     if (insertError) {
       console.error("❌ Insert test failed:", insertError);
       return NextResponse.json({ 
@@ -30,13 +32,13 @@ export async function GET() {
         step: "insert" 
       });
     }
-    
+
     // Test 2: Fetch all records
     const { data: fetchData, error: fetchError } = await supabase
       .from("winners")
       .select("*")
       .order("timestamp", { ascending: false });
-      
+
     if (fetchError) {
       console.error("❌ Fetch test failed:", fetchError);
       return NextResponse.json({ 
@@ -45,7 +47,7 @@ export async function GET() {
         step: "fetch" 
       });
     }
-    
+
     console.log("✅ Supabase test successful!");
     return NextResponse.json({ 
       success: true, 
@@ -53,7 +55,7 @@ export async function GET() {
       allRecords: fetchData,
       totalRecords: fetchData?.length || 0
     });
-    
+
   } catch (error) {
     console.error("❌ Supabase test exception:", error);
     return NextResponse.json({ 

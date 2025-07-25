@@ -164,6 +164,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   // Test with first dog only to verify database structure
   console.log('🧪 Testing database insertion with first dog...');
+  
+  if (dogs.length === 0) {
+    console.log('⚠️ No dogs to sync');
+    return;
+  }
+  
   const testDog = dogs[0];
 
   const testRecord = {
@@ -214,8 +220,10 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   if (testError) {
     console.error('❌ DATABASE TEST FAILED:', testError);
+    console.error('❌ Error details:', JSON.stringify(testError, null, 2));
     console.error('❌ Cannot proceed with sync - database structure issue');
-    return;
+    console.error('❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA');
+    throw new Error('Database test failed: ' + testError.message);
   } else {
     console.log('✅ Database test successful! Proceeding with full sync...');
     addedCount = 1; // Count the test dog
@@ -360,10 +368,57 @@ async function markRemovedDogs() {
   }
 }
 
+async function validateEnvironment() {
+  console.log('🔍 Validating environment variables...');
+  
+  const required = [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY', 
+    'PETFINDER_CLIENT_ID',
+    'PETFINDER_CLIENT_SECRET'
+  ];
+  
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing required environment variables:', missing);
+    throw new Error(`Missing environment variables: ${missing.join(', ')}`);
+  }
+  
+  console.log('✅ All environment variables present');
+}
+
+async function testDatabaseConnection() {
+  console.log('🔗 Testing Supabase connection...');
+  
+  try {
+    const { data, error } = await supabase
+      .from('dogs')
+      .select('count', { count: 'exact', head: true });
+
+    if (error) {
+      console.error('❌ Supabase connection failed:', error);
+      throw new Error('Database connection failed: ' + error.message);
+    }
+
+    console.log(`✅ Database connected! Current dogs: ${data || 0}`);
+    return true;
+  } catch (error) {
+    console.error('❌ Database test failed:', error);
+    throw error;
+  }
+}
+
 async function main() {
   console.log('🐕 Starting dog data sync...');
 
   try {
+    // Validate environment before making any API calls
+    await validateEnvironment();
+    
+    // Test database connection before fetching from Petfinder
+    await testDatabaseConnection();
+    
     const accessToken = await getAccessToken();
 
     // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
