@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       const size = dog.size || 'Unknown size';
       const city = dog.contact?.address?.city || 'Unknown city';
       const state = dog.contact?.address?.state || '';
-      const description = dog.description?.slice(0, 140) || 'No description yet.';
+      const description = dog.description || 'No description yet.';
       const visibilityScore = dog.visibilityScore || 0;
 
       const compositeScore = `**Visibility Score: ${visibilityScore}**`;

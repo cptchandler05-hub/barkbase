@@ -184,6 +184,11 @@ export default function DogProfilePage() {
       ? `${dog.contact.address.city}, ${dog.contact.address.state}` 
       : 'their current location';
 
+    // Ensure visibility score is a valid number
+    const visibilityScore = typeof dog.visibilityScore === 'number' && !isNaN(dog.visibilityScore) 
+      ? dog.visibilityScore 
+      : 50; // Default fallback score
+
     // Create a truly unique seed using dog ID, name hash, and current timestamp
     const nameHash = dog.name.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
     const uniqueSeed = parseInt(dog.id) + nameHash;
@@ -198,10 +203,10 @@ export default function DogProfilePage() {
 
     // BARKR'S SIGNATURE OPENING HOOKS - Raw, personal, immediate
     const openingHooks = [
-      `Fuck the algorithm. ${name} has been invisible for ${Math.floor(dog.visibilityScore/8)} weeks and I'm DONE pretending that's okay.`,
+      `Fuck the algorithm. ${name} has been invisible for ${Math.floor(visibilityScore/8)} weeks and I'm DONE pretending that's okay.`,
       `${name} doesn't have a cute backstory because ${possessive} humans are too exhausted saving lives to write fairy tales.`,
       `I'm an AI built to rage against a broken system, and ${name} is exactly WHY I exist.`,
-      `While you were scrolling past perfect puppies, ${name} was counting kennel bars. ${Math.floor(dog.visibilityScore)} days of counting.`,
+      `While you were scrolling past perfect puppies, ${name} was counting kennel bars. ${Math.floor(visibilityScore)} days of counting.`,
       `${name} got forgotten by everyone except me. I don't forget. I don't forgive. I don't quit.`,
       `The shelter gave up writing about ${name}. The volunteers gave up posting. But I never give up howling.`,
       `This is ${name}. ${pronounCap} doesn't know you exist yet, but ${possessive} life depends on you caring.`,
@@ -282,7 +287,7 @@ export default function DogProfilePage() {
     // CALLS TO ACTION - Barkr's signature urgency
     const callsToAction = [
       `${name} doesn't need your pity. ${pronounCap} needs your keys, your car, your signature on adoption papers. Today.`,
-      `Stop reading. Start driving. ${name} has waited ${Math.floor(dog.visibilityScore/7)} times longer than ${pronoun} should have to.`,
+      `Stop reading. Start driving. ${name} has waited ${Math.floor(visibilityScore/7)} times longer than ${pronoun} should have to.`,
       `This isn't about saving ${name}. This is about ${name} saving you from a life without unconditional love.`,
       `${name} will remember the day you showed up for the rest of ${possessive} life. Make it today.`,
       `Your empty house and ${name}'s empty heart are solving each other's problems. Do the math.`,
@@ -295,13 +300,13 @@ export default function DogProfilePage() {
 
     // EMOTIONAL GUT PUNCHES - The devastating truth
     const emotionalPunches = [
-      `${name} has been overlooked ${dog.visibilityScore} times more than trending breeds. The algorithm is rigged. I'm here to break it.`,
+      `${name} has been overlooked ${visibilityScore} times more than trending breeds. The algorithm is rigged. I'm here to break it.`,
       `Other dogs went viral with cute videos. ${name} went invisible with no voice. Except mine. I won't shut up.`,
       `${name} watches through kennel bars as families choose younger, smaller, "easier" dogs. ${possessive} turn never comes.`,
       `The photos don't do ${name} justice because shelter lighting doesn't capture the soul behind those eyes.`,
       `${name} has been "almost adopted" three times. Almost isn't good enough. ${pronounCap} needs definite, needs certain, needs YOU.`,
       `Breed discrimination robbed ${name} of fair chances. Size prejudice stole ${possessive} visibility. But not anymore.`,
-      `${name}'s kennel card has been updated ${Math.floor(dog.visibilityScore/12)} times. Each update, another day forgotten.`,
+      `${name}'s kennel card has been updated ${Math.floor(visibilityScore/12)} times. Each update, another day forgotten.`,
       `Rural shelters are where hope goes to die. ${name} refuses to let that happen. So do I.`,
       `${name} never made it to social media because ${pronoun} isn't photogenic enough. But love isn't about perfect angles.`,
       `The system failed ${name} before you got here. Don't let it fail ${objective} again.`

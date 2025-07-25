@@ -450,7 +450,7 @@ const urgencyTriggers = [
         const size = dog.size || 'Unknown size';
         const city = dog.contact?.address?.city || 'Unknown city';
         const state = dog.contact?.address?.state || '';
-        const description = dog.description?.slice(0, 140) || 'No description yet.';
+        const description = dog.description || 'No description yet.';
 
         const visibilityScore = calculateVisibilityScore(dog);
         dog.visibilityScore = visibilityScore;
@@ -715,7 +715,7 @@ const urgencyTriggers = [
         const size = dog.size || 'Unknown size';
         const city = dog.contact?.address?.city || 'Unknown city';
         const state = dog.contact?.address?.state || '';
-        const description = dog.description?.slice(0, 140) || 'No description yet.';
+        const description = dog.description || 'No description yet.';
         const visibilityScore = calculateVisibilityScore(dog);
 
         dog.visibilityScore = visibilityScore;
@@ -735,6 +735,7 @@ const urgencyTriggers = [
 
       let reply: string;
 
+```
       if (!updatedMemory.hasSeenResults) {
         // ✅ First time seeing results - show visibility explanation
         reply = `🐾 **How I Rank Dogs:**
