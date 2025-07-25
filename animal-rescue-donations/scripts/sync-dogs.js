@@ -411,6 +411,13 @@ async function testDatabaseConnection() {
 
 async function main() {
   console.log('🐕 Starting dog data sync...');
+  
+  // Check for test mode environment variable
+  const testMode = process.env.TEST_MODE === 'true';
+  
+  if (testMode) {
+    console.log('🧪 RUNNING IN TEST MODE - Limited API calls');
+  }
 
   try {
     // Validate environment before making any API calls
@@ -424,23 +431,30 @@ async function main() {
     // Use expanded rural ZIP coverage for comprehensive invisible dog discovery
     const locations = [];
 
-    // Add 75 random rural ZIPs each run for comprehensive coverage
-    for (let i = 0; i < 75; i++) {
+    if (testMode) {
+      // Test mode: only use 2 locations to minimize API usage
       locations.push(getRandomRuralZip());
-    }
+      locations.push('Austin, TX'); // One rural, one city
+      console.log('🧪 Test mode: Using only 2 locations to preserve API quota');
+    } else {
+      // Full mode: 75 random rural ZIPs + major cities
+      for (let i = 0; i < 75; i++) {
+        locations.push(getRandomRuralZip());
+      }
 
-    // Add major cities for comparison/balance (~10% of searches)
-    const majorCities = [
-      'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-      'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA',
-      'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'Dallas, TX'
-    ];
+      // Add major cities for comparison/balance (~10% of searches)
+      const majorCities = [
+        'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
+        'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA',
+        'Phoenix, AZ', 'Philadelphia, PA', 'San Antonio, TX', 'Dallas, TX'
+      ];
 
-    // Add 8 random major cities
-    for (let i = 0; i < 8; i++) {
-      const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
-      if (!locations.includes(randomCity)) {
-        locations.push(randomCity);
+      // Add 8 random major cities
+      for (let i = 0; i < 8; i++) {
+        const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
+        if (!locations.includes(randomCity)) {
+          locations.push(randomCity);
+        }
       }
     }
 
