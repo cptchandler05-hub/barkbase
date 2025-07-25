@@ -224,14 +224,33 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   console.log('🔑 Record keys:', Object.keys(testRecord));
   console.log('📊 Record has id field:', 'id' in testRecord);
 
-  // Use upsert with petfinder_id as the conflict resolution key
-  const { data: testData, error: testError } = await supabase
+  // First check if dog already exists by petfinder_id
+  const { data: existingTestDog, error: existingError } = await supabase
     .from('dogs')
-    .upsert([testRecord], { 
-      onConflict: 'petfinder_id',
-      ignoreDuplicates: false 
-    })
-    .select();
+    .select('id')
+    .eq('petfinder_id', testRecord.petfinder_id)
+    .single();
+
+  let testData, testError;
+  
+  if (existingTestDog) {
+    // Update existing dog
+    const { data, error } = await supabase
+      .from('dogs')
+      .update(testRecord)
+      .eq('id', existingTestDog.id)
+      .select();
+    testData = data;
+    testError = error;
+  } else {
+    // Insert new dog
+    const { data, error } = await supabase
+      .from('dogs')
+      .insert([testRecord])
+      .select();
+    testData = data;
+    testError = error;
+  }
 
   if (testError) {
     console.error('❌ DATABASE TEST FAILED:', testError);
@@ -288,12 +307,11 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         petfinder_id: dog.id.toString()
       };
 
-      // Check if dog already exists - need to match on organization_id + organization_animal_id or other unique field
+      // Check if dog already exists by petfinder_id
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
         .select('id, last_updated_at')
-        .eq('organization_id', dogRecord.organization_id)
-        .eq('organization_animal_id', dogRecord.organization_animal_id || dog.id.toString())
+        .eq('petfinder_id', dogRecord.petfinder_id)
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
@@ -325,15 +343,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         // Insert new dog
         const { error: insertError } = await supabase
           .from('dogs')
-          .upsert([dogRecord], {
-            onConflict: 'petfinder_id',
-            ignoreDuplicates: false
-          })
+          .insert([dogRecord]);
 
         if (insertError) {
           console.warn(`⚠️ Failed to insert dog ${dogRecord.name}:`, insertError);
-          if (addedCount === 0) {
-            console.error('❌ CRITICAL: First insert failed!');
+          if (addedCount === 1) { // Changed from 0 to 1 since we already added the test dog
+            console.error('❌ CRITICAL: First regular insert failed!');
             console.error('❌ Error code:', insertError.code);
             console.error('❌ Error message:', insertError.message);
             console.error('❌ Error details:', insertError.details);
@@ -356,7 +371,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
           }
         } else {
           addedCount++;
-          if (addedCount === 1) console.log('✅ First dog inserted successfully');
+          if (addedCount === 2) console.log('✅ First regular dog inserted successfully'); // Changed from 1 to 2
         }
       }
     } catch (error) {
