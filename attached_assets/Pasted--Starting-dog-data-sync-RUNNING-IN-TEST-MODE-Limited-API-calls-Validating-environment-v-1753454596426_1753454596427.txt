@@ -1,0 +1,96 @@
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 66002
+📍 Found 100 dogs in 66002
+🔍 Fetching dogs from: Austin, TX
+ 🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure: {
+  "petfinder_id": "77468747",
+  "api_source": "petfinder",
+  "organization_id": "MO229",
+  "url": "https://www.petfinder.com/dog/poppy-77468747/mo/trenton/green-hills-animal-shelter-mo229/?referrer_id=309266f4-4871-4de8-9be8-fa0bd07816e8&utm_source=api&utm_medium=partnership&utm_content=309266f4-4871-4de8-9be8-fa0bd07816e8",
+  "name": "Poppy",
+  "type": "Dog",
+  "species": "Dog",
+  "primary_breed": "Australian Cattle Dog / Blue Heeler",
+  "secondary_breed": "Hound",
+  "is_mixed": true,
+  "is_unknown_breed": false,
+  "age": "Baby",
+  "gender": "Male",
+  "size": "Large",
+  "coat": "Short",
+  "primary_color": null,
+  "secondary_color": null,
+  "tertiary_color": null,
+  "status": "adoptable",
+  "spayed_neutered": true,
+  "house_trained": null,
+  "good_with_children": true,
+  "good_with_dogs": true,
+  "good_with_cats": null,
+  "description": "Meet Poppy! He is 4 months old. He is part of an accidental breeding and the owner wasn’t able to...",
+  "photos": [
+    {
+      "small": "https://dbw3zep4prcju.cloudfront.net/animal/b86a6c35-c1f1-41e7-ba48-d76b76a92cc7/image/941552d6-ba19-4d42-8644-2e58b10620e5.jpg?versionId=r3UcFgO3GXD.dMnCLvEm_7f14FnNODd2&bust=1753446823&width=100",
+      "medium": "https://dbw3zep4prcju.cloudfront.net/animal/b86a6c35-c1f1-41e7-ba48-d76b76a92cc7/image/941552d6-ba19-4d42-8644-2e58b10620e5.jpg?versionId=r3UcFgO3GXD.dMnCLvEm_7f14FnNODd2&bust=1753446823&width=300",
+      "large": "https://dbw3zep4prcju.cloudfront.net/animal/b86a6c35-c1f1-41e7-ba48-d76b76a92cc7/image/941552d6-ba19-4d42-8644-2e58b10620e5.jpg?versionId=r3UcFgO3GXD.dMnCLvEm_7f14FnNODd2&bust=1753446823&width=600",
+      "full": "https://dbw3zep4prcju.cloudfront.net/animal/b86a6c35-c1f1-41e7-ba48-d76b76a92cc7/image/941552d6-ba19-4d42-8644-2e58b10620e5.jpg?versionId=r3UcFgO3GXD.dMnCLvEm_7f14FnNODd2&bust=1753446823"
+    }
+  ],
+  "tags": [
+    "Friendly",
+    "Playful",
+    "Gentle"
+  ],
+  "contact_info": {
+    "email": "greenhillsanimalshelter@gmail.com",
+    "phone": "(660) 359-2700",
+    "address": {
+      "address1": "3041 East 10th Street",
+      "address2": null,
+      "city": "Trenton",
+      "state": "MO",
+      "postcode": "64683",
+      "country": "US"
+    }
+  },
+  "city": "Trenton",
+  "state": "MO",
+  "postcode": "64683",
+  "latitude": null,
+  "longitude": null,
+  "visibility_score": 40,
+  "organization_animal_id": null,
+  "last_updated_at": "2025-07-25T14:42:23.597Z"
+}
+❌ DATABASE TEST FAILED: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'petfinder_id' column of 'dogs' in the schema cache"
+}
+❌ Error details: {
+  "code": "PGRST204",
+  "details": null,
+  "hint": null,
+  "message": "Could not find the 'petfinder_id' column of 'dogs' in the schema cache"
+}
+❌ Cannot proceed with sync - database structure issue
+❌ STOPPING IMMEDIATELY TO PRESERVE API QUOTA
+❌ Dog sync failed: Error: Database test failed: Could not find the 'petfinder_id' column of 'dogs' in the schema cache
+    at syncDogsToDatabase (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:226:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/home/runner/workspace/animal-rescue-donations/scripts/sync-dogs.js:484:7)
