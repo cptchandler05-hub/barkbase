@@ -166,16 +166,59 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 
   if (syncError) {
     console.error('❌ Failed to create sync record:', syncError);
-    console.error('❌ Sync record data:', syncRecord);
-    return;
+    console.error('❌ Error code:', syncError.code);
+    console.error('❌ Error message:', syncError.message);
+    console.error('❌ Error details:', syncError.details);
+    console.error('❌ Sync record data:', JSON.stringify(syncRecord, null, 2));
+    
+    // Continue without sync record for debugging
+    console.log('⚠️ Continuing without sync record for debugging...');
+  } else {
+    console.log('✅ Sync record created:', syncData?.id);
   }
-  
-  console.log('✅ Sync record created:', syncData.id);
 
   let addedCount = 0;
   let updatedCount = 0;
 
-  for (const dog of dogs) {
+  // Test with first dog only to verify database structure
+  console.log('🧪 Testing database insertion with first dog...');
+  const testDog = dogs[0];
+  
+  const testRecord = {
+    petfinder_id: testDog.id.toString(),
+    name: testDog.name || 'Test Dog',
+    breed_primary: testDog.breeds?.primary || 'Mixed Breed',
+    breed_secondary: testDog.breeds?.secondary || null,
+    age: testDog.age || 'Unknown',
+    gender: testDog.gender || 'Unknown',
+    size: testDog.size || 'Unknown',
+    location: `${testDog.contact?.address?.city || ''}, ${testDog.contact?.address?.state || ''}`.trim(),
+    organization_id: testDog.organization_id || '',
+    description: testDog.description || null,
+    photos: testDog.photos?.map(photo => photo.large || photo.medium || photo.small) || [],
+    status: 'available',
+    visibility_score: calculateVisibilityScore(testDog),
+    last_updated_at: new Date().toISOString(),
+    source: source
+  };
+
+  console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
+  
+  const { data: testData, error: testError } = await supabase
+    .from('dogs')
+    .insert([testRecord])
+    .select();
+
+  if (testError) {
+    console.error('❌ DATABASE TEST FAILED:', testError);
+    console.error('❌ Cannot proceed with sync - database structure issue');
+    return;
+  } else {
+    console.log('✅ Database test successful! Proceeding with full sync...');
+    addedCount = 1; // Count the test dog
+  }
+
+  for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
         petfinder_id: dog.id.toString(),
@@ -231,8 +274,25 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         if (insertError) {
           console.warn(`⚠️ Failed to insert dog ${dogRecord.name}:`, insertError);
           if (addedCount === 0) {
-            console.error('❌ First insert error details:', insertError);
-            console.error('❌ Sample dog record:', JSON.stringify(dogRecord, null, 2));
+            console.error('❌ CRITICAL: First insert failed!');
+            console.error('❌ Error code:', insertError.code);
+            console.error('❌ Error message:', insertError.message);
+            console.error('❌ Error details:', insertError.details);
+            console.error('❌ Sample dog record:', JSON.stringify({
+              petfinder_id: dogRecord.petfinder_id,
+              name: dogRecord.name,
+              breed_primary: dogRecord.breed_primary,
+              age: dogRecord.age,
+              gender: dogRecord.gender,
+              size: dogRecord.size,
+              location: dogRecord.location,
+              photos_length: dogRecord.photos.length,
+              description_length: dogRecord.description?.length || 0
+            }, null, 2));
+            
+            // Stop processing on first error to avoid wasting API quota
+            console.error('❌ Stopping sync due to database error');
+            return;
           }
         } else {
           addedCount++;
