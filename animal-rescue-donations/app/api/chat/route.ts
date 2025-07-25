@@ -399,8 +399,13 @@ const urgencyTriggers = [
     console.log(`[🧠 Final Decision] aiIntent: ${aiIntent}, context: ${context}, isAdoptionMode: ${updatedMemory.isAdoptionMode}`);
 
     if (moreRequest) {
+      console.log('[🐾 More Request] Processing more dogs request');
+      console.log('[🐾 Memory Check] Cached dogs count:', updatedMemory.cachedDogs?.length || 0);
+      console.log('[🐾 Memory Check] Seen dogs count:', updatedMemory.seenDogIds?.length || 0);
+
       // 🧠 Check if we have cached dogs - if not, something went wrong with memory
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
+        console.log('[❌ No Cache] No cached dogs available');
         return NextResponse.json({
           content: `Hmm… I don't have any more dogs cached right now 🐶. Try a new search or say a breed + location again.`,
           memory: updatedMemory,
@@ -414,11 +419,24 @@ const urgencyTriggers = [
         }
       }
 
+      // ✅ Sort all cached dogs by visibility score (highest first) before filtering
+      updatedMemory.cachedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+
       const unseenDogs = updatedMemory.cachedDogs.filter(
         (dog: Dog) => !updatedMemory.seenDogIds?.includes(dog.id)
       );
 
+      console.log('[🐾 Filter Check] Unseen dogs count:', unseenDogs.length);
+
       const moreDogs = unseenDogs.slice(0, 10);
+
+      if (moreDogs.length === 0) {
+        console.log('[🐾 No More] All cached dogs have been shown');
+        return NextResponse.json({
+          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [**Adoption Page**](/adopt) to see more!`,
+          memory: updatedMemory,
+        });
+      }
 
       // ✅ Add shown dogs to seen list *immediately*
       if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
@@ -428,19 +446,9 @@ const urgencyTriggers = [
       }
       updatedMemory.hasSeenResults = true;
 
-      if (moreDogs.length === 0) {
-        return NextResponse.json({
-          content: `Looks like I've already shown you all the dogs I could find for now. 🐾 Try a new location or breed—or head to the [**Adoption Page**](/adopt) to see more!`,
-          memory: updatedMemory,
-        });
-      }
-
-      updatedMemory.hasSeenResults = true;
+      console.log('[🐾 Showing] Displaying', moreDogs.length, 'more dogs');
 
       const dogListParts: string[] = [];
-
-      // ✅ Ensure final batch is sorted by visibility score before formatting
-      moreDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
 
       for (const dog of moreDogs) {
         const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
@@ -452,8 +460,7 @@ const urgencyTriggers = [
         const state = dog.contact?.address?.state || '';
         const description = dog.description || 'No description yet.';
 
-        const visibilityScore = calculateVisibilityScore(dog);
-        dog.visibilityScore = visibilityScore;
+        const visibilityScore = dog.visibilityScore || 0;
 
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;

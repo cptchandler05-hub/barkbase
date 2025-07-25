@@ -58,56 +58,59 @@ export async function POST(req: Request) {
         console.log(`[📊 Database] Found ${dbDogs.length} dogs in database`);
 
         // Convert database dogs to expected format and calculate real visibility scores
-        const formattedDogs = dbDogs.map(dog => ({
-          id: dog.petfinder_id,
-          name: dog.name,
-          breeds: { 
-            primary: dog.primary_breed, 
-            secondary: dog.secondary_breed,
-            mixed: dog.is_mixed 
-          },
-          age: dog.age,
-          size: dog.size,
-          gender: dog.gender,
-          photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-            ? dog.photos.map(photo => {
-                if (typeof photo === 'string') {
-                  return { medium: photo };
-                } else if (photo && typeof photo === 'object') {
-                  return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                }
-                return { medium: '/images/barkr.png' };
-              })
-            : [{ medium: '/images/barkr.png' }],
-          contact: { 
-            address: { 
-              city: dog.city || 'Unknown', 
-              state: dog.state || 'Unknown'
+        const formattedDogs = dbDogs.map(dog => {
+          const formattedDog = {
+            id: dog.petfinder_id,
+            name: dog.name,
+            breeds: { 
+              primary: dog.primary_breed, 
+              secondary: dog.secondary_breed,
+              mixed: dog.is_mixed 
+            },
+            age: dog.age,
+            size: dog.size,
+            gender: dog.gender,
+            photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+              ? dog.photos.map(photo => {
+                  if (typeof photo === 'string') {
+                    return { medium: photo };
+                  } else if (photo && typeof photo === 'object') {
+                    return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                  }
+                  return { medium: '/images/barkr.png' };
+                })
+              : [{ medium: '/images/barkr.png' }],
+            contact: { 
+              address: { 
+                city: dog.city || 'Unknown', 
+                state: dog.state || 'Unknown'
+              }
+            },
+            description: dog.description,
+            attributes: {
+              special_needs: dog.special_needs,
+              spayed_neutered: dog.spayed_neutered,
+              house_trained: dog.house_trained,
+              shots_current: dog.shots_current
+            },
+            colors: {
+              primary: dog.primary_color,
+              secondary: dog.secondary_color,
+              tertiary: dog.tertiary_color
+            },
+            environment: {
+              children: dog.good_with_children,
+              dogs: dog.good_with_dogs,
+              cats: dog.good_with_cats
             }
-          },
-          description: dog.description,
-          attributes: {
-            special_needs: dog.special_needs,
-            spayed_neutered: dog.spayed_neutered,
-            house_trained: dog.house_trained,
-            shots_current: dog.shots_current
-          },
-          colors: {
-            primary: dog.primary_color,
-            secondary: dog.secondary_color,
-            tertiary: dog.tertiary_color
-          },
-          environment: {
-            children: dog.good_with_children,
-            dogs: dog.good_with_dogs,
-            cats: dog.good_with_cats
-          }
-        }));
+          };
 
-        // Calculate real visibility scores for all dogs
-        for (const dog of formattedDogs) {
-          dog.visibilityScore = calculateVisibilityScore(dog);
-        }
+          // Always calculate the real visibility score using the proper algorithm
+          formattedDog.visibilityScore = calculateVisibilityScore(formattedDog);
+          console.log(`[🔢 Score] ${formattedDog.name}: ${formattedDog.visibilityScore}`);
+          
+          return formattedDog;
+        });
 
         // Sort by visibility score (highest first - most invisible)
         formattedDogs.sort((a, b) => (b.visibilityScore || 0) - (a.visibilityScore || 0));

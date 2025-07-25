@@ -7,17 +7,19 @@ const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { dogId: string } }
+  { params }: { params: Promise<{ dogId: string }> | { dogId: string } }
 ) {
-  // Handle both sync and async params
+  // Handle both sync and async params properly
   const resolvedParams = await Promise.resolve(params);
   const { dogId } = resolvedParams;
 
   console.log('[🐕 Dog API] Raw params:', resolvedParams);
   console.log('[🐕 Dog API] Extracted dogId:', dogId);
+  console.log('[🐕 Dog API] Type of dogId:', typeof dogId);
+  console.log('[🐕 Dog API] dogId truthy check:', !!dogId);
 
-  if (!dogId || dogId === 'undefined') {
-    console.error('[❌ Dog API] No valid dogId provided. Received:', dogId);
+  if (!dogId || dogId === 'undefined' || typeof dogId !== 'string') {
+    console.error('[❌ Dog API] No valid dogId provided. Received:', dogId, 'Type:', typeof dogId);
     return NextResponse.json({ error: 'Dog ID is required' }, { status: 400 });
   }
 
