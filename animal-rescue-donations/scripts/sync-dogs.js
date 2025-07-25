@@ -167,43 +167,22 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   const testDog = dogs[0];
 
   const testRecord = {
-    api_source: source,
-    organization_id: testDog.organization_id || '',
-    organization_animal_id: testDog.id.toString(),
-    url: testDog.url || '',
+    petfinder_id: testDog.id.toString(),
     name: testDog.name || 'Test Dog',
-    type: 'Dog',
-    species: testDog.species || 'Dog',
-    primary_breed: testDog.breeds?.primary || 'Mixed Breed',
-    secondary_breed: testDog.breeds?.secondary || null,
-    is_mixed: testDog.breeds?.mixed || false,
-    is_unknown_breed: testDog.breeds?.unknown || false,
+    breed_primary: testDog.breeds?.primary || 'Mixed Breed',
+    breed_secondary: testDog.breeds?.secondary || null,
     age: testDog.age || 'Unknown',
     gender: testDog.gender || 'Unknown',
     size: testDog.size || 'Unknown',
-    coat: testDog.coat || null,
-    primary_color: testDog.colors?.primary || null,
-    secondary_color: testDog.colors?.secondary || null,
-    tertiary_color: testDog.colors?.tertiary || null,
-    status: testDog.status || 'adoptable',
-    spayed_neutered: testDog.attributes?.spayed_neutered || null,
-    house_trained: testDog.attributes?.house_trained || null,
-    special_needs: testDog.attributes?.special_needs || null,
-    shots_current: testDog.attributes?.shots_current || null,
-    good_with_children: testDog.environment?.children || null,
-    good_with_dogs: testDog.environment?.dogs || null,
-    good_with_cats: testDog.environment?.cats || null,
+    location: `${testDog.contact?.address?.city || 'Unknown'}, ${testDog.contact?.address?.state || 'Unknown'}`,
+    organization_id: testDog.organization_id || '',
     description: testDog.description || null,
-    photos: testDog.photos || [],
-    tags: testDog.tags || [],
-    contact_info: testDog.contact || {},
-    city: testDog.contact?.address?.city || null,
-    state: testDog.contact?.address?.state || null,
-    postcode: testDog.contact?.address?.postcode || null,
-    latitude: null,
-    longitude: null,
+    photos: testDog.photos?.map(p => p.medium || p.large || p.small || p.full) || [],
+    status: 'available',
     visibility_score: calculateVisibilityScore(testDog),
-    last_updated_at: new Date().toISOString()
+    last_updated: new Date().toISOString(),
+    source: 'petfinder',
+    raw_data: testDog
   };
 
   console.log('🧪 Test record structure:', JSON.stringify(testRecord, null, 2));
@@ -225,50 +204,29 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   for (const dog of dogs.slice(1)) { // Skip first dog since we already tested it
     try {
       const dogRecord = {
-        api_source: source,
-        organization_id: dog.organization_id || '',
-        organization_animal_id: dog.id.toString(),
-        url: dog.url || '',
+        petfinder_id: dog.id.toString(),
         name: dog.name || 'Unknown',
-        type: 'Dog',
-        species: dog.species || 'Dog',
-        primary_breed: dog.breeds?.primary || 'Mixed Breed',
-        secondary_breed: dog.breeds?.secondary || null,
-        is_mixed: dog.breeds?.mixed || false,
-        is_unknown_breed: dog.breeds?.unknown || false,
+        breed_primary: dog.breeds?.primary || 'Mixed Breed',
+        breed_secondary: dog.breeds?.secondary || null,
         age: dog.age || 'Unknown',
         gender: dog.gender || 'Unknown',
         size: dog.size || 'Unknown',
-        coat: dog.coat || null,
-        primary_color: dog.colors?.primary || null,
-        secondary_color: dog.colors?.secondary || null,
-        tertiary_color: dog.colors?.tertiary || null,
-        status: dog.status || 'adoptable',
-        spayed_neutered: dog.attributes?.spayed_neutered || null,
-        house_trained: dog.attributes?.house_trained || null,
-        special_needs: dog.attributes?.special_needs || null,
-        shots_current: dog.attributes?.shots_current || null,
-        good_with_children: dog.environment?.children || null,
-        good_with_dogs: dog.environment?.dogs || null,
-        good_with_cats: dog.environment?.cats || null,
+        location: `${dog.contact?.address?.city || 'Unknown'}, ${dog.contact?.address?.state || 'Unknown'}`,
+        organization_id: dog.organization_id || '',
         description: dog.description || null,
-        photos: dog.photos || [],
-        tags: dog.tags || [],
-        contact_info: dog.contact || {},
-        city: dog.contact?.address?.city || null,
-        state: dog.contact?.address?.state || null,
-        postcode: dog.contact?.address?.postcode || null,
-        latitude: null,
-        longitude: null,
+        photos: dog.photos?.map(p => p.medium || p.large || p.small || p.full) || [],
+        status: 'available',
         visibility_score: calculateVisibilityScore(dog),
-        last_updated_at: new Date().toISOString()
+        last_updated: new Date().toISOString(),
+        source: 'petfinder',
+        raw_data: dog
       };
 
       // Check if dog already exists
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
-        .select('id, last_updated_at')
-        .eq('organization_animal_id', dogRecord.organization_animal_id)
+        .select('id, last_updated')
+        .eq('petfinder_id', dogRecord.petfinder_id)
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
