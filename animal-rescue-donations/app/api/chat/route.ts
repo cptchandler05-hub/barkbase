@@ -561,7 +561,7 @@ const urgencyTriggers = [
                   size: dog.size,
                   gender: dog.gender,
                   photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-                    ? dog.photos.map(photo => {
+                    ? dog.photos.map((photo: any) => {
                         if (typeof photo === 'string') {
                           return { medium: photo };
                         } else if (photo && typeof photo === 'object') {
@@ -797,7 +797,7 @@ const urgencyTriggers = [
               size: dog.size,
               gender: dog.gender,
               photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-                ? dog.photos.map(photo => {
+                ? dog.photos.map((photo: any) => {
                     if (typeof photo === 'string') {
                       return { medium: photo };
                     } else if (photo && typeof photo === 'object') {
@@ -1067,7 +1067,7 @@ const urgencyTriggers = [
                 size: dog.size,
                 gender: dog.gender,
                 photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-                  ? dog.photos.map(photo => {
+                  ? dog.photos.map((photo: any) => {
                       if (typeof photo === 'string') {
                         return { medium: photo };
                       } else if (photo && typeof photo === 'object') {
