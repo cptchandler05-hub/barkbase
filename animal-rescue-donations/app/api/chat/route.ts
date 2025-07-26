@@ -223,8 +223,31 @@ const urgencyTriggers = [
     // 🧠 Trust the AI intent detection - don't override it just because breed/location was extracted
     let aiIntent: 'adoption' | 'general' = aiExtracted.intent;
 
+    // Check for invisible dogs requests that should always be adoption mode
+    const missionIntentPhrases = [
+      'invisible dogs',
+      'forgotten dogs',
+      'overlooked dogs',
+      'dogs in danger',
+      'underdogs',
+      'rural dogs',
+      'the dogs no one sees',
+      'longest waiting',
+      'show me the invisible dogs',
+      'help the ones nobody sees',
+      'most invisible',
+      'show me the most invisible',
+    ];
+
+    const missionIntentDetected = missionIntentPhrases.some(p => lastMessage.toLowerCase().includes(p));
+
+    // Force adoption mode for invisible dogs requests
+    if (missionIntentDetected) {
+      console.log("[🧠 Mission Intent] Invisible dogs request detected, forcing adoption mode");
+      aiIntent = 'adoption';
+    }
     // Only override to adoption if we have strong adoption context in memory
-    if (aiIntent === 'general' && memory?.breed && memory?.location && memory?.isAdoptionMode) {
+    else if (aiIntent === 'general' && memory?.breed && memory?.location && memory?.isAdoptionMode) {
       console.log("[🧠 Override] General intent but strong adoption context in memory");
       aiIntent = 'adoption';
     }
@@ -741,21 +764,6 @@ const urgencyTriggers = [
         fullLocation = ruralZip;
       }
 
-      const missionIntentPhrases = [
-        'invisible dogs',
-        'forgotten dogs',
-        'overlooked dogs',
-        'dogs in danger',
-        'underdogs',
-        'rural dogs',
-        'the dogs no one sees',
-        'longest waiting',
-        'show me the invisible dogs',
-        'help the ones nobody sees',
-        'most invisible',
-        'show me the most invisible',
-      ];
-
       // 🧠 Garbage input fallback
       const badPhrases = [
         'hi', 'hey', 'hello', 'yes', 'no',
@@ -764,8 +772,6 @@ const urgencyTriggers = [
 
       const last = lastMessage.toLowerCase().trim();
       const looksUseless = badPhrases.some(p => last.includes(p)) || last.length <= 12;
-
-      const missionIntentDetected = missionIntentPhrases.some(p => last.includes(p));
 
       if (missionIntentDetected) {
         // For invisible dogs requests, fetch from database based ONLY on visibility score
