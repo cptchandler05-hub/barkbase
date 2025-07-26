@@ -828,7 +828,7 @@ const urgencyTriggers = [
                 }));
                 allDogs = allDogs.concat(formattedDbDogs);
               }
-            
+
 
             // If we need more dogs or no breed specified, search Petfinder
             if (allDogs.length < 50 || !normalizedBreed) {

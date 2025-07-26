@@ -120,6 +120,11 @@ export default function RafflePage() {
       setWinners(prev => [newWinner, ...prev]);
       setPlayBackflip(true);
       setTimeout(() => setPlayBackflip(false), 2000);
+      
+      // Auto-refresh page after 15 seconds to show new raffle
+      setTimeout(() => {
+        window.location.reload();
+      }, 15000);
     }
 
     return (
@@ -127,7 +132,10 @@ export default function RafflePage() {
         🎉 Congratulations to <strong>{shortWinner}</strong>!<br />
         <strong>🏆 They won:</strong> {halfPot} ETH<br />
         <strong>🐶 And {halfPot} ETH goes to support the mission & our featured dog rescue!</strong><br />
-        Everybody wins! A new raffle will begin soon...
+        Everybody wins! A new raffle is starting now...
+        <div className="text-sm mt-2 text-green-700">
+          Page will refresh in 15 seconds to show the new raffle timer
+        </div>
       </div>
     );
   };
