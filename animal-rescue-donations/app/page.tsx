@@ -40,14 +40,14 @@ export default function Page() {
       inputRef.current.focus();
     }
   }, [messages, hasUserInteracted]);
-  
+
   const [input, setInput] = useState("");
 
   const [location, setLocation] = useState<string | null>(null);
   const [breed, setBreed] = useState<string | null>(null);
 
   const [memory, setMemory] = useState<any | null>(null);
-  
+
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
@@ -89,26 +89,41 @@ export default function Page() {
 
   // Show most invisible dogs from rural areas
   const handleShowInvisibleDogs = async () => {
-    setHasUserInteracted(true);
     setLoading(true);
-    setShouldScroll(true);
-
     try {
-      const res = await fetch("/api/invisible-dogs", {
+      // Use the chat endpoint instead of the invisible-dogs endpoint for consistency
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            ...messages,
+            { role: "user", content: "show me the most invisible dogs" }
+          ],
+          memory: memory
+        }),
       });
 
-      const data = await res.json();
-      const content = data.content || "";
+      if (!response.ok) {
+        throw new Error("Failed to fetch invisible dogs");
+      }
+
+      const data = await response.json();
+      const content = data.content;
 
       if (content && content.trim().length > 1) {
-        setMessages((prev) => [...prev, { role: "assistant", content }]);
+        // Add both the user message and assistant response
+        setMessages((prev) => [
+          ...prev,
+          { role: "user", content: "show me the most invisible dogs" },
+          { role: "assistant", content }
+        ]);
         setShouldScroll(true);
-        
+
         // Update memory if provided
         if (data.memory) {
           setMemory(data.memory);
+          console.log("[🖥️ Frontend received memory]:", data.memory);
         }
       } else {
         setMessages((prev) => [
@@ -129,11 +144,12 @@ export default function Page() {
           content: "Something went wrong while searching for invisible dogs. Please try again.",
         },
       ]);
+      setShouldScroll(true);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleSend = async () => {
     if (!input.trim()) return;
     // Block short garbage inputs locally too
@@ -156,7 +172,7 @@ export default function Page() {
       return;
     }
     lastRequestRef.current = currentInput;
-    
+
     setHasUserInteracted(true);
     const newMessages = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
@@ -184,7 +200,7 @@ export default function Page() {
           memory: currentMemory,
         }),
       });
- 
+
       const data = await res.json();
       const content = data.content || "";
 
@@ -197,7 +213,7 @@ export default function Page() {
         }
 
         setMemory(data.memory);
-        
+
         // Update individual state for backward compatibility, with basic validation
         if (
           data.memory.location &&
@@ -492,7 +508,7 @@ export default function Page() {
                       </button>
                     </div>
 
-                  
+
                   </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">

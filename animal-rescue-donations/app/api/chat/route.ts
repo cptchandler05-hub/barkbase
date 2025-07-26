@@ -315,24 +315,24 @@ const urgencyTriggers = [
       updatedMemory.location = aiExtracted.location;
       updatedMemory.seenDogIds = [];
       updatedMemory.cachedDogs = [];
+      updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
     } else if (isValidLocationInput(updatedMemory.location)) {
       fullLocation = updatedMemory.location;
     }
 
-    if (isValidBreed(aiExtracted.breed) && !moreRequest) {
-      // Only clear cache if this is actually a different breed
-      if (aiExtracted.breed !== updatedMemory.breed) {
+    if (aiExtracted.breed && isValidBreed(aiExtracted.breed) && !moreRequest) {
+        if (aiExtracted.breed !== updatedMemory.breed) {
+          console.warn('[🔷 Barkr] New breed provided, wiping previous:', updatedMemory.breed);
+          updatedMemory.breed = aiExtracted.breed;
+          updatedMemory.hasSeenResults = false;
+          updatedMemory.seenDogIds = [];
+          updatedMemory.cachedDogs = [];
+          updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
+        }
         fullBreed = aiExtracted.breed;
-        updatedMemory.breed = aiExtracted.breed;
-        updatedMemory.hasSeenResults = false;
-        updatedMemory.seenDogIds = [];
-        updatedMemory.cachedDogs = [];
-      } else {
-        fullBreed = aiExtracted.breed;
+      } else if (aiExtracted.breed && !moreRequest) {
+        console.warn('[⚠️ Barkr] Invalid breed parsed:', aiExtracted.breed);
       }
-    } else if (isValidBreed(updatedMemory.breed)) {
-      fullBreed = updatedMemory.breed;
-    }
 
     const possibleNewLocation = aiExtracted.location || null;
 
@@ -346,16 +346,17 @@ const urgencyTriggers = [
 {
       // 🧠 Only update location if valid and new
       if (aiExtracted.location && aiExtracted.location !== updatedMemory.location && !moreRequest) {
-        console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
-        if (isValidLocationInput(aiExtracted.location)) {
-          updatedMemory.location = aiExtracted.location;
-          fullLocation = aiExtracted.location;
-          updatedMemory.seenDogIds = [];
-          updatedMemory.cachedDogs = [];
-        } else {
-          console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
+          console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
+          if (isValidLocationInput(aiExtracted.location)) {
+            updatedMemory.location = aiExtracted.location;
+            fullLocation = aiExtracted.location;
+            updatedMemory.seenDogIds = [];
+            updatedMemory.cachedDogs = [];
+            updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
+          } else {
+            console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
+          }
         }
-      }
     }
     // 🧠 Only update breed if valid and new (but don't clear on "more dogs" requests)
     if (aiExtracted.breed && isValidBreed(aiExtracted.breed) && !moreRequest) {
@@ -365,6 +366,7 @@ const urgencyTriggers = [
         updatedMemory.hasSeenResults = false;
         updatedMemory.seenDogIds = [];
         updatedMemory.cachedDogs = [];
+        updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
       }
       fullBreed = aiExtracted.breed;
     } else if (aiExtracted.breed && !moreRequest) {
@@ -410,7 +412,7 @@ const urgencyTriggers = [
       // If we have cached dogs (like from invisible dogs button), use them first
       if (updatedMemory.cachedDogs && updatedMemory.cachedDogs.length > 0) {
         console.log('[🐾 Using Cache] Found cached dogs, checking for unseen ones...');
-        
+
         // Ensure all cached dogs have proper visibility scores
         for (const dog of updatedMemory.cachedDogs) {
           if (dog.visibilityScore === undefined || dog.visibilityScore === null) {
@@ -471,7 +473,7 @@ const urgencyTriggers = [
             memory: updatedMemory,
           });
         }
-        
+
         // If no more unseen dogs in cache, inform user
         if (unseenDogs.length === 0) {
           console.log('[🐾 No More Cache] All cached dogs have been shown');
@@ -512,7 +514,7 @@ const urgencyTriggers = [
                 if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
                   cleanBreed = cleanBreed.slice(0, -1);
                 }
-                
+
                 try {
                   const matchedBreed = await findBestBreedMatch(cleanBreed);
                   const searchBreed = matchedBreed || cleanBreed;
@@ -576,7 +578,7 @@ const urgencyTriggers = [
               // If we need more dogs, fetch from Petfinder
               if (allDogs.length < 20) {
                 console.log('[🔍 More Request] Fetching from Petfinder for additional dogs...');
-                
+
                 let normalizedBreed = updatedMemory.breed;
                 if (updatedMemory.breed) {
                   let cleanBreed = updatedMemory.breed.trim();
@@ -769,7 +771,7 @@ const urgencyTriggers = [
 
           if (dbDogs && dbDogs.length > 0) {
             console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'dogs from database');
-            
+
             const formattedDbDogs = dbDogs.map(dog => ({
               id: dog.petfinder_id,
               name: dog.name,
@@ -808,6 +810,7 @@ const urgencyTriggers = [
             updatedMemory.seenDogIds = dogsToShow.map((dog: Dog) => dog.id);
             updatedMemory.hasSeenResults = true;
             updatedMemory.isAdoptionMode = true;
+            updatedMemory.isInvisibleDogsSearch = true;
 
             const dogListParts: string[] = [];
 
@@ -966,20 +969,20 @@ const urgencyTriggers = [
             if (fullBreed) {
               // Normalize breed input consistently
               let cleanBreed = fullBreed.toLowerCase().trim();
-              
+
               // Remove trailing 's' if present and longer than 3 characters
               if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
                 cleanBreed = cleanBreed.slice(0, -1);
               }
-              
+
               // Capitalize first letter of each word for proper matching
               cleanBreed = cleanBreed
                 .split(' ')
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ');
-              
+
               console.log('[🧠 Breed Normalization] Input:', fullBreed, '→ Cleaned:', cleanBreed);
-              
+
               try {
                 const matchedBreed = await findBestBreedMatch(cleanBreed);
                 if (matchedBreed) {
