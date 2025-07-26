@@ -35,6 +35,16 @@ export async function GET() {
 
     await logWinner(winner, prize);
 
+    // Auto-restart the raffle after drawing winner
+    try {
+      console.log('🔄 Restarting raffle automatically...');
+      const restartTx = await contract.startNewRaffle(); // Assuming this method exists
+      await restartTx.wait();
+      console.log('✅ Raffle restarted successfully');
+    } catch (restartError) {
+      console.error('❌ Failed to restart raffle:', restartError);
+      // Continue anyway - manual restart may be needed
+    }
 
     if (entries.length === 0) {
       return NextResponse.json({ status: 'no-entries-draw-executed', txHash: tx.hash, winner, prize });

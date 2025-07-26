@@ -7,10 +7,10 @@ const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
   request: Request,
-  { params }: { params: { dogId: string } }
+  { params }: { params: Promise<{ dogId: string }> }
 ) {
   try {
-    const { dogId } = params;
+    const { dogId } = await params;
     console.log('Fetching dog details for dogId:', dogId);
     console.log('Type of dogId:', typeof dogId);
     console.log('dogId is truthy:', !!dogId);
