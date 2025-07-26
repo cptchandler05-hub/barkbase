@@ -526,6 +526,19 @@ const urgencyTriggers = [
                 }
               }
 
+              // Add location filtering for database search in more requests
+              if (updatedMemory.location) {
+                console.log('[🔄 More Request] Filtering by location:', updatedMemory.location);
+                // Extract state from location for database filtering
+                const stateMatch = updatedMemory.location.match(/([A-Z]{2})$/);
+                if (stateMatch) {
+                  const state = stateMatch[1];
+                  dbQuery = dbQuery.eq('state', state);
+                } else {
+                  console.log('[🔄 More Request] ZIP code provided, relying on Petfinder for location accuracy');
+                }
+              }
+
               const { data: dbDogs, error: dbError } = await dbQuery;
 
               let allDogs: Dog[] = [];
@@ -1017,6 +1030,21 @@ const urgencyTriggers = [
               console.log('[🗄️ Database] Filtering by breed:', normalizedBreed);
               // Use the actual normalized breed name for database search
               dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
+            }
+
+            // Add location filtering for database search
+            if (searchLocation) {
+              console.log('[🗄️ Database] Filtering by location:', searchLocation);
+              // Extract state from location for database filtering
+              const stateMatch = searchLocation.match(/([A-Z]{2})$/);
+              if (stateMatch) {
+                const state = stateMatch[1];
+                dbQuery = dbQuery.eq('state', state);
+              } else {
+                // If it's a ZIP code, we can't easily filter by it in the database
+                // So we'll let Petfinder handle ZIP code searches
+                console.log('[🗄️ Database] ZIP code provided, will rely more on Petfinder for location accuracy');
+              }
             }
 
             const { data: dbDogs, error: dbError } = await dbQuery;

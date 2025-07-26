@@ -91,61 +91,37 @@ export default function Page() {
   const handleShowInvisibleDogs = async () => {
     setLoading(true);
     try {
-      // Use the chat endpoint instead of the invisible-dogs endpoint for consistency
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [
-            ...messages,
-            { role: "user", content: "show me the most invisible dogs" }
-          ],
-          memory: memory
-        }),
-      });
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              messages: [
+                ...messages,
+                { role: 'user', content: 'show me the most invisible dogs' }
+              ],
+              memory: memory
+            }),
+          });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch invisible dogs");
-      }
-
-      const data = await response.json();
-      const content = data.content;
-
-      if (content && content.trim().length > 1) {
-        // Add both the user message and assistant response
-        setMessages((prev) => [
-          ...prev,
-          { role: "user", content: "show me the most invisible dogs" },
-          { role: "assistant", content }
-        ]);
-        setShouldScroll(true);
-
-        // Update memory if provided
-        if (data.memory) {
-          setMemory(data.memory);
-          console.log("[🖥️ Frontend received memory]:", data.memory);
-        }
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: "Sorry, I couldn't fetch the invisible dogs right now. Try again in a moment.",
-          },
-        ]);
-        setShouldScroll(true);
-      }
-    } catch (error) {
-      console.error("Invisible dogs error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Something went wrong while searching for invisible dogs. Please try again.",
-        },
-      ]);
-      setShouldScroll(true);
-    } finally {
+          if (response.ok) {
+            const data = await response.json();
+            if (data.content) {
+              const newMessages = [
+                ...messages,
+                { role: 'user', content: 'show me the most invisible dogs' },
+                { role: 'assistant', content: data.content }
+              ];
+              setMessages(newMessages);
+              if (data.memory) {
+                setMemory(data.memory);
+              }
+            }
+          } else {
+            console.error('Invisible dogs request failed');
+          }
+        } catch (error) {
+          console.error('Invisible dogs error:', error);
+        } finally {
       setLoading(false);
     }
   };
