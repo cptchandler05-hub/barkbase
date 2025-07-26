@@ -46,7 +46,7 @@ interface Dog {
 export default function DogProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const dogId = Array.isArray(params.dogId) ? params.dogId[0] : params.dogId;
+  const dogIdParam = Array.isArray(params.dogId) ? params.dogId[0] : params.dogId;
 
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,24 +54,24 @@ export default function DogProfilePage() {
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   useEffect(() => {
-    if (dogId) {
-      fetchDogDetails();
+    if (dogIdParam) {
+      fetchDogDetails(dogIdParam);
     }
-  }, [dogId]);
+  }, [dogIdParam]);
 
-  const fetchDogDetails = async (dogId: string | undefined, retryCount = 0) => {
+  const fetchDogDetails = async (dogIdParam: string | undefined, retryCount = 0) => {
     try {
-      console.log("Fetching dog details for dogId:", dogId);
-      console.log("Type of dogId:", typeof dogId);
-      console.log("dogId is truthy:", !!dogId);
+      console.log("Fetching dog details for dogId:", dogIdParam);
+      console.log("Type of dogId:", typeof dogIdParam);
+      console.log("dogId is truthy:", !!dogIdParam);
 
-      if (!dogId) {
+      if (!dogIdParam) {
         console.error("No dogId available");
         setLoading(false);
         return;
       }
 
-      const apiUrl = `/api/dog/${dogId}`;
+      const apiUrl = `/api/dog/${dogIdParam}`;
       console.log("Making request to:", apiUrl);
 
       // Add a small delay to avoid overwhelming the API
@@ -91,7 +91,7 @@ export default function DogProfilePage() {
         console.log("Retrying due to auth error...");
         // Wait a moment before retrying
         await new Promise(resolve => setTimeout(resolve, 1000));
-        fetchDogDetails(dogId, retryCount + 1);
+        fetchDogDetails(dogIdParam, retryCount + 1);
         return;
       }
 
@@ -421,7 +421,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
             alt="Loading..."
             className="animate-spin h-16 w-16 opacity-70 mx-auto mb-4"
           />
-          <p className="text-lg text-gray-600">Loading {dogId}'s profile...</p>
+          <p className="text-lg text-gray-600">Loading {dogIdParam}'s profile...</p>
         </div>
       </div>
     );
@@ -475,7 +475,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
           })
         : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }];
 
-  const currentDogId = dogId;
+  const currentDogId = dogIdParam;
 
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
@@ -657,8 +657,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                         <a
                           href={`mailto:${dog.contact.email}?subject=Interested in adopting ${dog.name}`}
                           className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
-                        >
-                          ✉️ Email: {dog.contact.email}                        </a>
+                        >                          ✉️ Email: {dog.contact.email}                        </a>
                       )}
 
                       {/* Petfinder verification link - required for legal compliance */}
