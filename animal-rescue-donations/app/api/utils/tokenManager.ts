@@ -13,7 +13,7 @@ export async function clearTokenCache() {
 export async function getAccessToken(forceRefresh = false): Promise<string | null> {
   try {
     // Check environment variables first
-    if (!process.env.PETFINDER_API_KEY || !process.env.PETFINDER_SECRET) {
+    if (!process.env.PETFINDER_CLIENT_ID || !process.env.PETFINDER_CLIENT_SECRET) {
       console.error('[❌ Token Manager] Missing Petfinder API credentials');
       return null;
     }
@@ -33,8 +33,8 @@ export async function getAccessToken(forceRefresh = false): Promise<string | nul
       },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: process.env.PETFINDER_API_KEY,
-        client_secret: process.env.PETFINDER_SECRET,
+        client_id: process.env.PETFINDER_CLIENT_ID,
+        client_secret: process.env.PETFINDER_CLIENT_SECRET,
       }),
     });
 
