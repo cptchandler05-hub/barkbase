@@ -19,9 +19,9 @@ export async function getAccessToken(forceRefresh = false): Promise<string | nul
     }
 
     // Return cached token if valid and not forcing refresh
-    if (!forceRefresh && cachedToken && typeof cachedToken === 'object' && cachedToken.accessToken && cachedToken.expiresAt > Date.now()) {
+    if (!forceRefresh && cachedToken && tokenExpiresAt > Date.now()) {
       console.log('[🎫 Token Manager] Using cached token');
-      return cachedToken.accessToken;
+      return cachedToken;
     }
 
     console.log('[🎫 Token Manager] Fetching new Petfinder access token...');
@@ -66,14 +66,11 @@ export async function getAccessToken(forceRefresh = false): Promise<string | nul
 
     // Cache the token with expiration (subtract 10 minutes for safety)
     const expiresIn = data.expires_in || 3600; // Default to 1 hour if not provided
-    cachedToken = {
-      accessToken: data.access_token,
-      expiresAt: Date.now() + (expiresIn * 1000) - (10 * 60 * 1000),
-    };
-    tokenExpiresAt = cachedToken.expiresAt;
+    cachedToken = data.access_token;
+    tokenExpiresAt = Date.now() + (expiresIn * 1000) - (10 * 60 * 1000);
 
     console.log('[✅ Token Manager] Got new Petfinder token, expires in', expiresIn, 'seconds');
-    return cachedToken.accessToken;
+    return cachedToken;
 
   } catch (error) {
     console.error('[❌ Token Manager Error]', error);
