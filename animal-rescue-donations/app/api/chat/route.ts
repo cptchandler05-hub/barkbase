@@ -513,10 +513,15 @@ const urgencyTriggers = [
                   cleanBreed = cleanBreed.slice(0, -1);
                 }
                 
-                const matchedBreed = await findBestBreedMatch(cleanBreed);
-                const searchBreed = matchedBreed || cleanBreed;
-                console.log('[🔄 More Request] Using breed for database:', searchBreed);
-                dbQuery = dbQuery.ilike('primary_breed', `%${searchBreed}%`);
+                try {
+                  const matchedBreed = await findBestBreedMatch(cleanBreed);
+                  const searchBreed = matchedBreed || cleanBreed;
+                  console.log('[🔄 More Request] Using breed for database:', searchBreed);
+                  dbQuery = dbQuery.ilike('primary_breed', `%${searchBreed}%`);
+                } catch (error) {
+                  console.error('[❌ Database Breed Match Error]', error);
+                  dbQuery = dbQuery.ilike('primary_breed', `%${cleanBreed}%`);
+                }
               }
 
               const { data: dbDogs, error: dbError } = await dbQuery;
@@ -578,8 +583,13 @@ const urgencyTriggers = [
                   if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
                     cleanBreed = cleanBreed.slice(0, -1);
                   }
-                  const matchedBreed = await findBestBreedMatch(cleanBreed);
-                  normalizedBreed = matchedBreed || cleanBreed;
+                  try {
+                    const matchedBreed = await findBestBreedMatch(cleanBreed);
+                    normalizedBreed = matchedBreed || cleanBreed;
+                  } catch (error) {
+                    console.error('[❌ Petfinder Breed Match Error]', error);
+                    normalizedBreed = cleanBreed;
+                  }
                 }
 
                 const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
@@ -961,13 +971,18 @@ const urgencyTriggers = [
               }
               
               console.log('[🧠 Breed Match] Attempting fuzzy match for:', cleanBreed);
-              const matchedBreed = await findBestBreedMatch(cleanBreed);
-              if (matchedBreed) {
-                normalizedBreed = matchedBreed;
-                console.log('[✅ Breed Match] Matched to:', normalizedBreed);
-              } else {
+              try {
+                const matchedBreed = await findBestBreedMatch(cleanBreed);
+                if (matchedBreed) {
+                  normalizedBreed = matchedBreed;
+                  console.log('[✅ Breed Match] Matched to:', normalizedBreed);
+                } else {
+                  normalizedBreed = cleanBreed;
+                  console.log('[⚠️ Breed Match] No match found, using cleaned:', normalizedBreed);
+                }
+              } catch (error) {
+                console.error('[❌ Breed Match Error]', error);
                 normalizedBreed = cleanBreed;
-                console.log('[⚠️ Breed Match] No match found, using cleaned:', normalizedBreed);
               }
             }
 
@@ -1124,7 +1139,7 @@ const urgencyTriggers = [
             const dogList = dogListParts.join('\n\n---\n\n\n');
 
             let reply: string;
-            if (!updatedMemory.hasSeenResults) {
+            if (!memory.hasSeenResults) {
               // ✅ First time seeing results - show visibility explanation
               reply = `🐾 **How I Rank Dogs:**
 
