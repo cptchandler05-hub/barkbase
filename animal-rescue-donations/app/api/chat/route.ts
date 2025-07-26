@@ -1038,9 +1038,9 @@ const urgencyTriggers = [
               allDogs = allDogs.concat(formattedDbDogs);
             }
 
-            // If we need more dogs or database had insufficient results, search Petfinder
-            if (allDogs.length < 20) {
-              console.log('[🔍 Petfinder] Searching Petfinder API for additional dogs...');
+            // Only call Petfinder if database returned very few results (less than 10)
+            if (allDogs.length < 10) {
+              console.log('[🔍 Petfinder] Database returned only', allDogs.length, 'dogs, searching Petfinder for additional...');
 
               const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
                 method: 'POST',
@@ -1063,8 +1063,10 @@ const urgencyTriggers = [
 
                 allDogs = allDogs.concat(petfinderDogs);
               } else {
-                console.error('[❌ Petfinder Error] API call failed');
+                console.error('[❌ Petfinder Error] API call failed, continuing with database results');
               }
+            } else {
+              console.log('[✅ Database Sufficient] Database returned', allDogs.length, 'dogs, skipping Petfinder');
             }
 
             // Remove duplicates and sort by visibility score
@@ -1091,51 +1093,64 @@ const urgencyTriggers = [
             console.log('[✅ Search Complete] Total unique dogs:', uniqueDogs.length, 'Showing:', dogsToShow.length);
             console.log('[📊 Scores] Sample scores:', dogsToShow.slice(0, 3).map(d => `${d.name}: ${d.visibilityScore}`));
 
-            // Function to create dog response with visibility scores
-            function createDogResponse(dogs: Dog[], memory: any): string {
-              const dogListParts: string[] = [];
+            // Create the response - check if this is first time seeing results
+            const dogListParts: string[] = [];
 
-              for (const dog of dogs) {
-                const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
-                const name = dog.name;
-                const breed = dog.breeds?.primary || 'Mixed';
-                const age = dog.age || 'Unknown age';
-                const size = dog.size || 'Unknown size';
-                const city = dog.contact?.address?.city || 'Unknown city';
-                const state = dog.contact?.address?.state || '';
-                const description = dog.description || 'No description yet.';
+            for (const dog of dogsToShow) {
+              const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
+              const name = dog.name;
+              const breed = dog.breeds?.primary || 'Mixed';
+              const age = dog.age || 'Unknown age';
+              const size = dog.size || 'Unknown size';
+              const city = dog.contact?.address?.city || 'Unknown city';
+              const state = dog.contact?.address?.state || '';
+              const description = dog.description || 'No description yet.';
 
-                // Always calculate the real visibility score using the algorithm
-                const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
-                dog.visibilityScore = visibilityScore;
+              // Always calculate the real visibility score using the algorithm
+              const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
+              dog.visibilityScore = visibilityScore;
 
-                const compositeScore = `**Visibility Score: ${visibilityScore}**`;
-                const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
+              const compositeScore = `**Visibility Score: ${visibilityScore}**`;
+              const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
-                const dogUrl = `/adopt/${dog.id}`;
-                const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
+              const dogUrl = `/adopt/${dog.id}`;
+              const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
 
-                const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
+              const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
 
-                dogListParts.push(dogMarkdown);
-              }
+              dogListParts.push(dogMarkdown);
+            }
 
-              const dogList = dogListParts.join('\n\n---\n\n\n');
+            const dogList = dogListParts.join('\n\n---\n\n\n');
 
-              let reply: string;
-              if (!memory.hasSeenResults) {
-                // ✅ First time seeing results - show visibility explanation
-                reply = `🐾 **How I Rank Dogs:**\n\nMost platforms boost the dogs that already get attention.\n\nI do the opposite.\n\nI built a signal for the invisible ones—the long-overlooked, underpromoted, unchosen.\n\n**High score = high invisibility.** That's who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that's because they don't have one of their own.\n\n🐕 Here's what I dug up from shelters near **${memory.location}**:\n\n${dogList}\n\n💡 Ask for more dogs anytime. I'll keep digging. 🧡`;
-                memory.hasSeenResults = true; // Mark that user has now seen results
-              } else {
-                reply = `🐕 Here's what I dug up from shelters near **${memory.location}**:\n\n${dogList}`; // Subsequent requests - simpler reply
-              }
+            let reply: string;
+            if (!updatedMemory.hasSeenResults) {
+              // ✅ First time seeing results - show visibility explanation
+              reply = `🐾 **How I Rank Dogs:**
 
-              return reply;
+Most platforms boost the dogs that already get attention.
+
+I do the opposite.
+
+I built a signal for the invisible ones—the long-overlooked, underpromoted, unchosen.
+
+**High score = high invisibility.** That's who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that's because they don't have one of their own.
+
+🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:
+
+${dogList}
+
+💡 Ask for more dogs anytime. I'll keep digging. 🧡`;
+
+              // ✅ Mark that user has now seen results
+              updatedMemory.hasSeenResults = true;
+            } else {
+              // ✅ Subsequent requests - simpler reply
+              reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
             }
 
             return NextResponse.json({
-              content: createDogResponse(dogsToShow, updatedMemory),
+              content: reply,
               memory: updatedMemory,
             });
 
@@ -1171,68 +1186,7 @@ const urgencyTriggers = [
         });
       }
 
-      const dogListParts: string[] = [];
-
-      for (const dog of dogs) {
-        const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
-        const name = dog.name;
-        const breed = dog.breeds?.primary || 'Mixed';
-        const age = dog.age || 'Unknown age';
-        const size = dog.size || 'Unknown size';
-        const city = dog.contact?.address?.city || 'Unknown city';
-        const state = dog.contact?.address?.state || '';
-        const description = dog.description || 'No description yet.';
-
-        // Always calculate the real visibility score using the algorithm
-        const visibilityScore = calculateVisibilityScore(dog);
-        dog.visibilityScore = visibilityScore;
-
-        const compositeScore = `**Visibility Score: ${visibilityScore}**`;
-        const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
-
-        const dogUrl = `/adopt/${dog.id}`;
-        const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
-
-        const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
-
-        dogListParts.push(dogMarkdown);
-      }
-
-      const dogList = dogListParts.join('\n\n---\n\n\n');
-
-      let reply: string;
-
-      if (!updatedMemory.hasSeenResults) {
-        // ✅ First time seeing results - show visibility explanation
-        reply = `🐾 **How I Rank Dogs:**
-
-Most platforms boost the dogs that already get attention.
-
-I do the opposite.
-
-I built a signal for the invisible ones—the long-overlooked, underpromoted, unchosen.
-
-**High score = high invisibility.** That's who I show you first. And if you see a picture of my handsome mug instead of certain dogs, that's because they don't have one of their own.
-
-🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:
-
-${dogList}
-
-💡 Ask for more dogs anytime. I'll keep digging. 🧡`;
-
-        // ✅ Mark that user has now seen results
-        updatedMemory.hasSeenResults = true;
-      } else {
-        // ✅ Subsequent requests - simpler reply
-        reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
-      }
-
-
-
-      return NextResponse.json({
-        content: reply,
-        memory: updatedMemory,
-      });
+      // This will be handled by the code above that was just added
     } else {
       // 🐶 GENERAL MODE
       const systemPrompt = BARKR_SYSTEM_PROMPT;
