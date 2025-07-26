@@ -407,6 +407,81 @@ const urgencyTriggers = [
       console.log('[🐾 Memory Check] Location:', updatedMemory.location);
       console.log('[🐾 Memory Check] Breed:', updatedMemory.breed);
 
+      // If we have cached dogs (like from invisible dogs button), use them first
+      if (updatedMemory.cachedDogs && updatedMemory.cachedDogs.length > 0) {
+        console.log('[🐾 Using Cache] Found cached dogs, checking for unseen ones...');
+        
+        // Ensure all cached dogs have proper visibility scores
+        for (const dog of updatedMemory.cachedDogs) {
+          if (dog.visibilityScore === undefined || dog.visibilityScore === null) {
+            dog.visibilityScore = calculateVisibilityScore(dog);
+          }
+        }
+
+        // Sort all cached dogs by visibility score (highest first) before filtering
+        updatedMemory.cachedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+
+        const unseenDogs = updatedMemory.cachedDogs.filter(
+          (dog: Dog) => !updatedMemory.seenDogIds?.includes(dog.id)
+        );
+
+        console.log('[🐾 Filter Check] Unseen dogs count:', unseenDogs.length);
+
+        const moreDogs = unseenDogs.slice(0, 10);
+
+        if (moreDogs.length > 0) {
+          // Add shown dogs to seen list
+          if (!updatedMemory.seenDogIds) updatedMemory.seenDogIds = [];
+          updatedMemory.seenDogIds.push(...moreDogs.map((d: Dog) => d.id));
+          if (updatedMemory.seenDogIds.length > 200) {
+            updatedMemory.seenDogIds = updatedMemory.seenDogIds.slice(-200);
+          }
+
+          console.log('[🐾 Showing] Displaying', moreDogs.length, 'more dogs from cache');
+
+          const dogListParts: string[] = [];
+
+          for (const dog of moreDogs) {
+            const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
+            const name = dog.name;
+            const breed = dog.breeds?.primary || 'Mixed';
+            const age = dog.age || 'Unknown age';
+            const size = dog.size || 'Unknown size';
+            const city = dog.contact?.address?.city || 'Unknown city';
+            const state = dog.contact?.address?.state || '';
+            const description = dog.description || 'No description yet.';
+
+            const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
+            const compositeScore = `**Visibility Score: ${visibilityScore}**`;
+            const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
+
+            const dogUrl = `/adopt/${dog.id}`;
+            const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
+
+            const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
+
+            dogListParts.push(dogMarkdown);
+          }
+
+          const dogList = dogListParts.join('\n\n---\n\n');
+          const remainingCount = updatedMemory.cachedDogs.length - updatedMemory.seenDogIds.length;
+
+          return NextResponse.json({
+            content: `🐕 More pups coming your way:\n\n${dogList}\n\nKeep asking for more if you want to see all ${remainingCount} remaining dogs! 🐾`,
+            memory: updatedMemory,
+          });
+        }
+        
+        // If no more unseen dogs in cache, inform user
+        if (unseenDogs.length === 0) {
+          console.log('[🐾 No More Cache] All cached dogs have been shown');
+          return NextResponse.json({
+            content: `I've shown you all ${updatedMemory.cachedDogs.length} dogs I found. 🐾 Try a new search with different criteria, or check the [**Adoption Page**](/adopt) for more options!`,
+            memory: updatedMemory,
+          });
+        }
+      }
+
       // If no cached dogs, try to fetch fresh ones using memory location/breed
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
         console.log('[🔄 No Cache] Refetching dogs from memory context');
@@ -418,7 +493,7 @@ const urgencyTriggers = [
           try {
              // Try to refetch dogs from database first, then Petfinder
 
-              // First try database
+              // First try database with proper breed normalization
               const supabase = createClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -428,62 +503,85 @@ const urgencyTriggers = [
                 .from('dogs')
                 .select('*')
                 .eq('status', 'adoptable')
+                .order('visibility_score', { ascending: false })
                 .limit(100);
 
               if (updatedMemory.breed) {
-                // Use fuzzy breed matching
-                const matchedBreed = await findBestBreedMatch(updatedMemory.breed);
-                const searchBreed = matchedBreed || updatedMemory.breed;
-                dbQuery = dbQuery.ilike('primary_breed', `*${searchBreed}*`);
+                // Normalize breed for database search
+                let cleanBreed = updatedMemory.breed.trim();
+                if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
+                  cleanBreed = cleanBreed.slice(0, -1);
+                }
+                
+                const matchedBreed = await findBestBreedMatch(cleanBreed);
+                const searchBreed = matchedBreed || cleanBreed;
+                console.log('[🔄 More Request] Using breed for database:', searchBreed);
+                dbQuery = dbQuery.ilike('primary_breed', `%${searchBreed}%`);
               }
 
               const { data: dbDogs, error: dbError } = await dbQuery;
 
               let allDogs: Dog[] = [];
 
-              if (dbDogs && dbDogs.length > 0) {
-              console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
-              const formattedDbDogs = dbDogs.map(dog => ({
-                id: dog.petfinder_id,
-                name: dog.name,
-                breeds: { 
-                  primary: dog.primary_breed, 
-                  secondary: dog.secondary_breed,
-                  mixed: dog.is_mixed 
-                },
-                age: dog.age,
-                size: dog.size,
-                gender: dog.gender,
-                photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-                  ? dog.photos.map(photo => {
-                      if (typeof photo === 'string') {
-                        return { medium: photo };
-                      } else if (photo && typeof photo === 'object') {
-                        return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                      }
-                      return { medium: '/images/barkr.png' };
-                    })
-                  : [{ medium: '/images/barkr.png' }],
-                contact: { 
-                  address: { 
-                    city: dog.city || 'Unknown', 
-                    state: dog.state || 'Unknown'
-                  }
-                },
-                description: dog.description,
-                attributes: {
-                  special_needs: dog.special_needs,
-                  spayed_neutered: dog.spayed_neutered,
-                  house_trained: dog.house_trained,
-                  shots_current: dog.shots_current
-                },
-                visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
-              }));
-              allDogs = allDogs.concat(formattedDbDogs);
-            }
+              if (dbError) {
+                console.error('[❌ Database Error in More Request]', dbError);
+              }
 
-            // If we need more dogs or database had none, fetch from Petfinder
-            if (allDogs.length < 50) {
+              if (dbDogs && dbDogs.length > 0) {
+                console.log('[✅ Database] Found', dbDogs.length, 'dogs in database for more request');
+                const formattedDbDogs = dbDogs.map(dog => ({
+                  id: dog.petfinder_id,
+                  name: dog.name,
+                  breeds: { 
+                    primary: dog.primary_breed, 
+                    secondary: dog.secondary_breed,
+                    mixed: dog.is_mixed 
+                  },
+                  age: dog.age,
+                  size: dog.size,
+                  gender: dog.gender,
+                  photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+                    ? dog.photos.map(photo => {
+                        if (typeof photo === 'string') {
+                          return { medium: photo };
+                        } else if (photo && typeof photo === 'object') {
+                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                        }
+                        return { medium: '/images/barkr.png' };
+                      })
+                    : [{ medium: '/images/barkr.png' }],
+                  contact: { 
+                    address: { 
+                      city: dog.city || 'Unknown', 
+                      state: dog.state || 'Unknown'
+                    }
+                  },
+                  description: dog.description,
+                  attributes: {
+                    special_needs: dog.special_needs,
+                    spayed_neutered: dog.spayed_neutered,
+                    house_trained: dog.house_trained,
+                    shots_current: dog.shots_current
+                  },
+                  visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+                }));
+                allDogs = allDogs.concat(formattedDbDogs);
+              }
+
+              // If we need more dogs, fetch from Petfinder
+              if (allDogs.length < 20) {
+                console.log('[🔍 More Request] Fetching from Petfinder for additional dogs...');
+                
+                let normalizedBreed = updatedMemory.breed;
+                if (updatedMemory.breed) {
+                  let cleanBreed = updatedMemory.breed.trim();
+                  if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
+                    cleanBreed = cleanBreed.slice(0, -1);
+                  }
+                  const matchedBreed = await findBestBreedMatch(cleanBreed);
+                  normalizedBreed = matchedBreed || cleanBreed;
+                }
+
                 const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -853,22 +951,31 @@ const urgencyTriggers = [
       // ✅ Check if we need to fetch new dogs from API
       if (!updatedMemory.cachedDogs || updatedMemory.cachedDogs.length === 0) {
          try {
+            // Normalize breed using fuzzy matching if provided
+            let normalizedBreed = fullBreed;
+            if (fullBreed) {
+              // Remove trailing 's' if present and longer than 3 characters
+              let cleanBreed = fullBreed.trim();
+              if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
+                cleanBreed = cleanBreed.slice(0, -1);
+              }
+              
+              console.log('[🧠 Breed Match] Attempting fuzzy match for:', cleanBreed);
+              const matchedBreed = await findBestBreedMatch(cleanBreed);
+              if (matchedBreed) {
+                normalizedBreed = matchedBreed;
+                console.log('[✅ Breed Match] Matched to:', normalizedBreed);
+              } else {
+                normalizedBreed = cleanBreed;
+                console.log('[⚠️ Breed Match] No match found, using cleaned:', normalizedBreed);
+              }
+            }
+
             // First search database
             const supabase = createClient(
               process.env.NEXT_PUBLIC_SUPABASE_URL!,
               process.env.SUPABASE_SERVICE_ROLE_KEY!
             );
-
-            // Normalize breed using fuzzy matching if provided
-            let normalizedBreed = fullBreed;
-            if (fullBreed) {
-              console.log('[🧠 Breed Match] Attempting fuzzy match for:', fullBreed);
-              const matchedBreed = await findBestBreedMatch(fullBreed);
-              if (matchedBreed) {
-                normalizedBreed = matchedBreed;
-                console.log('[✅ Breed Match] Matched to:', normalizedBreed);
-              }
-            }
 
             console.log('[🗄️ Database] Searching database first...');
             let dbQuery = supabase
@@ -880,77 +987,67 @@ const urgencyTriggers = [
 
             if (normalizedBreed) {
               console.log('[🗄️ Database] Filtering by breed:', normalizedBreed);
-              dbQuery = dbQuery.ilike('primary_breed', `*${normalizedBreed}*`);
+              dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
             }
 
             const { data: dbDogs, error: dbError } = await dbQuery;
 
-              if (dbDogs && dbDogs.length > 0) {
-                console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
-                const formattedDbDogs = dbDogs.map(dog => ({
-                  id: dog.petfinder_id,
-                  name: dog.name,
-                  breeds: { 
-                    primary: dog.primary_breed, 
-                    secondary: dog.secondary_breed,
-                    mixed: dog.is_mixed 
-                  },
-                  age: dog.age,
-                  size: dog.size,
-                  gender: dog.gender,
-                  photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-                    ? dog.photos.map(photo => {
-                        if (typeof photo === 'string') {
-                          return { medium: photo };
-                        } else if (photo && typeof photo === 'object') {
-                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                        }
-                        return { medium: '/images/barkr.png' };
-                      })
-                    : [{ medium: '/images/barkr.png' }],
-                  contact: { 
-                    address: { 
-                      city: dog.city || 'Unknown', 
-                      state: dog.state || 'Unknown'
-                    }
-                  },
-                  description: dog.description,
-                  url: dog.url,
-                  attributes: {
-                    special_needs: dog.special_needs,
-                    spayed_neutered: dog.spayed_neutered,
-                    house_trained: dog.house_trained,
-                    shots_current: dog.shots_current
-                  },
-                  visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
-                }));
-                allDogs = allDogs.concat(formattedDbDogs);
-              }
+            if (dbError) {
+              console.error('[❌ Database Error]', dbError);
+            }
 
+            if (dbDogs && dbDogs.length > 0) {
+              console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
+              const formattedDbDogs = dbDogs.map(dog => ({
+                id: dog.petfinder_id,
+                name: dog.name,
+                breeds: { 
+                  primary: dog.primary_breed, 
+                  secondary: dog.secondary_breed,
+                  mixed: dog.is_mixed 
+                },
+                age: dog.age,
+                size: dog.size,
+                gender: dog.gender,
+                photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+                  ? dog.photos.map(photo => {
+                      if (typeof photo === 'string') {
+                        return { medium: photo };
+                      } else if (photo && typeof photo === 'object') {
+                        return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                      }
+                      return { medium: '/images/barkr.png' };
+                    })
+                  : [{ medium: '/images/barkr.png' }],
+                contact: { 
+                  address: { 
+                    city: dog.city || 'Unknown', 
+                    state: dog.state || 'Unknown'
+                  }
+                },
+                description: dog.description,
+                url: dog.url,
+                attributes: {
+                  special_needs: dog.special_needs,
+                  spayed_neutered: dog.spayed_neutered,
+                  house_trained: dog.house_trained,
+                  shots_current: dog.shots_current
+                },
+                visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+              }));
+              allDogs = allDogs.concat(formattedDbDogs);
+            }
 
-            // If we need more dogs or no breed specified, search Petfinder
-            if (allDogs.length < 50 || !normalizedBreed) {
-              console.log('[🔍 Petfinder] Searching Petfinder API...');
-
-              // Also normalize breed for main search
-              let searchBreed = fullBreed;
-              if (fullBreed && !normalizedBreed) {
-                console.log('[🧠 Breed Match] Attempting fuzzy match for main search:', fullBreed);
-                const matchedBreed = await findBestBreedMatch(fullBreed);
-                if (matchedBreed) {
-                  searchBreed = matchedBreed;
-                  console.log('[✅ Breed Match] Matched to:', searchBreed);
-                }
-              } else if (normalizedBreed) {
-                searchBreed = normalizedBreed;
-              }
+            // If we need more dogs or database had insufficient results, search Petfinder
+            if (allDogs.length < 20) {
+              console.log('[🔍 Petfinder] Searching Petfinder API for additional dogs...');
 
               const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   location: searchLocation ?? '',
-                  breed: searchBreed ?? '',
+                  breed: normalizedBreed ?? '',
                 }),
               });
 
@@ -965,6 +1062,8 @@ const urgencyTriggers = [
                 }
 
                 allDogs = allDogs.concat(petfinderDogs);
+              } else {
+                console.error('[❌ Petfinder Error] API call failed');
               }
             }
 
