@@ -1,51 +1,52 @@
+
 export function calculateVisibilityScore(dog: any): number {
   if (!dog) return 50; // Default fallback score
 
   let score = 0;
 
   try {
-    // Photo scoring (0-40 points)
+    // Photo scoring (0-40 points) - FEWER photos = MORE invisible
     const photoCount = (dog.photos && Array.isArray(dog.photos)) ? dog.photos.length : 0;
-    if (photoCount === 0) score += 0;
-    else if (photoCount === 1) score += 10;
-    else if (photoCount === 2) score += 20;
-    else if (photoCount >= 3) score += 40;
+    if (photoCount === 0) score += 40; // No photos = maximum invisibility boost
+    else if (photoCount === 1) score += 20; // One photo = still quite invisible
+    else if (photoCount === 2) score += 10; // Two photos = somewhat invisible
+    // 3+ photos = 0 points (visible enough)
 
-    // Description scoring (0-30 points)
+    // Description scoring (0-30 points) - SHORTER descriptions = MORE invisible
     const description = dog.description || '';
-    if (description.length === 0) score += 0;
-    else if (description.length < 50) score += 5;
-    else if (description.length < 150) score += 15;
-    else score += 30;
+    if (description.length === 0) score += 30; // No description = maximum invisibility
+    else if (description.length < 50) score += 20; // Very short = high invisibility
+    else if (description.length < 150) score += 10; // Short = some invisibility
+    // 150+ characters = 0 points (well described)
 
-    // Age scoring (0-20 points) - puppies get lower scores to balance visibility
+    // Age scoring (0-20 points) - older dogs are more invisible
     const age = (dog.age || '').toLowerCase();
     switch (age) {
       case 'baby':
-      case 'young': score += 5; break;
-      case 'adult': score += 20; break;
-      case 'senior': score += 15; break;
-      default: score += 10;
+      case 'young': score += 0; break; // Puppies are highly visible
+      case 'adult': score += 10; break; // Adults somewhat invisible
+      case 'senior': score += 20; break; // Seniors most invisible
+      default: score += 5; // Unknown age gets some points
     }
 
-    // Size scoring (0-10 points) - larger dogs often overlooked
+    // Size scoring (0-10 points) - larger dogs are more invisible
     const size = (dog.size || '').toLowerCase();
     switch (size) {
-      case 'small': score += 5; break;
-      case 'medium': score += 7; break;
-      case 'large':
-      case 'extra large': score += 10; break;
-      default: score += 5;
+      case 'small': score += 0; break; // Small dogs are popular
+      case 'medium': score += 3; break; // Medium somewhat invisible
+      case 'large': score += 7; break; // Large dogs face challenges
+      case 'extra large': score += 10; break; // XL dogs most invisible
+      default: score += 2; // Unknown size gets some points
     }
 
-    // Mixed breed bonus
-    if (dog.breeds?.mixed) score += 5;
+    // Mixed breed penalty (mixed breeds are often overlooked)
+    if (dog.breeds?.mixed) score += 8;
 
-    // Special needs bonus
-    if (dog.attributes?.special_needs) score += 10;
+    // Special needs penalty (harder to place)
+    if (dog.attributes?.special_needs) score += 15;
 
-    // Gender bonus (male dogs often adopted less frequently)
-    if (dog.gender === 'Male') score += 4;
+    // Gender penalty (male dogs are adopted less frequently)
+    if (dog.gender === 'Male') score += 6;
 
     // Black Dog Syndrome - darker colored dogs face adoption challenges
     const colors = dog.colors || {};
@@ -57,10 +58,10 @@ export function calculateVisibilityScore(dog: any): number {
         secondaryColor.includes('black') || 
         tertiaryColor.includes('black') ||
         primaryColor.includes('dark')) {
-      score += 8;
+      score += 12;
     }
 
-      // Location type - rural areas get higher scores (less visibility)
+    // Location penalty - rural areas get higher scores (less visibility)
     const city = dog.contact?.address?.city?.toLowerCase() || '';
     const state = dog.contact?.address?.state || '';
     const postcode = dog.contact?.address?.postcode || '';
@@ -71,10 +72,10 @@ export function calculateVisibilityScore(dog: any): number {
         city.includes('township') ||
         city.includes('ville') ||
         city.length < 6) { // Small town names are often shorter
-      score += 6;
+      score += 8;
     }
 
-    // Breed popularity - less popular breeds get higher scores
+    // Breed popularity penalty - less popular breeds get higher scores
     const primaryBreed = dog.breeds?.primary?.toLowerCase() || '';
     const popularBreeds = [
       'golden retriever', 'labrador retriever', 'german shepherd', 'bulldog',
@@ -88,33 +89,33 @@ export function calculateVisibilityScore(dog: any): number {
     );
     
     if (!isPopularBreed && primaryBreed !== 'mixed' && primaryBreed !== '') {
-      score += 9; // Less popular breeds get higher invisibility score
+      score += 12; // Less popular breeds get higher invisibility score
     }
 
-    // Medical history - dogs with health issues are harder to place
+    // Medical history penalties - dogs with health issues are harder to place
     const attributes = dog.attributes || {};
-    if (attributes.shots_current === false) score += 4;
-    if (attributes.spayed_neutered === false) score += 2;
+    if (attributes.shots_current === false) score += 6;
+    if (attributes.spayed_neutered === false) score += 4;
     if (dog.description?.toLowerCase().includes('medical') ||
         dog.description?.toLowerCase().includes('surgery') ||
         dog.description?.toLowerCase().includes('treatment') ||
         dog.description?.toLowerCase().includes('medication')) {
-      score += 10;
+      score += 15;
     }
 
-    // Energy level - high energy dogs may be overlooked by many families
-    if (dog.attributes?.energy_level === 'High') score += 6;
+    // Energy level penalty - high energy dogs may be overlooked by many families
+    if (dog.attributes?.energy_level === 'High') score += 8;
 
-    // Social restrictions - dogs with behavioral limitations
-    if (attributes.good_with_children === false) score += 5;
-    if (attributes.good_with_dogs === false) score += 4;
-    if (attributes.good_with_cats === false) score += 3;
+    // Social restriction penalties - dogs with behavioral limitations
+    if (attributes.good_with_children === false) score += 8;
+    if (attributes.good_with_dogs === false) score += 6;
+    if (attributes.good_with_cats === false) score += 4;
 
-    // House training status
-    if (attributes.house_trained === false) score += 3;
+    // House training penalty
+    if (attributes.house_trained === false) score += 5;
 
-    // Ensure score is within valid range
-    return Math.max(0, Math.min(100, score));
+    // NO MAXIMUM CAP - return the true invisibility score
+    return Math.max(0, score);
 
   } catch (error) {
     console.error('Error calculating visibility score:', error);
