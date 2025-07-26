@@ -60,11 +60,11 @@ export async function searchDogs(location: string, breed?: string, limit = 100) 
       const city = locationParts[0];
       const state = locationParts[1];
 
-      // Fix the query syntax - use proper PostgreSQL format
-      query = query.or(`city.ilike.*${city}*,state.ilike.*${state}*`);
+      // Fix the query syntax - use proper PostgreSQL ilike format
+      query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
     } else {
       // Single location - check both city and state
-      query = query.or(`city.ilike.*${location}*,state.ilike.*${location}*`);
+      query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
     }
 
     if (breed) {

@@ -212,7 +212,51 @@ async function fetchDogsFromLocation(location, accessToken) {
   }
 
   const data = await response.json();
-  return data.animals || [];
+  const dogs = data.animals || [];
+  
+  // For each dog, if description is truncated, fetch full details
+  const dogsWithFullDetails = [];
+  
+  for (const dog of dogs) {
+    try {
+      // Check if description might be truncated (common indicators)
+      const description = dog.description || '';
+      const needsFullDetails = description.length === 0 || 
+                              description.endsWith('...') || 
+                              description.length < 100 ||
+                              description.includes('Contact us for more');
+      
+      if (needsFullDetails) {
+        console.log(`📝 Fetching full details for ${dog.name} (ID: ${dog.id})`);
+        await rateLimitedDelay(); // Rate limit individual dog requests
+        
+        const dogDetailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (dogDetailResponse.ok) {
+          const dogDetailData = await dogDetailResponse.json();
+          dogsWithFullDetails.push(dogDetailData.animal);
+          console.log(`✅ Got full details for ${dog.name}`);
+        } else {
+          console.warn(`⚠️ Failed to get full details for ${dog.name}, using original data`);
+          dogsWithFullDetails.push(dog);
+        }
+      } else {
+        // Description looks complete, use as-is
+        dogsWithFullDetails.push(dog);
+      }
+    } catch (error) {
+      console.warn(`⚠️ Error processing ${dog.name}:`, error.message);
+      dogsWithFullDetails.push(dog); // Use original data as fallback
+    }
+  }
+  
+  console.log(`📋 Processed ${dogsWithFullDetails.length} dogs from ${location}`);
+  return dogsWithFullDetails;
 }
 
 async function syncDogsToDatabase(dogs, source = 'petfinder') {
