@@ -341,6 +341,8 @@ export default function Page() {
         const invisibleDogsMessage = "Show me the most invisible dogs";
         setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
         setInput('');
+        setShouldScroll(true);
+        setHasUserInteracted(true);
         handleSend(invisibleDogsMessage);
         return;
       }
@@ -361,6 +363,8 @@ export default function Page() {
       const invisibleDogsMessage = "Show me the most invisible dogs";
       setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
       setInput('');
+      setShouldScroll(true);
+      setHasUserInteracted(true);
 
       const chatResponse = await fetch('/api/chat', {
         method: 'POST',
@@ -378,6 +382,7 @@ export default function Page() {
       const chatData = await chatResponse.json();
       setMessages(prev => [...prev, { role: 'assistant', content: chatData.content }]);
       setMemory(chatData.memory);
+      setShouldScroll(true);
 
     } catch (error) {
       console.error('[❌ Invisible Dogs Button Error]', error);
@@ -385,6 +390,8 @@ export default function Page() {
       const invisibleDogsMessage = "Show me the most invisible dogs";
       setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
       setInput('');
+      setShouldScroll(true);
+      setHasUserInteracted(true);
       handleSend(invisibleDogsMessage);
     } finally {
       setIsLoading(false);
