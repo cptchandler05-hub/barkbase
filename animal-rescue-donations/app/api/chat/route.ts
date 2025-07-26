@@ -767,13 +767,15 @@ const urgencyTriggers = [
 
       const missionIntentDetected = missionIntentPhrases.some(p => last.includes(p));
 
-      if (!fullBreed && !fullLocation && missionIntentDetected) {
-        // For invisible dogs requests, fetch from database directly without location/breed requirements
+      if (missionIntentDetected) {
+        // For invisible dogs requests, fetch from database based ONLY on visibility score
         try {
           const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!
           );
+
+          console.log('[🔍 Invisible Dogs] Fetching dogs with highest visibility scores...');
 
           const { data: dbDogs, error: dbError } = await supabase
             .from('dogs')
@@ -781,6 +783,11 @@ const urgencyTriggers = [
             .eq('status', 'adoptable')
             .order('visibility_score', { ascending: false })
             .limit(100);
+
+          if (dbError) {
+            console.error('[❌ Invisible Dogs Database Error]', dbError);
+            throw new Error('Database query failed');
+          }
 
           if (dbDogs && dbDogs.length > 0) {
             console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'dogs from database');
@@ -852,18 +859,23 @@ const urgencyTriggers = [
             const dogList = dogListParts.join('\n\n---\n\n');
 
             return NextResponse.json({
-              content: `🐾 **The Most Invisible Dogs**\n\nThese are the dogs the algorithms forgot. The ones with the highest invisibility scores.\n\n${dogList}\n\n💡 Ask for more dogs anytime. I have ${formattedDbDogs.length} total invisible dogs waiting. 🧡`,
+              content: `🐾 **The Most Invisible Dogs**\n\nThese are the dogs the algorithms forgot. The ones with the highest invisibility scores nationwide.\n\n${dogList}\n\n💡 Ask for more dogs anytime. I have ${formattedDbDogs.length} total invisible dogs waiting. 🧡`,
+              memory: updatedMemory,
+            });
+          } else {
+            console.log('[⚠️ Invisible Dogs] No dogs found in database');
+            return NextResponse.json({
+              content: `I couldn't find any dogs in our database right now. This might be because our database is still syncing. Try again in a few minutes, or search for dogs by breed and location instead. 🐾`,
               memory: updatedMemory,
             });
           }
         } catch (error) {
           console.error('[❌ Invisible Dogs Error]', error);
+          return NextResponse.json({
+            content: `Something went wrong while fetching the most invisible dogs. Try again, or search for dogs by breed and location instead. 🐾`,
+            memory: updatedMemory,
+          });
         }
-
-        return NextResponse.json({
-          content: `I see you. And I see them—the ones the system forgot. But I still need a location or breed to sniff them out.\n\nTell me what kind of pup you're drawn to, and give me a ZIP code or city + state to search. 🐾`,
-          memory: updatedMemory,
-        });
       }
 
       if (!fullBreed && !fullLocation && looksUseless) {

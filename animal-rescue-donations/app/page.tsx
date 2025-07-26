@@ -322,6 +322,75 @@ export default function Page() {
     });
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInvisibleDogs = async () => {
+    try {
+      setIsLoading(true);
+
+      // Fetch invisible dogs from dedicated API endpoint
+      const response = await fetch('/api/invisible-dogs');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch invisible dogs');
+      }
+
+      if (!data.dogs || data.dogs.length === 0) {
+        // Fallback to chat API if no dogs found
+        const invisibleDogsMessage = "Show me the most invisible dogs";
+        setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
+        setInput('');
+        handleSend(invisibleDogsMessage);
+        return;
+      }
+
+      // Cache the dogs and create a message that triggers the chat with cached data
+      const invisibleDogsMemory = {
+        ...memory,
+        cachedDogs: data.dogs,
+        seenDogIds: [],
+        hasSeenResults: false,
+        isAdoptionMode: true,
+        isInvisibleDogsSearch: true,
+        location: null,
+        breed: null
+      };
+
+      // Send message to chat API with pre-loaded invisible dogs
+      const invisibleDogsMessage = "Show me the most invisible dogs";
+      setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
+      setInput('');
+
+      const chatResponse = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [...messages, { role: 'user', content: invisibleDogsMessage }],
+          memory: invisibleDogsMemory
+        }),
+      });
+
+      if (!chatResponse.ok) {
+        throw new Error('Chat API failed');
+      }
+
+      const chatData = await chatResponse.json();
+      setMessages(prev => [...prev, { role: 'assistant', content: chatData.content }]);
+      setMemory(chatData.memory);
+
+    } catch (error) {
+      console.error('[❌ Invisible Dogs Button Error]', error);
+      // Fallback to regular chat message
+      const invisibleDogsMessage = "Show me the most invisible dogs";
+      setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
+      setInput('');
+      handleSend(invisibleDogsMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
