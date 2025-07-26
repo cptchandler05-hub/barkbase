@@ -114,7 +114,7 @@ function calculateVisibilityScore(dog) {
     const primaryColor = colors.primary?.toLowerCase() || '';
     const secondaryColor = colors.secondary?.toLowerCase() || '';
     const tertiaryColor = colors.tertiary?.toLowerCase() || '';
-    
+
     if (primaryColor.includes('black') || 
         secondaryColor.includes('black') || 
         tertiaryColor.includes('black') ||
@@ -126,7 +126,7 @@ function calculateVisibilityScore(dog) {
     const city = dog.contact?.address?.city?.toLowerCase() || '';
     const state = dog.contact?.address?.state || '';
     const postcode = dog.contact?.address?.postcode || '';
-    
+
     // Basic rural indicators
     if (city.includes('rural') || 
         city.includes('county') || 
@@ -143,12 +143,12 @@ function calculateVisibilityScore(dog) {
       'poodle', 'beagle', 'rottweiler', 'yorkshire terrier', 'dachshund',
       'siberian husky', 'boxer', 'border collie', 'australian shepherd'
     ];
-    
+
     const isPopularBreed = popularBreeds.some(breed => 
       primaryBreed.includes(breed.replace(' ', '').toLowerCase()) ||
       breed.includes(primaryBreed)
     );
-    
+
     if (!isPopularBreed && primaryBreed !== 'mixed' && primaryBreed !== '') {
       score += 9; // Less popular breeds get higher invisibility score
     }
@@ -330,13 +330,13 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
   }
 
   let testData, testError;
-  
+
   if (existingTestDog) {
     console.log('🔄 Updating existing dog with ID:', existingTestDog.id);
     // Update existing dog (exclude id from update)
     const updateRecord = { ...testRecord };
     delete updateRecord.id; // Make sure id is not in update
-    
+
     const { data, error } = await supabase
       .from('dogs')
       .update(updateRecord)
@@ -349,7 +349,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
     // Insert new dog (id should auto-increment)
     const insertRecord = { ...testRecord };
     delete insertRecord.id; // Absolutely ensure no id field
-    
+
     const { data, error } = await supabase
       .from('dogs')
       .insert([insertRecord])
@@ -413,6 +413,12 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         petfinder_id: dog.id.toString()
       };
 
+      // Calculate visibility score using the algorithm
+      const visibilityScore = calculateVisibilityScore(dogRecord);
+      dogRecord.visibility_score = visibilityScore;
+
+      console.log(`[📊 Score] ${dogRecord.name}: ${visibilityScore}`);
+
       // Check if dog already exists by petfinder_id
       const { data: existingDog, error: checkError } = await supabase
         .from('dogs')
@@ -443,7 +449,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         // Ensure no id field is present - it should auto-increment
         const insertRecord = { ...dogRecord };
         delete insertRecord.id; // Absolutely ensure no id field
-        
+
         // Insert new dog
         const { error: insertError } = await supabase
           .from('dogs')

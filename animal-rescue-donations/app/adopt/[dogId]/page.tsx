@@ -475,6 +475,8 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
           })
         : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }];
 
+  const currentDogId = dogId;
+
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
       <div className="min-h-screen">
@@ -656,8 +658,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                           href={`mailto:${dog.contact.email}?subject=Interested in adopting ${dog.name}`}
                           className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
                         >
-                          ✉️ Email: {dog.contact.email}
-                        </a>
+                          ✉️ Email: {dog.contact.email}                        </a>
                       )}
 
                       {/* Petfinder verification link - required for legal compliance */}

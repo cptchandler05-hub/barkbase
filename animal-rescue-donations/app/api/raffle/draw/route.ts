@@ -25,17 +25,17 @@ export async function GET() {
     const winner = await contract.getLastWinner();
     const potBalance = await provider.getBalance(RAFFLE_CONTRACT_ADDRESS);
     const prize = parseFloat(ethers.formatEther(potBalance)) / 2;
-    
+
     console.log("🎯 DRAW COMPLETED:", {
       winner,
       potBalance: ethers.formatEther(potBalance),
       prize,
       entriesCount: entries.length
     });
-    
+
     await logWinner(winner, prize);
 
-    
+
     if (entries.length === 0) {
       return NextResponse.json({ status: 'no-entries-draw-executed', txHash: tx.hash, winner, prize });
     }

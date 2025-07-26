@@ -417,13 +417,13 @@ const urgencyTriggers = [
 
           try {
              // Try to refetch dogs from database first, then Petfinder
-            
+
               // First try database
               const supabase = createClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.SUPABASE_SERVICE_ROLE_KEY!
               );
-              
+
               let dbQuery = supabase
                 .from('dogs')
                 .select('*')
@@ -511,7 +511,7 @@ const urgencyTriggers = [
 
               updatedMemory.cachedDogs = uniqueDogs;
               console.log('[✅ Refetch] Successfully refetched', uniqueDogs.length, 'dogs');
-            
+
           } catch (error) {
             console.error('[❌ Refetch Error]', error);
           }
@@ -762,7 +762,7 @@ const urgencyTriggers = [
               process.env.NEXT_PUBLIC_SUPABASE_URL!,
               process.env.SUPABASE_SERVICE_ROLE_KEY!
             );
-            
+
             // Normalize breed using fuzzy matching if provided
             let normalizedBreed = fullBreed;
             if (fullBreed) {
@@ -773,7 +773,7 @@ const urgencyTriggers = [
                 console.log('[✅ Breed Match] Matched to:', normalizedBreed);
               }
             }
-            
+
             console.log('[🗄️ Database] Searching database first...');
             let dbQuery = supabase
               .from('dogs')
@@ -835,7 +835,7 @@ const urgencyTriggers = [
             // If we need more dogs or no breed specified, search Petfinder
             if (allDogs.length < 50 || !normalizedBreed) {
               console.log('[🔍 Petfinder] Searching Petfinder API...');
-              
+
               // Also normalize breed for main search
               let searchBreed = fullBreed;
               if (fullBreed && !normalizedBreed) {
@@ -848,7 +848,7 @@ const urgencyTriggers = [
               } else if (normalizedBreed) {
                 searchBreed = normalizedBreed;
               }
-              
+
               const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -857,49 +857,49 @@ const urgencyTriggers = [
                   breed: searchBreed ?? '',
                 }),
               });
-          
+
               if (searchRes.ok) {
                 const searchData = await searchRes.json();
                 const petfinderDogs = searchData.animals || [];
                 console.log('[✅ Petfinder] Found', petfinderDogs.length, 'dogs from Petfinder');
-          
+
                 // Calculate visibility scores for Petfinder dogs
                 for (const dog of petfinderDogs) {
                   dog.visibilityScore = calculateVisibilityScore(dog);
                 }
-          
+
                 allDogs = allDogs.concat(petfinderDogs);
               }
             }
-          
+
             // Remove duplicates and sort by visibility score
             const uniqueDogs = allDogs.filter((dog, index, self) => 
               index === self.findIndex(d => d.id === dog.id)
             );
-          
+
             if (uniqueDogs.length === 0) {
               return NextResponse.json({
                 content: `I searched near **${updatedMemory.location}** for **${updatedMemory.breed}s** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
                 memory: updatedMemory,
               });
             }
-          
+
             // Sort by visibility score (highest first - most invisible)
             uniqueDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
-          
+
             // Cache all dogs, show first 10
             updatedMemory.cachedDogs = uniqueDogs;
             const dogsToShow = uniqueDogs.slice(0, 10);
             updatedMemory.seenDogIds = dogsToShow.map((dog: Dog) => dog.id);
             updatedMemory.hasSeenResults = true;
-          
+
             console.log('[✅ Search Complete] Total unique dogs:', uniqueDogs.length, 'Showing:', dogsToShow.length);
             console.log('[📊 Scores] Sample scores:', dogsToShow.slice(0, 3).map(d => `${d.name}: ${d.visibilityScore}`));
-          
+
             // Function to create dog response with visibility scores
             function createDogResponse(dogs: Dog[], memory: any): string {
               const dogListParts: string[] = [];
-          
+
               for (const dog of dogs) {
                 const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
                 const name = dog.name;
@@ -909,24 +909,24 @@ const urgencyTriggers = [
                 const city = dog.contact?.address?.city || 'Unknown city';
                 const state = dog.contact?.address?.state || '';
                 const description = dog.description || 'No description yet.';
-          
+
                 // Always calculate the real visibility score using the algorithm
                 const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
                 dog.visibilityScore = visibilityScore;
-          
+
                 const compositeScore = `**Visibility Score: ${visibilityScore}**`;
                 const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
-          
+
                 const dogUrl = `/adopt/${dog.id}`;
                 const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
-          
+
                 const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
-          
+
                 dogListParts.push(dogMarkdown);
               }
-          
+
               const dogList = dogListParts.join('\n\n---\n\n\n');
-          
+
               let reply: string;
               if (!memory.hasSeenResults) {
                 // ✅ First time seeing results - show visibility explanation
@@ -935,7 +935,7 @@ const urgencyTriggers = [
               } else {
                 reply = `🐕 Here's what I dug up from shelters near **${memory.location}**:\n\n${dogList}`; // Subsequent requests - simpler reply
               }
-          
+
               return reply;
             }
 
@@ -943,7 +943,7 @@ const urgencyTriggers = [
               content: createDogResponse(dogsToShow, updatedMemory),
               memory: updatedMemory,
             });
-          
+
           } catch (error) {
             console.error('[❌ Search Error]', error);
             return NextResponse.json({
