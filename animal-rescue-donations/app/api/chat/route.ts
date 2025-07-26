@@ -215,7 +215,7 @@ const urgencyTriggers = [
       normalizedMsg.includes('more dogs') ||
       normalizedMsg.includes('show me more');
 
-    let context = classifyContext(messages, updatedMemory);
+    let context = classifyContext(messages, updatedMemory || {});
 
     // 🧠 Run GPT intent + breed/location parser on every message
     const aiExtracted = await extractBreedAndLocationViaAI(lastMessage);
@@ -224,7 +224,7 @@ const urgencyTriggers = [
     let aiIntent: 'adoption' | 'general' = aiExtracted.intent;
 
     // Only override to adoption if we have strong adoption context in memory
-    if (aiIntent === 'general' && memory.breed && memory.location && memory.isAdoptionMode) {
+    if (aiIntent === 'general' && memory?.breed && memory?.location && memory?.isAdoptionMode) {
       console.log("[🧠 Override] General intent but strong adoption context in memory");
       aiIntent = 'adoption';
     }
@@ -256,7 +256,7 @@ const urgencyTriggers = [
     }
     // Keep adoption mode for explicit "more" requests when in adoption context
     else if (
-      memory.isAdoptionMode === true &&
+      memory?.isAdoptionMode === true &&
       (moreRequest || ["more", "more dogs", "show me more", "more please", "another", "next"].includes(recentUserMsg))
     ) {
       aiIntent = 'adoption';
@@ -373,7 +373,7 @@ const urgencyTriggers = [
       console.warn('[⚠️ Barkr] Invalid breed parsed:', aiExtracted.breed);
     }
 
-    if (!fullBreed && isCleanMemoryValue(memory.breed)) {
+    if (!fullBreed && memory?.breed && isCleanMemoryValue(memory.breed)) {
       fullBreed = memory.breed;
     }
 
@@ -390,11 +390,11 @@ const urgencyTriggers = [
     }
 
     // 🧠 Optional console warnings for invalid memory state (Issue 5)
-    if (!updatedMemory.breed && memory.breed && !isValidBreed(memory.breed)) {
+    if (!updatedMemory.breed && memory?.breed && !isValidBreed(memory.breed)) {
       console.warn('[⚠️ Barkr Warning] Previous breed memory was invalid and has been wiped:', memory.breed);
     }
 
-    if (!updatedMemory.location && memory.location && memory.location.length > 60) {
+    if (!updatedMemory.location && memory?.location && memory.location.length > 60) {
       console.warn('[⚠️ Barkr Warning] Previous location memory was invalid and has been wiped:', memory.location);
     }
 
@@ -769,6 +769,10 @@ const urgencyTriggers = [
 
       if (missionIntentDetected) {
         // For invisible dogs requests, fetch from database based ONLY on visibility score
+        // Clear any breed/location requirements for invisible dogs search
+        updatedMemory.breed = null;
+        updatedMemory.location = null;
+        
         try {
           const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,

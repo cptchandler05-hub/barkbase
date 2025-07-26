@@ -63,8 +63,6 @@ export function calculateVisibilityScore(dog: any): number {
 
     // Location penalty - rural areas get higher scores (less visibility)
     const city = dog.contact?.address?.city?.toLowerCase() || '';
-    const state = dog.contact?.address?.state || '';
-    const postcode = dog.contact?.address?.postcode || '';
     
     // Basic rural indicators
     if (city.includes('rural') || 
