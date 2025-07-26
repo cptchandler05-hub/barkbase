@@ -144,16 +144,29 @@ export async function POST(req: Request) {
     }
 
     if (breed && breed.toLowerCase() !== 'null') {
-      const normalizedBreed =
-        breed.endsWith('s') && breed.length > 3
-          ? breed.slice(0, -1)
-          : breed;
+      // Normalize breed input
+      let normalizedBreed = breed.toLowerCase().trim();
+      
+      // Remove trailing 's' if present and longer than 3 characters
+      if (normalizedBreed.endsWith('s') && normalizedBreed.length > 3) {
+        normalizedBreed = normalizedBreed.slice(0, -1);
+      }
+      
+      // Capitalize first letter of each word
+      normalizedBreed = normalizedBreed
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      console.log(`[🧠 Breed Normalization] "${breed}" → "${normalizedBreed}"`);
 
       const bestMatch = await findBestBreedMatch(normalizedBreed);
       if (bestMatch) {
-        const safeBreed = bestMatch;
-        console.log(`[🐾 Fuzzy Breed Match] "${breed}" → "${bestMatch}"`);
-        params.append('breed', safeBreed);
+        console.log(`[✅ Breed Match Success] "${normalizedBreed}" → "${bestMatch}"`);
+        params.append('breed', bestMatch);
+      } else {
+        console.log(`[⚠️ Breed Match Failed] No match found for "${normalizedBreed}", skipping breed filter`);
+        // Don't append breed parameter if no match found - this prevents API errors
       }
     }
 

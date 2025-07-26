@@ -964,25 +964,35 @@ const urgencyTriggers = [
             // Normalize breed using fuzzy matching if provided
             let normalizedBreed = fullBreed;
             if (fullBreed) {
+              // Normalize breed input consistently
+              let cleanBreed = fullBreed.toLowerCase().trim();
+              
               // Remove trailing 's' if present and longer than 3 characters
-              let cleanBreed = fullBreed.trim();
               if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
                 cleanBreed = cleanBreed.slice(0, -1);
               }
               
-              console.log('[🧠 Breed Match] Attempting fuzzy match for:', cleanBreed);
+              // Capitalize first letter of each word for proper matching
+              cleanBreed = cleanBreed
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+              
+              console.log('[🧠 Breed Normalization] Input:', fullBreed, '→ Cleaned:', cleanBreed);
+              
               try {
                 const matchedBreed = await findBestBreedMatch(cleanBreed);
                 if (matchedBreed) {
                   normalizedBreed = matchedBreed;
-                  console.log('[✅ Breed Match] Matched to:', normalizedBreed);
+                  console.log('[✅ Breed Match Success] Matched to:', normalizedBreed);
                 } else {
                   normalizedBreed = cleanBreed;
-                  console.log('[⚠️ Breed Match] No match found, using cleaned:', normalizedBreed);
+                  console.log('[⚠️ Breed Match] No fuzzy match found, using cleaned:', normalizedBreed);
                 }
               } catch (error) {
                 console.error('[❌ Breed Match Error]', error);
                 normalizedBreed = cleanBreed;
+                console.log('[🔄 Breed Fallback] Using cleaned breed:', normalizedBreed);
               }
             }
 
@@ -1002,6 +1012,7 @@ const urgencyTriggers = [
 
             if (normalizedBreed) {
               console.log('[🗄️ Database] Filtering by breed:', normalizedBreed);
+              // Use the actual normalized breed name for database search
               dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
             }
 
