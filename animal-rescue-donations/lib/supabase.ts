@@ -52,8 +52,9 @@ export async function searchDogs(location?: string, breed?: string, limit = 100)
     .eq('status', 'adoptable')
     .order('visibility_score', { ascending: false });
 
+  // Add location filter (search both city and state)
   if (location) {
-    query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
+    query = query.or(`city.ilike.*${location}*,state.ilike.*${location}*`);
   }
 
   if (breed) {

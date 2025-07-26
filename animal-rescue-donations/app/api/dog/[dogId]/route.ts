@@ -7,11 +7,10 @@ const PETFINDER_API_URL = "https://api.petfinder.com/v2";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ dogId: string }> }
+  { params }: { params: { dogId: string } }
 ) {
   try {
-    const resolvedParams = await params;
-    const { dogId } = resolvedParams;
+    const { dogId } = params;
 
     if (!dogId) {
       console.error('❌ No dogId provided');

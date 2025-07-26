@@ -194,7 +194,50 @@ export default function AdoptPage() {
   };
 
   const handleSearch = async () => {
-    if (!searchLocation.trim()) {
+    let effectiveLocation = searchLocation.trim();
+    
+    // If no location provided, use rural area search
+    if (!effectiveLocation) {
+      console.log("No location provided, using rural area search");
+      try {
+        const ruralResponse = await fetch("/api/petfinder/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            location: "", // Will trigger getRandomRuralZip() on backend
+            breed: searchBreed.trim() || ""
+          }),
+        });
+
+        if (ruralResponse.ok) {
+          const data = await ruralResponse.json();
+          if (data.animals) {
+            // Filter by size and age if specified
+            let filteredDogs = data.animals;
+
+            if (searchSize) {
+              filteredDogs = filteredDogs.filter((dog: Dog) => 
+                dog.size?.toLowerCase() === searchSize.toLowerCase()
+              );
+            }
+
+            if (searchAge) {
+              filteredDogs = filteredDogs.filter((dog: Dog) => 
+                dog.age?.toLowerCase() === searchAge.toLowerCase()
+              );
+            }
+
+            setDogs(filteredDogs);
+            setHasSearched(true);
+            setCurrentPage(1);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Rural search error:", error);
+      }
+      
       alert("Please enter a location to search.");
       return;
     }
@@ -208,7 +251,7 @@ export default function AdoptPage() {
 
       // First try Supabase dogs table
       const dbDogs = await searchDogs(
-        searchLocation.trim(), 
+        effectiveLocation, 
         searchBreed.trim() || undefined, 
         100
       );
@@ -277,7 +320,7 @@ export default function AdoptPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          location: searchLocation.trim(),
+          location: effectiveLocation,
           breed: searchBreed.trim() || null
         }),
       });

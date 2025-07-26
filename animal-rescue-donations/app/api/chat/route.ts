@@ -431,7 +431,10 @@ const urgencyTriggers = [
                 .limit(100);
 
               if (updatedMemory.breed) {
-                dbQuery = dbQuery.ilike('primary_breed', `%${updatedMemory.breed}%`);
+                // Use fuzzy breed matching
+                const matchedBreed = await findBestBreedMatch(updatedMemory.breed);
+                const searchBreed = matchedBreed || updatedMemory.breed;
+                dbQuery = dbQuery.ilike('primary_breed', `*${searchBreed}*`);
               }
 
               const { data: dbDogs, error: dbError } = await dbQuery;
@@ -626,6 +629,8 @@ const urgencyTriggers = [
         'longest waiting',
         'show me the invisible dogs',
         'help the ones nobody sees',
+        'most invisible',
+        'show me the most invisible',
       ];
 
       // 🧠 Garbage input fallback
@@ -640,6 +645,97 @@ const urgencyTriggers = [
       const missionIntentDetected = missionIntentPhrases.some(p => last.includes(p));
 
       if (!fullBreed && !fullLocation && missionIntentDetected) {
+        // For invisible dogs requests, fetch from database directly without location/breed requirements
+        try {
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+          );
+
+          const { data: dbDogs, error: dbError } = await supabase
+            .from('dogs')
+            .select('*')
+            .eq('status', 'adoptable')
+            .order('visibility_score', { ascending: false })
+            .limit(100);
+
+          if (dbDogs && dbDogs.length > 0) {
+            console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'dogs from database');
+            
+            const formattedDbDogs = dbDogs.map(dog => ({
+              id: dog.petfinder_id,
+              name: dog.name,
+              breeds: { 
+                primary: dog.primary_breed, 
+                secondary: dog.secondary_breed,
+                mixed: dog.is_mixed 
+              },
+              age: dog.age,
+              size: dog.size,
+              gender: dog.gender,
+              photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
+                ? dog.photos.map(photo => {
+                    if (typeof photo === 'string') {
+                      return { medium: photo };
+                    } else if (photo && typeof photo === 'object') {
+                      return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                    }
+                    return { medium: '/images/barkr.png' };
+                  })
+                : [{ medium: '/images/barkr.png' }],
+              contact: { 
+                address: { 
+                  city: dog.city || 'Unknown', 
+                  state: dog.state || 'Unknown'
+                }
+              },
+              description: dog.description,
+              url: dog.url,
+              visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+            }));
+
+            // Cache all dogs, show first 10
+            updatedMemory.cachedDogs = formattedDbDogs;
+            const dogsToShow = formattedDbDogs.slice(0, 10);
+            updatedMemory.seenDogIds = dogsToShow.map((dog: Dog) => dog.id);
+            updatedMemory.hasSeenResults = true;
+            updatedMemory.isAdoptionMode = true;
+
+            const dogListParts: string[] = [];
+
+            for (const dog of dogsToShow) {
+              const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
+              const name = dog.name;
+              const breed = dog.breeds?.primary || 'Mixed';
+              const age = dog.age || 'Unknown age';
+              const size = dog.size || 'Unknown size';
+              const city = dog.contact?.address?.city || 'Unknown city';
+              const state = dog.contact?.address?.state || '';
+              const description = dog.description || 'No description yet.';
+
+              const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
+              const compositeScore = `**Visibility Score: ${visibilityScore}**`;
+              const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
+
+              const dogUrl = `/adopt/${dog.id}`;
+              const adoptLink = `[**View ${name} ❤️**](${dogUrl})`;
+
+              const dogMarkdown = `${compositeScore}\n${tagline}\n\n**${name}** – ${breed}\n![${name}](${photo})\n*${age} • ${size} • ${city}, ${state}*\n\n${description}...\n\n${adoptLink}`;
+
+              dogListParts.push(dogMarkdown);
+            }
+
+            const dogList = dogListParts.join('\n\n---\n\n');
+
+            return NextResponse.json({
+              content: `🐾 **The Most Invisible Dogs**\n\nThese are the dogs the algorithms forgot. The ones with the highest invisibility scores.\n\n${dogList}\n\n💡 Ask for more dogs anytime. I have ${formattedDbDogs.length} total invisible dogs waiting. 🧡`,
+              memory: updatedMemory,
+            });
+          }
+        } catch (error) {
+          console.error('[❌ Invisible Dogs Error]', error);
+        }
+
         return NextResponse.json({
           content: `I see you. And I see them—the ones the system forgot. But I still need a location or breed to sniff them out.\n\nTell me what kind of pup you're drawn to, and give me a ZIP code or city + state to search. 🐾`,
           memory: updatedMemory,
@@ -779,11 +875,12 @@ const urgencyTriggers = [
               .from('dogs')
               .select('*')
               .eq('status', 'adoptable')
+              .order('visibility_score', { ascending: false })
               .limit(100);
 
             if (normalizedBreed) {
               console.log('[🗄️ Database] Filtering by breed:', normalizedBreed);
-              dbQuery = dbQuery.ilike('primary_breed', `%${normalizedBreed}%`);
+              dbQuery = dbQuery.ilike('primary_breed', `*${normalizedBreed}*`);
             }
 
             const { data: dbDogs, error: dbError } = await dbQuery;
@@ -818,6 +915,7 @@ const urgencyTriggers = [
                     }
                   },
                   description: dog.description,
+                  url: dog.url,
                   attributes: {
                     special_needs: dog.special_needs,
                     spayed_neutered: dog.spayed_neutered,
