@@ -172,10 +172,10 @@ function isValidBreed(breed: string | null): boolean {
   if (!breed) return false;
   const clean = breed.trim().toLowerCase();
   const banned = [
-    'hi', 'hello', 'hey', 'how are you', 'how r u', 'yo', 'sup',
+    'hello', 'how are you', 'how r u', 'yo', 'sup',
     'adopt', 'adoption', 'rescue', 'search', 'something', 'anything',
     'dog', 'dogs', 'puppy', 'puppies', 'any', 'whatever', 'you pick', 'up to you',
-    'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don’t know'
+    'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don't know'
   ];
 
   if (clean.length < 3 || clean.length > 30) return false;
@@ -557,7 +557,7 @@ const urgencyTriggers = [
                 // Check if it's a ZIP code
                 if (/^\d{5}$/.test(updatedMemory.location)) {
                   console.log('[🔄 More Request] Filtering by ZIP code:', updatedMemory.location);
-                  
+
                   // Get state from ZIP code for broader search
                   const zipToState = getStateFromZip(updatedMemory.location);
                   if (zipToState) {
@@ -1099,7 +1099,7 @@ const urgencyTriggers = [
               // Check if it's a ZIP code
               if (/^\d{5}$/.test(searchLocation)) {
                 console.log('[🗄️ Database] Filtering by ZIP code:', searchLocation);
-                
+
                 // Get state from ZIP code for broader search
                 const zipToState = getStateFromZip(searchLocation);
                 if (zipToState) {
