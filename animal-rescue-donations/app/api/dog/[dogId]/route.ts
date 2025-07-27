@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDogById } from '@/lib/supabase';
+import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 
 export async function GET(request: Request, { params }: { params: { dogId: string } }) {
   const dogId = params?.dogId;
@@ -130,6 +131,11 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
     const dogData = await dogResponse.json();
     console.log('✅ Successfully fetched dog details from Petfinder:', dogData.animal?.name);
+
+    // Calculate and add visibility score for Petfinder dogs not in database
+    if (dogData.animal) {
+      dogData.animal.visibility_score = calculateVisibilityScore(dogData.animal);
+    }
 
     return NextResponse.json(dogData);
 

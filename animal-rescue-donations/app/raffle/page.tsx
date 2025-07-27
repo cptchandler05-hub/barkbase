@@ -109,22 +109,33 @@ export default function RafflePage() {
     }
   };
 
+  const [refreshTimeout, setRefreshTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showWinner, setShowWinner] = useState(false);
+
   const renderWinnerMessage = () => {
-    if (!participants.length) return null;
+    if (!raffleEnded || !participants.length) return null;
+    
     const lastWinner = participants[participants.length - 1];
     const shortWinner = `${lastWinner.slice(0, 6)}...${lastWinner.slice(-4)}`;
     const halfPot = (parseFloat(pot) / 2).toFixed(4);
 
-    const newWinner = { address: shortWinner, amount: halfPot };
-    if (!winners.find(w => w.address === shortWinner && w.amount === halfPot)) {
-      setWinners(prev => [newWinner, ...prev]);
+    // Only set up refresh logic once
+    if (!showWinner) {
+      setShowWinner(true);
       setPlayBackflip(true);
       setTimeout(() => setPlayBackflip(false), 2000);
       
-      // Auto-refresh page after 15 seconds to show new raffle
-      setTimeout(() => {
+      // Auto-refresh page after 15 seconds to reset for new raffle
+      const timeout = setTimeout(() => {
+        setShowWinner(false);
+        setRaffleEnded(false);
+        setParticipants([]);
+        setPot("0");
+        // Force a complete page reload to get new raffle state
         window.location.reload();
       }, 15000);
+      
+      setRefreshTimeout(timeout);
     }
 
     return (
