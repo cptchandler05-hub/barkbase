@@ -667,8 +667,11 @@ const urgencyTriggers = [
                   // Deduplicate dogs by ID before combining
                   const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
                   const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
+                  const duplicatesFound = petfinderDogs.length - uniquePetfinderDogs.length;
 
                   allDogs = allDogs.concat(uniquePetfinderDogs);
+                  console.log('[✅ Petfinder Integration] Found', petfinderDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
+                  console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
                 }
               }
 
@@ -1179,9 +1182,11 @@ const urgencyTriggers = [
                 // Deduplicate dogs by ID before combining (database dogs use petfinder_id, Petfinder dogs use id)
                 const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
                 const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
+                const duplicatesFound = petfinderDogs.length - uniquePetfinderDogs.length;
 
                 allDogs = allDogs.concat(uniquePetfinderDogs);
-                console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Petfinder duplicates removed:', petfinderDogs.length - uniquePetfinderDogs.length, 'Showing:', Math.min(allDogs.length, 10));
+                console.log('[✅ Petfinder Integration] Found', petfinderDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
+                console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
               } else {
                 console.error('[❌ Petfinder Error] API call failed, continuing with database results');
               }
@@ -1219,6 +1224,7 @@ const urgencyTriggers = [
             for (const dog of dogsToShow) {
               const photo = dog.photos?.[0]?.medium || '/images/barkr.png';
               const name = dog.name;
+              // Use normalized breed for display
               const breed = dog.breeds?.primary || 'Mixed';
               const age = dog.age || 'Unknown age';
               const size = dog.size || 'Unknown size';
