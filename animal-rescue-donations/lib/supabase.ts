@@ -116,13 +116,25 @@ export async function getDogById(petfinderId: string): Promise<Dog | null> {
         return null;
       }
       console.error('Supabase error getting dog by ID:', error);
-      throw error;
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
+      // Don't throw, return null to allow fallback to Petfinder
+      return null;
     }
 
     console.log('Found dog in database:', data?.name);
     return data as Dog;
   } catch (error) {
     console.error('Error getting dog by ID:', error);
-    throw error;
+    console.error('Unexpected error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    // Don't throw, return null to allow fallback to Petfinder
+    return null;
   }
 }

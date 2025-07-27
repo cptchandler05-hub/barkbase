@@ -16,12 +16,20 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     console.log('🐕 Checking database first for dog ID:', dogId);
 
     // First try to get dog from our database
-    const dbDog = await getDogById(dogId);
+    let dbDog;
+    try {
+      dbDog = await getDogById(dogId);
+      console.log('Database query result:', dbDog ? 'Found' : 'Not found');
+    } catch (dbError) {
+      console.error('Database query error:', dbError);
+      // Continue to Petfinder API if database fails
+    }
     
-    if (dbDog && dbDog.description && dbDog.description.trim().length > 100) {
-      // We have a good description in the database, use it
-      console.log('✅ Found complete dog details in database');
+    if (dbDog) {
+      console.log('✅ Found dog in database:', dbDog.name);
+      console.log('Description length:', dbDog.description?.length || 0);
       
+      // Always return database dog if found, regardless of description length
       // Format the database dog to match Petfinder API response structure
       const formattedDog = {
         animal: {
@@ -70,10 +78,17 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       return NextResponse.json(formattedDog);
     }
 
-    // If no good description in database, fetch from Petfinder
-    console.log('🔄 Database missing or has incomplete description, fetching from Petfinder...');
+    // If no dog in database, fetch from Petfinder
+    console.log('🔄 No dog found in database, fetching from Petfinder...');
+
+    // Check if we have Petfinder credentials
+    if (!process.env.PETFINDER_CLIENT_ID || !process.env.PETFINDER_CLIENT_SECRET) {
+      console.error('❌ Missing Petfinder credentials');
+      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
+    }
 
     // Get Petfinder access token
+    console.log('🔑 Getting Petfinder access token...');
     const tokenResponse = await fetch('https://api.petfinder.com/v2/oauth2/token', {
       method: 'POST',
       headers: {
@@ -87,14 +102,17 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     });
 
     if (!tokenResponse.ok) {
-      console.error('❌ Failed to get Petfinder token:', tokenResponse.status);
-      throw new Error('Failed to get Petfinder access token');
+      const tokenError = await tokenResponse.text();
+      console.error('❌ Failed to get Petfinder token:', tokenResponse.status, tokenError);
+      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
+    console.log('✅ Got Petfinder access token');
 
     // Fetch individual dog details from Petfinder for complete data including full description
+    console.log(`🔍 Fetching dog ${dogId} from Petfinder API...`);
     const dogResponse = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -102,23 +120,30 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     });
 
     if (!dogResponse.ok) {
-      console.error('❌ Petfinder API error:', dogResponse.status);
+      const dogError = await dogResponse.text();
+      console.error('❌ Petfinder API error:', dogResponse.status, dogError);
       if (dogResponse.status === 404) {
         return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
       }
-      throw new Error(`Petfinder API error: ${dogResponse.status}`);
+      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
     const dogData = await dogResponse.json();
-    console.log('✅ Successfully fetched dog details from Petfinder');
+    console.log('✅ Successfully fetched dog details from Petfinder:', dogData.animal?.name);
 
     return NextResponse.json(dogData);
 
   } catch (error) {
     console.error('❌ Error fetching dog details:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    // Return 404 instead of 500 for missing dogs
     return NextResponse.json(
-      { error: 'Failed to fetch dog details' },
-      { status: 500 }
+      { error: 'Dog not found' },
+      { status: 404 }
     );
   }
 }
