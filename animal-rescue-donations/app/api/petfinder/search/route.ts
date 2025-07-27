@@ -213,11 +213,7 @@ export async function POST(req: Request) {
         visibilityScore: calculateVisibilityScore(dog),
       })).sort((a: Dog, b: Dog) => b.visibilityScore - a.visibilityScore);
 
-      // TEMPORARILY DISABLED: Full details fetching to test Dog ID page issues
-      // The bulk API calls may be causing rate limiting that interferes with individual dog requests
-      console.log(`[⚠️ Full Details Disabled] Skipping full description fetching to avoid rate limits`);
-
-      // For dogs with missing descriptions, we'll let the Dog ID page handle individual requests
+      // Fetch full details for dogs with incomplete descriptions
       const dogsNeedingFullDetails = data.animals.filter((dog: Dog) => 
         !dog.description || 
         dog.description.length < 100 || 
@@ -225,7 +221,55 @@ export async function POST(req: Request) {
         dog.description.trim().endsWith('...')
       );
 
-      console.log(`[📊 Stats] ${dogsNeedingFullDetails.length}/${data.animals.length} dogs have incomplete descriptions`);
+      console.log(`[📊 Stats] ${dogsNeedingFullDetails.length}/${data.animals.length} dogs need full details`);
+
+      if (dogsNeedingFullDetails.length > 0) {
+        console.log(`[📝 Full Details] Fetching complete descriptions for ${dogsNeedingFullDetails.length} dogs`);
+        
+        // Process dogs in batches to avoid overwhelming the API
+        const batchSize = 5;
+        for (let i = 0; i < dogsNeedingFullDetails.length; i += batchSize) {
+          const batch = dogsNeedingFullDetails.slice(i, i + batchSize);
+          
+          const detailPromises = batch.map(async (dog: Dog) => {
+            try {
+              // Add delay between individual requests
+              await new Promise(resolve => setTimeout(resolve, 200));
+              
+              const detailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+
+              if (detailResponse.ok) {
+                const detailData = await detailResponse.json();
+                // Update the dog in the main array with full details
+                const dogIndex = data.animals.findIndex((d: Dog) => d.id === dog.id);
+                if (dogIndex !== -1) {
+                  data.animals[dogIndex] = {
+                    ...data.animals[dogIndex],
+                    description: detailData.animal.description || data.animals[dogIndex].description
+                  };
+                }
+                console.log(`✅ Got full details for ${dog.name}`);
+              } else {
+                console.warn(`⚠️ Failed to get full details for ${dog.name}`);
+              }
+            } catch (error) {
+              console.error(`❌ Error fetching details for ${dog.name}:`, error);
+            }
+          });
+
+          await Promise.all(detailPromises);
+          
+          // Longer delay between batches
+          if (i + batchSize < dogsNeedingFullDetails.length) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      }
     }
 
     return NextResponse.json(data);
