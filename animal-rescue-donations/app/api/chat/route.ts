@@ -253,9 +253,13 @@ const urgencyTriggers = [
       console.log("[🧠 Mission Intent] Invisible dogs request detected, forcing adoption mode");
       aiIntent = 'adoption';
     }
-    // Only override to adoption if we have strong adoption context in memory
-    else if (aiIntent === 'general' && memory?.breed && memory?.location && memory?.isAdoptionMode) {
-      console.log("[🧠 Override] General intent but strong adoption context in memory");
+    // Override to adoption if we have strong adoption context in memory OR if this looks like a location response
+    else if (aiIntent === 'general' && (
+      (memory?.breed && memory?.location && memory?.isAdoptionMode) ||
+      (memory?.breed && !memory?.location && (isValidLocationInput(lastMessage) || /^\d{5}$/.test(lastMessage.trim()))) ||
+      (memory?.isAdoptionMode && (isValidLocationInput(lastMessage) || /^\d{5}$/.test(lastMessage.trim())))
+    )) {
+      console.log("[🧠 Override] General intent but adoption context detected - location input or strong adoption memory");
       aiIntent = 'adoption';
     }
 
@@ -277,7 +281,9 @@ const urgencyTriggers = [
     const hasAdoptionKeywords = adoptionKeywords.some(word => recentUserMsg.includes(word));
 
     // Force general mode for conversation enders, topic changes, or general questions without adoption keywords
-    if (isConversationEnder || isTopicChanger || (hasGeneralQuestion && !hasAdoptionKeywords)) {
+    // BUT NOT for location inputs (ZIP codes or city,state format)
+    const looksLikeLocation = isValidLocationInput(lastMessage) || /^\d{5}$/.test(lastMessage.trim());
+    if ((isConversationEnder || isTopicChanger || (hasGeneralQuestion && !hasAdoptionKeywords)) && !looksLikeLocation) {
       aiIntent = 'general';
       context = 'general';
       updatedMemory.isAdoptionMode = false;
