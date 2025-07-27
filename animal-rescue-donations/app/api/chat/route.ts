@@ -139,15 +139,15 @@ function isValidLocationInput(input: string | null): boolean {
    const cleaned = input.trim().toLowerCase().replace(/\s+/g, ' ');
    const invalids = ['rural', 'rural area', 'rural areas', 'the country', 'anywhere', 'you pick', 'up to you', 'whatever', 'everywhere', 'nationwide'];
    if (invalids.includes(cleaned)) return false;
-   
+
    // Check for ZIP code (5 digits)
    const zipRegex = /^\d{5}$/;
    if (zipRegex.test(cleaned)) return true;
-   
+
    // Check for city, state format or just city names
    const cityStateRegex = /^[a-zA-Z\s]+(?:,\s?[a-zA-Z]{2,})?$/i;
    if (cityStateRegex.test(cleaned) && cleaned.length >= 2) return true;
-   
+
    return false;
 }
 
@@ -551,17 +551,21 @@ const urgencyTriggers = [
                 }
               }
 
-              // Add location filtering for database search in more requests
+              // Add location filtering for database search
               if (updatedMemory.location) {
                 console.log('[🔄 More Request] Filtering by location:', updatedMemory.location);
-                // Extract state from location for database filtering
-                const stateMatch = updatedMemory.location.match(/([A-Z]{2})$/);
-                if (stateMatch) {
-                  const state = stateMatch[1];
-                  dbQuery = dbQuery.eq('state', state);
-                  console.log('[🔄 More Request] Filtering by state:', state);
-                } else if (/^\d{5}$/.test(updatedMemory.location)) {
-                  console.log('[🔄 More Request] ZIP code provided, will search all states and rely on Petfinder distance filtering');
+                // Check if it's a ZIP code
+                if (/^\d{5}$/.test(updatedMemory.location)) {
+                  console.log('[🔄 More Request] Filtering by ZIP code:', updatedMemory.location);
+                  dbQuery = dbQuery.eq('postcode', updatedMemory.location);
+                } else {
+                  // Extract state from location for database filtering
+                  const stateMatch = updatedMemory.location.match(/([A-Z]{2})$/);
+                  if (stateMatch) {
+                    const state = stateMatch[1];
+                    dbQuery = dbQuery.eq('state', state);
+                    console.log('[🔄 More Request] Filtering by state:', state);
+                  }
                 }
               }
 
@@ -1083,16 +1087,18 @@ const urgencyTriggers = [
             // Add location filtering for database search
             if (searchLocation) {
               console.log('[🗄️ Database] Filtering by location:', searchLocation);
-              // Extract state from location for database filtering
-              const stateMatch = searchLocation.match(/([A-Z]{2})$/);
-              if (stateMatch) {
-                const state = stateMatch[1];
-                dbQuery = dbQuery.eq('state', state);
-                console.log('[🗄️ Database] Filtering by state:', state);
-              } else if (/^\d{5}$/.test(searchLocation)) {
-                // For ZIP codes, we need to call Petfinder first to get location info
-                // or implement ZIP to state mapping - for now, continue without state filter
-                console.log('[🗄️ Database] ZIP code provided, will search all states and rely on Petfinder distance filtering');
+              // Check if it's a ZIP code
+              if (/^\d{5}$/.test(searchLocation)) {
+                console.log('[🗄️ Database] Filtering by ZIP code:', searchLocation);
+                dbQuery = dbQuery.eq('postcode', searchLocation);
+              } else {
+                // Extract state from location for database filtering
+                const stateMatch = searchLocation.match(/([A-Z]{2})$/);
+                if (stateMatch) {
+                  const state = stateMatch[1];
+                  dbQuery = dbQuery.eq('state', state);
+                  console.log('[🗄️ Database] Filtering by state:', state);
+                }
               }
             }
 

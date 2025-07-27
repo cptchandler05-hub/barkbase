@@ -52,19 +52,24 @@ export async function searchDogs(location: string, breed?: string, limit = 100) 
       .select('*')
       .eq('status', 'adoptable');
 
-    // Parse location for city and state
-    const locationParts = location.split(',').map(part => part.trim());
-
-    if (locationParts.length >= 2) {
-      // Format: "City, State"
-      const city = locationParts[0];
-      const state = locationParts[1];
-
-      // Fix the query syntax - use proper PostgreSQL ilike format
-      query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
+    // Check if location is a ZIP code first
+    if (/^\d{5}$/.test(location)) {
+      console.log('[🗄️ Supabase] Filtering by ZIP code:', location);
+      query = query.eq('postcode', location);
     } else {
-      // Single location - check both city and state
-      query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
+      // Parse location for city and state
+      const locationParts = location.split(',').map(part => part.trim());
+
+      if (locationParts.length >= 2) {
+        // Format: "City, State"
+        const city = locationParts[0];
+        const state = locationParts[1];
+        // Fix the query syntax - use proper PostgreSQL ilike format
+        query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
+      } else {
+        // Single location - check both city and state
+        query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
+      }
     }
 
     if (breed) {
