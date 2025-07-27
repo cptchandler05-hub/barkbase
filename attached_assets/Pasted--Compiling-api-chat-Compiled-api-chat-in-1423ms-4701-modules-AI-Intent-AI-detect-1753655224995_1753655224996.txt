@@ -1,0 +1,56 @@
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1423ms (4701 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: Hi Barkr!
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 5362ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] Boston, MA
+[🐾 Barkr Memory] {
+  location: 'Boston, MA',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Boston, MA', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Boston, MA
+[✅ Database] Found 6 dogs in database
+[🔍 Petfinder] Database returned only 6 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 504ms (4704 modules)
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: 'Boston, MA', breed: 'Chihuahua' }
+[💾 Database] Trying database search first...
+[✅ Database Hit] Found 6 dogs in database
+ POST /api/petfinder/search 200 in 788ms
+[✅ Petfinder] Found 6 dogs from Petfinder
+[✅ Search Complete] Total unique dogs: 12 Showing: 10
+[📊 Scores] Sample scores: [ 'Catalina: 92', 'Binxy: 80', 'Oso: 80' ]
+ POST /api/chat 200 in 3441ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: more dogs please
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🐾 More Request] Processing more dogs request
+[🐾 Memory Check] Cached dogs count: 12
+[🐾 Memory Check] Seen dogs count: 10
+[🐾 Memory Check] Location: Boston, MA
+[🐾 Memory Check] Breed: chihuahuas
+[🐾 Using Cache] Found cached dogs, checking for unseen ones...
+[🐾 Filter Check] Unseen dogs count: 2
+[🐾 Showing] Displaying 2 more dogs from cache
+ POST /api/chat 200 in 1678ms
