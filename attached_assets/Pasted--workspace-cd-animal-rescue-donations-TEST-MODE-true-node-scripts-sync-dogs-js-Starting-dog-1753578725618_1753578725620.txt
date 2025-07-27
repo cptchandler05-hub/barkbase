@@ -1,0 +1,635 @@
+~/workspace$ cd animal-rescue-donations && TEST_MODE=true node scripts/sync-dogs.js
+🐕 Starting dog data sync...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🔍 Validating environment variables...
+✅ All environment variables present
+🔗 Testing Supabase connection...
+✅ Database connected! Current dogs: 0
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🧪 Test mode: Using only 2 locations to preserve API quota
+🔍 Fetching dogs from: 97002
+📝 Fetching full details for Todd (ID: 77493202)
+✅ Got full details for Todd
+📝 Fetching full details for Lucy (ID: 77493166)
+✅ Got full details for Lucy
+📝 Fetching full details for Violet (ID: 77493152)
+✅ Got full details for Violet
+📝 Fetching full details for Bayla (ID: 77493059)
+✅ Got full details for Bayla
+📝 Fetching full details for Pennywise (ID: 77492695)
+✅ Got full details for Pennywise
+📝 Fetching full details for Freddy (ID: 77492691)
+✅ Got full details for Freddy
+📝 Fetching full details for Michael (ID: 77492683)
+✅ Got full details for Michael
+📝 Fetching full details for Benji (ID: 77492274)
+✅ Got full details for Benji
+📝 Fetching full details for Bob (ID: 77489582)
+✅ Got full details for Bob
+📝 Fetching full details for Pearl (ID: 77489537)
+✅ Got full details for Pearl
+📝 Fetching full details for Blondie (ID: 77489393)
+✅ Got full details for Blondie
+📝 Fetching full details for Frankie (ID: 77488245)
+✅ Got full details for Frankie
+📝 Fetching full details for Adrienne (ID: 77485518)
+✅ Got full details for Adrienne
+📝 Fetching full details for Rocky (ID: 77485521)
+✅ Got full details for Rocky
+📝 Fetching full details for Missy (ID: 77485519)
+✅ Got full details for Missy
+📝 Fetching full details for Arthur (ID: 77483130)
+✅ Got full details for Arthur
+📝 Fetching full details for McCormick (mcas) (ID: 77481959)
+✅ Got full details for McCormick (mcas)
+📝 Fetching full details for Fennel (ID: 77481443)
+✅ Got full details for Fennel
+📝 Fetching full details for Poe (ID: 77481407)
+✅ Got full details for Poe
+📝 Fetching full details for Zola Kate (ID: 77481438)
+✅ Got full details for Zola Kate
+📝 Fetching full details for Mercedes (ID: 77481406)
+✅ Got full details for Mercedes
+📝 Fetching full details for Finch (ID: 77481385)
+✅ Got full details for Finch
+📝 Fetching full details for Trudy (ID: 77481409)
+✅ Got full details for Trudy
+📝 Fetching full details for Dilbert (ID: 77481498)
+✅ Got full details for Dilbert
+📝 Fetching full details for Ty (ID: 77481508)
+✅ Got full details for Ty
+📝 Fetching full details for Starshine (ID: 77481382)
+✅ Got full details for Starshine
+📝 Fetching full details for Snoopy (ID: 77481384)
+✅ Got full details for Snoopy
+📝 Fetching full details for Slinky (ID: 77481393)
+✅ Got full details for Slinky
+📝 Fetching full details for Remo (ID: 77481496)
+✅ Got full details for Remo
+📝 Fetching full details for Lola (ID: 77481468)
+✅ Got full details for Lola
+📝 Fetching full details for Scotty (ID: 77481470)
+✅ Got full details for Scotty
+📝 Fetching full details for Sam (ID: 77481476)
+✅ Got full details for Sam
+📝 Fetching full details for Trevor (ID: 77481445)
+✅ Got full details for Trevor
+📝 Fetching full details for Rebel (ID: 77481453)
+✅ Got full details for Rebel
+📝 Fetching full details for Russell (ID: 77481466)
+✅ Got full details for Russell
+📝 Fetching full details for Scout (ID: 77481482)
+✅ Got full details for Scout
+📝 Fetching full details for Jeffrey (ID: 77481478)
+✅ Got full details for Jeffrey
+📝 Fetching full details for Sansa And Pollock (ID: 77481484)
+✅ Got full details for Sansa And Pollock
+📝 Fetching full details for Anna (ID: 77480644)
+✅ Got full details for Anna
+📝 Fetching full details for Elsa (ID: 77480620)
+✅ Got full details for Elsa
+📝 Fetching full details for Freddy (ID: 77480083)
+✅ Got full details for Freddy
+📝 Fetching full details for Dan (ID: 77479437)
+✅ Got full details for Dan
+📝 Fetching full details for Nommy (ID: 77478493)
+✅ Got full details for Nommy
+📝 Fetching full details for Iris (ID: 77477262)
+✅ Got full details for Iris
+📝 Fetching full details for Batman (ID: 77476035)
+✅ Got full details for Batman
+📝 Fetching full details for Obie (ID: 77474930)
+✅ Got full details for Obie
+📝 Fetching full details for Kind Kona (ID: 77473781)
+✅ Got full details for Kind Kona
+📝 Fetching full details for Alice (ID: 77472936)
+✅ Got full details for Alice
+📝 Fetching full details for Salsa (ID: 77472843)
+✅ Got full details for Salsa
+📝 Fetching full details for Luke (ID: 77471469)
+✅ Got full details for Luke
+📝 Fetching full details for Crumpet (ID: 77468858)
+✅ Got full details for Crumpet
+📝 Fetching full details for Murray (ID: 77465058)
+✅ Got full details for Murray
+📝 Fetching full details for Maxwell (ID: 77465057)
+✅ Got full details for Maxwell
+📝 Fetching full details for Mavis (ID: 77465060)
+✅ Got full details for Mavis
+📝 Fetching full details for Minnow (ID: 77465061)
+✅ Got full details for Minnow
+📝 Fetching full details for Tink (ID: 77462717)
+✅ Got full details for Tink
+📝 Fetching full details for Sparky (ID: 77462718)
+✅ Got full details for Sparky
+📝 Fetching full details for Baby-Spice (ID: 77462719)
+✅ Got full details for Baby-Spice
+📝 Fetching full details for Cadence (ID: 77461671)
+✅ Got full details for Cadence
+📝 Fetching full details for Coraline (ID: 77461672)
+✅ Got full details for Coraline
+📝 Fetching full details for Bella (ID: 77460918)
+✅ Got full details for Bella
+📝 Fetching full details for Paisley (ID: 77460912)
+✅ Got full details for Paisley
+📝 Fetching full details for Tara &amp; Torrie (ID: 77460916)
+✅ Got full details for Tara &amp; Torrie
+📝 Fetching full details for Pearl (ID: 77460897)
+✅ Got full details for Pearl
+📝 Fetching full details for Taffy (ID: 77460871)
+✅ Got full details for Taffy
+📝 Fetching full details for CINDER (ID: 77458807)
+✅ Got full details for CINDER
+📝 Fetching full details for Keller (ID: 77458593)
+✅ Got full details for Keller
+📝 Fetching full details for Wade (mcas) (ID: 77458353)
+✅ Got full details for Wade (mcas)
+📝 Fetching full details for Queso (ID: 77457819)
+✅ Got full details for Queso
+📝 Fetching full details for Zara (ID: 77456562)
+✅ Got full details for Zara
+📝 Fetching full details for Orin (mcas) (ID: 77456346)
+✅ Got full details for Orin (mcas)
+📝 Fetching full details for Merida (ID: 77455991)
+✅ Got full details for Merida
+📝 Fetching full details for Winston (ID: 77455939)
+✅ Got full details for Winston
+📝 Fetching full details for Willow (ID: 77455577)
+✅ Got full details for Willow
+📝 Fetching full details for Milo (COMING SOON) (ID: 77453979)
+✅ Got full details for Milo (COMING SOON)
+📝 Fetching full details for Dory (ID: 77451806)
+✅ Got full details for Dory
+📝 Fetching full details for Hunter & Keely (ID: 77451729)
+✅ Got full details for Hunter & Keely
+📝 Fetching full details for Coral (ID: 77451749)
+✅ Got full details for Coral
+📝 Fetching full details for Lee (ID: 77451690)
+✅ Got full details for Lee
+📝 Fetching full details for Verde (ID: 77451641)
+✅ Got full details for Verde
+📝 Fetching full details for Cora (ID: 77451485)
+✅ Got full details for Cora
+📝 Fetching full details for Sunny (ID: 77451524)
+✅ Got full details for Sunny
+📝 Fetching full details for Casey (ID: 77451383)
+✅ Got full details for Casey
+📝 Fetching full details for Cardi (ID: 77451309)
+✅ Got full details for Cardi
+📝 Fetching full details for Blue (ID: 77451279)
+✅ Got full details for Blue
+📝 Fetching full details for Cicada (ID: 77449457)
+✅ Got full details for Cicada
+📝 Fetching full details for Lexus (ID: 77449437)
+✅ Got full details for Lexus
+📝 Fetching full details for Lucky Dumpling (ID: 77445549)
+✅ Got full details for Lucky Dumpling
+📝 Fetching full details for Piglet (mcas) (ID: 77445415)
+✅ Got full details for Piglet (mcas)
+📝 Fetching full details for Odie (ID: 77445318)
+✅ Got full details for Odie
+📝 Fetching full details for Taco (ID: 77445313)
+✅ Got full details for Taco
+📝 Fetching full details for Lucy (ID: 77445263)
+✅ Got full details for Lucy
+📝 Fetching full details for Chloe (ID: 77445281)
+✅ Got full details for Chloe
+📝 Fetching full details for Bronson (ID: 77445262)
+✅ Got full details for Bronson
+📝 Fetching full details for Sky (ID: 77445283)
+✅ Got full details for Sky
+📝 Fetching full details for Lucky Girl (ID: 77443841)
+✅ Got full details for Lucky Girl
+📝 Fetching full details for Miss Red (ID: 77443680)
+✅ Got full details for Miss Red
+📝 Fetching full details for Flower (mcas) (ID: 77442738)
+✅ Got full details for Flower (mcas)
+📝 Fetching full details for Flower (mcas) (ID: 77442734)
+✅ Got full details for Flower (mcas)
+📝 Fetching full details for Tyson (ID: 77442724)
+✅ Got full details for Tyson
+📋 Processed 100 dogs from 97002
+📍 Found 100 dogs in 97002
+🔍 Fetching dogs from: Austin, TX
+📝 Fetching full details for Scooby (ID: 77492265)
+✅ Got full details for Scooby
+📝 Fetching full details for 58988887 (ID: 77492874)
+✅ Got full details for 58988887
+📝 Fetching full details for 58989215 (ID: 77492876)
+✅ Got full details for 58989215
+📝 Fetching full details for Amira (ID: 77492293)
+✅ Got full details for Amira
+📝 Fetching full details for Cubex (ID: 77492294)
+✅ Got full details for Cubex
+📝 Fetching full details for Americano (ID: 77492295)
+✅ Got full details for Americano
+📝 Fetching full details for Katie (ID: 77492307)
+✅ Got full details for Katie
+📝 Fetching full details for Duke (ID: 77492071)
+✅ Got full details for Duke
+📝 Fetching full details for Duke (ID: 77492013)
+✅ Got full details for Duke
+📝 Fetching full details for Ms. Daisy (ID: 77491871)
+✅ Got full details for Ms. Daisy
+📝 Fetching full details for Kailani (ID: 77491476)
+✅ Got full details for Kailani
+📝 Fetching full details for Ollie (ID: 77491428)
+✅ Got full details for Ollie
+📝 Fetching full details for Kailani (ID: 77491373)
+✅ Got full details for Kailani
+📝 Fetching full details for Jaynie (ID: 77491257)
+✅ Got full details for Jaynie
+📝 Fetching full details for Swiftie (ID: 77491132)
+✅ Got full details for Swiftie
+📝 Fetching full details for Gus (ID: 77491133)
+✅ Got full details for Gus
+📝 Fetching full details for Dora (ID: 77490742)
+✅ Got full details for Dora
+📝 Fetching full details for Wrenly (ID: 77490188)
+✅ Got full details for Wrenly
+📝 Fetching full details for Dino (ID: 77489924)
+✅ Got full details for Dino
+📝 Fetching full details for Tom (ID: 77489996)
+✅ Got full details for Tom
+📝 Fetching full details for Mavrick (ID: 77489196)
+✅ Got full details for Mavrick
+📝 Fetching full details for Gabriella (ID: 77489199)
+✅ Got full details for Gabriella
+📝 Fetching full details for Cynthia (ID: 77489200)
+✅ Got full details for Cynthia
+📝 Fetching full details for Sporto (ID: 77489201)
+✅ Got full details for Sporto
+📝 Fetching full details for Reese (ID: 77489202)
+✅ Got full details for Reese
+📝 Fetching full details for Beatrice (ID: 77489203)
+✅ Got full details for Beatrice
+📝 Fetching full details for Snickers (ID: 77489205)
+✅ Got full details for Snickers
+📝 Fetching full details for Raven (ID: 77489206)
+✅ Got full details for Raven
+📝 Fetching full details for Daxter (ID: 77489207)
+✅ Got full details for Daxter
+📝 Fetching full details for Yorkie (ID: 77489210)
+✅ Got full details for Yorkie
+📝 Fetching full details for Peaches (ID: 77489211)
+✅ Got full details for Peaches
+📝 Fetching full details for Ajax (ID: 77489212)
+✅ Got full details for Ajax
+📝 Fetching full details for Thomas (ID: 77489215)
+✅ Got full details for Thomas
+📝 Fetching full details for Jess (ID: 77489217)
+✅ Got full details for Jess
+📝 Fetching full details for Terrie (ID: 77489219)
+✅ Got full details for Terrie
+📝 Fetching full details for Andrea (ID: 77489220)
+✅ Got full details for Andrea
+📝 Fetching full details for ChiChi (ID: 77489221)
+✅ Got full details for ChiChi
+📝 Fetching full details for Pookie (ID: 77489223)
+✅ Got full details for Pookie
+📝 Fetching full details for The Chad (ID: 77489224)
+✅ Got full details for The Chad
+📝 Fetching full details for Baked Beans (ID: 77489225)
+✅ Got full details for Baked Beans
+📝 Fetching full details for Christine (ID: 77489226)
+✅ Got full details for Christine
+📝 Fetching full details for Alan (ID: 77489218)
+✅ Got full details for Alan
+📝 Fetching full details for Cheese (ID: 77489194)
+✅ Got full details for Cheese
+📝 Fetching full details for PugBoy (ID: 77489195)
+✅ Got full details for PugBoy
+📝 Fetching full details for Red (ID: 77489021)
+✅ Got full details for Red
+📝 Fetching full details for Cali (ID: 77488624)
+✅ Got full details for Cali
+📝 Fetching full details for Lucy (ID: 77488567)
+✅ Got full details for Lucy
+📝 Fetching full details for Rowen (ID: 77488555)
+✅ Got full details for Rowen
+📝 Fetching full details for Karma (ID: 77487788)
+✅ Got full details for Karma
+📝 Fetching full details for BUDDY-Best Boy (ID: 77487769)
+✅ Got full details for BUDDY-Best Boy
+📝 Fetching full details for Karma (ID: 77487456)
+✅ Got full details for Karma
+📝 Fetching full details for Henry (ID: 77486815)
+✅ Got full details for Henry
+📝 Fetching full details for Tiger (ID: 77486725)
+✅ Got full details for Tiger
+📝 Fetching full details for Reagan (ID: 77486702)
+✅ Got full details for Reagan
+📝 Fetching full details for Chai 25-03-102 (ID: 77486351)
+✅ Got full details for Chai 25-03-102
+📝 Fetching full details for Brownie 25-07-016 (ID: 77486354)
+✅ Got full details for Brownie 25-07-016
+📝 Fetching full details for Watson 25-07-049 (ID: 77486348)
+✅ Got full details for Watson 25-07-049
+📝 Fetching full details for Windy 25-06-113 (ID: 77486347)
+✅ Got full details for Windy 25-06-113
+📝 Fetching full details for Shrimps 25-06-199 (ID: 77486329)
+✅ Got full details for Shrimps 25-06-199
+📝 Fetching full details for Rufus 25-07-016 (ID: 77486330)
+✅ Got full details for Rufus 25-07-016
+📝 Fetching full details for Shadow Darkness 25-07-016 (ID: 77486344)
+✅ Got full details for Shadow Darkness 25-07-016
+📝 Fetching full details for Beast 25-07-016 (ID: 77486343)
+✅ Got full details for Beast 25-07-016
+📝 Fetching full details for Snowy 25-06-113 (ID: 77486341)
+✅ Got full details for Snowy 25-06-113
+📝 Fetching full details for Rain 25-06-113 (ID: 77486334)
+✅ Got full details for Rain 25-06-113
+📝 Fetching full details for Mack-enzie 25-06-150 (ID: 77486336)
+✅ Got full details for Mack-enzie 25-06-150
+📝 Fetching full details for Bufford 25-07-016 (ID: 77486337)
+✅ Got full details for Bufford 25-07-016
+📝 Fetching full details for sky 25-06-113 (ID: 77486335)
+✅ Got full details for sky 25-06-113
+📝 Fetching full details for Hopper 25-07-016 (ID: 77486333)
+✅ Got full details for Hopper 25-07-016
+📝 Fetching full details for Thriller (ID: 77486281)
+✅ Got full details for Thriller
+📝 Fetching full details for Tito (ID: 77486288)
+✅ Got full details for Tito
+📝 Fetching full details for Jean (ID: 77486287)
+✅ Got full details for Jean
+📝 Fetching full details for La Toya (ID: 77486280)
+✅ Got full details for La Toya
+📝 Fetching full details for Jackson (ID: 77486282)
+✅ Got full details for Jackson
+📝 Fetching full details for Michael (ID: 77486284)
+✅ Got full details for Michael
+📝 Fetching full details for Jermaine (ID: 77486283)
+✅ Got full details for Jermaine
+📝 Fetching full details for Janet (ID: 77486286)
+✅ Got full details for Janet
+📝 Fetching full details for Rebbie (ID: 77486285)
+✅ Got full details for Rebbie
+📝 Fetching full details for TEDDY (ID: 77485516)
+✅ Got full details for TEDDY
+📝 Fetching full details for Montanna (ID: 77484786)
+✅ Got full details for Montanna
+📝 Fetching full details for Moose (ID: 77484788)
+✅ Got full details for Moose
+📝 Fetching full details for Chuy (ID: 77484704)
+✅ Got full details for Chuy
+📝 Fetching full details for Siggi (ID: 77484591)
+✅ Got full details for Siggi
+📝 Fetching full details for Wilder (ID: 77484285)
+✅ Got full details for Wilder
+📝 Fetching full details for DARRYL (ID: 77484124)
+✅ Got full details for DARRYL
+📝 Fetching full details for GOLDEN BOY (ID: 77484127)
+✅ Got full details for GOLDEN BOY
+📝 Fetching full details for MADDY (ID: 77484128)
+✅ Got full details for MADDY
+📝 Fetching full details for BANJO (ID: 77484123)
+✅ Got full details for BANJO
+📝 Fetching full details for LYCAN (ID: 77484122)
+✅ Got full details for LYCAN
+📝 Fetching full details for TEXAS (ID: 77484115)
+✅ Got full details for TEXAS
+📝 Fetching full details for HODGE (ID: 77484119)
+✅ Got full details for HODGE
+📝 Fetching full details for VALKYRIE (ID: 77484121)
+✅ Got full details for VALKYRIE
+📝 Fetching full details for Harper (ID: 77480847)
+✅ Got full details for Harper
+📝 Fetching full details for Remy (ID: 77480371)
+✅ Got full details for Remy
+📝 Fetching full details for Gaia (ID: 77480311)
+✅ Got full details for Gaia
+📝 Fetching full details for Peanut (ID: 77480100)
+✅ Got full details for Peanut
+📝 Fetching full details for Peanut (ID: 77480073)
+✅ Got full details for Peanut
+📝 Fetching full details for Rosey (ID: 77479999)
+✅ Got full details for Rosey
+📝 Fetching full details for Lester (ID: 77479991)
+✅ Got full details for Lester
+📋 Processed 100 dogs from Austin, TX
+📍 Found 100 dogs in Austin, TX
+🎯 Found 200 unique dogs total
+📝 Syncing 200 dogs to database...
+🔗 Testing Supabase connection...
+✅ Connected to Supabase! Current dogs in DB: 0
+⚠️ Skipping sync record creation - testing direct dog insertion
+🧪 Testing database insertion with first dog...
+🧪 Test record structure (first few fields): {
+  "api_source": "petfinder",
+  "name": "Todd",
+  "petfinder_id": "77493202",
+  "primary_breed": "Terrier",
+  "city": "Salem",
+  "state": "OR"
+}
+🔑 Record keys count: 39
+📊 Record has id field: false
+➕ Inserting new dog...
+✅ Database test successful! Proceeding with full sync...
+[📊 Score] Lucy: 21
+✅ First regular dog inserted successfully
+[📊 Score] Violet: 21
+[📊 Score] Bayla: 18
+[📊 Score] Pennywise: 47
+[📊 Score] Freddy: 27
+[📊 Score] Michael: 27
+[📊 Score] Benji: 31
+[📊 Score] Bob: 51
+[📊 Score] Pearl: 18
+[📊 Score] Blondie: 25
+[📊 Score] Frankie: 47
+[📊 Score] Adrienne: 38
+[📊 Score] Rocky: 44
+[📊 Score] Missy: 41
+[📊 Score] Arthur: 74
+[📊 Score] McCormick (mcas): 47
+[📊 Score] Fennel: 41
+[📊 Score] Poe: 24
+[📊 Score] Zola Kate: 41
+[📊 Score] Mercedes: 51
+[📊 Score] Finch: 47
+[📊 Score] Trudy: 41
+[📊 Score] Dilbert: 44
+[📊 Score] Ty: 47
+[📊 Score] Starshine: 38
+[📊 Score] Snoopy: 47
+[📊 Score] Slinky: 47
+[📊 Score] Remo: 61
+[📊 Score] Lola: 41
+[📊 Score] Scotty: 47
+[📊 Score] Sam: 47
+[📊 Score] Trevor: 47
+[📊 Score] Rebel: 24
+[📊 Score] Russell: 44
+[📊 Score] Scout: 47
+[📊 Score] Jeffrey: 44
+[📊 Score] Sansa And Pollock: 18
+[📊 Score] Anna: 21
+[📊 Score] Elsa: 21
+[📊 Score] Freddy: 27
+[📊 Score] Dan: 27
+[📊 Score] Nommy: 54
+[📊 Score] Iris: 35
+[📊 Score] Batman: 34
+[📊 Score] Obie: 65
+[📊 Score] Kind Kona: 41
+[📊 Score] Alice: 28
+✅ First dog updated successfully
+[📊 Score] Salsa: 27
+[📊 Score] Luke: 41
+[📊 Score] Crumpet: 45
+[📊 Score] Murray: 67
+[📊 Score] Maxwell: 47
+[📊 Score] Mavis: 61
+[📊 Score] Minnow: 41
+[📊 Score] Tink: 28
+[📊 Score] Sparky: 34
+[📊 Score] Baby-Spice: 18
+[📊 Score] Cadence: 41
+[📊 Score] Coraline: 41
+[📊 Score] Bella: 45
+[📊 Score] Paisley: 35
+[📊 Score] Tara &amp; Torrie: 48
+[📊 Score] Pearl: 51
+[📊 Score] Taffy: 55
+[📊 Score] CINDER: 31
+[📊 Score] Keller: 87
+[📊 Score] Wade (mcas): 41
+[📊 Score] Queso: 27
+[📊 Score] Zara: 21
+[📊 Score] Orin (mcas): 51
+[📊 Score] Merida: 48
+[📊 Score] Winston: 61
+[📊 Score] Willow: 51
+[📊 Score] Milo (COMING SOON): 44
+[📊 Score] Dory: 21
+[📊 Score] Hunter & Keely: 28
+[📊 Score] Coral: 21
+[📊 Score] Lee: 34
+[📊 Score] Verde: 21
+[📊 Score] Cora: 38
+[📊 Score] Sunny: 27
+[📊 Score] Casey: 24
+[📊 Score] Cardi: 41
+[📊 Score] Blue: 27
+[📊 Score] Cicada: 47
+[📊 Score] Lexus: 41
+[📊 Score] Lucky Dumpling: 44
+[📊 Score] Piglet (mcas): 25
+[📊 Score] Odie: 31
+[📊 Score] Taco: 37
+[📊 Score] Lucy: 65
+[📊 Score] Chloe: 38
+[📊 Score] Bronson: 61
+[📊 Score] Sky: 41
+[📊 Score] Lucky Girl: 21
+[📊 Score] Miss Red: 31
+[📊 Score] Flower (mcas): 77
+[📊 Score] Flower (mcas): 37
+[📊 Score] Tyson: 37
+[📊 Score] Scooby: 18
+[📊 Score] Zinfandel: 41
+[📊 Score] 58988887: 64
+[📊 Score] 58989215: 74
+[📊 Score] Amira: 81
+[📊 Score] Cubex: 87
+[📊 Score] Americano: 81
+[📊 Score] Katie: 95
+[📊 Score] Duke: 31
+[📊 Score] Duke: 31
+[📊 Score] Ms. Daisy: 58
+[📊 Score] Kailani: 21
+[📊 Score] Ollie: 21
+[📊 Score] Kailani: 21
+[📊 Score] Jaynie: 41
+[📊 Score] Swiftie: 31
+[📊 Score] Gus: 41
+[📊 Score] Leia: 51
+[📊 Score] Dora: 21
+[📊 Score] Wrenly: 18
+[📊 Score] Dino: 27
+[📊 Score] Tom: 47
+[📊 Score] Mavrick: 91
+[📊 Score] Gabriella: 85
+[📊 Score] Cynthia: 88
+[📊 Score] Sporto: 87
+[📊 Score] Reese: 94
+[📊 Score] Beatrice: 88
+[📊 Score] Snickers: 78
+[📊 Score] Raven: 85
+[📊 Score] Daxter: 94
+[📊 Score] Yorkie: 91
+[📊 Score] Peaches: 88
+[📊 Score] Ajax: 91
+[📊 Score] Thomas: 94
+[📊 Score] Jess: 85
+[📊 Score] Terrie: 81
+[📊 Score] Andrea: 91
+[📊 Score] ChiChi: 88
+[📊 Score] Pookie: 87
+[📊 Score] The Chad: 94
+[📊 Score] Baked Beans: 88
+[📊 Score] Christine: 88
+[📊 Score] Alan: 87
+[📊 Score] Cheese: 94
+[📊 Score] PugBoy: 97
+[📊 Score] Red: 37
+[📊 Score] Cali: 31
+[📊 Score] Lucy: 31
+[📊 Score] Rowen: 38
+[📊 Score] Karma: 25
+[📊 Score] BUDDY-Best Boy: 37
+[📊 Score] Karma: 25
+[📊 Score] Henry: 51
+[📊 Score] Tiger: 57
+[📊 Score] Reagan: 21
+[📊 Score] Chai 25-03-102: 54
+[📊 Score] Brownie 25-07-016: 64
+[📊 Score] Watson 25-07-049: 47
+[📊 Score] Windy 25-06-113: 58
+[📊 Score] Shrimps 25-06-199: 28
+[📊 Score] Rufus 25-07-016: 64
+[📊 Score] Shadow Darkness 25-07-016: 64
+[📊 Score] Beast 25-07-016: 64
+[📊 Score] Snowy 25-06-113: 58
+[📊 Score] Rain 25-06-113: 64
+[📊 Score] Mack-enzie 25-06-150: 38
+[📊 Score] Bufford 25-07-016: 64
+[📊 Score] sky 25-06-113: 58
+[📊 Score] Hopper 25-07-016: 64
+[📊 Score] Thriller: 18
+[📊 Score] Tito: 24
+[📊 Score] Jean: 28
+[📊 Score] La Toya: 18
+[📊 Score] Jackson: 24
+[📊 Score] Michael: 24
+[📊 Score] Jermaine: 24
+[📊 Score] Janet: 18
+[📊 Score] Rebbie: 18
+[📊 Score] TEDDY: 71
+[📊 Score] Montanna: 58
+[📊 Score] Moose: 21
+[📊 Score] Chuy: 74
+[📊 Score] Siggi: 51
+[📊 Score] Wilder: 27
+[📊 Score] DARRYL: 47
+[📊 Score] GOLDEN BOY: 61
+[📊 Score] MADDY: 45
+[📊 Score] BANJO: 57
+[📊 Score] LYCAN: 61
+[📊 Score] TEXAS: 47
+[📊 Score] HODGE: 57
+[📊 Score] VALKYRIE: 55
+[📊 Score] Harper: 21
+[📊 Score] Remy: 21
+[📊 Score] Gaia: 21
+[📊 Score] Peanut: 37
+[📊 Score] Peanut: 37
+[📊 Score] Rosey: 31
+[📊 Score] Lester: 41
+✅ Sync completed: 150 added, 50 updated
+🧹 Marking old dogs as removed...
+✅ Marked old dogs as removed
+✅ Dog sync completed successfully!
