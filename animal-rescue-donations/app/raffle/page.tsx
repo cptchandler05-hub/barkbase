@@ -112,36 +112,36 @@ export default function RafflePage() {
   const [refreshTimeout, setRefreshTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showWinner, setShowWinner] = useState(false);
 
+  // Handle winner message auto-refresh logic
+  useEffect(() => {
+    if (raffleEnded && participants.length && !refreshTimeout) {
+      setShowWinner(true);
+      setPlayBackflip(true);
+      setTimeout(() => setPlayBackflip(false), 2000);
+      
+      // Auto-refresh page after 15 seconds to reset for new raffle
+      const timeout = setTimeout(() => {
+        console.log("🔄 Auto-refreshing page for new raffle...");
+        window.location.reload();
+      }, 15000);
+      
+      setRefreshTimeout(timeout);
+    }
+    
+    // Cleanup timeout if component unmounts
+    return () => {
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+    };
+  }, [raffleEnded, participants.length, refreshTimeout]);
+
   const renderWinnerMessage = () => {
     if (!raffleEnded || !participants.length) return null;
     
     const lastWinner = participants[participants.length - 1];
     const shortWinner = `${lastWinner.slice(0, 6)}...${lastWinner.slice(-4)}`;
     const halfPot = (parseFloat(pot) / 2).toFixed(4);
-
-    // Set up refresh logic once when winner message first renders
-    useEffect(() => {
-      if (raffleEnded && participants.length && !refreshTimeout) {
-        setShowWinner(true);
-        setPlayBackflip(true);
-        setTimeout(() => setPlayBackflip(false), 2000);
-        
-        // Auto-refresh page after 15 seconds to reset for new raffle
-        const timeout = setTimeout(() => {
-          console.log("🔄 Auto-refreshing page for new raffle...");
-          window.location.reload();
-        }, 15000);
-        
-        setRefreshTimeout(timeout);
-      }
-      
-      // Cleanup timeout if component unmounts
-      return () => {
-        if (refreshTimeout) {
-          clearTimeout(refreshTimeout);
-        }
-      };
-    }, [raffleEnded, participants.length, refreshTimeout]);
 
     return (
       <div className="bg-green-100 p-4 rounded-xl shadow mb-4 animate-pulse">
