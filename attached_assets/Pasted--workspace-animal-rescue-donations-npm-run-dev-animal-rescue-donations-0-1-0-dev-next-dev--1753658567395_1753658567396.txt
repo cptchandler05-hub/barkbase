@@ -1,0 +1,71 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 11s (8582 modules)
+ GET / 200 in 11714ms
+ ✓ Compiled in 1068ms (4184 modules)
+ HEAD / 200 in 47ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1908ms (4635 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hi barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 6412ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+ POST /api/chat 200 in 2164ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] 90210
+[🐾 Barkr Memory] {
+  location: '90210',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: '90210', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: 90210
+[🗄️ Database] Filtering by ZIP code: 90210
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 737ms (4638 modules)
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: '90210', breed: 'Chihuahua' }
+[💾 Database] Trying database search first...
+[🗄️ Supabase] Filtering by ZIP code: 90210
+[🐾 /api/petfinder/search hit]
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[🧠 Breed Normalization] "chihuahua" → "Chihuahua"
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] "Chihuahua" → "Chihuahua"
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100&location=90210&distance=100&breed=Chihuahua
+[❌ API Error] 429 {"type":"https://httpstatus.es/429", "status":429, "title":"Rate Limit Exceeded", "detail":"Limit Exceeded"}
+[❌ Rate Limit Hit] Petfinder API rate limit exceeded
+ POST /api/petfinder/search 429 in 1826ms
+[❌ Petfinder Error] API call failed, continuing with database results
+ POST /api/chat 200 in 3856ms
