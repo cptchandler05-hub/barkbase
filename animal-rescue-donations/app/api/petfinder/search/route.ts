@@ -31,23 +31,37 @@ export async function POST(req: Request) {
           console.log(`[✅ Database Hit] Found ${dbDogs.length} dogs in database`);
 
           // Transform database dogs to API format
-          const formattedDogs = dbDogs.map(dog => ({
-            id: parseInt(dog.petfinder_id),
-            organization_id: dog.organization_id,
-            name: dog.name,
-            breeds: {
-              primary: dog.breed_primary,
-              secondary: dog.breed_secondary,
-              mixed: dog.breed_secondary ? true : false
-            },
-            age: dog.age,
-            gender: dog.gender,
-            size: dog.size,
-            description: dog.description,
-            photos: dog.photos.map(url => ({ large: url, medium: url, small: url })),
-            contact: { address: { city: dog.location.split(',')[0], state: dog.location.split(',')[1] } },
-            visibilityScore: dog.visibility_score
-          }));
+          const formattedDogs = dbDogs.map(dog => {
+            // Safely parse location
+            let city = 'Unknown';
+            let state = 'Unknown';
+            if (dog.location && typeof dog.location === 'string') {
+              const locationParts = dog.location.split(',');
+              city = locationParts[0]?.trim() || 'Unknown';
+              state = locationParts[1]?.trim() || 'Unknown';
+            } else if (dog.city && dog.state) {
+              city = dog.city;
+              state = dog.state;
+            }
+
+            return {
+              id: parseInt(dog.petfinder_id),
+              organization_id: dog.organization_id,
+              name: dog.name,
+              breeds: {
+                primary: dog.breed_primary,
+                secondary: dog.breed_secondary,
+                mixed: dog.breed_secondary ? true : false
+              },
+              age: dog.age,
+              gender: dog.gender,
+              size: dog.size,
+              description: dog.description,
+              photos: dog.photos ? dog.photos.map(url => ({ large: url, medium: url, small: url })) : [],
+              contact: { address: { city, state } },
+              visibilityScore: dog.visibility_score
+            };
+          });
 
           return NextResponse.json({
             animals: formattedDogs,

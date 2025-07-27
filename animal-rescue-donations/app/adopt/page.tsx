@@ -316,11 +316,20 @@ export default function AdoptPage() {
 
       // Fallback to Petfinder API if no dogs in database
       console.log("No dogs found in database, falling back to Petfinder API");
+      
+      // If no location provided, use a random rural ZIP where help is needed most
+      let searchLocation = effectiveLocation;
+      if (!searchLocation || searchLocation.trim() === '') {
+        const { getRandomRuralZip } = await import('../lib/utils.js');
+        searchLocation = getRandomRuralZip();
+        console.log("No location provided, using rural ZIP:", searchLocation);
+      }
+      
       const res = await fetch('/api/petfinder/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          location: effectiveLocation,
+          location: searchLocation,
           breed: searchBreed.trim() || null
         }),
       });

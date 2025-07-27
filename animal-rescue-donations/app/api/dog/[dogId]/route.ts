@@ -25,11 +25,11 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       console.error('Database query error:', dbError);
       // Continue to Petfinder API if database fails
     }
-    
+
     if (dbDog) {
       console.log('✅ Found dog in database:', dbDog.name);
       console.log('Description length:', dbDog.description?.length || 0);
-      
+
       // Always return database dog if found, regardless of description length
       // Format the database dog to match Petfinder API response structure
       const formattedDog = {
@@ -75,7 +75,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
           visibility_score: dbDog.visibility_score
         }
       };
-      
+
       return NextResponse.json(formattedDog);
     }
 
@@ -145,7 +145,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined
     });
-    
+
     // Return 404 instead of 500 for missing dogs
     return NextResponse.json(
       { error: 'Dog not found' },
