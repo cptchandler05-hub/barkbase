@@ -1009,7 +1009,7 @@ const urgencyTriggers = [
       updatedMemory.location = searchLocation;
 
       const isZip = /^\d{5}$/.test(searchLocation || '');
-      const isCityState = /^[a-zA-Z\\s]+,\s?[A-Z]{2}$/.test(searchLocation || '');
+      const isCityState = /^[a-zA-Z\s]+,\s?[A-Z]{2}$/.test(searchLocation || '');
 
       if (!isZip && !isCityState) {
         console.warn(`⚠️ Invalid location "${searchLocation}", asking user for clarification.`);
