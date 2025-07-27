@@ -137,11 +137,18 @@ function classifyContext(
 function isValidLocationInput(input: string | null): boolean {
    if (!input) return false;
    const cleaned = input.trim().toLowerCase().replace(/\s+/g, ' ');
-   const invalids = ['rural', 'rural area', 'rural areas', 'the country', 'anywhere', 'you pick', 'up to you', 'whatever'];
+   const invalids = ['rural', 'rural area', 'rural areas', 'the country', 'anywhere', 'you pick', 'up to you', 'whatever', 'everywhere', 'nationwide'];
    if (invalids.includes(cleaned)) return false;
+   
+   // Check for ZIP code (5 digits)
    const zipRegex = /^\d{5}$/;
+   if (zipRegex.test(cleaned)) return true;
+   
+   // Check for city, state format or just city names
    const cityStateRegex = /^[a-zA-Z\s]+(?:,\s?[a-zA-Z]{2,})?$/i;
-   return zipRegex.test(cleaned) || cityStateRegex.test(cleaned);
+   if (cityStateRegex.test(cleaned) && cleaned.length >= 2) return true;
+   
+   return false;
 }
 
 function getRandomTagline(name: string): string {
@@ -357,29 +364,18 @@ const urgencyTriggers = [
         console.warn('[⚠️ Barkr] GPT returned invalid breed:', aiExtracted.breed);
       }
 
-    const possibleNewLocation = aiExtracted.location || null;
-
-    if (
-      possibleNewLocation &&
-      typeof possibleNewLocation === 'string' &&
-      possibleNewLocation.length <= 60 &&
-      !/^rural/i.test(possibleNewLocation.trim()) &&
-      !possibleNewLocation.toLowerCase().includes('rural areas')
-    )
-{
-      // 🧠 Only update location if valid and new
-      if (aiExtracted.location && aiExtracted.location !== updatedMemory.location && !moreRequest) {
-          console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
-          if (isValidLocationInput(aiExtracted.location)) {
-            updatedMemory.location = aiExtracted.location;
-            fullLocation = aiExtracted.location;
-            updatedMemory.seenDogIds = [];
-            updatedMemory.cachedDogs = [];
-            updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
-          } else {
-            console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
-          }
-        }
+    // 🧠 Only update location if valid and new
+    if (aiExtracted.location && aiExtracted.location !== updatedMemory.location && !moreRequest) {
+      console.warn('[🧠 Barkr] New location provided, wiping previous:', updatedMemory.location);
+      if (isValidLocationInput(aiExtracted.location)) {
+        updatedMemory.location = aiExtracted.location;
+        fullLocation = aiExtracted.location;
+        updatedMemory.seenDogIds = [];
+        updatedMemory.cachedDogs = [];
+        updatedMemory.isInvisibleDogsSearch = false; // Clear invisible dogs search flag
+      } else {
+        console.warn("[⚠️ Barkr] Rejected vague or invalid location:", aiExtracted.location);
+      }
     }
     // 🧠 Only update breed if valid and new (but don't clear on "more dogs" requests)
     if (aiExtracted.breed && isValidBreed(aiExtracted.breed) && !moreRequest) {
@@ -557,8 +553,9 @@ const urgencyTriggers = [
                 if (stateMatch) {
                   const state = stateMatch[1];
                   dbQuery = dbQuery.eq('state', state);
-                } else {
-                  console.log('[🔄 More Request] ZIP code provided, relying on Petfinder for location accuracy');
+                  console.log('[🔄 More Request] Filtering by state:', state);
+                } else if (/^\d{5}$/.test(updatedMemory.location)) {
+                  console.log('[🔄 More Request] ZIP code provided, will search all states and rely on Petfinder distance filtering');
                 }
               }
 
@@ -634,7 +631,7 @@ const urgencyTriggers = [
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    location: updatedMemory.location,
+                    location: updatedMemory.location || '',
                     breed: normalizedBreed || '',
                   }),
                 });
@@ -1085,10 +1082,11 @@ const urgencyTriggers = [
               if (stateMatch) {
                 const state = stateMatch[1];
                 dbQuery = dbQuery.eq('state', state);
-              } else {
-                // If it's a ZIP code, we can't easily filter by it in the database
-                // So we'll let Petfinder handle ZIP code searches
-                console.log('[🗄️ Database] ZIP code provided, will rely more on Petfinder for location accuracy');
+                console.log('[🗄️ Database] Filtering by state:', state);
+              } else if (/^\d{5}$/.test(searchLocation)) {
+                // For ZIP codes, we need to call Petfinder first to get location info
+                // or implement ZIP to state mapping - for now, continue without state filter
+                console.log('[🗄️ Database] ZIP code provided, will search all states and rely on Petfinder distance filtering');
               }
             }
 
@@ -1148,7 +1146,7 @@ const urgencyTriggers = [
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  location: searchLocation ?? '',
+                  location: fullLocation ?? searchLocation ?? '',
                   breed: normalizedBreed ?? '',
                 }),
               });
