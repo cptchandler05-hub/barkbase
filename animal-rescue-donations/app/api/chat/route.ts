@@ -354,7 +354,7 @@ const urgencyTriggers = [
         }
         fullBreed = aiExtracted.breed;
       } else if (aiExtracted.breed && !moreRequest) {
-        console.warn('[⚠️ Barkr] Invalid breed parsed:', aiExtracted.breed);
+        console.warn('[⚠️ Barkr] GPT returned invalid breed:', aiExtracted.breed);
       }
 
     const possibleNewLocation = aiExtracted.location || null;
@@ -641,14 +641,34 @@ const urgencyTriggers = [
 
                 if (searchRes.ok) {
                   const searchData = await searchRes.json();
-                  const fetchedDogs = searchData.animals || [];
+                  const petfinderDogs = searchData.animals || [];
+                  // Calculate visibility scores for Petfinder dogs if not present and ensure photos
+                  for (const dog of petfinderDogs) {
+                    if (!dog.visibilityScore) {
+                      dog.visibilityScore = calculateVisibilityScore(dog);
+                    }
 
-                  // Calculate and assign visibility scores
-                  for (const dog of fetchedDogs) {
-                    dog.visibilityScore = calculateVisibilityScore(dog);
+                    // Ensure photos are properly formatted or use Barkr fallback
+                    if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
+                      dog.photos = [{ medium: '/images/barkr.png' }];
+                    } else {
+                      // Ensure each photo has proper structure
+                      dog.photos = dog.photos.map(photo => {
+                        if (typeof photo === 'string') {
+                          return { medium: photo };
+                        } else if (photo && typeof photo === 'object') {
+                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                        }
+                        return { medium: '/images/barkr.png' };
+                      });
+                    }
                   }
 
-                  allDogs = allDogs.concat(fetchedDogs);
+                  // Deduplicate dogs by ID before combining
+                  const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
+                  const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
+
+                  allDogs = allDogs.concat(uniquePetfinderDogs);
                 }
               }
 
@@ -778,7 +798,7 @@ const urgencyTriggers = [
         // Clear any breed/location requirements for invisible dogs search
         updatedMemory.breed = null;
         updatedMemory.location = null;
-        
+
         try {
           const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -1133,14 +1153,35 @@ const urgencyTriggers = [
               if (searchRes.ok) {
                 const searchData = await searchRes.json();
                 const petfinderDogs = searchData.animals || [];
-                console.log('[✅ Petfinder] Found', petfinderDogs.length, 'dogs from Petfinder');
 
-                // Calculate visibility scores for Petfinder dogs
+                // Calculate visibility scores for Petfinder dogs and ensure photos
                 for (const dog of petfinderDogs) {
-                  dog.visibilityScore = calculateVisibilityScore(dog);
+                  if (!dog.visibilityScore) {
+                    dog.visibilityScore = calculateVisibilityScore(dog);
+                  }
+
+                  // Ensure photos are properly formatted or use Barkr fallback
+                  if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
+                    dog.photos = [{ medium: '/images/barkr.png' }];
+                  } else {
+                    // Ensure each photo has proper structure
+                    dog.photos = dog.photos.map(photo => {
+                      if (typeof photo === 'string') {
+                        return { medium: photo };
+                      } else if (photo && typeof photo === 'object') {
+                        return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                      }
+                      return { medium: '/images/barkr.png' };
+                    });
+                  }
                 }
 
-                allDogs = allDogs.concat(petfinderDogs);
+                // Deduplicate dogs by ID before combining (database dogs use petfinder_id, Petfinder dogs use id)
+                const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
+                const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
+
+                allDogs = allDogs.concat(uniquePetfinderDogs);
+                console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Petfinder duplicates removed:', petfinderDogs.length - uniquePetfinderDogs.length, 'Showing:', Math.min(allDogs.length, 10));
               } else {
                 console.error('[❌ Petfinder Error] API call failed, continuing with database results');
               }
