@@ -119,24 +119,29 @@ export default function RafflePage() {
     const shortWinner = `${lastWinner.slice(0, 6)}...${lastWinner.slice(-4)}`;
     const halfPot = (parseFloat(pot) / 2).toFixed(4);
 
-    // Only set up refresh logic once
-    if (!showWinner) {
-      setShowWinner(true);
-      setPlayBackflip(true);
-      setTimeout(() => setPlayBackflip(false), 2000);
+    // Set up refresh logic once when winner message first renders
+    useEffect(() => {
+      if (raffleEnded && participants.length && !refreshTimeout) {
+        setShowWinner(true);
+        setPlayBackflip(true);
+        setTimeout(() => setPlayBackflip(false), 2000);
+        
+        // Auto-refresh page after 15 seconds to reset for new raffle
+        const timeout = setTimeout(() => {
+          console.log("🔄 Auto-refreshing page for new raffle...");
+          window.location.reload();
+        }, 15000);
+        
+        setRefreshTimeout(timeout);
+      }
       
-      // Auto-refresh page after 15 seconds to reset for new raffle
-      const timeout = setTimeout(() => {
-        setShowWinner(false);
-        setRaffleEnded(false);
-        setParticipants([]);
-        setPot("0");
-        // Force a complete page reload to get new raffle state
-        window.location.reload();
-      }, 15000);
-      
-      setRefreshTimeout(timeout);
-    }
+      // Cleanup timeout if component unmounts
+      return () => {
+        if (refreshTimeout) {
+          clearTimeout(refreshTimeout);
+        }
+      };
+    }, [raffleEnded, participants.length, refreshTimeout]);
 
     return (
       <div className="bg-green-100 p-4 rounded-xl shadow mb-4 animate-pulse">
