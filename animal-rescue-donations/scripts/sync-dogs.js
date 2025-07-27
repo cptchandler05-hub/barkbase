@@ -173,6 +173,12 @@ async function calculateVisibilityScore(dog) {
     // House training penalty
     if (attributes.house_trained === false) score += 5;
 
+    // Time published penalty (estimate - longer in system = more invisible)
+    if (dog.published_at) {
+      const daysSincePublished = Math.floor((Date.now() - new Date(dog.published_at).getTime()) / (1000 * 60 * 60 * 24));
+      score += Math.min(daysSincePublished * 2, 60); // Cap at 60 points for time (30 days max)
+    }
+
     // NO MAXIMUM CAP - return the true invisibility score
     return Math.max(0, score);
 
