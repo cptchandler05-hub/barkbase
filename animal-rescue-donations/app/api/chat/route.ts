@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
-import { getRandomRuralZip, getStateFromZip } from '../../../lib/utils';
+import { getRandomRuralZip, getStateFromZip } from '@/lib/utils';
 import { createClient } from '@supabase/supabase-js';
 import { findBestBreedMatch } from '@/app/api/utils/fuzzyBreedMatch';
 
@@ -805,7 +805,7 @@ const urgencyTriggers = [
 
       // 🧠 Garbage input fallback
       const badPhrases = [
-        'hi', 'hey', 'hello', 'yes', 'no',
+        'yes', 'no',
         'what', 'who', 'how', 'you', '?', 'ok', 'okay', 'help', 'idk'
       ];
 
