@@ -1,0 +1,209 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 4.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.5s (8582 modules)
+ GET / 200 in 15222ms
+ ✓ Compiled in 933ms (4184 modules)
+ HEAD / 200 in 39ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 2.8s (4635 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: Hi Barkr! I don't know if you understand this or not, but my name is Justin, and I am your developer and creator. Just wanted to let you know that I am very proud of you, and that we are getting very close to deployment, so you will be interacting with the general public soon and saving lives! 
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 10247ms
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: Absolutely! Now I have to perform a few test queries, ok?
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 4080ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Austin, TX
+[📍 Normalized Location] Austin, TX
+[🐾 Barkr Memory] {
+  location: 'Austin, TX',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Austin, TX', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Austin, TX
+[✅ Database] Found 9 dogs in database
+[🔍 Petfinder] Database returned only 9 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1350ms (4638 modules)
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: 'Austin, TX', breed: 'Chihuahua' }
+[💾 Database] Trying database search first...
+[✅ Database Hit] Found 11 dogs in database
+[⚠️ Database Fallback] Database search failed, using live API: TypeError: Cannot read properties of undefined (reading 'split')
+    at eval (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:60:56)
+    at Array.map (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:40:50)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+[🐾 /api/petfinder/search hit]
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[🧠 Breed Normalization] "chihuahua" → "Chihuahua"
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] "Chihuahua" → "Chihuahua"
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100&location=austin%2C+tx&distance=100&breed=Chihuahua
+[❌ API Error] 429 {"type":"https://httpstatus.es/429", "status":429, "title":"Rate Limit Exceeded", "detail":"Limit Exceeded"}
+[❌ Rate Limit Hit] Petfinder API rate limit exceeded
+ POST /api/petfinder/search 429 in 2607ms
+[❌ Petfinder Error] API call failed, continuing with database results
+[✅ Search Complete] Total unique dogs: 9 Showing: 9
+[📊 Scores] Sample scores: [ 'Thomas: 94', 'The Chad: 94', 'ChiChi: 88' ]
+ POST /api/chat 200 in 4650ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: more dogs plese
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🐾 More Request] Processing more dogs request
+[🐾 Memory Check] Cached dogs count: 9
+[🐾 Memory Check] Seen dogs count: 9
+[🐾 Memory Check] Location: Austin, TX
+[🐾 Memory Check] Breed: chihuahuas
+[🐾 Using Cache] Found cached dogs, checking for unseen ones...
+[🐾 Filter Check] Unseen dogs count: 0
+[🐾 No More Cache] All cached dogs have been shown
+ POST /api/chat 200 in 1664ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 2.6s (8813 modules)
+ GET /adopt/77490188 200 in 3507ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 568ms (4643 modules)
+[🐕 /api/dog/77490188] Fetching dog details
+dogId type: string value: 77490188
+🐕 Checking database first for dog ID: 77490188
+Searching for dog with petfinder_id: 77490188
+ HEAD /adopt/77490188 200 in 346ms
+Found dog in database: Wrenly
+Database query result: Found
+✅ Found dog in database: Wrenly
+Description length: 55
+ GET /api/dog/77490188 200 in 1648ms
+[🐕 /api/dog/77490188] Fetching dog details
+dogId type: string value: 77490188
+🐕 Checking database first for dog ID: 77490188
+Searching for dog with petfinder_id: 77490188
+Found dog in database: Wrenly
+Database query result: Found
+✅ Found dog in database: Wrenly
+Description length: 55
+ GET /api/dog/77490188 200 in 202ms
+ GET /adopt/77489215 200 in 66ms
+ HEAD /adopt/77489215 200 in 43ms
+[🐕 /api/dog/77489215] Fetching dog details
+dogId type: string value: 77489215
+🐕 Checking database first for dog ID: 77489215
+Searching for dog with petfinder_id: 77489215
+Found dog in database: Thomas
+Database query result: Found
+✅ Found dog in database: Thomas
+Description length: 0
+ GET /api/dog/77489215 200 in 357ms
+[🐕 /api/dog/77489215] Fetching dog details
+dogId type: string value: 77489215
+🐕 Checking database first for dog ID: 77489215
+Searching for dog with petfinder_id: 77489215
+Found dog in database: Thomas
+Database query result: Found
+✅ Found dog in database: Thomas
+Description length: 0
+ GET /api/dog/77489215 200 in 223ms
+ GET / 200 in 238ms
+ HEAD / 200 in 25ms
+[🧠 Mission Intent] Invisible dogs request detected, forcing adoption mode
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: show me the most invisible dogs
+[⚠️ Barkr] Invalid breed in memory, wiping: undefined
+[⚠️ Barkr] Invalid location in memory, wiping: undefined
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🔍 Invisible Dogs] Fetching dogs with highest visibility scores...
+[✅ Invisible Dogs] Found 100 dogs from database
+ POST /api/chat 200 in 1990ms
+ GET /adopt/77471284 200 in 70ms
+ HEAD /adopt/77471284 200 in 53ms
+[🐕 /api/dog/77471284] Fetching dog details
+dogId type: string value: 77471284
+🐕 Checking database first for dog ID: 77471284
+Searching for dog with petfinder_id: 77471284
+Found dog in database: Larry
+Database query result: Found
+✅ Found dog in database: Larry
+Description length: 150
+ GET /api/dog/77471284 200 in 178ms
+[🐕 /api/dog/77471284] Fetching dog details
+dogId type: string value: 77471284
+🐕 Checking database first for dog ID: 77471284
+Searching for dog with petfinder_id: 77471284
+Found dog in database: Larry
+Database query result: Found
+✅ Found dog in database: Larry
+Description length: 150
+ GET /api/dog/77471284 200 in 246ms
+ GET /adopt/77461380 200 in 49ms
+ HEAD /adopt/77461380 200 in 53ms
+[🐕 /api/dog/77461380] Fetching dog details
+dogId type: string value: 77461380
+🐕 Checking database first for dog ID: 77461380
+Searching for dog with petfinder_id: 77461380
+Found dog in database: Nellie
+Database query result: Found
+✅ Found dog in database: Nellie
+Description length: 117
+ GET /api/dog/77461380 200 in 338ms
+[🐕 /api/dog/77461380] Fetching dog details
+dogId type: string value: 77461380
+🐕 Checking database first for dog ID: 77461380
+Searching for dog with petfinder_id: 77461380
+Found dog in database: Nellie
+Database query result: Found
+✅ Found dog in database: Nellie
+Description length: 117
+ GET /api/dog/77461380 200 in 240ms
