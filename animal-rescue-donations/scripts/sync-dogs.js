@@ -1,6 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
-const { scoreVisibility } = require('../lib/scoreVisibility.js'); // Import visibility scoring function
 
 // Initialize Supabase client with service key for database operations
 const supabase = createClient(
