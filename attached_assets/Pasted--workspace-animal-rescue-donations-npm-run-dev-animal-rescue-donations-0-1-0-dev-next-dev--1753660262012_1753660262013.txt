@@ -1,0 +1,76 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1896ms
+ ○ Compiling / ...
+ ✓ Compiled / in 12.4s (8582 modules)
+ GET / 200 in 13401ms
+ ✓ Compiled in 1419ms (4184 modules)
+ HEAD / 200 in 30ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1554ms (4635 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hi barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 5399ms
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hello
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 3571ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] 02134
+[🐾 Barkr Memory] {
+  location: '02134',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: '02134', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: 02134
+[🗄️ Database] Filtering by ZIP code: 02134
+[❌ Search Error] TypeError: (0 , _lib_utils__WEBPACK_IMPORTED_MODULE_2__.getStateFromZip) is not a function
+    at POST (webpack-internal:///(rsc)/./app/api/chat/route.ts:1074:107)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+ POST /api/chat 200 in 1740ms
