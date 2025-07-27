@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
-import { getRandomRuralZip } from '@/lib/utils';
+import { getRandomRuralZip, getStateFromZip } from '@/lib/utils';
 import { createClient } from '@supabase/supabase-js';
 import { findBestBreedMatch } from '@/app/api/utils/fuzzyBreedMatch';
 
@@ -557,7 +557,16 @@ const urgencyTriggers = [
                 // Check if it's a ZIP code
                 if (/^\d{5}$/.test(updatedMemory.location)) {
                   console.log('[🔄 More Request] Filtering by ZIP code:', updatedMemory.location);
-                  dbQuery = dbQuery.eq('postcode', updatedMemory.location);
+                  
+                  // Get state from ZIP code for broader search
+                  const zipToState = getStateFromZip(updatedMemory.location);
+                  if (zipToState) {
+                    console.log('[🔄 More Request] Expanding ZIP search to state:', zipToState);
+                    dbQuery = dbQuery.eq('state', zipToState);
+                  } else {
+                    // Fallback to exact ZIP match if state lookup fails
+                    dbQuery = dbQuery.eq('postcode', updatedMemory.location);
+                  }
                 } else {
                   // Extract state from location for database filtering
                   const stateMatch = updatedMemory.location.match(/([A-Z]{2})$/);
@@ -1090,7 +1099,16 @@ const urgencyTriggers = [
               // Check if it's a ZIP code
               if (/^\d{5}$/.test(searchLocation)) {
                 console.log('[🗄️ Database] Filtering by ZIP code:', searchLocation);
-                dbQuery = dbQuery.eq('postcode', searchLocation);
+                
+                // Get state from ZIP code for broader search
+                const zipToState = getStateFromZip(searchLocation);
+                if (zipToState) {
+                  console.log('[🗄️ Database] Expanding ZIP search to state:', zipToState);
+                  dbQuery = dbQuery.eq('state', zipToState);
+                } else {
+                  // Fallback to exact ZIP match if state lookup fails
+                  dbQuery = dbQuery.eq('postcode', searchLocation);
+                }
               } else {
                 // Extract state from location for database filtering
                 const stateMatch = searchLocation.match(/([A-Z]{2})$/);

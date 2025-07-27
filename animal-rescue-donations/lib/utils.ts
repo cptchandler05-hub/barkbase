@@ -1,3 +1,116 @@
+// ZIP code to state mapping for broader geographic search
+const ZIP_TO_STATE_MAP: { [key: string]: string } = {
+  // Massachusetts ZIP codes
+  '01': 'MA', '02': 'MA',
+  // New York ZIP codes  
+  '10': 'NY', '11': 'NY', '12': 'NY', '13': 'NY', '14': 'NY',
+  // California ZIP codes
+  '90': 'CA', '91': 'CA', '92': 'CA', '93': 'CA', '94': 'CA', '95': 'CA', '96': 'CA',
+  // Texas ZIP codes
+  '75': 'TX', '76': 'TX', '77': 'TX', '78': 'TX', '79': 'TX',
+  // Florida ZIP codes
+  '32': 'FL', '33': 'FL', '34': 'FL',
+  // Illinois ZIP codes
+  '60': 'IL', '61': 'IL', '62': 'IL',
+  // Pennsylvania ZIP codes
+  '15': 'PA', '16': 'PA', '17': 'PA', '18': 'PA', '19': 'PA',
+  // Ohio ZIP codes
+  '43': 'OH', '44': 'OH', '45': 'OH',
+  // Michigan ZIP codes
+  '48': 'MI', '49': 'MI',
+  // Georgia ZIP codes
+  '30': 'GA', '31': 'GA',
+  // North Carolina ZIP codes
+  '27': 'NC', '28': 'NC',
+  // New Jersey ZIP codes
+  '07': 'NJ', '08': 'NJ',
+  // Virginia ZIP codes
+  '22': 'VA', '23': 'VA', '24': 'VA',
+  // Washington ZIP codes
+  '98': 'WA', '99': 'WA',
+  // Colorado ZIP codes
+  '80': 'CO', '81': 'CO',
+  // Arizona ZIP codes
+  '85': 'AZ', '86': 'AZ',
+  // Maryland ZIP codes
+  '20': 'MD', '21': 'MD',
+  // Wisconsin ZIP codes
+  '53': 'WI', '54': 'WI',
+  // Minnesota ZIP codes
+  '55': 'MN', '56': 'MN',
+  // Tennessee ZIP codes
+  '37': 'TN', '38': 'TN',
+  // Missouri ZIP codes
+  '63': 'MO', '64': 'MO', '65': 'MO',
+  // Alabama ZIP codes
+  '35': 'AL', '36': 'AL',
+  // Louisiana ZIP codes
+  '70': 'LA', '71': 'LA',
+  // Kentucky ZIP codes
+  '40': 'KY', '41': 'KY', '42': 'KY',
+  // Oregon ZIP codes
+  '97': 'OR',
+  // Oklahoma ZIP codes
+  '73': 'OK', '74': 'OK',
+  // Connecticut ZIP codes
+  '06': 'CT',
+  // Iowa ZIP codes
+  '50': 'IA', '51': 'IA', '52': 'IA',
+  // Mississippi ZIP codes
+  '38': 'MS', '39': 'MS',
+  // Arkansas ZIP codes
+  '71': 'AR', '72': 'AR',
+  // Kansas ZIP codes
+  '66': 'KS', '67': 'KS',
+  // Utah ZIP codes
+  '84': 'UT',
+  // Nevada ZIP codes
+  '89': 'NV',
+  // New Mexico ZIP codes
+  '87': 'NM', '88': 'NM',
+  // West Virginia ZIP codes
+  '24': 'WV', '25': 'WV', '26': 'WV',
+  // Nebraska ZIP codes
+  '68': 'NE', '69': 'NE',
+  // Idaho ZIP codes
+  '83': 'ID',
+  // Hawaii ZIP codes
+  '96': 'HI',
+  // Maine ZIP codes
+  '03': 'ME', '04': 'ME',
+  // New Hampshire ZIP codes
+  '03': 'NH',
+  // Vermont ZIP codes
+  '05': 'VT',
+  // Delaware ZIP codes
+  '19': 'DE',
+  // Rhode Island ZIP codes
+  '02': 'RI',
+  // Montana ZIP codes
+  '59': 'MT',
+  // North Dakota ZIP codes
+  '58': 'ND',
+  // South Dakota ZIP codes
+  '57': 'SD',
+  // Alaska ZIP codes
+  '99': 'AK',
+  // Wyoming ZIP codes
+  '82': 'WY',
+  // South Carolina ZIP codes
+  '29': 'SC',
+  // Indiana ZIP codes
+  '46': 'IN', '47': 'IN'
+};
+
+export function getStateFromZip(zipCode: string): string | null {
+  if (!zipCode || zipCode.length !== 5 || !/^\d{5}$/.test(zipCode)) {
+    return null;
+  }
+  
+  const prefix = zipCode.substring(0, 2);
+  return ZIP_TO_STATE_MAP[prefix] || null;
+}
+
 export function getRandomRuralZip(): string {
   const ruralZips = [
     // 🐕 Texas - Expanded coverage
