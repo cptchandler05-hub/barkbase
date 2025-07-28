@@ -5,6 +5,7 @@ import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdo
 import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
 import { getAllDogs, searchDogs } from '@/lib/supabase';
+import { getRandomRuralZip } from '@/lib/utils';
 
 interface Dog {
   id: string;
@@ -320,7 +321,6 @@ export default function AdoptPage() {
       // If no location provided, use a random rural ZIP where help is needed most
       let searchLocation = effectiveLocation;
       if (!searchLocation || searchLocation.trim() === '') {
-        const { getRandomRuralZip } = await import('../lib/utils');
         searchLocation = getRandomRuralZip();
         console.log("No location provided, using rural ZIP:", searchLocation);
       }
