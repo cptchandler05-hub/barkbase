@@ -69,52 +69,44 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       console.log('Description length:', dbDog.description?.length || 0);
 
       // Always return database dog if found, regardless of description length
-      // Format the database dog to match Petfinder API response structure
-      const formattedDog = {
-        animal: {
-          id: dbDog.petfinder_id,
-          name: dbDog.name,
-          type: dbDog.type,
-          species: dbDog.species,
-          breeds: {
-            primary: dbDog.primary_breed,
-            secondary: dbDog.secondary_breed,
-            mixed: dbDog.is_mixed,
-            unknown: dbDog.is_unknown_breed
-          },
-          age: dbDog.age,
-          gender: dbDog.gender,
-          size: dbDog.size,
-          coat: dbDog.coat,
-          colors: {
-            primary: dbDog.primary_color,
-            secondary: dbDog.secondary_color,
-            tertiary: dbDog.tertiary_color
-          },
-          attributes: {
-            spayed_neutered: dbDog.spayed_neutered,
-            house_trained: dbDog.house_trained,
-            special_needs: dbDog.special_needs,
-            shots_current: dbDog.shots_current
-          },
-          environment: {
-            children: dbDog.good_with_children,
-            dogs: dbDog.good_with_dogs,
-            cats: dbDog.good_with_cats
-          },
-          description: dbDog.description,
-          photos: dbDog.photos || [],
-          tags: dbDog.tags || [],
-          contact: dbDog.contact_info || {},
-          status: dbDog.status,
-          organization_id: dbDog.organization_id,
-          organization_animal_id: dbDog.organization_animal_id,
-          url: dbDog.url,
-          visibility_score: dbDog.visibility_score
+      // Calculate visibility score if not present or if it's the default fallback
+      let visibilityScore = dbDog.visibility_score;
+      if (!visibilityScore || visibilityScore === 50) {
+        try {
+          const { calculateVisibilityScore } = await import('@/lib/scoreVisibility');
+          visibilityScore = calculateVisibilityScore(dbDog);
+          console.log(`Recalculated visibility score for ${dbDog.name}: ${visibilityScore}`);
+        } catch (error) {
+          console.error('Error calculating visibility score:', error);
+          visibilityScore = dbDog.visibility_score || 50;
         }
+      }
+
+      // Transform to match the expected format
+      const transformedDog = {
+        id: dbDog.petfinder_id,
+        name: dbDog.name,
+        breeds: {
+          primary: dbDog.primary_breed,
+          secondary: dbDog.secondary_breed,
+          mixed: dbDog.is_mixed
+        },
+        age: dbDog.age,
+        size: dbDog.size,
+        gender: dbDog.gender,
+        photos: dbDog.photos || [],
+        contact: {
+          address: {
+            city: dbDog.city,
+            state: dbDog.state
+          }
+        },
+        description: dbDog.description,
+        url: dbDog.url,
+        visibilityScore: visibilityScore
       };
 
-      return NextResponse.json(formattedDog);
+      return NextResponse.json(transformedDog);
     }
 
     // Fetch from Petfinder API

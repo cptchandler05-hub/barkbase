@@ -40,7 +40,7 @@ export async function getAllDogs(limit = 100, offset = 0) {
   return data as Dog[];
 }
 
-export async function searchDogs(location: string, breed?: string, limit = 100) {
+export async function searchDogs(location: string, breed?: string, limit = 100, size?: string, age?: string) {
   if (!isSupabaseAvailable()) {
     console.warn('Supabase is not available. Returning an empty array.');
     return [];
@@ -74,6 +74,14 @@ export async function searchDogs(location: string, breed?: string, limit = 100) 
 
     if (breed) {
       query = query.or(`primary_breed.ilike.%${breed}%,secondary_breed.ilike.%${breed}%`);
+    }
+
+    if (size) {
+      query = query.eq('size', size);
+    }
+
+    if (age) {
+      query = query.eq('age', age);
     }
 
     query = query

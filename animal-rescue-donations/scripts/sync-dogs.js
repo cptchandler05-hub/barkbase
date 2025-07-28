@@ -109,8 +109,12 @@ async function fetchDogsFromLocation(location, accessToken) {
       const description = dog.description || '';
       const needsFullDetails = description.length === 0 || 
                               description.endsWith('...') || 
-                              description.length < 100 ||
-                              description.includes('Contact us for more');
+                              description.endsWith('…') || 
+                              description.length < 150 ||
+                              description.includes('Contact us for more') ||
+                              description.includes('For more information') ||
+                              description.includes('Please contact') ||
+                              description.includes('Call for more details');
       
       if (needsFullDetails) {
         console.log(`📝 Fetching full details for ${dog.name} (ID: ${dog.id})`);
