@@ -320,7 +320,7 @@ export default function AdoptPage() {
       // If no location provided, use a random rural ZIP where help is needed most
       let searchLocation = effectiveLocation;
       if (!searchLocation || searchLocation.trim() === '') {
-        const { getRandomRuralZip } = await import('../lib/utils.js');
+        const { getRandomRuralZip } = await import('../lib/utils');
         searchLocation = getRandomRuralZip();
         console.log("No location provided, using rural ZIP:", searchLocation);
       }

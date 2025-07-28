@@ -175,7 +175,7 @@ function isValidBreed(breed: string | null): boolean {
     'hello', 'how are you', 'how r u', 'yo', 'sup',
     'adopt', 'adoption', 'rescue', 'search', 'something', 'anything',
     'dog', 'dogs', 'puppy', 'puppies', 'any', 'whatever', 'you pick', 'up to you',
-    'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don't know'
+    'yes', 'no', 'ok', 'okay', 'please', 'show me', 'rural', 'idk', 'i don\'t know'
   ];
 
   if (clean.length < 3 || clean.length > 30) return false;
