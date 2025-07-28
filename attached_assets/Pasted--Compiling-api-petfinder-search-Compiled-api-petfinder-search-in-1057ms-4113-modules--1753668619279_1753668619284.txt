@@ -1,0 +1,251 @@
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1057ms (4113 modules)
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: '', breed: '' }
+[🐾 /api/petfinder/search hit]
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100
+[✅ Petfinder Success] Found 100 dogs
+[📊 Stats] 100/100 dogs need full details
+[📝 Full Details] Fetching complete descriptions for 100 dogs
+✅ Got full details for Cow
+✅ Got full details for Chavo
+✅ Got full details for 58992312
+✅ Got full details for Big Feet
+✅ Got full details for Bingo
+✅ Got full details for Pickles Chi
+✅ Got full details for Bama Chi
+✅ Got full details for Daria
+✅ Got full details for Mater
+✅ Got full details for Vida
+[🔍 /api/petfinder/search] Starting search request
+[📋 Raw Input] { location: '', breed: '' }
+[🐾 /api/petfinder/search hit]
+[🎫 Token Manager] Using cached token
+[📡 Fetching]: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=100
+✅ Got full details for Meadow
+✅ Got full details for Choco
+✅ Got full details for Lemon Shark
+✅ Got full details for Jetta
+✅ Got full details for Koda
+[✅ Petfinder Success] Found 100 dogs
+[📊 Stats] 100/100 dogs need full details
+[📝 Full Details] Fetching complete descriptions for 100 dogs
+✅ Got full details for Cow
+✅ Got full details for Chavo
+✅ Got full details for 58992312
+✅ Got full details for Bingo
+✅ Got full details for Big Feet
+✅ Got full details for Lucille
+✅ Got full details for Minnie
+✅ Got full details for Baloo
+✅ Got full details for Blaze
+✅ Got full details for Bamboo
+✅ Got full details for Daria
+✅ Got full details for Mater
+✅ Got full details for Vida
+✅ Got full details for Bama Chi
+✅ Got full details for Pickles Chi
+✅ Got full details for Kiba
+✅ Got full details for Theo
+✅ Got full details for Tiberius
+✅ Got full details for Marta
+✅ Got full details for Xena
+✅ Got full details for Lemon Shark
+✅ Got full details for Meadow
+✅ Got full details for Choco
+✅ Got full details for Reed
+✅ Got full details for Koda
+✅ Got full details for Sweet Boys Penn and Teller
+✅ Got full details for Pickle
+✅ Got full details for Jetta
+✅ Got full details for Bruno
+✅ Got full details for Zooma Thurman
+✅ Got full details for Blaze
+✅ Got full details for Lucille
+✅ Got full details for Bamboo
+✅ Got full details for Minnie
+✅ Got full details for Baloo
+✅ Got full details for Bubbles
+✅ Got full details for Sadie
+✅ Got full details for Odie
+✅ Got full details for Hans
+✅ Got full details for Buzz
+✅ Got full details for Xena
+✅ Got full details for Kiba
+✅ Got full details for Tiberius
+✅ Got full details for Marta
+✅ Got full details for Theo
+✅ Got full details for Pinto
+✅ Got full details for MISSY
+✅ Got full details for Bucee
+✅ Got full details for Juno
+✅ Got full details for Mars
+✅ Got full details for Bruno
+✅ Got full details for Zooma Thurman
+✅ Got full details for Sweet Boys Penn and Teller
+✅ Got full details for Reed
+✅ Got full details for Pickle
+✅ Got full details for Spike
+✅ Got full details for Scooter
+✅ Got full details for Mayleen
+✅ Got full details for Bruno
+✅ Got full details for Mayleen
+✅ Got full details for Buzz
+✅ Got full details for Hans
+✅ Got full details for Sadie
+✅ Got full details for Pistol Waterford
+✅ Got full details for Bubbles
+✅ Got full details for Odie
+✅ Got full details for Buzz - AL
+✅ Got full details for Bear
+✅ Got full details for Fern
+✅ Got full details for Forest
+✅ Got full details for Pinto
+✅ Got full details for Juno
+✅ Got full details for Mars
+✅ Got full details for Bucee
+✅ Got full details for MISSY
+✅ Got full details for Bunnie XO
+✅ Got full details for Sequoia
+✅ Got full details for Xena
+✅ Got full details for Zion
+✅ Got full details for Denali
+✅ Got full details for Spike
+✅ Got full details for Mayleen
+✅ Got full details for Scooter
+✅ Got full details for Mayleen
+✅ Got full details for Bruno
+✅ Got full details for Loki
+✅ Got full details for Skor
+✅ Got full details for Hannah
+✅ Got full details for Princess
+✅ Got full details for Lucy
+✅ Got full details for Buzz - AL
+✅ Got full details for Bear
+✅ Got full details for Fern
+✅ Got full details for Pistol Waterford
+✅ Got full details for Forest
+✅ Got full details for Piper Waterford
+✅ Got full details for Frodo
+✅ Got full details for Pepper Waterford
+✅ Got full details for Hersey
+✅ Got full details for Lucky
+✅ Got full details for Bunnie XO
+✅ Got full details for Sequoia
+✅ Got full details for Denali
+✅ Got full details for Xena
+✅ Got full details for Zion
+✅ Got full details for Peppy Waterford
+✅ Got full details for Ozzy
+✅ Got full details for Pete Waterford
+✅ Got full details for Pauly
+✅ Got full details for French
+✅ Got full details for Princess
+✅ Got full details for Loki
+✅ Got full details for Skor
+✅ Got full details for Lucy
+✅ Got full details for Hannah
+✅ Got full details for Cookie
+✅ Got full details for Rosie Waterford
+✅ Got full details for Daisy Waterford
+✅ Got full details for SASKA
+✅ Got full details for Poppy Waterford
+✅ Got full details for Frodo
+✅ Got full details for Piper Waterford
+✅ Got full details for Lucky
+✅ Got full details for Hersey
+✅ Got full details for Pepper Waterford
+✅ Got full details for Walker
+✅ Got full details for Minnie
+✅ Got full details for Cocoa
+✅ Got full details for Spot
+✅ Got full details for Cocoa
+✅ Got full details for French
+✅ Got full details for Peppy Waterford
+✅ Got full details for Pete Waterford
+✅ Got full details for Ozzy
+✅ Got full details for Pauly
+✅ Got full details for Sadie (55 lbs)
+✅ Got full details for Pippa aka Happy
+✅ Got full details for Bryce
+✅ Got full details for Cocoa
+✅ Got full details for Missy - New to Rescue - Beautiful Girl
+✅ Got full details for Daisy Waterford
+✅ Got full details for Poppy Waterford
+✅ Got full details for Rosie Waterford
+✅ Got full details for Cookie
+✅ Got full details for Cocoa
+✅ Got full details for SASKA
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Sadie
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Spot
+✅ Got full details for Minnie
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Walker
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Pippa aka Happy
+✅ Got full details for Bryce
+✅ Got full details for Sadie (55 lbs)
+✅ Got full details for Missy - New to Rescue - Beautiful Girl
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Rocco
+✅ Got full details for Everest
+ POST /api/petfinder/search 200 in 35190ms
+✅ Got full details for Cocoa
+✅ Got full details for Sadie
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Everest
+✅ Got full details for Cocoa
+✅ Got full details for Cocoa
+✅ Got full details for Rocco
+ POST /api/petfinder/search 200 in 32635ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 1800ms (7939 modules)
+ GET /adopt/77508875 200 in 2632ms
+ HEAD /adopt/77508875 200 in 43ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 673ms (4115 modules)
+[🐕 /api/dog/77508875] Fetching dog details
+dogId type: string value: 77508875
+🐕 Checking database first for dog ID: 77508875
+Searching for dog with petfinder_id: 77508875
+No dog found with petfinder_id: 77508875
+Database query result: Not found
+🔄 No dog found in database, fetching from Petfinder...
+🔑 Getting Petfinder access token...
+✅ Got Petfinder access token
+🔍 Fetching dog 77508875 from Petfinder API...
+❌ Petfinder API error: 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+ GET /api/dog/77508875 404 in 2158ms
+[🐕 /api/dog/77508875] Fetching dog details
+dogId type: string value: 77508875
+🐕 Checking database first for dog ID: 77508875
+Searching for dog with petfinder_id: 77508875
+No dog found with petfinder_id: 77508875
+Database query result: Not found
+🔄 No dog found in database, fetching from Petfinder...
+🔑 Getting Petfinder access token...
+✅ Got Petfinder access token
+🔍 Fetching dog 77508875 from Petfinder API...
+❌ Petfinder API error: 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+ GET /api/dog/77508875 404 in 721ms
