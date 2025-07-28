@@ -2,6 +2,44 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDogById } from '@/lib/supabase';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 
+let cachedToken: string | null = null;
+let tokenExpiresAt: number = 0;
+
+async function getAccessToken(forceRefresh = false) {
+  const now = Date.now();
+  const buffer = 5 * 60 * 1000; // 5-minute buffer
+
+  if (!forceRefresh && cachedToken && now < (tokenExpiresAt - buffer)) {
+    console.log('🔄 Using cached Petfinder token');
+    return cachedToken;
+  }
+
+  console.log('🔑 Getting fresh Petfinder access token...');
+
+  const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: process.env.PETFINDER_CLIENT_ID!,
+      client_secret: process.env.PETFINDER_CLIENT_SECRET!,
+    }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ Token request failed:', res.status, errorText);
+    throw new Error(`Failed to get token: ${res.status} - ${errorText}`);
+  }
+
+  const data = await res.json();
+  cachedToken = data.access_token;
+  tokenExpiresAt = now + (data.expires_in * 1000);
+
+  console.log('✅ Got fresh Petfinder access token, expires in', data.expires_in, 'seconds');
+  return cachedToken;
+}
+
 export async function GET(request: Request, { params }: { params: { dogId: string } }) {
   const dogId = params?.dogId;
 
@@ -79,57 +117,36 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       return NextResponse.json(formattedDog);
     }
 
-    // If no dog in database, fetch from Petfinder
+    // Fetch from Petfinder API
     console.log('🔄 No dog found in database, fetching from Petfinder...');
 
-    // Check if we have Petfinder credentials
-    if (!process.env.PETFINDER_CLIENT_ID || !process.env.PETFINDER_CLIENT_SECRET) {
-      console.error('❌ Missing Petfinder credentials');
-      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
-    }
-
-    // Get Petfinder access token
-    console.log('🔑 Getting Petfinder access token...');
-    const tokenResponse = await fetch('https://api.petfinder.com/v2/oauth2/token', {
-      method: 'POST',
+    let accessToken = await getAccessToken();
+    let petfinderResponse = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: process.env.PETFINDER_CLIENT_ID!,
-        client_secret: process.env.PETFINDER_CLIENT_SECRET!,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const tokenError = await tokenResponse.text();
-      console.error('❌ Failed to get Petfinder token:', tokenResponse.status, tokenError);
-      return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
-    }
-
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-    console.log('✅ Got Petfinder access token');
-
-    // Fetch individual dog details from Petfinder for complete data including full description
-    console.log(`🔍 Fetching dog ${dogId} from Petfinder API...`);
-    const dogResponse = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
     });
 
-    if (!dogResponse.ok) {
-      const dogError = await dogResponse.text();
-      console.error('❌ Petfinder API error:', dogResponse.status, dogError);
-      if (dogResponse.status === 404) {
-        return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
-      }
+    // If we get 401 (unauthorized), try with fresh token
+    if (petfinderResponse.status === 401) {
+      console.log('🔄 Token expired, getting fresh token and retrying...');
+      accessToken = await getAccessToken(true); // Force refresh
+      petfinderResponse = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    if (!petfinderResponse.ok) {
+      const errorData = await petfinderResponse.json().catch(() => ({}));
+      console.error(`❌ Petfinder API error: ${petfinderResponse.status}`, errorData);
       return NextResponse.json({ error: 'Dog not found' }, { status: 404 });
     }
 
-    const dogData = await dogResponse.json();
+    const dogData = await petfinderResponse.json();
     console.log('✅ Successfully fetched dog details from Petfinder:', dogData.animal?.name);
 
     // Calculate and add visibility score for Petfinder dogs not in database

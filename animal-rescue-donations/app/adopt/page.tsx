@@ -196,51 +196,44 @@ export default function AdoptPage() {
 
   const handleSearch = async () => {
     let effectiveLocation = searchLocation.trim();
-    
-    // If no location provided, use rural area search
+
+    // If no location provided, check database first for invisible dogs
     if (!effectiveLocation) {
-      console.log("No location provided, using rural area search");
+      console.log("No location provided, checking database for invisible dogs first");
+
       try {
-        const ruralResponse = await fetch("/api/petfinder/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            location: "", // Will trigger getRandomRuralZip() on backend
-            breed: searchBreed.trim() || ""
-          }),
+        // Check database for most invisible dogs first
+        console.log("Fetching most invisible dogs from database...");
+        const invisibleResponse = await fetch('/api/invisible-dogs', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
         });
 
-        if (ruralResponse.ok) {
-          const data = await ruralResponse.json();
-          if (data.animals) {
-            // Filter by size and age if specified
-            let filteredDogs = data.animals;
+        if (invisibleResponse.ok) {
+          const invisibleData = await invisibleResponse.json();
+          console.log("Fetched dogs from database:", invisibleData.dogs?.length || 0);
 
-            if (searchSize) {
-              filteredDogs = filteredDogs.filter((dog: Dog) => 
-                dog.size?.toLowerCase() === searchSize.toLowerCase()
-              );
-            }
-
-            if (searchAge) {
-              filteredDogs = filteredDogs.filter((dog: Dog) => 
-                dog.age?.toLowerCase() === searchAge.toLowerCase()
-              );
-            }
-
-            setDogs(filteredDogs);
+          if (invisibleData.dogs && invisibleData.dogs.length >= 20) {
+            // We have enough dogs from database, use them
+            setDogs(invisibleData.dogs);
             setHasSearched(true);
             setCurrentPage(1);
-            setLoading(false);
+            console.log(`Using ${invisibleData.dogs.length} invisible dogs from database`);
             return;
+          } else {
+            console.log(`Only ${invisibleData.dogs?.length || 0} dogs in database, supplementing with Petfinder`);
+            // Continue to Petfinder to get more dogs
           }
         }
       } catch (error) {
-        console.error("Rural search error:", error);
+        console.error("Database search error:", error);
       }
-      
-      alert("Please enter a location to search.");
-      return;
+
+      // If we reach here, either database had insufficient dogs or failed
+      // Use Petfinder to get more dogs, but focus on rural areas for invisible dogs
+      console.log("Supplementing with Petfinder API for more invisible dogs");
+      effectiveLocation = getRandomRuralZip();
+      console.log("Using rural ZIP for Petfinder search:", effectiveLocation);
     }
 
     setLoading(true);
@@ -317,14 +310,14 @@ export default function AdoptPage() {
 
       // Fallback to Petfinder API if no dogs in database
       console.log("No dogs found in database, falling back to Petfinder API");
-      
+
       // If no location provided, use a random rural ZIP where help is needed most
       let searchLocation = effectiveLocation;
       if (!searchLocation || searchLocation.trim() === '') {
         searchLocation = getRandomRuralZip();
         console.log("No location provided, using rural ZIP:", searchLocation);
       }
-      
+
       const res = await fetch('/api/petfinder/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
