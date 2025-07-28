@@ -5,7 +5,7 @@ import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdo
 import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
 import { getAllDogs, searchDogs } from '@/lib/supabase';
-import { getRandomRuralZip } from '@/lib/utils';
+import { getRandomRuralZip } from '@/lib/utils.ts';
 
 interface Dog {
   id: string;
