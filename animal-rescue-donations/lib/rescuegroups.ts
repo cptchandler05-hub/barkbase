@@ -333,7 +333,7 @@ class RescueGroupsAPI {
       state: state,
       postcode: postalcode,
       latitude: lat,
-      longitude: lon
+      longitude: lon,
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
