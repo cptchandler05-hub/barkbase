@@ -22,6 +22,7 @@ import {
 } from "@coinbase/onchainkit/identity";
 import { motion } from "framer-motion";
 import ThankYouToast from "@/app/components/ThankYouToast";
+import Navigation from "@/app/components/Navigation";
 
 
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
@@ -401,7 +402,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-6 pt-6 pb-6">
         {thankYouImageUrl && (
           <ThankYouToast
             imageUrl={thankYouImageUrl}
@@ -411,37 +412,7 @@ export default function Page() {
         )}
 
 
-        <header className="flex items-center justify-between mb-12 z-50 relative">
-          <img
-            src="/logos/barkbase-logo.png"
-            alt="BarkBase Logo"
-            className="w-48 md:w-60 lg:w-72 h-auto"
-          />
-          <div className="relative z-50">
-            <Wallet>
-              <ConnectWallet>
-                <Avatar className="h-6 w-6" />
-                <Name />
-              </ConnectWallet>
-              <WalletDropdown>
-                <Identity className="px-4 pt-3 pb-2">
-                  <Avatar />
-                  <Name />
-                  <Address />
-                  <EthBalance />
-                </Identity>
-                <WalletDropdownLink
-                  icon="wallet"
-                  href="https://keys.coinbase.com"
-                >
-                  Wallet
-                </WalletDropdownLink>
-                <WalletDropdownDisconnect />
-              </WalletDropdown>
-            </Wallet>
-          </div>
-
-        </header>
+        <Navigation />
         <a
           href="/raffle"
           className="block group relative mx-auto mt-6 mb-10 w-full max-w-5xl rounded-2xl overflow-hidden shadow-lg border border-yellow-400 bg-yellow-100 hover:shadow-2xl transition-all duration-300"

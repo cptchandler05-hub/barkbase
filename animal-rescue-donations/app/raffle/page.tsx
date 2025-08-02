@@ -11,6 +11,7 @@ import { X } from "lucide-react";
 
 import { getWinners } from "@/lib/getWinners";
 import BarkrBackflip from "@/components/BarkrBackFlip";
+import Navigation from "@/app/components/Navigation";
 
 
 export default function RafflePage() {
@@ -118,16 +119,16 @@ export default function RafflePage() {
       setShowWinner(true);
       setPlayBackflip(true);
       setTimeout(() => setPlayBackflip(false), 2000);
-      
+
       // Auto-refresh page after 15 seconds to reset for new raffle
       const timeout = setTimeout(() => {
         console.log("🔄 Auto-refreshing page for new raffle...");
         window.location.reload();
       }, 15000);
-      
+
       setRefreshTimeout(timeout);
     }
-    
+
     // Cleanup timeout if component unmounts
     return () => {
       if (refreshTimeout) {
@@ -138,7 +139,7 @@ export default function RafflePage() {
 
   const renderWinnerMessage = () => {
     if (!raffleEnded || !participants.length) return null;
-    
+
     const lastWinner = participants[participants.length - 1];
     const shortWinner = `${lastWinner.slice(0, 6)}...${lastWinner.slice(-4)}`;
     const halfPot = (parseFloat(pot) / 2).toFixed(4);
@@ -161,29 +162,7 @@ export default function RafflePage() {
   return (
 
     <div className="relative min-h-screen">
-      <div className="mt-4 flex justify-end z-[1000] relative">
-
-
-      <Wallet>
-        <ConnectWallet>
-          <Avatar className="h-6 w-6" />
-          <Name />
-        </ConnectWallet>
-        <WalletDropdown>
-          <Identity className="px-4 pt-3 pb-2">
-            <Avatar />
-            <Name />
-            <Address />
-            <EthBalance />
-          </Identity>
-          <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
-            Wallet
-          </WalletDropdownLink>
-          <WalletDropdownDisconnect />
-        </WalletDropdown>
-      </Wallet>
-    </div>
-
+      <Navigation />
 
 
       <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-yellow-50 to-blue-100 rounded-2xl shadow-2xl relative overflow-visible px-6 py-10 mt-8 sm:mt-16 md:mt-20 z-[10]">

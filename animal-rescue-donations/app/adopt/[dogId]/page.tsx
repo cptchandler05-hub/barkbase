@@ -6,6 +6,7 @@ import { Address, Avatar, Name, Identity, EthBalance } from "@coinbase/onchainki
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
+import Navigation from "@/app/components/Navigation";
 
 interface Dog {
   id: string;
@@ -480,37 +481,8 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
   return (
     <div className="min-h-screen w-full font-sans text-gray-800">
       <div className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          {/* Header */}
-          <header className="flex items-center justify-between mb-8 z-50 relative">
-            <a href="/">
-              <img
-                src="/logos/barkbase-logo.png"
-                alt="BarkBase Logo"
-                className="w-48 md:w-60 lg:w-72 h-auto cursor-pointer"
-              />
-            </a>
-            <div className="relative z-50">
-              <Wallet>
-                <ConnectWallet>
-                  <Avatar className="h-6 w-6" />
-                  <Name />
-                </ConnectWallet>
-                <WalletDropdown>
-                  <Identity className="px-4 pt-3 pb-2">
-                    <Avatar />
-                    <Name />
-                    <Address />
-                    <EthBalance />
-                  </Identity>
-                  <WalletDropdownLink icon="wallet" href="https://keys.coinbase.com">
-                    Wallet
-                  </WalletDropdownLink>
-                  <WalletDropdownDisconnect />
-                </WalletDropdown>
-              </Wallet>
-            </div>
-          </header>
+        <div className="max-w-7xl mx-auto px-6 pt-6 pb-6">
+          <Navigation />
 
           {/* Breadcrumb */}
           <div className="mb-6">
