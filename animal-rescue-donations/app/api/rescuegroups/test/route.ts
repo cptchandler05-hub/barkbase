@@ -19,8 +19,8 @@ export async function GET() {
         sampleAnimal: testAnimals[0] ? {
           id: testAnimals[0].animalID,
           name: testAnimals[0].animalName,
-          breed: testAnimals[0].animalPrimaryBreed,
-          location: testAnimals[0].animalLocationCitystate
+          species: testAnimals[0].animalSpecies,
+          status: testAnimals[0].animalStatus
         } : null
       }
     });

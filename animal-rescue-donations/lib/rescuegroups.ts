@@ -108,28 +108,9 @@ class RescueGroupsAPI {
         ],
         fields: [
           'animalID',
-          'animalOrgID',
           'animalName',
-          'animalGeneralAge',
-          'animalSex',
-          'animalGeneralSizePotential',
-          'animalPrimaryBreed',
-          'animalSecondaryBreed',
-          'animalMixedBreed',
-          'animalDescription',
           'animalStatus',
-          'animalSpecialNeeds',
-          'animalHousetrained',
-          'animalGoodWithKids',
-          'animalGoodWithCats',
-          'animalGoodWithDogs',
-          'animalAltered',
-          'animalPictures',
-          'animalLocationAddress',
-          'animalLocationCitystate',
-          'animalLocationPostalcode',
-          'animalThumbnailUrl',
-          'animalUrl'
+          'animalSpecies'
         ]
       }
     };
@@ -203,28 +184,9 @@ class RescueGroupsAPI {
       ],
       fields: [
         'animalID',
-        'animalOrgID',
         'animalName',
-        'animalGeneralAge',
-        'animalSex',
-        'animalGeneralSizePotential',
-        'animalPrimaryBreed',
-        'animalSecondaryBreed',
-        'animalMixedBreed',
-        'animalDescription',
         'animalStatus',
-        'animalSpecialNeeds',
-        'animalHousetrained',
-        'animalGoodWithKids',
-        'animalGoodWithCats',
-        'animalGoodWithDogs',
-        'animalAltered',
-        'animalPictures',
-        'animalLocationAddress',
-        'animalLocationCitystate',
-        'animalLocationPostalcode',
-        'animalThumbnailUrl',
-        'animalUrl'
+        'animalSpecies'
       ]
     };
 
