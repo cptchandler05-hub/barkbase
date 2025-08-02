@@ -207,10 +207,7 @@ class RescueGroupsAPI {
         'animalSecondaryBreed',
         'animalMixedBreed',
         'animalDescription',
-        'animalPictures',
-        'animalLocationAddress',
-        'animalLocationCitystate',
-        'animalLocationPostalcode'
+        'animalPictures'
       ]
     };
 
