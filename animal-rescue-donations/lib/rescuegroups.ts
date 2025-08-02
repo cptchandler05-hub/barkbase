@@ -19,9 +19,6 @@ interface RescueGroupsAnimal {
   animalGoodWithCats: string;
   animalGoodWithDogs: string;
   animalAltered: string;
-  animalLocationAddress: string;
-  animalLocationCitystate: string;
-  animalLocationPostalcode: string;
   animalLocationDistance?: number;
   animalThumbnailUrl?: string;
   animalUrl: string;
@@ -117,10 +114,7 @@ class RescueGroupsAPI {
           'animalPrimaryBreed',
           'animalSecondaryBreed',
           'animalMixedBreed',
-          'animalDescription',
-          'animalLocationAddress',
-          'animalLocationCitystate',
-          'animalLocationPostalcode'
+          'animalDescription'
         ]
       }
     };
