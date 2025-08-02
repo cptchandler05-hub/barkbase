@@ -118,7 +118,18 @@ class RescueGroupsAPI {
           'animalPrimaryBreed',
           'animalSecondaryBreed',
           'animalMixedBreed',
-          'animalDescription'
+          'animalDescription',
+          'animalSpecialNeeds',
+          'animalHousetrained',
+          'animalGoodWithKids',
+          'animalGoodWithCats',
+          'animalGoodWithDogs',
+          'animalAltered',
+          'animalPictures',
+          'animalLocationAddress',
+          'animalLocationCitystate',
+          'animalLocationPostalcode',
+          'animalUrl'
         ]
       }
     };
@@ -202,7 +213,18 @@ class RescueGroupsAPI {
         'animalPrimaryBreed',
         'animalSecondaryBreed',
         'animalMixedBreed',
-        'animalDescription'
+        'animalDescription',
+        'animalSpecialNeeds',
+        'animalHousetrained',
+        'animalGoodWithKids',
+        'animalGoodWithCats',
+        'animalGoodWithDogs',
+        'animalAltered',
+        'animalPictures',
+        'animalLocationAddress',
+        'animalLocationCitystate',
+        'animalLocationPostalcode',
+        'animalUrl'
       ]
     };
 
