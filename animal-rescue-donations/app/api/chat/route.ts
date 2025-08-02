@@ -731,7 +731,7 @@ const urgencyTriggers = [
       console.log('[🐾 Filter Check] Unseen dogs count:', unseenDogs.length);
       console.log('[🐾 Filter Check] Total cached dogs:', updatedMemory.cachedDogs.length);
 
-      const moreDogs = unseenDogs.slice(0, 10);
+      const moreDogs = unseenDogs.slice(00, 10);
 
       if (moreDogs.length === 0) {
         console.log('[🐾 No More] All cached dogs have been shown');
@@ -1084,6 +1084,7 @@ const urgencyTriggers = [
               .from('dogs')
               .select('*')
               .eq('status', 'adoptable')
+              .order('api_source_priority', { ascending: true })
               .order('visibility_score', { ascending: false })
               .limit(100);
 
