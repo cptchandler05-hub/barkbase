@@ -147,7 +147,6 @@ class RescueGroupsAPI {
           'animalGoodWithCats',
           'animalGoodWithDogs',
           'animalAltered',
-          'animalLocation',
           'animalLocationDistance',
           'animalThumbnailUrl',
           'animalUrl'
@@ -242,7 +241,6 @@ class RescueGroupsAPI {
         'animalGoodWithCats',
         'animalGoodWithDogs',
         'animalAltered',
-        'animalLocation',
         'animalLocationDistance',
         'animalThumbnailUrl',
         'animalUrl'
@@ -265,13 +263,12 @@ class RescueGroupsAPI {
 
   // Transform RescueGroups animal to our database format
   transformToDatabaseFormat(animal: RescueGroupsAnimal): any {
-    // Parse location from the new location schema
-    const location = animal.animalLocation || {};
-    const city = location.city || 'Unknown';
-    const state = location.state || 'Unknown';
-    const postalcode = location.postalcode || null;
-    const lat = location.lat || null;
-    const lon = location.lon || null;
+    // For now, we'll use default location values since we removed location fields
+    const city = 'Unknown';
+    const state = 'Unknown';
+    const postalcode = null;
+    const lat = null;
+    const lon = null;
 
     // Parse photos - RescueGroups returns pictures as an object with numbered keys
     const photos = [];
