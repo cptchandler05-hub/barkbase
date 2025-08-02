@@ -13,6 +13,14 @@ interface RescueGroupsAnimal {
   animalMixedBreed: string;
   animalDescription: string;
   animalStatus: string;
+  animalPictures?: Array<{
+    large?: string;
+    original?: string;
+    small?: string;
+    order?: number;
+    created?: string;
+    updated?: string;
+  }>;
   animalSpecialNeeds: string;
   animalHousetrained: string;
   animalGoodWithKids: string;
@@ -114,7 +122,8 @@ class RescueGroupsAPI {
           'animalPrimaryBreed',
           'animalSecondaryBreed',
           'animalMixedBreed',
-          'animalDescription'
+          'animalDescription',
+          'animalPictures'
         ]
       }
     };
@@ -198,7 +207,8 @@ class RescueGroupsAPI {
         'animalPrimaryBreed',
         'animalSecondaryBreed',
         'animalMixedBreed',
-        'animalDescription'
+        'animalDescription',
+        'animalPictures'
       ]
     };
 
@@ -223,10 +233,23 @@ class RescueGroupsAPI {
     const city = locationParts[0]?.trim() || 'Unknown';
     const state = locationParts[1]?.trim() || 'Unknown';
 
-    // Parse photos
-    const photos = Array.isArray(animal.animalPictures) 
-      ? animal.animalPictures.map(pic => pic.large || pic.original || pic.small).filter(Boolean)
-      : [];
+    // Parse photos - RescueGroups returns pictures as an object with numbered keys
+    const photos = [];
+    if (animal.animalPictures) {
+      // Convert the pictures object to an array and sort by order
+      const pictureEntries = Object.entries(animal.animalPictures)
+        .map(([key, pic]: [string, any]) => ({
+          ...pic,
+          order: pic.order || parseInt(key) || 0
+        }))
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+      
+      // Extract URLs in order of preference: large -> original -> small
+      for (const pic of pictureEntries) {
+        const url = pic.large || pic.original || pic.small;
+        if (url) photos.push(url);
+      }
+    }
 
     // Map boolean-like strings to actual booleans
     const mapBoolean = (value: string) => {
