@@ -147,7 +147,7 @@ class RescueGroupsAPI {
           'animalGoodWithCats',
           'animalGoodWithDogs',
           'animalAltered',
-          'animalLocationCitystate',
+          'animalLocation',
           'animalLocationDistance',
           'animalThumbnailUrl',
           'animalUrl'
@@ -242,7 +242,7 @@ class RescueGroupsAPI {
         'animalGoodWithCats',
         'animalGoodWithDogs',
         'animalAltered',
-        'animalLocationCitystate',
+        'animalLocation',
         'animalLocationDistance',
         'animalThumbnailUrl',
         'animalUrl'
