@@ -8,21 +8,21 @@ interface RescueGroupsAnimal {
   animalGeneralAge: string;
   animalSex: string;
   animalGeneralSizePotential: string;
-  animalBreed: string;
+  animalPrimaryBreed: string;
   animalSecondaryBreed?: string;
   animalMixedBreed: string;
   animalDescription: string;
   animalStatus: string;
-  animalSpecialneeds: string;
+  animalSpecialNeeds: string;
   animalHousetrained: string;
   animalGoodWithKids: string;
   animalGoodWithCats: string;
   animalGoodWithDogs: string;
-  animalSpayedNeutered: string;
+  animalAltered: string;
   animalPictures?: any[];
-  animalLocation: string;
+  animalLocationAddress: string;
   animalLocationCitystate: string;
-  animalLocationZip: string;
+  animalLocationPostalcode: string;
   animalLocationDistance?: number;
   animalThumbnailUrl?: string;
   animalUrl: string;
@@ -113,21 +113,21 @@ class RescueGroupsAPI {
           'animalGeneralAge',
           'animalSex',
           'animalGeneralSizePotential',
-          'animalBreed',
+          'animalPrimaryBreed',
           'animalSecondaryBreed',
           'animalMixedBreed',
           'animalDescription',
           'animalStatus',
-          'animalSpecialneeds',
+          'animalSpecialNeeds',
           'animalHousetrained',
           'animalGoodWithKids',
           'animalGoodWithCats', 
           'animalGoodWithDogs',
-          'animalSpayedNeutered',
+          'animalAltered',
           'animalPictures',
-          'animalLocation',
+          'animalLocationAddress',
           'animalLocationCitystate',
-          'animalLocationZip',
+          'animalLocationPostalcode',
           'animalThumbnailUrl',
           'animalUrl'
         ]
@@ -147,7 +147,7 @@ class RescueGroupsAPI {
     // Add breed filter if provided
     if (params.breed) {
       searchData.search.filters.push({
-        fieldName: 'animalBreed',
+        fieldName: 'animalPrimaryBreed',
         operation: 'contains',
         criteria: params.breed
       });
@@ -208,21 +208,21 @@ class RescueGroupsAPI {
         'animalGeneralAge',
         'animalSex',
         'animalGeneralSizePotential',
-        'animalBreed',
+        'animalPrimaryBreed',
         'animalSecondaryBreed',
         'animalMixedBreed',
         'animalDescription',
         'animalStatus',
-        'animalSpecialneeds',
+        'animalSpecialNeeds',
         'animalHousetrained', 
         'animalGoodWithKids',
         'animalGoodWithCats',
         'animalGoodWithDogs',
-        'animalSpayedNeutered',
+        'animalAltered',
         'animalPictures',
-        'animalLocation',
+        'animalLocationAddress',
         'animalLocationCitystate',
-        'animalLocationZip',
+        'animalLocationPostalcode',
         'animalThumbnailUrl',
         'animalUrl'
       ]
@@ -271,7 +271,7 @@ class RescueGroupsAPI {
       name: animal.animalName || 'Unknown',
       type: 'Dog',
       species: 'Dog',
-      primary_breed: animal.animalBreed || 'Mixed Breed',
+      primary_breed: animal.animalPrimaryBreed || 'Mixed Breed',
       secondary_breed: animal.animalSecondaryBreed || null,
       is_mixed: mapBoolean(animal.animalMixedBreed) || false,
       is_unknown_breed: false,
@@ -279,9 +279,9 @@ class RescueGroupsAPI {
       gender: animal.animalSex || 'Unknown', 
       size: animal.animalGeneralSizePotential || 'Unknown',
       status: 'adoptable',
-      spayed_neutered: mapBoolean(animal.animalSpayedNeutered),
+      spayed_neutered: mapBoolean(animal.animalAltered),
       house_trained: mapBoolean(animal.animalHousetrained),
-      special_needs: mapBoolean(animal.animalSpecialneeds),
+      special_needs: mapBoolean(animal.animalSpecialNeeds),
       good_with_children: mapBoolean(animal.animalGoodWithKids),
       good_with_dogs: mapBoolean(animal.animalGoodWithDogs),
       good_with_cats: mapBoolean(animal.animalGoodWithCats),
@@ -291,7 +291,7 @@ class RescueGroupsAPI {
       contact_info: {}, // Would need organization details for this
       city: city,
       state: state,
-      postcode: animal.animalLocationZip || null,
+      postcode: animal.animalLocationPostalcode || null,
       latitude: null, // Would need to geocode
       longitude: null, // Would need to geocode
       last_updated_at: new Date().toISOString(),
