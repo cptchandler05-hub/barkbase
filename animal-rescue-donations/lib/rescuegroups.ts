@@ -51,6 +51,8 @@ class RescueGroupsAPI {
   }
 
   private async makeRequest(data: any): Promise<any> {
+    console.log('[🦮 RescueGroups] Making request with data:', JSON.stringify(data, null, 2));
+    
     const response = await fetch(this.baseURL, {
       method: 'POST',
       headers: {
@@ -63,14 +65,21 @@ class RescueGroupsAPI {
       })
     });
 
+    console.log('[🦮 RescueGroups] Response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`RescueGroups API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('[❌ RescueGroups] Response error:', errorText);
+      throw new Error(`RescueGroups API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const result = await response.json();
+    console.log('[🦮 RescueGroups] Response result:', JSON.stringify(result, null, 2));
 
     if (result.status !== 'ok') {
-      throw new Error(`RescueGroups API error: ${result.messages?.generalMessages?.[0] || 'Unknown error'}`);
+      const errorMsg = result.messages?.generalMessages?.[0]?.messageText || JSON.stringify(result.messages) || 'Unknown error';
+      console.error('[❌ RescueGroups] API status not ok:', errorMsg);
+      throw new Error(`RescueGroups API error: ${errorMsg}`);
     }
 
     return result;
