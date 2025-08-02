@@ -110,6 +110,13 @@ export default function Navigation() {
             </a>
           </div>
 
+          {/* BARKBASE Text */}
+          <div className="flex-1 flex justify-center">
+            <h1 className="text-2xl font-bold text-blue-700 tracking-wide">
+              BARKBASE
+            </h1>
+          </div>
+
           {/* Mobile menu button */}
           <button
             onClick={toggleMobileMenu}
