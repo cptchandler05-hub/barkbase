@@ -88,12 +88,12 @@ class RescueGroupsAPI {
         filters: [
           {
             fieldName: 'animalSpecies',
-            operation: 'equals',
+            operation: 'equal',
             criteria: 'Dog'
           },
           {
             fieldName: 'animalStatus',
-            operation: 'equals', 
+            operation: 'equal', 
             criteria: 'Available'
           }
         ],
@@ -148,7 +148,7 @@ class RescueGroupsAPI {
     if (params.age) {
       searchData.search.filters.push({
         fieldName: 'animalGeneralAge',
-        operation: 'equals',
+        operation: 'equal',
         criteria: params.age
       });
     }
@@ -156,7 +156,7 @@ class RescueGroupsAPI {
     if (params.size) {
       searchData.search.filters.push({
         fieldName: 'animalGeneralSizePotential',
-        operation: 'equals',
+        operation: 'equal',
         criteria: params.size
       });
     }
@@ -164,7 +164,7 @@ class RescueGroupsAPI {
     if (params.gender) {
       searchData.search.filters.push({
         fieldName: 'animalSex',
-        operation: 'equals',
+        operation: 'equal',
         criteria: params.gender
       });
     }
