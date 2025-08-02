@@ -159,9 +159,10 @@ class RescueGroupsAPI {
       searchData.search.filters.push({
         fieldName: 'animalLocationZip',
         operation: 'radius',
-        criteria: params.location,
-        radius: params.radius || 100
+        criteria: params.location
       });
+      // Set radius as a separate property in the search object
+      searchData.search.radius = params.radius || 100;
     }
 
     // Add breed filter if provided
