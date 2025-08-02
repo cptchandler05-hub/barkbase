@@ -1,52 +1,33 @@
-// RescueGroups API Integration
+// RescueGroups v5 REST API Integration
 // Documentation: https://userguide.rescuegroups.org/display/APIDG/API+Developer+Guide
 
 interface RescueGroupsAnimal {
-  animalID: string;
-  animalOrgID: string;
-  animalName: string;
-  animalSpecies: string;
-  animalGeneralAge: string;
-  animalSex: string;
-  animalGeneralSizePotential: string;
-  animalPrimaryBreed: string;
-  animalSecondaryBreed?: string;
-  animalMixedBreed: string;
-  animalDescription: string;
-  animalStatus: string;
-  animalPictures?: Array<{
+  id: string;
+  name: string;
+  status: string;
+  species: string;
+  organization: string;
+  ageGroup: string;
+  sex: string;
+  sizeGroup: string;
+  breedPrimary: string;
+  breedSecondary?: string;
+  breedMixed: boolean;
+  descriptionText: string;
+  specialNeeds: boolean;
+  houseTrained: boolean;
+  goodWithChildren: boolean;
+  goodWithCats: boolean;
+  goodWithDogs: boolean;
+  pictures?: Array<{
     large?: string;
     original?: string;
     small?: string;
     order?: number;
-    created?: string;
-    updated?: string;
   }>;
-  animalSpecialNeeds: string;
-  animalHousetrained: string;
-  animalGoodWithKids: string;
-  animalGoodWithCats: string;
-  animalGoodWithDogs: string;
-  animalAltered: string;
-  animalLocation?: {
-    city?: string;
-    citystate?: string;
-    coordinates?: string;
-    country?: string;
-    lat?: number;
-    lon?: number;
-    name?: string;
-    phone?: string;
-    phoneExt?: string;
-    postalcode?: string;
-    postalcodePlus4?: string;
-    state?: string;
-    street?: string;
-    url?: string;
-  };
-  animalLocationDistance?: number;
-  animalThumbnailUrl?: string;
-  animalUrl: string;
+  thumbnailUrl?: string;
+  url: string;
+  distance?: number;
   [key: string]: any;
 }
 
@@ -58,11 +39,13 @@ interface RescueGroupsSearchParams {
   gender?: string;
   limit?: number;
   radius?: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 class RescueGroupsAPI {
   private apiKey: string;
-  private baseURL = 'https://api.rescuegroups.org/http/v2.json';
+  private baseURL = 'https://api.rescuegroups.org/v5/public/animals';
 
   constructor() {
     this.apiKey = process.env.RESCUEGROUPS_API_KEY || '';
@@ -71,19 +54,16 @@ class RescueGroupsAPI {
     }
   }
 
-  private async makeRequest(data: any): Promise<any> {
-    console.log('[🦮 RescueGroups] Making request with data:', JSON.stringify(data, null, 2));
+  private async makeRequest(url: string): Promise<any> {
+    console.log('[🦮 RescueGroups] Making GET request to:', url);
 
-    const response = await fetch(this.baseURL, {
-      method: 'POST',
+    const response = await fetch(url, {
+      method: 'GET',
       headers: {
+        'Authorization': this.apiKey,
         'Content-Type': 'application/json',
         'User-Agent': 'BarkBase/1.0'
-      },
-      body: JSON.stringify({
-        apikey: this.apiKey,
-        ...data
-      })
+      }
     });
 
     console.log('[🦮 RescueGroups] Response status:', response.status);
@@ -97,113 +77,80 @@ class RescueGroupsAPI {
     const result = await response.json();
     console.log('[🦮 RescueGroups] Response result:', JSON.stringify(result, null, 2));
 
-    if (result.status !== 'ok') {
-      const errorMsg = result.messages?.generalMessages?.[0]?.messageText || JSON.stringify(result.messages) || 'Unknown error';
-      console.error('[❌ RescueGroups] API status not ok:', errorMsg);
-      throw new Error(`RescueGroups API error: ${errorMsg}`);
-    }
-
     return result;
   }
 
   async searchAnimals(params: RescueGroupsSearchParams): Promise<RescueGroupsAnimal[]> {
-    const searchData = {
-      objectType: 'animals',
-      objectAction: 'publicSearch',
-      search: {
-        resultStart: 0,
-        resultLimit: params.limit || 100,
-        resultSort: 'animalID',
-        resultOrder: 'asc',
-        filters: [
-          {
-            fieldName: 'animalSpecies',
-            operation: 'equal',
-            criteria: 'Dog'
-          },
-          {
-            fieldName: 'animalStatus',
-            operation: 'equal', 
-            criteria: 'Available'
-          }
-        ],
-        fields: [
-          'animalID',
-          'animalName',
-          'animalStatus',
-          'animalSpecies',
-          'animalOrgID',
-          'animalGeneralAge',
-          'animalSex',
-          'animalGeneralSizePotential',
-          'animalPrimaryBreed',
-          'animalSecondaryBreed',
-          'animalMixedBreed',
-          'animalDescription',
-          'animalPictures',
-          'animalSpecialNeeds',
-          'animalHousetrained',
-          'animalGoodWithKids',
-          'animalGoodWithCats',
-          'animalGoodWithDogs',
-          'animalAltered',
-          'animalLocationDistance',
-          'animalThumbnailUrl',
-          'animalUrl'
-        ]
-      }
-    };
+    const endpoint = `${this.baseURL}/search/available/dogs`;
+    const url = new URL(endpoint);
+    const searchParams = url.searchParams;
 
-    // Add location filter if provided
-    if (params.location) {
-      searchData.search.filters.push({
-        fieldName: 'animalLocationZip',
-        operation: 'radius',
-        criteria: params.location
-      });
-      // Set radius as a separate property in the search object
-      searchData.search.radius = params.radius || 100;
+    // Add location-based filters
+    if (params.latitude && params.longitude) {
+      searchParams.append('filter[geoLatitude]', params.latitude.toString());
+      searchParams.append('filter[geoLongitude]', params.longitude.toString());
+      searchParams.append('filter[geoRadius]', (params.radius || 100).toString());
+    } else if (params.location) {
+      searchParams.append('filter[location]', params.location);
+      searchParams.append('filter[distance]', (params.radius || 100).toString());
     }
 
-    // Add breed filter if provided
+    // Add breed filter
     if (params.breed) {
-      searchData.search.filters.push({
-        fieldName: 'animalPrimaryBreed',
-        operation: 'contains',
-        criteria: params.breed
-      });
+      searchParams.append('filter[breedPrimary]', params.breed);
     }
 
-    // Add additional filters
+    // Add age filter
     if (params.age) {
-      searchData.search.filters.push({
-        fieldName: 'animalGeneralAge',
-        operation: 'equal',
-        criteria: params.age
-      });
+      searchParams.append('filter[ageGroup]', params.age);
     }
 
+    // Add size filter
     if (params.size) {
-      searchData.search.filters.push({
-        fieldName: 'animalGeneralSizePotential',
-        operation: 'equal',
-        criteria: params.size
-      });
+      searchParams.append('filter[sizeGroup]', params.size);
     }
 
+    // Add gender filter
     if (params.gender) {
-      searchData.search.filters.push({
-        fieldName: 'animalSex',
-        operation: 'equal',
-        criteria: params.gender
-      });
+      searchParams.append('filter[sex]', params.gender);
     }
+
+    // Add limit
+    if (params.limit) {
+      searchParams.append('limit', params.limit.toString());
+    }
+
+    // Specify fields to return
+    const fields = [
+      'id',
+      'name',
+      'status',
+      'species',
+      'organization',
+      'ageGroup',
+      'sex',
+      'sizeGroup',
+      'breedPrimary',
+      'breedSecondary',
+      'breedMixed',
+      'descriptionText',
+      'specialNeeds',
+      'houseTrained',
+      'goodWithChildren',
+      'goodWithCats',
+      'goodWithDogs',
+      'pictures',
+      'thumbnailUrl',
+      'url',
+      'distance'
+    ];
+    searchParams.append('fields[animals]', fields.join(','));
 
     try {
       console.log('[🦮 RescueGroups] Searching with params:', params);
-      const result = await this.makeRequest(searchData);
+      const result = await this.makeRequest(url.toString());
 
-      const animals = Object.values(result.data || {}) as RescueGroupsAnimal[];
+      const animals = result.data || [];
       console.log(`[✅ RescueGroups] Found ${animals.length} animals`);
 
       return animals;
@@ -214,48 +161,42 @@ class RescueGroupsAPI {
   }
 
   async getAnimalDetails(animalId: string): Promise<RescueGroupsAnimal | null> {
-    const detailData = {
-      objectType: 'animals',
-      objectAction: 'publicView',
-      values: [
-        {
-          animalID: animalId
-        }
-      ],
-      fields: [
-        'animalID',
-        'animalName',
-        'animalStatus',
-        'animalSpecies',
-        'animalOrgID',
-        'animalGeneralAge',
-        'animalSex',
-        'animalGeneralSizePotential',
-        'animalPrimaryBreed',
-        'animalSecondaryBreed',
-        'animalMixedBreed',
-        'animalDescription',
-        'animalPictures',
-        'animalSpecialNeeds',
-        'animalHousetrained',
-        'animalGoodWithKids',
-        'animalGoodWithCats',
-        'animalGoodWithDogs',
-        'animalAltered',
-        'animalLocationDistance',
-        'animalThumbnailUrl',
-        'animalUrl'
-      ]
-    };
+    const endpoint = `${this.baseURL}/${animalId}`;
+    const url = new URL(endpoint);
+
+    // Specify fields to return
+    const fields = [
+      'id',
+      'name',
+      'status',
+      'species',
+      'organization',
+      'ageGroup',
+      'sex',
+      'sizeGroup',
+      'breedPrimary',
+      'breedSecondary',
+      'breedMixed',
+      'descriptionText',
+      'specialNeeds',
+      'houseTrained',
+      'goodWithChildren',
+      'goodWithCats',
+      'goodWithDogs',
+      'pictures',
+      'thumbnailUrl',
+      'url'
+    ];
+    url.searchParams.append('fields[animals]', fields.join(','));
 
     try {
       console.log(`[🦮 RescueGroups] Getting details for animal: ${animalId}`);
-      const result = await this.makeRequest(detailData);
+      const result = await this.makeRequest(url.toString());
 
-      const animal = Object.values(result.data || {})[0] as RescueGroupsAnimal;
-      console.log(`[✅ RescueGroups] Got details for: ${animal?.animalName || 'Unknown'}`);
+      const animal = result.data?.[0] || null;
+      console.log(`[✅ RescueGroups] Got details for: ${animal?.name || 'Unknown'}`);
 
-      return animal || null;
+      return animal;
     } catch (error) {
       console.error(`[❌ RescueGroups] Failed to get details for ${animalId}:`, error);
       return null;
@@ -264,76 +205,55 @@ class RescueGroupsAPI {
 
   // Transform RescueGroups animal to our database format
   transformToDatabaseFormat(animal: RescueGroupsAnimal): any {
-    // For now, we'll use default location values since we removed location fields
-    const city = 'Unknown';
-    const state = 'Unknown';
-    const postalcode = null;
-    const lat = null;
-    const lon = null;
-
-    // Parse photos - RescueGroups returns pictures as an object with numbered keys
+    // Parse photos
     const photos = [];
-    if (animal.animalPictures) {
-      // Convert the pictures object to an array and sort by order
-      const pictureEntries = Object.entries(animal.animalPictures)
-        .map(([key, pic]: [string, any]) => ({
-          ...pic,
-          order: pic.order || parseInt(key) || 0
-        }))
+    if (animal.pictures && Array.isArray(animal.pictures)) {
+      // Sort by order and extract URLs
+      const sortedPictures = animal.pictures
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-      // Extract URLs in order of preference: large -> original -> small
-      for (const pic of pictureEntries) {
+      for (const pic of sortedPictures) {
         const url = pic.large || pic.original || pic.small;
         if (url) photos.push(url);
       }
     }
 
     // Add fallback for thumbnail URL if no pictures array
-    if (photos.length === 0 && animal.animalThumbnailUrl) {
-      photos.push(animal.animalThumbnailUrl);
+    if (photos.length === 0 && animal.thumbnailUrl) {
+      photos.push(animal.thumbnailUrl);
     }
 
-    // Map boolean-like strings to actual booleans
-    const mapBoolean = (value: string) => {
-      if (!value) return null;
-      const normalized = value.toLowerCase();
-      if (normalized === 'yes' || normalized === '1' || normalized === 'true') return true;
-      if (normalized === 'no' || normalized === '0' || normalized === 'false') return false;
-      return null;
-    };
-
     return {
-      rescuegroups_id: animal.animalID,
+      rescuegroups_id: animal.id,
       api_source: 'rescuegroups',
-      organization_id: animal.animalOrgID || '',
-      url: animal.animalUrl || '',
-      name: animal.animalName || 'Unknown',
+      organization_id: animal.organization || '',
+      url: animal.url || '',
+      name: animal.name || 'Unknown',
       type: 'Dog',
       species: 'Dog',
-      primary_breed: animal.animalPrimaryBreed || 'Mixed Breed',
-      secondary_breed: animal.animalSecondaryBreed || null,
-      is_mixed: mapBoolean(animal.animalMixedBreed) || false,
+      primary_breed: animal.breedPrimary || 'Mixed Breed',
+      secondary_breed: animal.breedSecondary || null,
+      is_mixed: animal.breedMixed || false,
       is_unknown_breed: false,
-      age: animal.animalGeneralAge || 'Unknown',
-      gender: animal.animalSex || 'Unknown', 
-      size: animal.animalGeneralSizePotential || 'Unknown',
+      age: animal.ageGroup || 'Unknown',
+      gender: animal.sex || 'Unknown',
+      size: animal.sizeGroup || 'Unknown',
       status: 'adoptable',
-      spayed_neutered: mapBoolean(animal.animalAltered),
-      house_trained: mapBoolean(animal.animalHousetrained),
-      special_needs: mapBoolean(animal.animalSpecialNeeds),
-      good_with_children: mapBoolean(animal.animalGoodWithKids),
-      good_with_dogs: mapBoolean(animal.animalGoodWithDogs),
-      good_with_cats: mapBoolean(animal.animalGoodWithCats),
-      description: animal.animalDescription || null,
+      spayed_neutered: null, // Not available in v5 API
+      house_trained: animal.houseTrained || null,
+      special_needs: animal.specialNeeds || null,
+      good_with_children: animal.goodWithChildren || null,
+      good_with_dogs: animal.goodWithDogs || null,
+      good_with_cats: animal.goodWithCats || null,
+      description: animal.descriptionText || null,
       photos: photos,
-      tags: [], // RescueGroups doesn't have tags in the same format
-      contact_info: {}, // Would need organization details for this
-      city: city,
-      state: state,
-      postcode: postalcode,
-      latitude: lat,
-      longitude: lon,
+      tags: [],
+      contact_info: {},
+      city: 'Unknown',
+      state: 'Unknown',
+      postcode: null,
+      latitude: null,
+      longitude: null,
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
