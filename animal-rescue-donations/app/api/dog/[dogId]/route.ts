@@ -79,7 +79,7 @@ export async function GET(
           },
           published_at: dbDog.created_at,
           distance: null,
-          visibility_score: dbDog.visibility_score || calculateVisibilityScore({
+          visibilityScore: dbDog.visibility_score || calculateVisibilityScore({
             name: dbDog.name,
             breeds: { primary: dbDog.primary_breed, secondary: dbDog.secondary_breed, mixed: dbDog.is_mixed },
             age: dbDog.age,
@@ -161,7 +161,7 @@ export async function GET(
 
     // Calculate and add visibility score for Petfinder dogs not in database
     if (dogData.animal) {
-      dogData.animal.visibility_score = calculateVisibilityScore(dogData.animal);
+      dogData.animal.visibilityScore = calculateVisibilityScore(dogData.animal);
     }
 
     return NextResponse.json(dogData);
