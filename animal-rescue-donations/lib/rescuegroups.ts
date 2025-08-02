@@ -5,6 +5,7 @@ interface RescueGroupsAnimal {
   animalID: string;
   animalOrgID: string;
   animalName: string;
+  animalSpecies: string;
   animalGeneralAge: string;
   animalSex: string;
   animalGeneralSizePotential: string;
@@ -27,6 +28,22 @@ interface RescueGroupsAnimal {
   animalGoodWithCats: string;
   animalGoodWithDogs: string;
   animalAltered: string;
+  animalLocation?: {
+    city?: string;
+    citystate?: string;
+    coordinates?: string;
+    country?: string;
+    lat?: number;
+    lon?: number;
+    name?: string;
+    phone?: string;
+    phoneExt?: string;
+    postalcode?: string;
+    postalcodePlus4?: string;
+    state?: string;
+    street?: string;
+    url?: string;
+  };
   animalLocationDistance?: number;
   animalThumbnailUrl?: string;
   animalUrl: string;
@@ -123,7 +140,16 @@ class RescueGroupsAPI {
           'animalSecondaryBreed',
           'animalMixedBreed',
           'animalDescription',
-          'animalPictures'
+          'animalPictures',
+          'animalSpecialNeeds',
+          'animalHousetrained',
+          'animalGoodWithKids',
+          'animalGoodWithCats',
+          'animalGoodWithDogs',
+          'animalAltered',
+          'animalLocation',
+          'animalThumbnailUrl',
+          'animalUrl'
         ]
       }
     };
@@ -208,7 +234,16 @@ class RescueGroupsAPI {
         'animalSecondaryBreed',
         'animalMixedBreed',
         'animalDescription',
-        'animalPictures'
+        'animalPictures',
+        'animalSpecialNeeds',
+        'animalHousetrained',
+        'animalGoodWithKids',
+        'animalGoodWithCats',
+        'animalGoodWithDogs',
+        'animalAltered',
+        'animalLocation',
+        'animalThumbnailUrl',
+        'animalUrl'
       ]
     };
 
@@ -228,10 +263,13 @@ class RescueGroupsAPI {
 
   // Transform RescueGroups animal to our database format
   transformToDatabaseFormat(animal: RescueGroupsAnimal): any {
-    // Parse location
-    const locationParts = animal.animalLocationCitystate?.split(',') || [];
-    const city = locationParts[0]?.trim() || 'Unknown';
-    const state = locationParts[1]?.trim() || 'Unknown';
+    // Parse location from the new location schema
+    const location = animal.animalLocation || {};
+    const city = location.city || 'Unknown';
+    const state = location.state || 'Unknown';
+    const postalcode = location.postalcode || null;
+    const lat = location.lat || null;
+    const lon = location.lon || null;
 
     // Parse photos - RescueGroups returns pictures as an object with numbered keys
     const photos = [];
@@ -249,6 +287,11 @@ class RescueGroupsAPI {
         const url = pic.large || pic.original || pic.small;
         if (url) photos.push(url);
       }
+    }
+
+    // Add fallback for thumbnail URL if no pictures array
+    if (photos.length === 0 && animal.animalThumbnailUrl) {
+      photos.push(animal.animalThumbnailUrl);
     }
 
     // Map boolean-like strings to actual booleans
@@ -288,9 +331,9 @@ class RescueGroupsAPI {
       contact_info: {}, // Would need organization details for this
       city: city,
       state: state,
-      postcode: animal.animalLocationPostalcode || null,
-      latitude: null, // Would need to geocode
-      longitude: null, // Would need to geocode
+      postcode: postalcode,
+      latitude: lat,
+      longitude: lon
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
