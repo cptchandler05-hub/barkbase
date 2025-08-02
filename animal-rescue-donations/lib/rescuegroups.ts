@@ -281,7 +281,7 @@ class RescueGroupsAPI {
           order: pic.order || parseInt(key) || 0
         }))
         .sort((a, b) => (a.order || 0) - (b.order || 0));
-      
+
       // Extract URLs in order of preference: large -> original -> small
       for (const pic of pictureEntries) {
         const url = pic.large || pic.original || pic.small;
