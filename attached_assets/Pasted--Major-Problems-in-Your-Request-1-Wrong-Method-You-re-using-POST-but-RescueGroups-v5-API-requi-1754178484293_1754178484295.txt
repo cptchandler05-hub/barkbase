@@ -1,0 +1,155 @@
+🛑 Major Problems in Your Request
+❌ 1. Wrong Method
+You're using POST, but RescueGroups v5 API requires GET for public search endpoints.
+Their v5/public/animals/search/available endpoint is a GET-only route.
+
+❌ 2. Wrong Payload Format
+You’re sending a JSON body with filters like this:
+
+json
+Copy
+Edit
+{
+  "filters": [{ fieldName: ..., operation: ..., criteria: ... }]
+}
+But RescueGroups v5 REST does not use a JSON body for GET.
+
+It uses URL parameters only, and filters must be sent as query parameters like:
+
+pgsql
+Copy
+Edit
+https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter[location]=Austin, TX&filter[distance]=50
+❌ 3. Invalid Field Names
+Fields like animalLocation, animalLocationDistance, and animalLocationCoordinates don’t exist in the v5 API.
+
+Instead, their filters are structured like this:
+
+Filter	Example
+filter[location]	Austin, TX
+filter[distance]	100 (miles)
+filter[geoLongitude]	-97.7431
+filter[geoLatitude]	30.2672
+
+✅ How to Fix It — Full Rewrite Example
+Here’s a working version of your findAnimals method using correct syntax and field names for RescueGroups v5:
+
+ts
+Copy
+Edit
+class RescueGroupsAPI {
+  async findAnimals(postalcode: string, lat: number, lon: number) {
+    const apiKey = process.env.RESCUEGROUPS_API_KEY!;
+    const apiEndpoint = 'https://api.rescuegroups.org/v5/public/animals/search/available/dogs';
+
+    const url = new URL(apiEndpoint);
+    const params = url.searchParams;
+
+    // Filters
+    params.append('filter[geoRadius]', '100'); // radius in miles
+    params.append('filter[geoLongitude]', lon.toString());
+    params.append('filter[geoLatitude]', lat.toString());
+
+    // Add fields to return
+    const fields = [
+      'id',
+      'name',
+      'status',
+      'species',
+      'organization',
+      'ageGroup',
+      'sex',
+      'sizeGroup',
+      'breedPrimary',
+      'breedSecondary',
+      'breedMixed',
+      'descriptionText',
+      'specialNeeds',
+      'houseTrained',
+      'goodWithChildren',
+      'goodWithCats',
+      'goodWithDogs',
+      'pictures',
+      'thumbnailUrl',
+      'url',
+      'distance'
+    ];
+    params.append('fields[animals]', fields.join(','));
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          Authorization: apiKey,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      return responseData.data; // Animal results
+    } catch (error) {
+      console.error('Error fetching animals from RescueGroups:', error);
+      return null;
+    }
+  }
+}
+✅ Quick Fix Summary
+Fix	Status
+✅ Use GET not POST	✅ Fixed in new code
+✅ Pass filters as query params	✅
+✅ Use correct field names	✅
+✅ Use correct authorization header	✅
+
+⚠️ Bonus: Fix getAnimalDetails Too
+You're sending a POST with a body, but again, this endpoint uses GET:
+
+ts
+Copy
+Edit
+async getAnimalDetails(animalId: string) {
+  const apiKey = process.env.RESCUEGROUPS_API_KEY!;
+  const apiEndpoint = `https://api.rescuegroups.org/v5/public/animals/${animalId}`;
+
+  const url = new URL(apiEndpoint);
+  url.searchParams.append('fields[animals]', [
+    'id',
+    'name',
+    'status',
+    'species',
+    'organization',
+    'ageGroup',
+    'sex',
+    'sizeGroup',
+    'breedPrimary',
+    'breedSecondary',
+    'breedMixed',
+    'descriptionText',
+    'specialNeeds',
+    'pictures',
+    'url'
+  ].join(','));
+
+  try {
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: apiKey,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    return responseData.data[0]; // one animal
+  } catch (error) {
+    console.error('Error fetching animal details:', error);
+    return null;
+  }
+}
