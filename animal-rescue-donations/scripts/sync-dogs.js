@@ -60,14 +60,8 @@ async function rateLimitedDelay() {
   lastRequestTime = Date.now();
 }
 
-// Import the centralized visibility scoring function to ensure consistency
-const { calculateVisibilityScore: libCalculateVisibilityScore } = require('../lib/scoreVisibility.ts');
-
-// Create a wrapper that works with the sync script's CommonJS environment
-function calculateVisibilityScore(dog) {
-  // Convert to the format expected by the main scoring function
-  return libCalculateVisibilityScore(dog);
-}
+// Import the JavaScript version of the visibility scoring function
+const { calculateVisibilityScore } = require('../lib/scoreVisibility.js');
 
 async function fetchDogsFromLocation(location, accessToken) {
   await rateLimitedDelay();
