@@ -112,7 +112,7 @@ export default function Navigation() {
 
           {/* BARKBASE Text */}
           <div className="flex-1 flex justify-center">
-            <h1 className="text-2xl font-bold text-blue-700 tracking-wide">
+            <h1 className="text-3xl font-bold text-blue-700 tracking-wide">
               BARKBASE
             </h1>
           </div>
