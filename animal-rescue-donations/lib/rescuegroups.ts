@@ -113,12 +113,12 @@ class RescueGroupsAPI {
           'animalGeneralAge',
           'animalSex',
           'animalGeneralSizePotential',
-          'animalBreedPrimary',
-          'animalBreedSecondary',
+          'animalPrimaryBreed',
+          'animalSecondaryBreed',
           'animalMixedBreed',
           'animalDescription',
           'animalStatus',
-          'animalSpecialneeds',
+          'animalSpecialNeeds',
           'animalHousetrained',
           'animalGoodWithKids',
           'animalGoodWithCats',
@@ -147,7 +147,7 @@ class RescueGroupsAPI {
     // Add breed filter if provided
     if (params.breed) {
       searchData.search.filters.push({
-        fieldName: 'animalBreedPrimary',
+        fieldName: 'animalPrimaryBreed',
         operation: 'contains',
         criteria: params.breed
       });
@@ -208,12 +208,12 @@ class RescueGroupsAPI {
         'animalGeneralAge',
         'animalSex',
         'animalGeneralSizePotential',
-        'animalBreedPrimary',
-        'animalBreedSecondary',
+        'animalPrimaryBreed',
+        'animalSecondaryBreed',
         'animalMixedBreed',
         'animalDescription',
         'animalStatus',
-        'animalSpecialneeds',
+        'animalSpecialNeeds',
         'animalHousetrained',
         'animalGoodWithKids',
         'animalGoodWithCats',
