@@ -110,7 +110,15 @@ class RescueGroupsAPI {
           'animalID',
           'animalName',
           'animalStatus',
-          'animalSpecies'
+          'animalSpecies',
+          'animalOrgID',
+          'animalGeneralAge',
+          'animalSex',
+          'animalGeneralSizePotential',
+          'animalPrimaryBreed',
+          'animalSecondaryBreed',
+          'animalMixedBreed',
+          'animalDescription'
         ]
       }
     };
@@ -186,7 +194,15 @@ class RescueGroupsAPI {
         'animalID',
         'animalName',
         'animalStatus',
-        'animalSpecies'
+        'animalSpecies',
+        'animalOrgID',
+        'animalGeneralAge',
+        'animalSex',
+        'animalGeneralSizePotential',
+        'animalPrimaryBreed',
+        'animalSecondaryBreed',
+        'animalMixedBreed',
+        'animalDescription'
       ]
     };
 
