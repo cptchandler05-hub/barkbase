@@ -1,4 +1,3 @@
-
 // RescueGroups API Integration
 // Documentation: https://userguide.rescuegroups.org/display/APIDG/API+Developer+Guide
 
@@ -23,7 +22,7 @@ interface RescueGroupsAnimal {
   animalPictures?: any[];
   animalLocation: string;
   animalLocationCitystate: string;
-  animalLocationZipcode: string;
+  animalLocationZip: string;
   animalLocationDistance?: number;
   animalThumbnailUrl?: string;
   animalUrl: string;
@@ -43,7 +42,7 @@ interface RescueGroupsSearchParams {
 class RescueGroupsAPI {
   private apiKey: string;
   private baseURL = 'https://api.rescuegroups.org/http/v2.json';
-  
+
   constructor() {
     this.apiKey = process.env.RESCUEGROUPS_API_KEY || '';
     if (!this.apiKey) {
@@ -69,7 +68,7 @@ class RescueGroupsAPI {
     }
 
     const result = await response.json();
-    
+
     if (result.status !== 'ok') {
       throw new Error(`RescueGroups API error: ${result.messages?.generalMessages?.[0] || 'Unknown error'}`);
     }
@@ -119,7 +118,7 @@ class RescueGroupsAPI {
           'animalPictures',
           'animalLocation',
           'animalLocationCitystate',
-          'animalLocationZipcode',
+          'animalLocationZip',
           'animalThumbnailUrl',
           'animalUrl'
         ]
@@ -129,7 +128,7 @@ class RescueGroupsAPI {
     // Add location filter if provided
     if (params.location) {
       searchData.search.filters.push({
-        fieldName: 'animalLocationZipcode',
+        fieldName: 'animalLocationZip',
         operation: 'radius',
         criteria: params.location,
         radius: params.radius || 100
@@ -173,10 +172,10 @@ class RescueGroupsAPI {
     try {
       console.log('[🦮 RescueGroups] Searching with params:', params);
       const result = await this.makeRequest(searchData);
-      
+
       const animals = Object.values(result.data || {}) as RescueGroupsAnimal[];
       console.log(`[✅ RescueGroups] Found ${animals.length} animals`);
-      
+
       return animals;
     } catch (error) {
       console.error('[❌ RescueGroups] Search failed:', error);
@@ -214,7 +213,7 @@ class RescueGroupsAPI {
         'animalPictures',
         'animalLocation',
         'animalLocationCitystate',
-        'animalLocationZipcode',
+        'animalLocationZip',
         'animalThumbnailUrl',
         'animalUrl'
       ]
@@ -223,10 +222,10 @@ class RescueGroupsAPI {
     try {
       console.log(`[🦮 RescueGroups] Getting details for animal: ${animalId}`);
       const result = await this.makeRequest(detailData);
-      
+
       const animal = Object.values(result.data || {})[0] as RescueGroupsAnimal;
       console.log(`[✅ RescueGroups] Got details for: ${animal?.animalName || 'Unknown'}`);
-      
+
       return animal || null;
     } catch (error) {
       console.error(`[❌ RescueGroups] Failed to get details for ${animalId}:`, error);
@@ -283,7 +282,7 @@ class RescueGroupsAPI {
       contact_info: {}, // Would need organization details for this
       city: city,
       state: state,
-      postcode: animal.animalLocationZipcode || null,
+      postcode: animal.animalLocationZip || null,
       latitude: null, // Would need to geocode
       longitude: null, // Would need to geocode
       last_updated_at: new Date().toISOString(),
