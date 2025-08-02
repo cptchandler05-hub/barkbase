@@ -1,4 +1,3 @@
-
 // RescueGroups API Integration
 // Documentation: https://userguide.rescuegroups.org/display/APIDG/API+Developer+Guide
 
@@ -53,7 +52,7 @@ class RescueGroupsAPI {
 
   private async makeRequest(data: any): Promise<any> {
     console.log('[🦮 RescueGroups] Making request with data:', JSON.stringify(data, null, 2));
-    
+
     const response = await fetch(this.baseURL, {
       method: 'POST',
       headers: {
@@ -109,20 +108,20 @@ class RescueGroupsAPI {
         ],
         fields: [
           'animalID',
-          'animalOrgID', 
+          'animalOrgID',
           'animalName',
           'animalGeneralAge',
           'animalSex',
           'animalGeneralSizePotential',
-          'animalPrimaryBreed',
-          'animalSecondaryBreed',
+          'animalBreedPrimary',
+          'animalBreedSecondary',
           'animalMixedBreed',
           'animalDescription',
           'animalStatus',
-          'animalSpecialNeeds',
+          'animalSpecialneeds',
           'animalHousetrained',
           'animalGoodWithKids',
-          'animalGoodWithCats', 
+          'animalGoodWithCats',
           'animalGoodWithDogs',
           'animalAltered',
           'animalPictures',
@@ -148,7 +147,7 @@ class RescueGroupsAPI {
     // Add breed filter if provided
     if (params.breed) {
       searchData.search.filters.push({
-        fieldName: 'animalPrimaryBreed',
+        fieldName: 'animalBreedPrimary',
         operation: 'contains',
         criteria: params.breed
       });
@@ -205,17 +204,17 @@ class RescueGroupsAPI {
       fields: [
         'animalID',
         'animalOrgID',
-        'animalName', 
+        'animalName',
         'animalGeneralAge',
         'animalSex',
         'animalGeneralSizePotential',
-        'animalPrimaryBreed',
-        'animalSecondaryBreed',
+        'animalBreedPrimary',
+        'animalBreedSecondary',
         'animalMixedBreed',
         'animalDescription',
         'animalStatus',
-        'animalSpecialNeeds',
-        'animalHousetrained', 
+        'animalSpecialneeds',
+        'animalHousetrained',
         'animalGoodWithKids',
         'animalGoodWithCats',
         'animalGoodWithDogs',
