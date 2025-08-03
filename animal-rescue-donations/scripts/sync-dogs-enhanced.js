@@ -341,41 +341,59 @@ async function main() {
   }
 
   try {
-    // Generate locations (same as before)
-    const locations = [];
+    // 🎯 SEPARATE LOCATION STRATEGIES - No Overlap!
+    let rescueGroupsLocations = [];
+    let petfinderLocations = [];
     
     if (testMode) {
-      locations.push(getRandomRuralZip());
-      locations.push('Austin, TX');
+      // Test Mode: 1 rural + 1 urban (no overlap)
+      rescueGroupsLocations.push(getRandomRuralZip());
+      petfinderLocations.push('Austin, TX');
+      
+      console.log(`🦮 RescueGroups will search: ${rescueGroupsLocations[0]} (rural)`);
+      console.log(`🔍 Petfinder will search: ${petfinderLocations[0]} (urban)`);
     } else {
-      for (let i = 0; i < 75; i++) {
-        locations.push(getRandomRuralZip());
+      // 🏞️ RescueGroups: AGGRESSIVE rural coverage (120 rural ZIPs)
+      console.log('🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...');
+      for (let i = 0; i < 120; i++) {
+        rescueGroupsLocations.push(getRandomRuralZip());
       }
       
-      const majorCities = [
+      // 🏙️ Petfinder: Major metropolitan areas (24 cities)
+      console.log('🏙️ Generating urban locations for Petfinder...');
+      const majorMetros = [
+        // Tier 1 Cities (Population 1M+)
         'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-        'Denver, CO', 'Atlanta, GA', 'Miami, FL', 'Seattle, WA'
+        'Philadelphia, PA', 'Phoenix, AZ', 'San Antonio, TX', 'San Diego, CA',
+        'Dallas, TX', 'San Jose, CA', 'Austin, TX', 'Jacksonville, FL',
+        
+        // Tier 2 Cities (Population 500K+)
+        'Fort Worth, TX', 'Columbus, OH', 'Charlotte, NC', 'San Francisco, CA',
+        'Indianapolis, IN', 'Seattle, WA', 'Denver, CO', 'Washington, DC',
+        'Boston, MA', 'Nashville, TN', 'Baltimore, MD', 'Louisville, KY'
       ];
       
-      for (let i = 0; i < 8; i++) {
-        const randomCity = majorCities[Math.floor(Math.random() * majorCities.length)];
-        if (!locations.includes(randomCity)) {
-          locations.push(randomCity);
-        }
-      }
+      // Shuffle and take all 24 to maximize urban coverage
+      const shuffledMetros = majorMetros.sort(() => Math.random() - 0.5);
+      petfinderLocations = shuffledMetros.slice(0, 24);
+      
+      console.log(`🎯 RescueGroups targeting ${rescueGroupsLocations.length} rural areas`);
+      console.log(`🎯 Petfinder targeting ${petfinderLocations.length} metropolitan areas`);
+      console.log(`✅ Zero location overlap - maximized coverage strategy`);
     }
 
-    // Phase 1: RescueGroups Sync (Higher Quality)
-    console.log('🦮 Phase 1: RescueGroups Sync');
+    // Phase 1: RescueGroups Sync (Rural Focus - Invisible Dogs Priority)
+    console.log('🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)');
     let allRescueGroupsDogs = [];
     
-    for (const location of locations) {
+    for (const location of rescueGroupsLocations) {
       try {
         const dogs = await fetchDogsFromRescueGroups(location);
         const transformedDogs = dogs.map(transformRescueGroupsAnimal);
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Minimal delay for RescueGroups (they can handle 10 req/sec)
+        await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
         console.warn(`⚠️ RescueGroups failed for ${location}:`, error.message);
       }
@@ -392,18 +410,19 @@ async function main() {
       await syncDogsToDatabase(uniqueRescueGroupsDogs, 'rescuegroups');
     }
 
-    // Phase 2: Petfinder Sync (Fill gaps)
-    console.log('🔍 Phase 2: Petfinder Sync');
+    // Phase 2: Petfinder Sync (Metropolitan Focus - Urban Coverage) 
+    console.log('🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)');
     const accessToken = await getAccessToken();
     let allPetfinderDogs = [];
 
-    for (const location of locations) {
+    for (const location of petfinderLocations) {
       try {
         const dogs = await fetchDogsFromPetfinder(location, accessToken);
         const transformedDogs = dogs.map(transformPetfinderAnimal);
         allPetfinderDogs = allPetfinderDogs.concat(transformedDogs);
         
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Longer delay for Petfinder (stricter rate limits)
+        await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
         console.warn(`⚠️ Petfinder failed for ${location}:`, error.message);
       }
