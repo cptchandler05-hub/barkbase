@@ -2,7 +2,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
 const { calculateVisibilityScore } = require('../lib/scoreVisibility.js');
-const { RescueGroupsAPI } = require('../lib/rescuegroups.ts');
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -120,12 +119,21 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   };
 
   try {
-    const rescueGroupsAPI = new RescueGroupsAPI();
-    const animals = await rescueGroupsAPI.searchAnimals({
-      location: location,
-      limit: limit,
-      radius: 100
+    const response = await fetch('https://api.rescuegroups.org/v5/public/animals/search/available/dogs', {
+      method: 'POST',
+      headers: {
+        'Authorization': process.env.RESCUEGROUPS_API_KEY,
+        'Content-Type': 'application/vnd.api+json'
+      },
+      body: JSON.stringify(searchData)
     });
+
+    if (!response.ok) {
+      throw new Error(`RescueGroups API error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const animals = result.data || [];
     
     console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location}`);
     return animals;
