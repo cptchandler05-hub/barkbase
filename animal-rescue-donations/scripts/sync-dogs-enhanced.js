@@ -79,63 +79,55 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   const limit = isTestMode ? 5 : 100;
   console.log(`🦮 Fetching RescueGroups dogs from: ${location} (limit: ${limit})`);
 
-  const searchData = {
-    apikey: process.env.RESCUEGROUPS_API_KEY,
-    objectType: 'animals',
-    objectAction: 'publicSearch',
-    search: {
-      resultStart: 0,
-      resultLimit: limit,
-      resultSort: 'animalID',
-      resultOrder: 'asc',
-      filters: [
-        {
-          fieldName: 'animalSpecies',
-          operation: 'equals',
-          criteria: 'Dog'
-        },
-        {
-          fieldName: 'animalStatus',
-          operation: 'equals',
-          criteria: 'Available'
-        },
-        {
-          fieldName: 'animalLocationZipcode',
-          operation: 'radius',
-          criteria: location,
-          radius: 100
-        }
-      ],
-      fields: [
-        'animalID', 'animalOrgID', 'animalName', 'animalGeneralAge',
-        'animalSex', 'animalGeneralSizePotential', 'animalBreed',
-        'animalSecondaryBreed', 'animalMixedBreed', 'animalDescription',
-        'animalStatus', 'animalSpecialneeds', 'animalHousetrained',
-        'animalGoodWithKids', 'animalGoodWithCats', 'animalGoodWithDogs',
-        'animalSpayedNeutered', 'animalPictures', 'animalLocation',
-        'animalLocationCitystate', 'animalLocationZipcode', 'animalUrl'
-      ]
-    }
-  };
+  // Use GET request with query parameters (RescueGroups v5 API)
+  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
+  const params = url.searchParams;
+  
+  // Location filter
+  params.append('filter[location]', location);
+  params.append('filter[distance]', '100'); // 100 mile radius
+  
+  // Limit results
+  params.append('limit', limit.toString());
+  
+  // Sort by ID for consistent pagination
+  params.append('sort', 'id');
+  
+  // Specify fields to return
+  const fields = [
+    'id', 'name', 'status', 'species', 'organizations',
+    'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
+    'breedMixed', 'descriptionText', 'specialNeeds', 'houseTrained',
+    'goodWithChildren', 'goodWithCats', 'goodWithDogs',
+    'pictures', 'url', 'distance', 'location'
+  ];
+  params.append('fields[animals]', fields.join(','));
 
   try {
-    const response = await fetch('https://api.rescuegroups.org/v5/public/animals/search/available/dogs', {
-      method: 'POST',
+    const response = await fetch(url.toString(), {
+      method: 'GET',
       headers: {
         'Authorization': process.env.RESCUEGROUPS_API_KEY,
-        'Content-Type': 'application/vnd.api+json'
-      },
-      body: JSON.stringify(searchData)
+        'Content-Type': 'application/json'
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`RescueGroups API error: ${response.status}`);
+      const errorText = await response.text();
+      console.warn(`⚠️ RescueGroups API error ${response.status} for ${location}:`, errorText);
+      return [];
     }
 
     const result = await response.json();
     const animals = result.data || [];
     
-    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location}`);
+    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} (API limit may be 25)`);
+    
+    // Log first animal for debugging
+    if (animals.length > 0) {
+      console.log(`🔍 First dog: ${animals[0].attributes?.name || 'Unknown'} (ID: ${animals[0].id})`);
+    }
+    
     return animals;
   } catch (error) {
     console.warn(`⚠️ RescueGroups error for ${location}:`, error.message);
@@ -145,52 +137,61 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 
 // Transform RescueGroups animal to database format
 function transformRescueGroupsAnimal(animal) {
-  const locationParts = animal.animalLocationCitystate?.split(',') || [];
-  const city = locationParts[0]?.trim() || 'Unknown';
-  const state = locationParts[1]?.trim() || 'Unknown';
+  // RescueGroups v5 API uses attributes object
+  const attrs = animal.attributes || {};
+  
+  // Parse location
+  const location = attrs.location || {};
+  const city = location.citystate?.split(',')[0]?.trim() || 'Unknown';
+  const state = location.citystate?.split(',')[1]?.trim() || 'Unknown';
 
-  const photos = Array.isArray(animal.animalPictures) 
-    ? animal.animalPictures.map(pic => pic.large || pic.original || pic.small).filter(Boolean)
-    : [];
+  // Parse photos
+  const photos = [];
+  if (attrs.pictures && Array.isArray(attrs.pictures)) {
+    for (const pic of attrs.pictures) {
+      const url = pic.large || pic.original || pic.small;
+      if (url) photos.push(url);
+    }
+  }
 
   const mapBoolean = (value) => {
     if (!value) return null;
-    const normalized = value.toLowerCase();
+    const normalized = value.toString().toLowerCase();
     if (normalized === 'yes' || normalized === '1' || normalized === 'true') return true;
     if (normalized === 'no' || normalized === '0' || normalized === 'false') return false;
     return null;
   };
 
   return {
-    rescuegroups_id: animal.animalID,
+    rescuegroups_id: animal.id,
     api_source: 'rescuegroups',
-    api_source_priority: 1, // Higher priority
-    organization_id: animal.animalOrgID || '',
-    url: animal.animalUrl || '',
-    name: animal.animalName || 'Unknown',
+    api_source_priority: 1, // Higher priority than Petfinder
+    organization_id: attrs.organizations || '',
+    url: attrs.url || '',
+    name: attrs.name || 'Unknown',
     type: 'Dog',
     species: 'Dog',
-    primary_breed: animal.animalBreed || 'Mixed Breed',
-    secondary_breed: animal.animalSecondaryBreed || null,
-    is_mixed: mapBoolean(animal.animalMixedBreed) || false,
+    primary_breed: attrs.breedPrimary || 'Mixed Breed',
+    secondary_breed: attrs.breedSecondary || null,
+    is_mixed: mapBoolean(attrs.breedMixed) || false,
     is_unknown_breed: false,
-    age: animal.animalGeneralAge || 'Unknown',
-    gender: animal.animalSex || 'Unknown',
-    size: animal.animalGeneralSizePotential || 'Unknown',
+    age: attrs.ageGroup || 'Unknown',
+    gender: attrs.sex || 'Unknown',
+    size: attrs.sizeGroup || 'Unknown',
     status: 'adoptable',
-    spayed_neutered: mapBoolean(animal.animalSpayedNeutered),
-    house_trained: mapBoolean(animal.animalHousetrained),
-    special_needs: mapBoolean(animal.animalSpecialneeds),
-    good_with_children: mapBoolean(animal.animalGoodWithKids),
-    good_with_dogs: mapBoolean(animal.animalGoodWithDogs),
-    good_with_cats: mapBoolean(animal.animalGoodWithCats),
-    description: animal.animalDescription || null,
+    spayed_neutered: null, // Not available in v5 API
+    house_trained: mapBoolean(attrs.houseTrained),
+    special_needs: mapBoolean(attrs.specialNeeds),
+    good_with_children: mapBoolean(attrs.goodWithChildren),
+    good_with_dogs: mapBoolean(attrs.goodWithDogs),
+    good_with_cats: mapBoolean(attrs.goodWithCats),
+    description: attrs.descriptionText || null,
     photos: photos,
     tags: [],
     contact_info: {},
     city: city,
     state: state,
-    postcode: animal.animalLocationZipcode || null,
+    postcode: location.postalcode || null,
     latitude: null,
     longitude: null,
     last_updated_at: new Date().toISOString(),
@@ -409,12 +410,32 @@ async function main() {
       }
     }
 
-    // Remove duplicates from RescueGroups
+    // Remove duplicates from RescueGroups and track duplication patterns
+    console.log(`📊 RescueGroups raw results: ${allRescueGroupsDogs.length} total dogs fetched`);
+    
+    // Track duplication patterns
+    const duplicateCount = {};
+    allRescueGroupsDogs.forEach(dog => {
+      const id = dog.rescuegroups_id;
+      duplicateCount[id] = (duplicateCount[id] || 0) + 1;
+    });
+    
+    const duplicatedIds = Object.entries(duplicateCount).filter(([id, count]) => count > 1);
+    console.log(`📋 Duplication analysis: ${duplicatedIds.length} dogs appeared multiple times`);
+    
+    if (duplicatedIds.length > 0) {
+      console.log(`🔍 Most duplicated dogs:`);
+      duplicatedIds.slice(0, 5).forEach(([id, count]) => {
+        const dog = allRescueGroupsDogs.find(d => d.rescuegroups_id === id);
+        console.log(`   - ${dog?.name || 'Unknown'} (ID: ${id}): appeared ${count} times`);
+      });
+    }
+
     const uniqueRescueGroupsDogs = allRescueGroupsDogs.filter((dog, index, self) => 
       index === self.findIndex(d => d.rescuegroups_id === dog.rescuegroups_id)
     );
 
-    console.log(`🎯 Found ${uniqueRescueGroupsDogs.length} unique RescueGroups dogs`);
+    console.log(`🎯 Found ${uniqueRescueGroupsDogs.length} unique RescueGroups dogs (${allRescueGroupsDogs.length - uniqueRescueGroupsDogs.length} duplicates removed)`);
 
     if (uniqueRescueGroupsDogs.length > 0) {
       await syncDogsToDatabase(uniqueRescueGroupsDogs, 'rescuegroups');
@@ -443,10 +464,39 @@ async function main() {
       index === self.findIndex(d => d.petfinder_id === dog.petfinder_id)
     );
 
-    console.log(`🎯 Found ${uniquePetfinderDogs.length} unique Petfinder dogs`);
+    // 🎯 CROSS-API DEDUPLICATION: Remove Petfinder dogs that might be duplicates of RescueGroups dogs
+    // Check for potential duplicates by name + approximate location
+    const deduplicatedPetfinderDogs = [];
+    
+    for (const pfDog of uniquePetfinderDogs) {
+      const isDuplicate = uniqueRescueGroupsDogs.some(rgDog => {
+        // Match by exact name (case insensitive)
+        const nameMatch = rgDog.name.toLowerCase().trim() === pfDog.name.toLowerCase().trim();
+        
+        // Match by location (same state)
+        const stateMatch = rgDog.state === pfDog.state;
+        
+        // Match by basic characteristics
+        const breedMatch = rgDog.primary_breed === pfDog.primary_breed;
+        const ageMatch = rgDog.age === pfDog.age;
+        const genderMatch = rgDog.gender === pfDog.gender;
+        
+        // Consider it a duplicate if name + state match, OR if name + 2 other characteristics match
+        return (nameMatch && stateMatch) || (nameMatch && breedMatch && (ageMatch || genderMatch));
+      });
+      
+      if (!isDuplicate) {
+        deduplicatedPetfinderDogs.push(pfDog);
+      } else {
+        console.log(`🔄 Skipping Petfinder duplicate: ${pfDog.name} (RescueGroups has priority)`);
+      }
+    }
 
-    if (uniquePetfinderDogs.length > 0) {
-      await syncDogsToDatabase(uniquePetfinderDogs, 'petfinder');
+    console.log(`🎯 Found ${uniquePetfinderDogs.length} unique Petfinder dogs`);
+    console.log(`✅ After cross-API deduplication: ${deduplicatedPetfinderDogs.length} Petfinder dogs (${uniquePetfinderDogs.length - deduplicatedPetfinderDogs.length} duplicates removed)`);
+
+    if (deduplicatedPetfinderDogs.length > 0) {
+      await syncDogsToDatabase(deduplicatedPetfinderDogs, 'petfinder');
     }
 
     // Mark old dogs as removed
