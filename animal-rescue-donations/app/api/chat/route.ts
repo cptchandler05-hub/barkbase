@@ -731,7 +731,7 @@ const urgencyTriggers = [
       console.log('[🐾 Filter Check] Unseen dogs count:', unseenDogs.length);
       console.log('[🐾 Filter Check] Total cached dogs:', updatedMemory.cachedDogs.length);
 
-      const moreDogs = unseenDogs.slice(00, 10);
+      const moreDogs = unseenDogs.slice(0, 10);
 
       if (moreDogs.length === 0) {
         console.log('[🐾 No More] All cached dogs have been shown');
@@ -1172,50 +1172,63 @@ const urgencyTriggers = [
             // Only call Petfinder if database returned very few results (less than 10)
             if (allDogs.length < 10) {
               console.log('[🔍 Petfinder] Database returned only', allDogs.length, 'dogs, searching Petfinder for additional...');
-
+              // 🎯 Search using the priority waterfall search API (Database → RescueGroups → Petfinder)
               const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   location: fullLocation ?? searchLocation ?? '',
                   breed: normalizedBreed ?? '',
+                  size: null,
+                  age: null,
+                  gender: null,
+                  limit: 50,
                 }),
               });
 
               if (searchRes.ok) {
                 const searchData = await searchRes.json();
-                const petfinderDogs = searchData.animals || [];
+                // Update chat logging to show all sources
+                if (searchData.animals && searchData.animals.length > 0) {
+                  const sources = searchData.sources?.join(', ') || 'unknown';
+                  console.log(`[✅ Chat Search Success] Found ${searchData.animals.length} dogs for ${fullBreed} in ${fullLocation} from sources: ${sources}`);
 
-                // Calculate visibility scores for Petfinder dogs and ensure photos
-                for (const dog of petfinderDogs) {
-                  if (!dog.visibilityScore) {
-                    dog.visibilityScore = calculateVisibilityScore(dog);
+                  // Dogs are already sorted by visibility score from the search API
+                  const sortedDogs = searchData.animals;
+
+                  // Calculate visibility scores for Petfinder dogs and ensure photos
+                  for (const dog of sortedDogs) {
+                    if (!dog.visibilityScore) {
+                      dog.visibilityScore = calculateVisibilityScore(dog);
+                    }
+
+                    // Ensure photos are properly formatted or use Barkr fallback
+                    if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
+                      dog.photos = [{ medium: '/images/barkr.png' }];
+                    } else {
+                      // Ensure each photo has proper structure
+                      dog.photos = dog.photos.map(photo => {
+                        if (typeof photo === 'string') {
+                          return { medium: photo };
+                        } else if (photo && typeof photo === 'object') {
+                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+                        }
+                        return { medium: '/images/barkr.png' };
+                      });
+                    }
                   }
 
-                  // Ensure photos are properly formatted or use Barkr fallback
-                  if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
-                    dog.photos = [{ medium: '/images/barkr.png' }];
-                  } else {
-                    // Ensure each photo has proper structure
-                    dog.photos = dog.photos.map(photo => {
-                      if (typeof photo === 'string') {
-                        return { medium: photo };
-                      } else if (photo && typeof photo === 'object') {
-                        return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                      }
-                      return { medium: '/images/barkr.png' };
-                    });
-                  }
+                  // Deduplicate dogs by ID before combining (database dogs use petfinder_id, Petfinder dogs use id)
+                  const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
+                  const uniquePetfinderDogs = sortedDogs.filter(dog => !existingIds.has(dog.id.toString()));
+                  const duplicatesFound = sortedDogs.length - uniquePetfinderDogs.length;
+
+                  allDogs = allDogs.concat(uniquePetfinderDogs);
+                  console.log('[✅ Petfinder Integration] Found', sortedDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
+                  console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
+                } else {
+                  console.log('[⚠️ Chat Search] No dogs found via Petfinder API.');
                 }
-
-                // Deduplicate dogs by ID before combining (database dogs use petfinder_id, Petfinder dogs use id)
-                const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
-                const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
-                const duplicatesFound = petfinderDogs.length - uniquePetfinderDogs.length;
-
-                allDogs = allDogs.concat(uniquePetfinderDogs);
-                console.log('[✅ Petfinder Integration] Found', petfinderDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
-                console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
               } else {
                 console.error('[❌ Petfinder Error] API call failed, continuing with database results');
               }

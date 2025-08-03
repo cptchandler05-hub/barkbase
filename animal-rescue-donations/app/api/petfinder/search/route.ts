@@ -95,16 +95,19 @@ export async function POST(req: Request) {
     if (allDogs.length < normalizedParams.limit! && normalizedParams.location) {
       try {
         console.log('[🐾 Petfinder] Falling back to Petfinder API...');
+        console.log(`[📊 Current Results] ${allDogs.length} dogs found so far, need ${normalizedParams.limit! - allDogs.length} more`);
 
-        // Rate limiting check
+        // Rate limiting check with enhanced logging
         const now = Date.now();
         if (now > rateLimitResetTime) {
           requestCount = 0;
           rateLimitResetTime = now + RATE_LIMIT_WINDOW;
+          console.log('[🔄 Rate Limit] Reset rate limit window');
         }
 
         if (requestCount >= MAX_REQUESTS_PER_MINUTE) {
-          console.warn('[⚠️ Internal Rate Limit] Petfinder rate limit reached');
+          console.warn('[⚠️ Internal Rate Limit] Petfinder rate limit reached, returning partial results');
+          // Still return what we have instead of failing completely
         } else {
           // Ensure minimum time between requests
           const timeSinceLastRequest = now - lastRequestTime;
@@ -183,7 +186,17 @@ export async function POST(req: Request) {
               sources.push('petfinder');
             }
           } else {
-            console.warn('[⚠️ Petfinder] API response failed:', response.status);
+            const errorText = await response.text().catch(() => 'Unable to read error response');
+            console.warn('[⚠️ Petfinder] API response failed:', {
+              status: response.status,
+              statusText: response.statusText,
+              error: errorText.substring(0, 200) // First 200 chars of error
+            });
+            
+            // Check if it's a rate limiting error
+            if (response.status === 429) {
+              console.warn('[🚫 Petfinder Rate Limited] External API rate limit hit');
+            }
           }
         }
       } catch (pfError) {
@@ -215,9 +228,27 @@ export async function POST(req: Request) {
 
   } catch (err) {
     console.error('[❌ Search Error]', err);
+    
+    // Return partial results if we have any, even with errors
+    if (allDogs.length > 0) {
+      console.log(`[⚠️ Partial Success] Returning ${allDogs.length} dogs despite errors`);
+      const sortedDogs = DogFormatter.sortByVisibilityScore(allDogs.slice(0, normalizedParams.limit));
+      const legacyFormattedDogs = sortedDogs.map(DogFormatter.toLegacyFormat);
+      
+      return NextResponse.json({
+        animals: legacyFormattedDogs,
+        sources: sources,
+        total: sortedDogs.length,
+        searchStrategy: 'priority-waterfall-partial',
+        warning: 'Some sources failed but returning available results',
+        error: err instanceof Error ? err.message : 'Partial failure'
+      });
+    }
+    
     return NextResponse.json({
-      error: 'Search failed',
+      error: 'Search failed completely',
       details: err instanceof Error ? err.message : 'Unknown error',
+      searchedSources: sources.length > 0 ? sources : ['none'],
     }, { status: 500 });
   }
 }

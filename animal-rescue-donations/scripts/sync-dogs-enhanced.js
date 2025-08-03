@@ -1,4 +1,3 @@
-
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
 const { calculateVisibilityScore } = require('../lib/scoreVisibility.js');
@@ -54,7 +53,7 @@ async function getAccessToken() {
 
 async function rateLimitedDelay(apiType = 'petfinder') {
   const now = Date.now();
-  
+
   if (apiType === 'rescuegroups') {
     const timeSinceLastRequest = now - lastRescueGroupsRequest;
     if (timeSinceLastRequest < RESCUEGROUPS_MIN_INTERVAL) {
@@ -82,16 +81,16 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   // Use GET request with query parameters (RescueGroups v5 API)
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
-  
+
   // Location filter
   params.append('filter[location]', location);
   params.append('filter[distance]', '100'); // 100 mile radius
-  
+
   // Limit results
   params.append('limit', limit.toString());
-  
+
   // Note: RescueGroups v5 API has limited sort options, so we'll use default sorting
-  
+
   // Specify fields to return
   const fields = [
     'id', 'name', 'status', 'species', 'organizations',
@@ -119,14 +118,14 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 
     const result = await response.json();
     const animals = result.data || [];
-    
+
     console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} (API limit may be 25)`);
-    
+
     // Log first animal for debugging
     if (animals.length > 0) {
       console.log(`🔍 First dog: ${animals[0].attributes?.name || 'Unknown'} (ID: ${animals[0].id})`);
     }
-    
+
     return animals;
   } catch (error) {
     console.warn(`⚠️ RescueGroups error for ${location}:`, error.message);
@@ -138,7 +137,7 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 function transformRescueGroupsAnimal(animal) {
   // RescueGroups v5 API uses attributes object
   const attrs = animal.attributes || {};
-  
+
   // Parse location
   const location = attrs.location || {};
   const city = location.citystate?.split(',')[0]?.trim() || 'Unknown';
@@ -291,7 +290,7 @@ async function syncDogsToDatabase(dogs, source) {
 
       // Check if dog already exists by source-specific ID
       let existingDog = null;
-      
+
       if (source === 'rescuegroups') {
         const { data } = await supabase
           .from('dogs')
@@ -345,7 +344,7 @@ async function main() {
   console.log('🐕 Starting enhanced dog sync with RescueGroups + Petfinder...');
 
   const testMode = process.env.TEST_MODE === 'true';
-  
+
   if (testMode) {
     console.log('🧪 RUNNING IN TEST MODE - Limited API calls');
   }
@@ -354,54 +353,44 @@ async function main() {
     // 🎯 SEPARATE LOCATION STRATEGIES - No Overlap!
     let rescueGroupsLocations = [];
     let petfinderLocations = [];
-    
+
     if (testMode) {
       // Test Mode: 1 rural + 1 urban (no overlap)
       rescueGroupsLocations.push(getRandomRuralZip());
       petfinderLocations.push('Austin, TX');
-      
+
       console.log(`🦮 RescueGroups will search: ${rescueGroupsLocations[0]} (rural)`);
       console.log(`🔍 Petfinder will search: ${petfinderLocations[0]} (urban)`);
     } else {
       // 🏞️ RescueGroups: AGGRESSIVE rural coverage (120 rural ZIPs)
+      // Generate location lists with enhanced geographic strategy
       console.log('🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...');
-      for (let i = 0; i < 120; i++) {
-        rescueGroupsLocations.push(getRandomRuralZip());
-      }
-      
-      // 🏙️ Petfinder: Major metropolitan areas (24 cities)
+      const rescueGroupsLocations = generateRuralZipCodes(testMode ? 3 : 150); // Increased coverage
+
       console.log('🏙️ Generating urban locations for Petfinder...');
-      const majorMetros = [
-        // Tier 1 Cities (Population 1M+)
-        'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-        'Philadelphia, PA', 'Phoenix, AZ', 'San Antonio, TX', 'San Diego, CA',
-        'Dallas, TX', 'San Jose, CA', 'Austin, TX', 'Jacksonville, FL',
-        
-        // Tier 2 Cities (Population 500K+)
-        'Fort Worth, TX', 'Columbus, OH', 'Charlotte, NC', 'San Francisco, CA',
-        'Indianapolis, IN', 'Seattle, WA', 'Denver, CO', 'Washington, DC',
-        'Boston, MA', 'Nashville, TN', 'Baltimore, MD', 'Louisville, KY'
-      ];
-      
-      // Shuffle and take all 24 to maximize urban coverage
-      const shuffledMetros = majorMetros.sort(() => Math.random() - 0.5);
-      petfinderLocations = shuffledMetros.slice(0, 24);
-      
-      console.log(`🎯 RescueGroups targeting ${rescueGroupsLocations.length} rural areas`);
-      console.log(`🎯 Petfinder targeting ${petfinderLocations.length} metropolitan areas`);
-      console.log(`✅ Zero location overlap - maximized coverage strategy`);
+      const petfinderLocations = generateUrbanZipCodes(testMode ? 2 : 30); // Better urban coverage
+
+      // Enhanced coverage validation
+      console.log(`📍 Geographic Distribution:`);
+      console.log(`   RescueGroups: ${rescueGroupsLocations.length} rural areas (prioritizing invisible dogs)`);
+      console.log(`   Petfinder: ${petfinderLocations.length} metropolitan areas (urban supplement)`);
+
+      // Check for regional balance
+      const ruralStates = new Set(rescueGroupsLocations.map(loc => loc.slice(0, 2)));
+      const urbanStates = new Set(petfinderLocations.map(loc => loc.slice(0, 2)));
+      console.log(`   State Coverage: ${ruralStates.size} rural states, ${urbanStates.size} urban states`);
     }
 
     // Phase 1: RescueGroups Sync (Rural Focus - Invisible Dogs Priority)
     console.log('🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)');
     let allRescueGroupsDogs = [];
-    
+
     for (const location of rescueGroupsLocations) {
       try {
         const dogs = await fetchDogsFromRescueGroups(location, testMode);
         const transformedDogs = dogs.map(transformRescueGroupsAnimal);
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
-        
+
         // Minimal delay for RescueGroups (they can handle 10 req/sec)
         await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
@@ -411,17 +400,17 @@ async function main() {
 
     // Remove duplicates from RescueGroups and track duplication patterns
     console.log(`📊 RescueGroups raw results: ${allRescueGroupsDogs.length} total dogs fetched`);
-    
+
     // Track duplication patterns
     const duplicateCount = {};
     allRescueGroupsDogs.forEach(dog => {
       const id = dog.rescuegroups_id;
       duplicateCount[id] = (duplicateCount[id] || 0) + 1;
     });
-    
+
     const duplicatedIds = Object.entries(duplicateCount).filter(([id, count]) => count > 1);
     console.log(`📋 Duplication analysis: ${duplicatedIds.length} dogs appeared multiple times`);
-    
+
     if (duplicatedIds.length > 0) {
       console.log(`🔍 Most duplicated dogs:`);
       duplicatedIds.slice(0, 5).forEach(([id, count]) => {
@@ -450,7 +439,7 @@ async function main() {
         const dogs = await fetchDogsFromPetfinder(location, accessToken, testMode);
         const transformedDogs = dogs.map(transformPetfinderAnimal);
         allPetfinderDogs = allPetfinderDogs.concat(transformedDogs);
-        
+
         // Longer delay for Petfinder (stricter rate limits)
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
@@ -466,24 +455,24 @@ async function main() {
     // 🎯 CROSS-API DEDUPLICATION: Remove Petfinder dogs that might be duplicates of RescueGroups dogs
     // Check for potential duplicates by name + approximate location
     const deduplicatedPetfinderDogs = [];
-    
+
     for (const pfDog of uniquePetfinderDogs) {
       const isDuplicate = uniqueRescueGroupsDogs.some(rgDog => {
         // Match by exact name (case insensitive)
         const nameMatch = rgDog.name.toLowerCase().trim() === pfDog.name.toLowerCase().trim();
-        
+
         // Match by location (same state)
         const stateMatch = rgDog.state === pfDog.state;
-        
+
         // Match by basic characteristics
         const breedMatch = rgDog.primary_breed === pfDog.primary_breed;
         const ageMatch = rgDog.age === pfDog.age;
         const genderMatch = rgDog.gender === pfDog.gender;
-        
+
         // Consider it a duplicate if name + state match, OR if name + 2 other characteristics match
         return (nameMatch && stateMatch) || (nameMatch && breedMatch && (ageMatch || genderMatch));
       });
-      
+
       if (!isDuplicate) {
         deduplicatedPetfinderDogs.push(pfDog);
       } else {
@@ -518,3 +507,25 @@ async function main() {
 }
 
 main();
+
+function generateRuralZipCodes(count) {
+  const zipCodes = [];
+  for (let i = 0; i < count; i++) {
+    zipCodes.push(getRandomRuralZip());
+  }
+  return zipCodes;
+}
+
+function generateUrbanZipCodes(count) {
+  const majorMetros = [
+    'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
+    'Philadelphia, PA', 'Phoenix, AZ', 'San Antonio, TX', 'San Diego, CA',
+    'Dallas, TX', 'San Jose, CA', 'Austin, TX', 'Jacksonville, FL',
+    'Fort Worth, TX', 'Columbus, OH', 'Charlotte, NC', 'San Francisco, CA',
+    'Indianapolis, IN', 'Seattle, WA', 'Denver, CO', 'Washington, DC',
+    'Boston, MA', 'Nashville, TN', 'Baltimore, MD', 'Louisville, KY'
+  ];
+
+  const shuffledMetros = majorMetros.sort(() => Math.random() - 0.5);
+  return shuffledMetros.slice(0, count);
+}
