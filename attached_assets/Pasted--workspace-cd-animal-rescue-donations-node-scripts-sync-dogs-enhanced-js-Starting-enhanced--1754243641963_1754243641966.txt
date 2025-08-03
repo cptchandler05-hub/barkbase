@@ -1,0 +1,304 @@
+~/workspace$ cd animal-rescue-donations && node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...
+🏙️ Generating urban locations for Petfinder...
+🎯 RescueGroups targeting 120 rural areas
+🎯 Petfinder targeting 24 metropolitan areas
+✅ Zero location overlap - maximized coverage strategy
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 38633 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38633
+🦮 Fetching RescueGroups dogs from: 68010 (limit: 100)
+📋 Found 25 RescueGroups dogs from 68010
+🦮 Fetching RescueGroups dogs from: 66006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 66006
+🦮 Fetching RescueGroups dogs from: 68005 (limit: 100)
+📋 Found 25 RescueGroups dogs from 68005
+🦮 Fetching RescueGroups dogs from: 40008 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40008
+🦮 Fetching RescueGroups dogs from: 68002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 68002
+🦮 Fetching RescueGroups dogs from: 20602 (limit: 100)
+📋 Found 25 RescueGroups dogs from 20602
+🦮 Fetching RescueGroups dogs from: 82010 (limit: 100)
+📋 Found 25 RescueGroups dogs from 82010
+🦮 Fetching RescueGroups dogs from: 89007 (limit: 100)
+📋 Found 25 RescueGroups dogs from 89007
+🦮 Fetching RescueGroups dogs from: 20613 (limit: 100)
+📋 Found 25 RescueGroups dogs from 20613
+🦮 Fetching RescueGroups dogs from: 35031 (limit: 100)
+📋 Found 25 RescueGroups dogs from 35031
+🦮 Fetching RescueGroups dogs from: 38633 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38633
+🦮 Fetching RescueGroups dogs from: 24719 (limit: 100)
+📋 Found 25 RescueGroups dogs from 24719
+🦮 Fetching RescueGroups dogs from: 06026 (limit: 100)
+📋 Found 25 RescueGroups dogs from 06026
+🦮 Fetching RescueGroups dogs from: 24714 (limit: 100)
+📋 Found 25 RescueGroups dogs from 24714
+🦮 Fetching RescueGroups dogs from: 22033 (limit: 100)
+📋 Found 25 RescueGroups dogs from 22033
+🦮 Fetching RescueGroups dogs from: 71675 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71675
+🦮 Fetching RescueGroups dogs from: 53007 (limit: 100)
+📋 Found 25 RescueGroups dogs from 53007
+🦮 Fetching RescueGroups dogs from: 07006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 07006
+🦮 Fetching RescueGroups dogs from: 35033 (limit: 100)
+📋 Found 25 RescueGroups dogs from 35033
+🦮 Fetching RescueGroups dogs from: 19711 (limit: 100)
+📋 Found 25 RescueGroups dogs from 19711
+🦮 Fetching RescueGroups dogs from: 38639 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38639
+🦮 Fetching RescueGroups dogs from: 63012 (limit: 100)
+📋 Found 25 RescueGroups dogs from 63012
+🦮 Fetching RescueGroups dogs from: 29014 (limit: 100)
+📋 Found 25 RescueGroups dogs from 29014
+🦮 Fetching RescueGroups dogs from: 50003 (limit: 100)
+📋 Found 25 RescueGroups dogs from 50003
+🦮 Fetching RescueGroups dogs from: 71758 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71758
+🦮 Fetching RescueGroups dogs from: 89003 (limit: 100)
+📋 Found 25 RescueGroups dogs from 89003
+🦮 Fetching RescueGroups dogs from: 71678 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71678
+🦮 Fetching RescueGroups dogs from: 37015 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37015
+🦮 Fetching RescueGroups dogs from: 40050 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40050
+🦮 Fetching RescueGroups dogs from: 40104 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40104
+🦮 Fetching RescueGroups dogs from: 40003 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40003
+🦮 Fetching RescueGroups dogs from: 82010 (limit: 100)
+📋 Found 25 RescueGroups dogs from 82010
+🦮 Fetching RescueGroups dogs from: 30117 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30117
+🦮 Fetching RescueGroups dogs from: 85613 (limit: 100)
+📋 Found 25 RescueGroups dogs from 85613
+🦮 Fetching RescueGroups dogs from: 75001 (limit: 100)
+📋 Found 25 RescueGroups dogs from 75001
+🦮 Fetching RescueGroups dogs from: 57005 (limit: 100)
+📋 Found 25 RescueGroups dogs from 57005
+🦮 Fetching RescueGroups dogs from: 68002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 68002
+🦮 Fetching RescueGroups dogs from: 04002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 04002
+🦮 Fetching RescueGroups dogs from: 06024 (limit: 100)
+📋 Found 25 RescueGroups dogs from 06024
+🦮 Fetching RescueGroups dogs from: 27011 (limit: 100)
+📋 Found 25 RescueGroups dogs from 27011
+🦮 Fetching RescueGroups dogs from: 43002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 43002
+🦮 Fetching RescueGroups dogs from: 83204 (limit: 100)
+📋 Found 25 RescueGroups dogs from 83204
+🦮 Fetching RescueGroups dogs from: 40007 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40007
+🦮 Fetching RescueGroups dogs from: 20607 (limit: 100)
+📋 Found 25 RescueGroups dogs from 20607
+🦮 Fetching RescueGroups dogs from: 66016 (limit: 100)
+📋 Found 25 RescueGroups dogs from 66016
+🦮 Fetching RescueGroups dogs from: 38659 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38659
+🦮 Fetching RescueGroups dogs from: 01002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 01002
+🦮 Fetching RescueGroups dogs from: 93208 (limit: 100)
+📋 Found 25 RescueGroups dogs from 93208
+🦮 Fetching RescueGroups dogs from: 93203 (limit: 100)
+📋 Found 25 RescueGroups dogs from 93203
+🦮 Fetching RescueGroups dogs from: 30101 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30101
+🦮 Fetching RescueGroups dogs from: 38639 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38639
+🦮 Fetching RescueGroups dogs from: 03040 (limit: 100)
+📋 Found 25 RescueGroups dogs from 03040
+🦮 Fetching RescueGroups dogs from: 59002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 59002
+🦮 Fetching RescueGroups dogs from: 30214 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30214
+🦮 Fetching RescueGroups dogs from: 83201 (limit: 100)
+📋 Found 25 RescueGroups dogs from 83201
+🦮 Fetching RescueGroups dogs from: 60021 (limit: 100)
+📋 Found 25 RescueGroups dogs from 60021
+🦮 Fetching RescueGroups dogs from: 89006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 89006
+🦮 Fetching RescueGroups dogs from: 87001 (limit: 100)
+📋 Found 25 RescueGroups dogs from 87001
+🦮 Fetching RescueGroups dogs from: 38625 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38625
+🦮 Fetching RescueGroups dogs from: 40111 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40111
+🦮 Fetching RescueGroups dogs from: 71764 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71764
+🦮 Fetching RescueGroups dogs from: 30210 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30210
+🦮 Fetching RescueGroups dogs from: 63011 (limit: 100)
+📋 Found 25 RescueGroups dogs from 63011
+🦮 Fetching RescueGroups dogs from: 40026 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40026
+🦮 Fetching RescueGroups dogs from: 02802 (limit: 100)
+📋 Found 25 RescueGroups dogs from 02802
+🦮 Fetching RescueGroups dogs from: 57006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 57006
+🦮 Fetching RescueGroups dogs from: 48012 (limit: 100)
+📋 Found 25 RescueGroups dogs from 48012
+🦮 Fetching RescueGroups dogs from: 37059 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37059
+🦮 Fetching RescueGroups dogs from: 30116 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30116
+🦮 Fetching RescueGroups dogs from: 75009 (limit: 100)
+📋 Found 25 RescueGroups dogs from 75009
+🦮 Fetching RescueGroups dogs from: 75019 (limit: 100)
+📋 Found 25 RescueGroups dogs from 75019
+🦮 Fetching RescueGroups dogs from: 29014 (limit: 100)
+📋 Found 25 RescueGroups dogs from 29014
+🦮 Fetching RescueGroups dogs from: 38647 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38647
+🦮 Fetching RescueGroups dogs from: 98005 (limit: 100)
+📋 Found 25 RescueGroups dogs from 98005
+🦮 Fetching RescueGroups dogs from: 70030 (limit: 100)
+📋 Found 25 RescueGroups dogs from 70030
+🦮 Fetching RescueGroups dogs from: 37064 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37064
+🦮 Fetching RescueGroups dogs from: 97002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 97002
+🦮 Fetching RescueGroups dogs from: 01002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 01002
+🦮 Fetching RescueGroups dogs from: 59011 (limit: 100)
+📋 Found 25 RescueGroups dogs from 59011
+🦮 Fetching RescueGroups dogs from: 71642 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71642
+🦮 Fetching RescueGroups dogs from: 71639 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71639
+🦮 Fetching RescueGroups dogs from: 37075 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37075
+🦮 Fetching RescueGroups dogs from: 98004 (limit: 100)
+📋 Found 25 RescueGroups dogs from 98004
+🦮 Fetching RescueGroups dogs from: 53002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 53002
+🦮 Fetching RescueGroups dogs from: 68004 (limit: 100)
+📋 Found 25 RescueGroups dogs from 68004
+🦮 Fetching RescueGroups dogs from: 39062 (limit: 100)
+📋 Found 25 RescueGroups dogs from 39062
+🦮 Fetching RescueGroups dogs from: 37022 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37022
+🦮 Fetching RescueGroups dogs from: 39045 (limit: 100)
+📋 Found 25 RescueGroups dogs from 39045
+🦮 Fetching RescueGroups dogs from: 82050 (limit: 100)
+📋 Found 25 RescueGroups dogs from 82050
+🦮 Fetching RescueGroups dogs from: 37066 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37066
+🦮 Fetching RescueGroups dogs from: 37018 (limit: 100)
+📋 Found 25 RescueGroups dogs from 37018
+🦮 Fetching RescueGroups dogs from: 55001 (limit: 100)
+📋 Found 25 RescueGroups dogs from 55001
+🦮 Fetching RescueGroups dogs from: 38664 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38664
+🦮 Fetching RescueGroups dogs from: 99611 (limit: 100)
+📋 Found 25 RescueGroups dogs from 99611
+🦮 Fetching RescueGroups dogs from: 70006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 70006
+🦮 Fetching RescueGroups dogs from: 84009 (limit: 100)
+📋 Found 25 RescueGroups dogs from 84009
+🦮 Fetching RescueGroups dogs from: 38623 (limit: 100)
+📋 Found 25 RescueGroups dogs from 38623
+🦮 Fetching RescueGroups dogs from: 30183 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30183
+🦮 Fetching RescueGroups dogs from: 40033 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40033
+🦮 Fetching RescueGroups dogs from: 29006 (limit: 100)
+📋 Found 25 RescueGroups dogs from 29006
+🦮 Fetching RescueGroups dogs from: 55007 (limit: 100)
+📋 Found 25 RescueGroups dogs from 55007
+🦮 Fetching RescueGroups dogs from: 71772 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71772
+🦮 Fetching RescueGroups dogs from: 40036 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40036
+🦮 Fetching RescueGroups dogs from: 40027 (limit: 100)
+📋 Found 25 RescueGroups dogs from 40027
+🦮 Fetching RescueGroups dogs from: 01002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 01002
+🦮 Fetching RescueGroups dogs from: 30148 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30148
+🦮 Fetching RescueGroups dogs from: 99501 (limit: 100)
+📋 Found 25 RescueGroups dogs from 99501
+🦮 Fetching RescueGroups dogs from: 29002 (limit: 100)
+📋 Found 25 RescueGroups dogs from 29002
+🦮 Fetching RescueGroups dogs from: 99508 (limit: 100)
+📋 Found 25 RescueGroups dogs from 99508
+🦮 Fetching RescueGroups dogs from: 22030 (limit: 100)
+📋 Found 25 RescueGroups dogs from 22030
+🦮 Fetching RescueGroups dogs from: 66008 (limit: 100)
+📋 Found 25 RescueGroups dogs from 66008
+🦮 Fetching RescueGroups dogs from: 66013 (limit: 100)
+📋 Found 25 RescueGroups dogs from 66013
+🦮 Fetching RescueGroups dogs from: 30187 (limit: 100)
+📋 Found 25 RescueGroups dogs from 30187
+🦮 Fetching RescueGroups dogs from: 19702 (limit: 100)
+📋 Found 25 RescueGroups dogs from 19702
+🦮 Fetching RescueGroups dogs from: 71747 (limit: 100)
+📋 Found 25 RescueGroups dogs from 71747
+🦮 Fetching RescueGroups dogs from: 15005 (limit: 100)
+📋 Found 25 RescueGroups dogs from 15005
+🦮 Fetching RescueGroups dogs from: 24714 (limit: 100)
+📋 Found 25 RescueGroups dogs from 24714
+🦮 Fetching RescueGroups dogs from: 07010 (limit: 100)
+📋 Found 25 RescueGroups dogs from 07010
+🦮 Fetching RescueGroups dogs from: 04008 (limit: 100)
+📋 Found 25 RescueGroups dogs from 04008
+🎯 Found 1 unique RescueGroups dogs
+📝 Syncing 1 rescuegroups dogs to database...
+✅ rescuegroups sync completed: 1 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: San Francisco, CA (limit: 100)
+📋 Found 100 Petfinder dogs from San Francisco, CA
+🔍 Fetching Petfinder dogs from: New York, NY (limit: 100)
+📋 Found 100 Petfinder dogs from New York, NY
+🔍 Fetching Petfinder dogs from: San Diego, CA (limit: 100)
+📋 Found 100 Petfinder dogs from San Diego, CA
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 100)
+📋 Found 100 Petfinder dogs from Austin, TX
+🔍 Fetching Petfinder dogs from: Washington, DC (limit: 100)
+📋 Found 100 Petfinder dogs from Washington, DC
+🔍 Fetching Petfinder dogs from: Louisville, KY (limit: 100)
+📋 Found 100 Petfinder dogs from Louisville, KY
+🔍 Fetching Petfinder dogs from: San Jose, CA (limit: 100)
+📋 Found 100 Petfinder dogs from San Jose, CA
+🔍 Fetching Petfinder dogs from: Fort Worth, TX (limit: 100)
+📋 Found 100 Petfinder dogs from Fort Worth, TX
+🔍 Fetching Petfinder dogs from: Jacksonville, FL (limit: 100)
+📋 Found 100 Petfinder dogs from Jacksonville, FL
+🔍 Fetching Petfinder dogs from: Philadelphia, PA (limit: 100)
+📋 Found 100 Petfinder dogs from Philadelphia, PA
+🔍 Fetching Petfinder dogs from: Phoenix, AZ (limit: 100)
+📋 Found 100 Petfinder dogs from Phoenix, AZ
+🔍 Fetching Petfinder dogs from: Denver, CO (limit: 100)
+📋 Found 100 Petfinder dogs from Denver, CO
+🔍 Fetching Petfinder dogs from: Los Angeles, CA (limit: 100)
+📋 Found 100 Petfinder dogs from Los Angeles, CA
+🔍 Fetching Petfinder dogs from: Charlotte, NC (limit: 100)
+📋 Found 100 Petfinder dogs from Charlotte, NC
+🔍 Fetching Petfinder dogs from: Dallas, TX (limit: 100)
+⚠️ Petfinder failed for Dallas, TX: Petfinder API error for Dallas, TX: 502
+🔍 Fetching Petfinder dogs from: San Antonio, TX (limit: 100)
+📋 Found 100 Petfinder dogs from San Antonio, TX
+🔍 Fetching Petfinder dogs from: Boston, MA (limit: 100)
+📋 Found 100 Petfinder dogs from Boston, MA
+🔍 Fetching Petfinder dogs from: Chicago, IL (limit: 100)
+📋 Found 100 Petfinder dogs from Chicago, IL
+🔍 Fetching Petfinder dogs from: Baltimore, MD (limit: 100)
+📋 Found 100 Petfinder dogs from Baltimore, MD
+🔍 Fetching Petfinder dogs from: Houston, TX (limit: 100)
+📋 Found 100 Petfinder dogs from Houston, TX
+🔍 Fetching Petfinder dogs from: Columbus, OH (limit: 100)
+📋 Found 100 Petfinder dogs from Columbus, OH
+🔍 Fetching Petfinder dogs from: Nashville, TN (limit: 100)
+📋 Found 100 Petfinder dogs from Nashville, TN
+🔍 Fetching Petfinder dogs from: Seattle, WA (limit: 100)
+📋 Found 100 Petfinder dogs from Seattle, WA
+🔍 Fetching Petfinder dogs from: Indianapolis, IN (limit: 100)
+📋 Found 100 Petfinder dogs from Indianapolis, IN
+🎯 Found 1840 unique Petfinder dogs
+📝 Syncing 1840 petfinder dogs to database...
