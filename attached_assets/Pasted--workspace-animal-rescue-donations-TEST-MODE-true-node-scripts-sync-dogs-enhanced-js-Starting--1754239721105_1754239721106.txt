@@ -1,0 +1,57 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 22030 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 22030 (limit: 5)
+📋 Found 25 RescueGroups dogs from 22030
+🎯 Found 1 unique RescueGroups dogs
+📝 Syncing 1 rescuegroups dogs to database...
+⚠️ Failed to insert Unknown: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+✅ rescuegroups sync completed: 0 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+📝 Syncing 5 petfinder dogs to database...
+⚠️ Failed to insert Huck: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to update Sugar: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to update Sugar: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to update Lightning: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to update Lightning: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'api_source_priority' column of 'dogs' in the schema cache"
+}
+✅ petfinder sync completed: 0 added, 0 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
