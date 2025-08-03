@@ -105,6 +105,9 @@ class DogFormatter {
 
   // Format RescueGroups dog to unified format
   static formatRescueGroupsDog(dog: any): UnifiedDog {
+    // Extract attributes from the nested structure
+    const attrs = dog.attributes || dog;
+    
     const photos = (dog.pictures || [])
       .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
       .map((pic: any) => ({
@@ -114,29 +117,29 @@ class DogFormatter {
       }))
       .filter((photo: any) => photo.large);
 
-    if (photos.length === 0 && dog.thumbnailUrl) {
+    if (photos.length === 0 && attrs.thumbnailUrl) {
       photos.push({
-        small: dog.thumbnailUrl,
-        medium: dog.thumbnailUrl,
-        large: dog.thumbnailUrl
+        small: attrs.thumbnailUrl,
+        medium: attrs.thumbnailUrl,
+        large: attrs.thumbnailUrl
       });
     }
 
     const formatted = {
-      id: dog.id,
+      id: attrs.id || dog.id,
       source: 'rescuegroups' as const,
-      sourceId: dog.id,
+      sourceId: attrs.id || dog.id,
       organizationId: dog.organization || '',
-      name: dog.name || 'Unknown',
+      name: attrs.name || 'Unknown',
       breeds: {
-        primary: dog.breedPrimary || 'Mixed Breed',
-        secondary: dog.breedSecondary,
-        mixed: dog.breedMixed || !!dog.breedSecondary
+        primary: attrs.breedPrimary || 'Mixed Breed',
+        secondary: attrs.breedSecondary,
+        mixed: attrs.breedMixed || !!attrs.breedSecondary
       },
-      age: dog.ageGroup || 'Unknown',
-      gender: dog.sex || 'Unknown',
-      size: dog.sizeGroup || 'Unknown',
-      description: dog.descriptionText,
+      age: attrs.ageGroup || 'Unknown',
+      gender: attrs.sex || 'Unknown',
+      size: attrs.sizeGroup || 'Unknown',
+      description: attrs.descriptionText,
       photos: photos,
       contact: {
         address: {
@@ -145,13 +148,13 @@ class DogFormatter {
         }
       },
       characteristics: {
-        goodWithChildren: dog.goodWithChildren,
-        goodWithDogs: dog.goodWithDogs,
-        goodWithCats: dog.goodWithCats,
-        houseTrained: dog.houseTrained,
-        specialNeeds: dog.specialNeeds
+        goodWithChildren: attrs.goodWithChildren,
+        goodWithDogs: attrs.goodWithDogs,
+        goodWithCats: attrs.goodWithCats,
+        houseTrained: attrs.houseTrained,
+        specialNeeds: attrs.specialNeeds
       },
-      url: dog.url,
+      url: attrs.url,
       visibilityScore: 0, // Will be calculated
       verificationBadge: 'Verified by BarkBase'
     };
