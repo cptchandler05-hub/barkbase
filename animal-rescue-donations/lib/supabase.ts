@@ -151,3 +151,43 @@ export async function getDogById(petfinderId: string): Promise<Dog | null> {
     return null;
   }
 }
+
+export async function getDogByRescueGroupsId(rescueGroupsId: string): Promise<Dog | null> {
+  if (!isSupabaseAvailable()) {
+    console.warn('Supabase is not available. Returning null.');
+    return null;
+  }
+
+  if (!rescueGroupsId || rescueGroupsId === 'undefined' || rescueGroupsId === 'null') {
+    console.error('Invalid rescueGroupsId provided:', rescueGroupsId);
+    return null;
+  }
+
+  try {
+    console.log('Searching for dog with rescuegroups_id:', rescueGroupsId);
+
+    const { data, error } = await supabase
+      .from('dogs')
+      .select('*')
+      .eq('rescuegroups_id', rescueGroupsId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No rows returned
+        console.log(`No dog found with rescuegroups_id: ${rescueGroupsId}`);
+        return null;
+      }
+      console.error('Supabase error getting dog by RescueGroups ID:', error);
+      // Don't throw, return null to allow fallback
+      return null;
+    }
+
+    console.log('Found dog in database by RescueGroups ID:', data?.name);
+    return data as Dog;
+  } catch (error) {
+    console.error('Error getting dog by RescueGroups ID:', error);
+    // Don't throw, return null to allow fallback
+    return null;
+  }
+}
