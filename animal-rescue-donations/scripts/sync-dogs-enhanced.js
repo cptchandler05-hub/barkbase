@@ -90,8 +90,7 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   // Limit results
   params.append('limit', limit.toString());
   
-  // Sort by ID for consistent pagination
-  params.append('sort', 'id');
+  // Note: RescueGroups v5 API has limited sort options, so we'll use default sorting
   
   // Specify fields to return
   const fields = [
