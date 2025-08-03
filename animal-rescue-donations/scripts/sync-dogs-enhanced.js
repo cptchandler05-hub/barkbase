@@ -74,10 +74,11 @@ async function rateLimitedDelay(apiType = 'petfinder') {
 }
 
 // RescueGroups API functions
-async function fetchDogsFromRescueGroups(location) {
+async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   await rateLimitedDelay('rescuegroups');
 
-  console.log(`🦮 Fetching RescueGroups dogs from: ${location}`);
+  const limit = isTestMode ? 5 : 100;
+  console.log(`🦮 Fetching RescueGroups dogs from: ${location} (limit: ${limit})`);
 
   const searchData = {
     apikey: process.env.RESCUEGROUPS_API_KEY,
@@ -85,7 +86,7 @@ async function fetchDogsFromRescueGroups(location) {
     objectAction: 'publicSearch',
     search: {
       resultStart: 0,
-      resultLimit: 100,
+      resultLimit: limit,
       resultSort: 'animalID',
       resultOrder: 'asc',
       filters: [
@@ -122,7 +123,7 @@ async function fetchDogsFromRescueGroups(location) {
     const rescueGroupsAPI = new RescueGroupsAPI();
     const animals = await rescueGroupsAPI.searchAnimals({
       location: location,
-      limit: 100,
+      limit: limit,
       radius: 100
     });
     
@@ -190,15 +191,16 @@ function transformRescueGroupsAnimal(animal) {
 }
 
 // Existing Petfinder functions (keep as fallback)
-async function fetchDogsFromPetfinder(location, accessToken) {
+async function fetchDogsFromPetfinder(location, accessToken, isTestMode = false) {
   await rateLimitedDelay('petfinder');
 
-  console.log(`🔍 Fetching Petfinder dogs from: ${location}`);
+  const limit = isTestMode ? 5 : 100;
+  console.log(`🔍 Fetching Petfinder dogs from: ${location} (limit: ${limit})`);
 
   const params = new URLSearchParams({
     type: 'dog',
     status: 'adoptable',
-    limit: '100',
+    limit: limit.toString(),
     location: location,
     distance: '100'
   });
@@ -388,7 +390,7 @@ async function main() {
     
     for (const location of rescueGroupsLocations) {
       try {
-        const dogs = await fetchDogsFromRescueGroups(location);
+        const dogs = await fetchDogsFromRescueGroups(location, testMode);
         const transformedDogs = dogs.map(transformRescueGroupsAnimal);
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
         
@@ -417,7 +419,7 @@ async function main() {
 
     for (const location of petfinderLocations) {
       try {
-        const dogs = await fetchDogsFromPetfinder(location, accessToken);
+        const dogs = await fetchDogsFromPetfinder(location, accessToken, testMode);
         const transformedDogs = dogs.map(transformPetfinderAnimal);
         allPetfinderDogs = allPetfinderDogs.concat(transformedDogs);
         
