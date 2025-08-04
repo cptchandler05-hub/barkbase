@@ -90,6 +90,11 @@ export async function POST(req: Request) {
                 if (geocodeData.features && geocodeData.features.length > 0) {
                   const [lng, lat] = geocodeData.features[0].center;
                   coordinates = { latitude: lat, longitude: lng };
+                  
+                  // CRITICAL: Add geocoded coordinates to normalizedParams so RescueGroups gets them
+                  normalizedParams.latitude = lat;
+                  normalizedParams.longitude = lng;
+                  
                   console.log(`[✅ Geocoded] "${normalizedParams.location}" → ${lat}, ${lng}`);
                   console.log(`[📍 Location Details] ${geocodeData.features[0].place_name}`);
                 } else {
@@ -124,8 +129,8 @@ export async function POST(req: Request) {
           gender: normalizedParams.gender,
           limit: Math.min(maxResults, normalizedParams.limit! - allDogs.length),
           radius: normalizedParams.radius,
-          latitude: coordinates?.latitude, // Use geocoded latitude if available
-          longitude: coordinates?.longitude // Use geocoded longitude if available
+          latitude: normalizedParams.latitude, // Now comes from normalizedParams
+          longitude: normalizedParams.longitude // Now comes from normalizedParams
         };
 
 
