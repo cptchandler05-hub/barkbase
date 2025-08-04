@@ -102,25 +102,22 @@ class RescueGroupsAPI {
   }
 
   async searchAnimals(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
-    const endpoint = `${this.baseURL}/search/available/haspic`;
+    // CORRECTED: Use the proper dogs-specific endpoint as recommended by ChatGPT
+    const endpoint = `${this.baseURL}/search/available/dogs`;
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
-    // CRITICAL: Force dogs only - ensure no cats, horses, etc.
-    searchParams.append('filter[species]', 'Dog');
-    searchParams.append('filter[status]', 'Available');
+    // CRITICAL: Force dogs only - use the correct field name
+    searchParams.append('filter[species]', 'dog'); // lowercase as per API docs
     
-    // Additional safety filters
-    searchParams.append('filter[animalType]', 'Dog'); // Some APIs use this field too
-
     // Filter for recently updated animals (last 3 months to get more relevant results)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // Location-based filtering - RescueGroups v5 uses geoLatitude/geoLongitude/geoRadius
+    // FIXED: Location-based filtering - RescueGroups v5 uses geoLatitude/geoLongitude/geoRadius
     if (params.latitude && params.longitude) {
-      // Use coordinates for precise filtering
+      // Use coordinates for precise filtering - EXACTLY as ChatGPT recommended
       searchParams.append('filter[geoLatitude]', params.latitude.toString());
       searchParams.append('filter[geoLongitude]', params.longitude.toString());
       
@@ -128,20 +125,15 @@ class RescueGroupsAPI {
       searchParams.append('filter[geoRadius]', radius.toString());
       
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
-    } else if (params.location) {
-      // WITHOUT COORDINATES, WE CANNOT EFFECTIVELY FILTER BY LOCATION
-      // RescueGroups will return results from everywhere
-      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - results will be nationwide`);
+    } else {
+      // WITHOUT COORDINATES, WE CANNOT FILTER BY LOCATION AT ALL
+      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - results will be nationwide and unfiltered`);
       
-      // Try to extract state and use it in post-processing if needed
-      const stateMatch = params.location.match(/,\s*([A-Z]{2})$/);
-      if (stateMatch) {
-        const state = stateMatch[1];
-        console.log(`[🗺️ RescueGroups] Will attempt to filter results by state: ${state} in post-processing`);
-      }
+      // Don't attempt any location filtering without coordinates
+      // RescueGroups API requires lat/lng for geographic filtering
     }
 
-    // Breed filtering - RescueGroups uses exact breed names
+    // IMPROVED: Breed filtering with better normalization
     if (params.breed) {
       const breedName = params.breed.trim();
       
@@ -157,11 +149,10 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // ONLY filter by primary breed to be more restrictive
-      // Using both primary and secondary was returning too many mixed breeds
+      // Use primary breed filter as ChatGPT recommended
       searchParams.append('filter[breedPrimary]', properCaseBreed);
       
-      console.log(`[🔍 RescueGroups] Applying PRIMARY breed filter only for: ${properCaseBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying breed filter: ${properCaseBreed} (from: ${breedName})`);
     }
 
     // Other filters

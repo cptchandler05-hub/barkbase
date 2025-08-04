@@ -67,24 +67,23 @@ export async function POST(req: Request) {
               console.error('[❌ Geocoding] MAPBOX_ACCESS_TOKEN environment variable is missing!');
             } else {
               const geocodeResponse = await fetch(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US`
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US&limit=1`
               );
               
               console.log(`[🗺️ Geocoding] Response status: ${geocodeResponse.status}`);
               
               if (geocodeResponse.ok) {
                 const geocodeData = await geocodeResponse.json();
-                console.log(`[🗺️ Geocoding] Response data:`, {
-                  features: geocodeData.features?.length || 0,
-                  query: geocodeData.query
-                });
+                console.log(`[🗺️ Geocoding] Full response:`, JSON.stringify(geocodeData, null, 2));
                 
                 if (geocodeData.features && geocodeData.features.length > 0) {
                   const [lng, lat] = geocodeData.features[0].center;
                   coordinates = { latitude: lat, longitude: lng };
                   console.log(`[✅ Geocoded] "${normalizedParams.location}" → ${lat}, ${lng}`);
+                  console.log(`[📍 Location Details] ${geocodeData.features[0].place_name}`);
                 } else {
                   console.log(`[⚠️ Geocoding] No features found for "${normalizedParams.location}"`);
+                  console.log(`[🔍 Geocoding Debug] Full response:`, geocodeData);
                 }
               } else {
                 const errorText = await geocodeResponse.text();
@@ -94,6 +93,13 @@ export async function POST(req: Request) {
           } catch (error) {
             console.error(`[❌ Geocoding] Exception geocoding "${normalizedParams.location}":`, error);
           }
+        }
+
+        // Log final coordinates before RescueGroups call
+        if (coordinates) {
+          console.log(`[📍 Final Coordinates] Will search RescueGroups with: ${coordinates.latitude}, ${coordinates.longitude}`);
+        } else {
+          console.log(`[⚠️ No Coordinates] RescueGroups search will be nationwide (no location filtering)`);
         }
 
         const rgParams = {
