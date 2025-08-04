@@ -75,26 +75,42 @@ export async function POST(req: Request) {
             DogFormatter.formatRescueGroupsDog(dog, rgResult.included)
           );
 
-          // Filter and deduplicate RescueGroups results
+          // Filter and deduplicate RescueGroups results using fuzzy matching
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
-            // Apply breed filter if specified - be more flexible
+            // Apply breed filter if specified - use fuzzy matching
             if (normalizedParams.breed) {
-              const searchBreed = normalizedParams.breed.toLowerCase();
-              const primaryBreed = (rgDog.breeds.primary || '').toLowerCase();
-              const secondaryBreed = (rgDog.breeds.secondary || '').toLowerCase();
+              const searchBreed = normalizedParams.breed.toLowerCase().trim();
+              const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
+              const secondaryBreed = (rgDog.breeds.secondary || '').toLowerCase().trim();
 
-              // More flexible matching - partial matches in either direction
-              const breedMatch = primaryBreed.includes(searchBreed) || 
-                               secondaryBreed.includes(searchBreed) ||
-                               searchBreed.includes(primaryBreed.split(' ')[0]) || // Match first word
-                               (secondaryBreed && searchBreed.includes(secondaryBreed.split(' ')[0]));
+              // Handle plural/singular conversions
+              const searchBreedSingular = searchBreed.endsWith('s') && searchBreed.length > 3 ? 
+                searchBreed.slice(0, -1) : searchBreed;
+              const searchBreedPlural = searchBreed.endsWith('s') ? searchBreed : searchBreed + 's';
+
+              // More flexible breed matching
+              const breedVariants = [searchBreed, searchBreedSingular, searchBreedPlural];
+
+              const breedMatch = breedVariants.some(variant => {
+                return primaryBreed.includes(variant) || 
+                       secondaryBreed.includes(variant) ||
+                       variant.includes(primaryBreed) ||
+                       (secondaryBreed && variant.includes(secondaryBreed)) ||
+                       // Special case for terriers - match any breed containing "terrier"
+                       (variant === 'terrier' && (primaryBreed.includes('terrier') || secondaryBreed.includes('terrier'))) ||
+                       // Special case for labs
+                       (variant === 'lab' && (primaryBreed.includes('labrador') || secondaryBreed.includes('labrador'))) ||
+                       // Special case for mixed breeds
+                       (variant === 'mixed' && rgDog.breeds.mixed);
+              });
 
               if (!breedMatch) {
-                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed}`);
+                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed} (variants: ${breedVariants.join(', ')})`);
                 return false;
+              } else {
+                console.log(`[✅ Breed Match] Including ${rgDog.name} - ${rgDog.breeds.primary} matches ${normalizedParams.breed}`);
               }
             }
-
             return true;
           });
 

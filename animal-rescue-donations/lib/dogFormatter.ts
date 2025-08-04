@@ -27,11 +27,21 @@ interface UnifiedDog {
     };
   };
   characteristics?: {
-    goodWithChildren?: boolean;
-    goodWithDogs?: boolean;
-    goodWithCats?: boolean;
-    houseTrained?: boolean;
-    specialNeeds?: boolean;
+    goodWithChildren?: boolean | null;
+    goodWithDogs?: boolean | null;
+    goodWithCats?: boolean | null;
+    houseTrained?: boolean | null;
+    specialNeeds?: boolean | null;
+  };
+  attributes?: {
+    spayedNeutered?: boolean | null;
+    houseTrained?: boolean | null;
+    declawed?: boolean | null;
+    specialNeeds?: boolean | null;
+    shotsCurrent?: boolean | null;
+    goodWithChildren?: boolean | null;
+    goodWithDogs?: boolean | null;
+    goodWithCats?: boolean | null;
   };
   url?: string;
   visibilityScore: number;
@@ -107,11 +117,11 @@ class DogFormatter {
         }
       },
       characteristics: {
-        goodWithChildren: dog.good_with_children,
-        goodWithDogs: dog.good_with_dogs,
-        goodWithCats: dog.good_with_cats,
-        houseTrained: dog.house_trained,
-        specialNeeds: dog.special_needs
+        goodWithChildren: dog.good_with_children !== undefined ? Boolean(dog.good_with_children) : null,
+        goodWithDogs: dog.good_with_dogs !== undefined ? Boolean(dog.good_with_dogs) : null,
+        goodWithCats: dog.good_with_cats !== undefined ? Boolean(dog.good_with_cats) : null,
+        houseTrained: dog.house_trained !== undefined ? Boolean(dog.house_trained) : null,
+        specialNeeds: dog.special_needs !== undefined ? Boolean(dog.special_needs) : null
       },
       url: dog.url || '',
       visibilityScore: visibilityScore,
@@ -192,7 +202,7 @@ class DogFormatter {
       breeds: {
         primary: attrs.breedPrimary || 'Mixed Breed',
         secondary: attrs.breedSecondary || null,
-        mixed: attrs.breedMixed || false,
+        mixed: Boolean(attrs.breedMixed),
         unknown: false
       },
       age: attrs.ageGroup || 'Unknown',
@@ -204,20 +214,20 @@ class DogFormatter {
         email: orgInfo.name !== 'Unknown Organization' ? `Contact ${orgInfo.name}` : null,
         phone: null,
         address: {
-          city: locationInfo.city,
-          state: locationInfo.state,
+          city: locationInfo.city || 'Unknown',
+          state: locationInfo.state || 'Unknown',
           country: 'US'
         }
       },
       attributes: {
         spayedNeutered: null,
-        houseTrained: attrs.houseTrained || null,
+        houseTrained: attrs.houseTrained !== undefined ? Boolean(attrs.houseTrained) : null,
         declawed: null,
-        specialNeeds: attrs.specialNeeds || null,
+        specialNeeds: attrs.specialNeeds !== undefined ? Boolean(attrs.specialNeeds) : null,
         shotsCurrent: null,
-        goodWithChildren: attrs.goodWithChildren || null,
-        goodWithDogs: attrs.goodWithDogs || null,
-        goodWithCats: attrs.goodWithCats || null
+        goodWithChildren: attrs.goodWithChildren !== undefined ? Boolean(attrs.goodWithChildren) : null,
+        goodWithDogs: attrs.goodWithDogs !== undefined ? Boolean(attrs.goodWithDogs) : null,
+        goodWithCats: attrs.goodWithCats !== undefined ? Boolean(attrs.goodWithCats) : null
       },
       url: attrs.url || '',
       source: 'rescuegroups' as const,
@@ -265,11 +275,11 @@ class DogFormatter {
         }
       },
       characteristics: {
-        goodWithChildren: dog.attributes?.good_with_children,
-        goodWithDogs: dog.attributes?.good_with_dogs,
-        goodWithCats: dog.attributes?.good_with_cats,
-        houseTrained: dog.attributes?.house_trained,
-        specialNeeds: dog.attributes?.special_needs
+        goodWithChildren: dog.attributes?.good_with_children !== undefined ? Boolean(dog.attributes.good_with_children) : null,
+        goodWithDogs: dog.attributes?.good_with_dogs !== undefined ? Boolean(dog.attributes.good_with_dogs) : null,
+        goodWithCats: dog.attributes?.good_with_cats !== undefined ? Boolean(dog.attributes.good_with_cats) : null,
+        houseTrained: dog.attributes?.house_trained !== undefined ? Boolean(dog.attributes.house_trained) : null,
+        specialNeeds: dog.attributes?.special_needs !== undefined ? Boolean(dog.attributes.special_needs) : null
       },
       url: dog.url,
       visibilityScore: dog.visibilityScore || 0,

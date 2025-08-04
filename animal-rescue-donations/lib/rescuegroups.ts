@@ -125,14 +125,27 @@ class RescueGroupsAPI {
       console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 50}mi`);
     }
 
-    // Breed filter with correct v5 field name
+    // For generic breed searches, don't apply strict API-level breed filtering
+    // Let the application-level fuzzy matching handle breed filtering instead
     if (params.breed) {
-      // Just use the breed as-is - let the fuzzy matching handle normalization at the API call level
-      const breedName = params.breed.trim();
+      const breedName = params.breed.trim().toLowerCase();
       
-      // Use the correct breed filter field for v5 API
-      searchParams.append('filter[breedPrimary]', breedName);
-      console.log('[🔍 RescueGroups] Searching for breed:', breedName);
+      // Only apply API-level breed filter for very specific breeds to avoid over-filtering
+      const specificBreeds = ['chihuahua', 'labrador', 'golden retriever', 'german shepherd', 'poodle', 'bulldog'];
+      const isSpecificBreed = specificBreeds.some(breed => 
+        breedName === breed || breedName === breed + 's'
+      );
+      
+      if (isSpecificBreed) {
+        // Use exact breed for specific searches
+        const normalizedBreed = breedName.endsWith('s') && breedName.length > 3 ? 
+          breedName.slice(0, -1) : breedName;
+        searchParams.append('filter[breedPrimary]', normalizedBreed);
+        console.log('[🔍 RescueGroups] Applying API breed filter:', normalizedBreed);
+      } else {
+        // For generic searches like "terriers", don't filter at API level
+        console.log('[🔍 RescueGroups] Generic breed search, skipping API filter for:', breedName);
+      }
     }
 
     // Other filters
