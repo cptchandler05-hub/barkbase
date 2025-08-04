@@ -1,0 +1,130 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1779ms
+ ○ Compiling / ...
+ ✓ Compiled / in 14.8s (8586 modules)
+ GET / 200 in 15625ms
+ ✓ Compiled in 1353ms (4186 modules)
+ HEAD / 200 in 31ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1536ms (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hi barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 7481ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Kanab, UT
+[📍 Normalized Location] Kanab, UT
+[🐾 Barkr Memory] {
+  location: 'Kanab, UT',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Kanab, UT', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Kanab, UT
+[🗄️ Database] Filtering by state: UT
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ⨯ ./app/api/petfinder/search/route.ts
+Error: 
+  × Expected ',', got 'Result'
+    ╭─[/home/runner/workspace/animal-rescue-donations/app/api/petfinder/search/route.ts:73:1]
+ 73 │           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
+ 74 │           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
+ 75 │           const formattedRgDogs = rgResult.animals.map(dog => 
+ 76 │             DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])Result.included)
+    ·                                                                             ──────
+ 77 │           );
+ 78 │ 
+ 79 │           // Minimal filtering since RescueGroups API should already return correctly filtered results
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/api/petfinder/search/route.ts
+ ⨯ ./app/api/petfinder/search/route.ts
+Error: 
+  × Expected ',', got 'Result'
+    ╭─[/home/runner/workspace/animal-rescue-donations/app/api/petfinder/search/route.ts:73:1]
+ 73 │           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
+ 74 │           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
+ 75 │           const formattedRgDogs = rgResult.animals.map(dog => 
+ 76 │             DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])Result.included)
+    ·                                                                             ──────
+ 77 │           );
+ 78 │ 
+ 79 │           // Minimal filtering since RescueGroups API should already return correctly filtered results
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/api/petfinder/search/route.ts
+ ⨯ ./app/api/petfinder/search/route.ts
+Error: 
+  × Expected ',', got 'Result'
+    ╭─[/home/runner/workspace/animal-rescue-donations/app/api/petfinder/search/route.ts:73:1]
+ 73 │           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
+ 74 │           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
+ 75 │           const formattedRgDogs = rgResult.animals.map(dog => 
+ 76 │             DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])Result.included)
+    ·                                                                             ──────
+ 77 │           );
+ 78 │ 
+ 79 │           // Minimal filtering since RescueGroups API should already return correctly filtered results
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/api/petfinder/search/route.ts
+ ⨯ ./app/api/petfinder/search/route.ts
+Error: 
+  × Expected ',', got 'Result'
+    ╭─[/home/runner/workspace/animal-rescue-donations/app/api/petfinder/search/route.ts:73:1]
+ 73 │           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
+ 74 │           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
+ 75 │           const formattedRgDogs = rgResult.animals.map(dog => 
+ 76 │             DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])Result.included)
+    ·                                                                             ──────
+ 77 │           );
+ 78 │ 
+ 79 │           // Minimal filtering since RescueGroups API should already return correctly filtered results
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/api/petfinder/search/route.ts
+ POST /api/petfinder/search 500 in 5361ms
+[❌ Petfinder Error] API call failed, continuing with database results
+ POST /api/chat 200 in 7618ms
+ GET / 500 in 11ms
