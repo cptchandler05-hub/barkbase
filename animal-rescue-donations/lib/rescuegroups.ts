@@ -233,6 +233,33 @@ class RescueGroupsAPI {
           attributes: Object.keys(animals[0].attributes || {}),
           relationships: Object.keys(animals[0].relationships || {})
         });
+        
+        // Debug included data types
+        if (included.length > 0) {
+          const includedTypes = included.reduce((acc: any, item: any) => {
+            acc[item.type] = (acc[item.type] || 0) + 1;
+            return acc;
+          }, {});
+          console.log('[🔍 RG Included Types]:', includedTypes);
+          
+          // Show sample location data if available
+          const sampleLocation = included.find((item: any) => item.type === 'locations');
+          if (sampleLocation) {
+            console.log('[🌍 RG Sample Location]:', {
+              id: sampleLocation.id,
+              attributes: Object.keys(sampleLocation.attributes || {})
+            });
+          }
+          
+          // Show sample picture data if available
+          const samplePicture = included.find((item: any) => item.type === 'pictures');
+          if (samplePicture) {
+            console.log('[📷 RG Sample Picture]:', {
+              id: samplePicture.id,
+              attributes: Object.keys(samplePicture.attributes || {})
+            });
+          }
+        }
       }
 
       return { animals, included };

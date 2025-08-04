@@ -138,8 +138,8 @@ class DogFormatter {
     const name = attrs.name || 'Unknown';
     const id = dog.id || 'unknown';
 
-    // Parse photos with relationship support
-    const photos: string[] = [];
+    // Parse photos with relationship support - FIXED PARSING
+    const photos: any[] = [];
 
     // Try v5 relationship-based photos first
     if (dog.relationships?.pictures?.data && included.length > 0) {
@@ -148,24 +148,53 @@ class DogFormatter {
         item.type === 'pictures' && pictureIds.includes(item.id)
       );
 
+      console.log(`[🔍 RG Photos] Found ${pictureObjects.length} picture objects for ${name}`);
+
       for (const pic of pictureObjects) {
-        const url = pic.attributes?.large || pic.attributes?.original || pic.attributes?.small;
-        if (url) photos.push(url);
+        // Try different URL formats from RescueGroups API
+        const url = pic.attributes?.large?.url || 
+                   pic.attributes?.medium?.url || 
+                   pic.attributes?.small?.url ||
+                   pic.attributes?.large || 
+                   pic.attributes?.original || 
+                   pic.attributes?.small;
+        
+        if (url) {
+          photos.push({
+            small: url,
+            medium: url, 
+            large: url
+          });
+          console.log(`[✅ RG Photo] Added photo: ${url}`);
+        }
       }
     }
 
     // Fallback to direct photos in attributes
     if (photos.length === 0 && attrs.pictures && Array.isArray(attrs.pictures)) {
+      console.log(`[🔍 RG Photos] Trying attributes.pictures for ${name}`);
       const sortedPictures = attrs.pictures.sort((a, b) => (a.order || 0) - (b.order || 0));
       for (const pic of sortedPictures) {
         const url = pic.large || pic.original || pic.small;
-        if (url) photos.push(url);
+        if (url) {
+          photos.push({
+            small: url,
+            medium: url,
+            large: url
+          });
+          console.log(`[✅ RG Photo] Added attribute photo: ${url}`);
+        }
       }
     }
 
     // Use thumbnail as fallback
     if (photos.length === 0 && attrs.thumbnailUrl) {
-      photos.push(attrs.thumbnailUrl);
+      console.log(`[🔍 RG Photos] Using thumbnail for ${name}: ${attrs.thumbnailUrl}`);
+      photos.push({
+        small: attrs.thumbnailUrl,
+        medium: attrs.thumbnailUrl,
+        large: attrs.thumbnailUrl
+      });
     }
 
     // Parse organization info from included data
@@ -182,19 +211,26 @@ class DogFormatter {
       }
     }
 
-    // Parse location info from included data
+    // Parse location info from included data - FIXED PARSING
     let locationInfo = { city: 'Unknown', state: 'Unknown' };
     if (dog.relationships?.locations?.data?.[0] && included.length > 0) {
       const locationData = included.find((item: any) => 
         item.type === 'locations' && item.id === dog.relationships.locations.data[0].id
       );
-      if (locationData) {
+      if (locationData?.attributes) {
         locationInfo = {
-          city: locationData.attributes?.city || 'Unknown',
-          state: locationData.attributes?.state || 'Unknown'
+          city: locationData.attributes.city || locationData.attributes.cityname || 'Unknown',
+          state: locationData.attributes.state || locationData.attributes.statename || 'Unknown'
         };
+        console.log(`[🌍 RG Location] Found location for ${name}: ${locationInfo.city}, ${locationInfo.state}`);
+      } else {
+        console.log(`[⚠️ RG Location] No location attributes found for ${name}`);
       }
+    } else {
+      console.log(`[⚠️ RG Location] No location relationship found for ${name}`);
     }
+
+    console.log(`[🔍 RG Debug] ${name} - Photos: ${photos.length}, Location: ${locationInfo.city}, ${locationInfo.state}`);
 
     const formatted: UnifiedDog = {
       id: id,
