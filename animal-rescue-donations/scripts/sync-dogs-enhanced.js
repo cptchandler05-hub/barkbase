@@ -82,9 +82,13 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Location filter
+  // Location filter - try multiple parameter formats since RescueGroups API docs may be inconsistent
+  params.append('filter[locationAddress]', location);
+  params.append('filter[locationDistance]', '100'); // 100 mile radius
+  
+  // Also try alternative location parameter names
   params.append('filter[location]', location);
-  params.append('filter[distance]', '100'); // 100 mile radius
+  params.append('filter[distance]', '100');
 
   // Limit results
   params.append('limit', limit.toString());

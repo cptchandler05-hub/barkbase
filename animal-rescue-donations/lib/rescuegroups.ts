@@ -87,30 +87,40 @@ class RescueGroupsAPI {
 
     // Ensure we only get adoptable dogs
     searchParams.append('filter[status]', 'Available');
-    
+
     // Filter for dogs updated in the last 2 years to avoid stale listings
     const twoYearsAgo = new Date();
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
     searchParams.append('filter[lastUpdated]', `>${twoYearsAgo.toISOString().split('T')[0]}`);
 
-    // Add location-based filters
+    // Add location-based filters - RescueGroups v5 uses different parameter names
     if (params.latitude && params.longitude) {
-      searchParams.append('filter[geoLatitude]', params.latitude.toString());
-      searchParams.append('filter[geoLongitude]', params.longitude.toString());
-      searchParams.append('filter[geoRadius]', (params.radius || 100).toString());
+      // Use proper geo-based filtering
+      searchParams.append('filter[latitude]', params.latitude.toString());
+      searchParams.append('filter[longitude]', params.longitude.toString());
+      searchParams.append('filter[radius]', (params.radius || 100).toString());
+      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${params.radius || 100}mi`);
     } else if (params.location) {
-      searchParams.append('filter[location]', params.location);
-      searchParams.append('filter[distance]', (params.radius || 100).toString());
+      // Try location-based search with proper field names
+      searchParams.append('filter[locationAddress]', params.location);
+      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
+      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
-    // Add breed filter with better matching
+    // Add breed filter - RescueGroups might use different field names
     if (params.breed) {
       // Normalize breed name for better matching
       let breedName = params.breed;
       if (breedName.toLowerCase().includes('chihuahua')) {
         breedName = 'Chihuahua';
       }
-      searchParams.append('filter[breedPrimary]', breedName);
+
+      // RescueGroups v5 might use different breed filter syntax
+      // Try multiple approaches since API docs may be outdated
+      searchParams.append('filter[breedString]', breedName);  // Alternative field name
+      searchParams.append('filter[breedPrimary]', breedName); // Keep original as fallback
+
+      console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
     // Add age filter
