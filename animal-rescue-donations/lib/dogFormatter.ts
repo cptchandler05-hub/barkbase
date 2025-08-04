@@ -159,15 +159,17 @@ class DogFormatter {
       .filter(Boolean)
       .slice(0, 6); // Limit to 6 photos
 
-    // Extract name safely
-    const dogName = animal.attributes?.animalName || 
-                   animal.attributes?.name || 
+    // Extract name safely - try multiple possible field names
+    const dogName = animal.attributes?.name || 
+                   animal.attributes?.animalName || 
+                   animal.attributes?.petName || 
                    `Dog ${animal.id}`;
 
-    // Extract description safely  
-    const description = animal.attributes?.animalDescriptionText || 
-                       animal.attributes?.descriptionText || 
-                       animal.attributes?.description || '';
+    // Extract description safely - try multiple possible field names
+    const description = animal.attributes?.descriptionText || 
+                       animal.attributes?.animalDescriptionText || 
+                       animal.attributes?.description || 
+                       animal.attributes?.petDescription || '';
 
     const visibilityScore = DogFormatter.calculateVisibilityScore({
       photos: photos.length,
@@ -187,9 +189,9 @@ class DogFormatter {
         secondary: secondaryBreed,
         mixed: breedIds.length > 1
       },
-      age: DogFormatter.normalizeAge(animal.attributes?.animalAgeGroup || animal.attributes?.ageGroup),
-      size: DogFormatter.normalizeSize(animal.attributes?.animalSizeGroup || animal.attributes?.sizeGroup),
-      gender: DogFormatter.normalizeGender(animal.attributes?.animalSex || animal.attributes?.sex),
+      age: DogFormatter.normalizeAge(animal.attributes?.ageGroup || animal.attributes?.animalAgeGroup || animal.attributes?.age),
+      size: DogFormatter.normalizeSize(animal.attributes?.sizeGroup || animal.attributes?.animalSizeGroup || animal.attributes?.size),
+      gender: DogFormatter.normalizeGender(animal.attributes?.sex || animal.attributes?.animalSex || animal.attributes?.gender),
       photos: photos,
       contact: {
         address: {
@@ -198,13 +200,13 @@ class DogFormatter {
         }
       },
       description: description,
-      url: animal.attributes?.animalUrl || animal.attributes?.url || '',
+      url: animal.attributes?.url || animal.attributes?.animalUrl || animal.attributes?.petUrl || '',
       characteristics: {
-        goodWithChildren: animal.attributes?.animalGoodWithChildren || animal.attributes?.goodWithChildren || null,
-        goodWithDogs: animal.attributes?.animalGoodWithDogs || animal.attributes?.goodWithDogs || null,
-        goodWithCats: animal.attributes?.animalGoodWithCats || animal.attributes?.goodWithCats || null,
-        houseTrained: animal.attributes?.animalHouseTrained || animal.attributes?.houseTrained || null,
-        specialNeeds: animal.attributes?.animalSpecialNeeds || animal.attributes?.specialNeeds || null
+        goodWithChildren: animal.attributes?.goodWithChildren || animal.attributes?.animalGoodWithChildren || null,
+        goodWithDogs: animal.attributes?.goodWithDogs || animal.attributes?.animalGoodWithDogs || null,
+        goodWithCats: animal.attributes?.goodWithCats || animal.attributes?.animalGoodWithCats || null,
+        houseTrained: animal.attributes?.houseTrained || animal.attributes?.animalHouseTrained || null,
+        specialNeeds: animal.attributes?.specialNeeds || animal.attributes?.animalSpecialNeeds || null
       },
       visibilityScore: visibilityScore,
       verificationBadge: 'Verified by BarkBase'
@@ -323,32 +325,50 @@ class DogFormatter {
     // Helper method to normalize age
     static normalizeAge(age: string | undefined): string {
         if (!age) return 'Unknown';
-        const lowerAge = age.toLowerCase();
-        if (lowerAge.includes('baby')) return 'Baby';
-        if (lowerAge.includes('young')) return 'Young';
-        if (lowerAge.includes('adult')) return 'Adult';
-        if (lowerAge.includes('senior')) return 'Senior';
-        return 'Unknown';
+        const lowerAge = age.toLowerCase().trim();
+        if (lowerAge.includes('baby') || lowerAge.includes('puppy') || lowerAge.includes('infant')) return 'Baby';
+        if (lowerAge.includes('young') || lowerAge.includes('juvenile')) return 'Young';
+        if (lowerAge.includes('adult') || lowerAge.includes('mature')) return 'Adult';
+        if (lowerAge.includes('senior') || lowerAge.includes('elder') || lowerAge.includes('old')) return 'Senior';
+        // Handle numeric ages
+        if (lowerAge.match(/\d+/)) {
+            const ageNum = parseInt(lowerAge.match(/\d+/)?.[0] || '0');
+            if (ageNum < 1) return 'Baby';
+            if (ageNum < 2) return 'Young';
+            if (ageNum < 7) return 'Adult';
+            return 'Senior';
+        }
+        return age; // Return original if we can't categorize
     }
 
     // Helper method to normalize size
     static normalizeSize(size: string | undefined): string {
         if (!size) return 'Unknown';
-        const lowerSize = size.toLowerCase();
-        if (lowerSize.includes('small')) return 'Small';
-        if (lowerSize.includes('medium')) return 'Medium';
-        if (lowerSize.includes('large')) return 'Large';
-        if (lowerSize.includes('extra large')) return 'X-Large';
-        return 'Unknown';
+        const lowerSize = size.toLowerCase().trim();
+        if (lowerSize.includes('small') || lowerSize.includes('tiny') || lowerSize.includes('mini')) return 'Small';
+        if (lowerSize.includes('medium') || lowerSize.includes('med')) return 'Medium';
+        if (lowerSize.includes('extra large') || lowerSize.includes('xl') || lowerSize.includes('x-large')) return 'X-Large';
+        if (lowerSize.includes('large') || lowerSize.includes('big')) return 'Large';
+        // Handle weight-based sizing
+        if (lowerSize.match(/\d+/)) {
+            const weight = parseInt(lowerSize.match(/\d+/)?.[0] || '0');
+            if (weight < 25) return 'Small';
+            if (weight < 60) return 'Medium';
+            if (weight < 90) return 'Large';
+            return 'X-Large';
+        }
+        return size; // Return original if we can't categorize
     }
 
     // Helper method to normalize gender
     static normalizeGender(gender: string | undefined): string {
         if (!gender) return 'Unknown';
-        const lowerGender = gender.toLowerCase();
-        if (lowerGender.includes('male')) return 'Male';
+        const lowerGender = gender.toLowerCase().trim();
+        if (lowerGender.includes('male') && !lowerGender.includes('female')) return 'Male';
         if (lowerGender.includes('female')) return 'Female';
-        return 'Unknown';
+        if (lowerGender.includes('m') && lowerGender.length <= 2) return 'Male';
+        if (lowerGender.includes('f') && lowerGender.length <= 2) return 'Female';
+        return gender; // Return original if we can't categorize
     }
   
   static calculateVisibilityScore(dog: any): number {

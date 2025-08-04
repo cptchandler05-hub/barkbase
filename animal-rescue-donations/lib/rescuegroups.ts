@@ -86,7 +86,7 @@ class RescueGroupsAPI {
     const searchParams = url.searchParams;
 
     // Ensure we only get adoptable dogs
-    searchParams.append('filter[animalStatus]', 'Available');
+    searchParams.append('filter[status]', 'Available');
 
     // Filter for dogs updated in the last 2 years to avoid stale listings
     const twoYearsAgo = new Date();
@@ -96,14 +96,14 @@ class RescueGroupsAPI {
     // Add location-based filters - Use correct RescueGroups v5 parameter names
     if (params.latitude && params.longitude) {
       // Use proper geo-based filtering with correct field names
-      searchParams.append('filter[animalLocationLat]', params.latitude.toString());
-      searchParams.append('filter[animalLocationLon]', params.longitude.toString());
-      searchParams.append('filter[animalLocationDistance]', (params.radius || 100).toString());
+      searchParams.append('filter[locationLat]', params.latitude.toString());
+      searchParams.append('filter[locationLon]', params.longitude.toString());
+      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${params.radius || 100}mi`);
     } else if (params.location) {
       // Use location string with proper field name
-      searchParams.append('filter[animalLocation]', params.location);
-      searchParams.append('filter[animalLocationDistance]', (params.radius || 100).toString());
+      searchParams.append('filter[location]', params.location);
+      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
@@ -116,23 +116,23 @@ class RescueGroupsAPI {
       }
 
       // Use the correct breed filter field name for v5 API
-      searchParams.append('filter[animalBreedPrimary]', breedName);
+      searchParams.append('filter[breedPrimary]', breedName);
       console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
     // Add age filter
     if (params.age) {
-      searchParams.append('filter[animalAgeGroup]', params.age);
+      searchParams.append('filter[ageGroup]', params.age);
     }
 
     // Add size filter
     if (params.size) {
-      searchParams.append('filter[animalSizeGroup]', params.size);
+      searchParams.append('filter[sizeGroup]', params.size);
     }
 
     // Add gender filter
     if (params.gender) {
-      searchParams.append('filter[animalSex]', params.gender);
+      searchParams.append('filter[sex]', params.gender);
     }
 
     // Add limit
@@ -140,31 +140,35 @@ class RescueGroupsAPI {
       searchParams.append('limit', params.limit.toString());
     }
 
-    // Specify fields to return - using correct RescueGroups v5 field names
+    // Request minimal core fields first to ensure we get basic data
     const fields = [
       'id',
-      'animalName',
-      'animalStatus',
-      'animalSpecies',
-      'animalOrgID',
-      'animalAgeGroup',
-      'animalSex',
-      'animalSizeGroup',
-      'animalBreedPrimary',
-      'animalBreedSecondary',
-      'animalBreedMixed',
-      'animalDescriptionText',
-      'animalSpecialNeeds',
-      'animalHouseTrained',
-      'animalGoodWithChildren',
-      'animalGoodWithCats',
-      'animalGoodWithDogs',
-      'animalPictures',
-      'animalThumbnailUrl',
-      'animalUrl',
-      'animalDistance'
+      'name',
+      'status', 
+      'species',
+      'ageGroup',
+      'sex',
+      'sizeGroup',
+      'breedPrimary',
+      'breedSecondary',
+      'breedMixed',
+      'descriptionText',
+      'specialNeeds',
+      'houseTrained',
+      'goodWithChildren',
+      'goodWithCats', 
+      'goodWithDogs',
+      'pictures',
+      'thumbnailUrl',
+      'url',
+      'distance',
+      'updated',
+      'created'
     ];
     searchParams.append('fields[animals]', fields.join(','));
+
+    // Also request the include data we need
+    searchParams.append('include', 'breeds,locations,orgs,pictures');
 
     try {
       console.log('[🦮 RescueGroups] Searching with params:', params);
