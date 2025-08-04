@@ -119,127 +119,119 @@ class DogFormatter {
     };
   }
 
-  // Format RescueGroups dog to unified format
-  static formatRescueGroupsDog(animal: any, included: any[] = []): UnifiedDog {
-    // Create lookup maps for included data
-    const breedsMap = new Map();
-    const locationsMap = new Map();
-    const orgsMap = new Map(); 
-    const picturesMap = new Map();
+  // Format RescueGroups dogs with included relationship data
+  static formatRescueGroupsDog(dog: any, included: any[] = []): UnifiedDog {
+    console.log(`[🦮 RG Format] Processing: ${dog.attributes?.name || dog.name || 'Unknown'} (ID: ${dog.id})`);
 
-    if (included && Array.isArray(included)) {
-      included.forEach(item => {
-        if (item.type === 'breeds') {
-          breedsMap.set(item.id, item.attributes);
-        } else if (item.type === 'locations') {
-          locationsMap.set(item.id, item.attributes);
-        } else if (item.type === 'orgs') {
-          orgsMap.set(item.id, item.attributes);
-        } else if (item.type === 'pictures') {
-          picturesMap.set(item.id, item.attributes);
-        }
-      });
+    // Use v5 API structure (attributes-based)
+    const attrs = dog.attributes || {};
+    const name = attrs.name || 'Unknown';
+    const id = dog.id || 'unknown';
+
+    // Parse photos with relationship support
+    const photos: string[] = [];
+
+    // Try v5 relationship-based photos first
+    if (dog.relationships?.pictures?.data && included.length > 0) {
+      const pictureIds = dog.relationships.pictures.data.map((pic: any) => pic.id);
+      const pictureObjects = included.filter((item: any) => 
+        item.type === 'pictures' && pictureIds.includes(item.id)
+      );
+
+      for (const pic of pictureObjects) {
+        const url = pic.attributes?.large || pic.attributes?.original || pic.attributes?.small;
+        if (url) photos.push(url);
+      }
     }
 
-    // Get breed information - RescueGroups v5 API puts breeds directly in attributes
-    let primaryBreed = animal.attributes?.breedPrimary;
-    let secondaryBreed = animal.attributes?.breedSecondary;
-
-    // Try relationship lookup if direct attributes don't work
-    if (!primaryBreed) {
-      const breedIds = animal.relationships?.breeds?.data || [];
-      const primaryBreedId = breedIds[0]?.id;
-      const secondaryBreedId = breedIds[1]?.id;
-      primaryBreed = primaryBreedId ? breedsMap.get(primaryBreedId)?.name : null;
-      secondaryBreed = secondaryBreedId ? breedsMap.get(secondaryBreedId)?.name : null;
+    // Fallback to direct photos in attributes
+    if (photos.length === 0 && attrs.pictures && Array.isArray(attrs.pictures)) {
+      const sortedPictures = attrs.pictures.sort((a, b) => (a.order || 0) - (b.order || 0));
+      for (const pic of sortedPictures) {
+        const url = pic.large || pic.original || pic.small;
+        if (url) photos.push(url);
+      }
     }
 
-    // Final fallback
-    if (!primaryBreed) {
-      primaryBreed = 'Mixed Breed';
+    // Use thumbnail as fallback
+    if (photos.length === 0 && attrs.thumbnailUrl) {
+      photos.push(attrs.thumbnailUrl);
     }
 
-    // Get location information - try included data first
-    const locationIds = animal.relationships?.locations?.data || [];
-    const locationId = locationIds[0]?.id;
-    let location = locationId ? locationsMap.get(locationId) : null;
-
-    // Fallback to reasonable defaults if no location data
-    if (!location) {
-      location = {
-        city: 'Unknown',
-        state: 'Unknown'
-      };
-    }
-
-    // Get organization information
-    const orgIds = animal.relationships?.orgs?.data || [];
-    const orgId = orgIds[0]?.id;
-
-    // Get photos - handle RescueGroups v5 picture format
-    const pictureIds = animal.relationships?.pictures?.data || [];
-    const photos: any[] = pictureIds
-      .map((picRef: any) => {
-        const pic = picturesMap.get(picRef.id);
-        if (!pic) return null;
-
-        return {
-          small: pic.small?.url || pic.large?.url || pic.original?.url,
-          medium: pic.large?.url || pic.original?.url,
-          large: pic.large?.url || pic.original?.url,
-          full: pic.original?.url || pic.large?.url
+    // Parse organization info from included data
+    let orgInfo = { name: 'Unknown Organization', id: '' };
+    if (dog.relationships?.orgs?.data?.[0] && included.length > 0) {
+      const orgData = included.find((item: any) => 
+        item.type === 'orgs' && item.id === dog.relationships.orgs.data[0].id
+      );
+      if (orgData) {
+        orgInfo = {
+          name: orgData.attributes?.name || 'Unknown Organization',
+          id: orgData.id
         };
-      })
-      .filter(Boolean)
-      .slice(0, 6); // Limit to 6 photos
+      }
+    }
 
-    // Extract basic information directly from attributes (RescueGroups v5 format)
-    const dogName = animal.attributes?.name || `Dog ${animal.id}`;
-    const description = animal.attributes?.descriptionText || '';
-    const ageGroup = animal.attributes?.ageGroup || 'Unknown';
-    const sizeGroup = animal.attributes?.sizeGroup || 'Unknown';
-    const sex = animal.attributes?.sex || 'Unknown';
+    // Parse location info from included data
+    let locationInfo = { city: 'Unknown', state: 'Unknown' };
+    if (dog.relationships?.locations?.data?.[0] && included.length > 0) {
+      const locationData = included.find((item: any) => 
+        item.type === 'locations' && item.id === dog.relationships.locations.data[0].id
+      );
+      if (locationData) {
+        locationInfo = {
+          city: locationData.attributes?.city || 'Unknown',
+          state: locationData.attributes?.state || 'Unknown'
+        };
+      }
+    }
 
-    const visibilityScore = DogFormatter.calculateVisibilityScore({
-      photos: photos.length,
-      description: description,
-      location: location?.city || '',
-      lastUpdated: animal.attributes?.updated || animal.attributes?.created
-    });
-
-    return {
-      id: animal.id,
-      source: 'rescuegroups' as const,
-      sourceId: animal.id,
-      organizationId: orgId || '',
-      name: dogName,
+    const formatted: UnifiedDog = {
+      id: id,
+      name: name,
       breeds: {
-        primary: primaryBreed,
-        secondary: secondaryBreed,
-        mixed: !!secondaryBreed
+        primary: attrs.breedPrimary || 'Mixed Breed',
+        secondary: attrs.breedSecondary || null,
+        mixed: attrs.breedMixed || false,
+        unknown: false
       },
-      age: DogFormatter.normalizeAge(ageGroup),
-      size: DogFormatter.normalizeSize(sizeGroup),
-      gender: DogFormatter.normalizeGender(sex),
+      age: attrs.ageGroup || 'Unknown',
+      gender: attrs.sex || 'Unknown', 
+      size: attrs.sizeGroup || 'Unknown',
       photos: photos,
+      description: attrs.descriptionText || null,
       contact: {
+        email: orgInfo.name !== 'Unknown Organization' ? `Contact ${orgInfo.name}` : null,
+        phone: null,
         address: {
-          city: location?.city || 'Unknown',
-          state: location?.state || 'Unknown'
+          city: locationInfo.city,
+          state: locationInfo.state,
+          country: 'US'
         }
       },
-      description: description,
-      url: animal.attributes?.url || '',
-      characteristics: {
-        goodWithChildren: animal.attributes?.goodWithChildren || null,
-        goodWithDogs: animal.attributes?.goodWithDogs || null,
-        goodWithCats: animal.attributes?.goodWithCats || null,
-        houseTrained: animal.attributes?.houseTrained || null,
-        specialNeeds: animal.attributes?.specialNeeds || null
+      attributes: {
+        spayedNeutered: null,
+        houseTrained: attrs.houseTrained || null,
+        declawed: null,
+        specialNeeds: attrs.specialNeeds || null,
+        shotsCurrent: null,
+        goodWithChildren: attrs.goodWithChildren || null,
+        goodWithDogs: attrs.goodWithDogs || null,
+        goodWithCats: attrs.goodWithCats || null
       },
-      visibilityScore: visibilityScore,
-      verificationBadge: 'Verified by BarkBase'
+      url: attrs.url || '',
+      source: 'rescuegroups' as const,
+      distance: attrs.distance || null,
+      lastUpdated: attrs.updated || new Date().toISOString(),
+      visibilityScore: 0 // Will be calculated later
     };
+
+    // Calculate visibility score
+    formatted.visibilityScore = DogFormatter.calculateVisibilityScore(formatted);
+
+    console.log(`[✅ RG Formatted] ${formatted.name}: ${formatted.breeds.primary}, ${formatted.age}, ${formatted.size}, Photos: ${formatted.photos.length}, Score: ${formatted.visibilityScore}`);
+
+    return formatted;
   }
 
   // Format Petfinder dog to unified format
@@ -399,7 +391,7 @@ class DogFormatter {
         if (lowerGender.includes('f') && lowerGender.length <= 2) return 'Female';
         return gender; // Return original if we can't categorize
     }
-  
+
   static calculateVisibilityScore(dog: any): number {
         let score = 0;
 

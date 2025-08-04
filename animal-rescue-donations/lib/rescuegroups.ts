@@ -1,34 +1,51 @@
+
 // RescueGroups v5 REST API Integration
 // Documentation: https://userguide.rescuegroups.org/display/APIDG/API+Developer+Guide
 
 interface RescueGroupsAnimal {
   id: string;
-  name: string;
-  status: string;
-  species: string;
-  organization: string;
-  ageGroup: string;
-  sex: string;
-  sizeGroup: string;
-  breedPrimary: string;
-  breedSecondary?: string;
-  breedMixed: boolean;
-  descriptionText: string;
-  specialNeeds: boolean;
-  houseTrained: boolean;
-  goodWithChildren: boolean;
-  goodWithCats: boolean;
-  goodWithDogs: boolean;
-  pictures?: Array<{
-    large?: string;
-    original?: string;
-    small?: string;
-    order?: number;
-  }>;
-  thumbnailUrl?: string;
-  url: string;
-  distance?: number;
-  [key: string]: any;
+  attributes: {
+    name: string;
+    status: string;
+    species: string;
+    ageGroup: string;
+    sex: string;
+    sizeGroup: string;
+    breedPrimary: string;
+    breedSecondary?: string;
+    breedMixed: boolean;
+    descriptionText: string;
+    specialNeeds: boolean;
+    houseTrained: boolean;
+    goodWithChildren: boolean;
+    goodWithCats: boolean;
+    goodWithDogs: boolean;
+    pictures?: Array<{
+      large?: string;
+      original?: string;
+      small?: string;
+      order?: number;
+    }>;
+    thumbnailUrl?: string;
+    url: string;
+    distance?: number;
+    updated: string;
+    created: string;
+  };
+  relationships?: {
+    orgs?: {
+      data?: Array<{ id: string; type: string }>;
+    };
+    locations?: {
+      data?: Array<{ id: string; type: string }>;
+    };
+    breeds?: {
+      data?: Array<{ id: string; type: string }>;
+    };
+    pictures?: {
+      data?: Array<{ id: string; type: string }>;
+    };
+  };
 }
 
 interface RescueGroupsSearchParams {
@@ -75,77 +92,84 @@ class RescueGroupsAPI {
     }
 
     const result = await response.json();
-    console.log('[🦮 RescueGroups] Response result:', JSON.stringify(result, null, 2));
+    console.log('[🦮 RescueGroups] Response result structure:', {
+      dataCount: result.data?.length || 0,
+      includedCount: result.included?.length || 0,
+      meta: result.meta || 'none'
+    });
 
     return result;
   }
 
   async searchAnimals(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
-    const endpoint = `${this.baseURL}/search/available/dogs`;
+    const endpoint = `${this.baseURL}/search/available/haspic`;
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
-    // Ensure we only get adoptable dogs
+    // Core filters for dogs only
+    searchParams.append('filter[species]', 'Dog');
     searchParams.append('filter[status]', 'Available');
 
-    // Filter for dogs updated in the last 2 years to avoid stale listings
-    const twoYearsAgo = new Date();
-    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-    searchParams.append('filter[lastUpdated]', `>${twoYearsAgo.toISOString().split('T')[0]}`);
+    // Filter for recently updated animals (last 6 months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    searchParams.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
 
-    // Add location-based filters - Use correct RescueGroups v5 parameter names
-    if (params.latitude && params.longitude) {
-      // Use proper geo-based filtering with correct field names
-      searchParams.append('filter[locationLat]', params.latitude.toString());
-      searchParams.append('filter[locationLon]', params.longitude.toString());
-      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
-      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${params.radius || 100}mi`);
-    } else if (params.location) {
-      // Use location string with proper field name
+    // Location-based filtering with correct v5 parameter names
+    if (params.location) {
+      // For v5 API, use the location field directly
       searchParams.append('filter[location]', params.location);
-      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
-      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
-    }
-
-    // Add breed filter - Use correct field name for v5 API
-    if (params.breed) {
-      // Normalize breed name for better matching
-      let breedName = params.breed;
-      if (breedName.toLowerCase().includes('chihuahua')) {
-        breedName = 'Chihuahua';
+      if (params.radius) {
+        searchParams.append('filter[distance]', params.radius.toString());
       }
-
-      // Use the correct breed filter field name for v5 API - try multiple approaches
-      searchParams.append('filter[breeds.name]', breedName);
-      searchParams.append('filter[breedPrimary.name]', breedName);
-      console.log('[🔍 RescueGroups] Searching for breed:', breedName);
+      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 50}mi`);
     }
 
-    // Add age filter
+    // Breed filter with correct v5 field name
+    if (params.breed) {
+      let breedName = params.breed.trim();
+      
+      // Normalize common breed variations
+      const breedMap: { [key: string]: string } = {
+        'chihuahua': 'Chihuahua',
+        'chihuahuas': 'Chihuahua',
+        'jack russell': 'Jack Russell Terrier',
+        'jack russells': 'Jack Russell Terrier',
+        'jack russell terrier': 'Jack Russell Terrier',
+        'golden retriever': 'Golden Retriever',
+        'lab': 'Labrador Retriever',
+        'labrador': 'Labrador Retriever'
+      };
+
+      const normalizedBreed = breedMap[breedName.toLowerCase()] || breedName;
+      
+      // Use the correct breed filter field for v5 API
+      searchParams.append('filter[breedPrimary]', normalizedBreed);
+      console.log('[🔍 RescueGroups] Searching for breed:', normalizedBreed);
+    }
+
+    // Other filters
     if (params.age) {
       searchParams.append('filter[ageGroup]', params.age);
     }
 
-    // Add size filter
     if (params.size) {
       searchParams.append('filter[sizeGroup]', params.size);
     }
 
-    // Add gender filter
     if (params.gender) {
       searchParams.append('filter[sex]', params.gender);
     }
 
-    // Add limit
-    if (params.limit) {
-      searchParams.append('limit', params.limit.toString());
-    }
+    // Set limit
+    const limit = Math.min(params.limit || 50, 100);
+    searchParams.append('limit', limit.toString());
 
-    // Request minimal core fields first to ensure we get basic data
+    // Request specific fields
     const fields = [
       'id',
       'name',
-      'status', 
+      'status',
       'species',
       'ageGroup',
       'sex',
@@ -157,7 +181,7 @@ class RescueGroupsAPI {
       'specialNeeds',
       'houseTrained',
       'goodWithChildren',
-      'goodWithCats', 
+      'goodWithCats',
       'goodWithDogs',
       'pictures',
       'thumbnailUrl',
@@ -168,16 +192,26 @@ class RescueGroupsAPI {
     ];
     searchParams.append('fields[animals]', fields.join(','));
 
-    // Also request the include data we need
-    searchParams.append('include', 'breeds,locations,orgs,pictures');
+    // Include related data
+    searchParams.append('include', 'orgs,locations,breeds,pictures');
 
     try {
-      console.log('[🦮 RescueGroups] Searching with params:', params);
+      console.log('[🦮 RescueGroups] Final search URL:', url.toString());
       const result = await this.makeRequest(url.toString());
 
       const animals = result.data || [];
       const included = result.included || [];
+      
       console.log(`[✅ RescueGroups] Found ${animals.length} animals with ${included.length} included items`);
+      
+      // Log sample data structure if we have results
+      if (animals.length > 0) {
+        console.log('[🔍 RescueGroups] Sample animal structure:', {
+          id: animals[0].id,
+          attributes: Object.keys(animals[0].attributes || {}),
+          relationships: Object.keys(animals[0].relationships || {})
+        });
+      }
 
       return { animals, included };
     } catch (error) {
@@ -196,7 +230,6 @@ class RescueGroupsAPI {
       'name',
       'status',
       'species',
-      'organization',
       'ageGroup',
       'sex',
       'sizeGroup',
@@ -214,13 +247,14 @@ class RescueGroupsAPI {
       'url'
     ];
     url.searchParams.append('fields[animals]', fields.join(','));
+    url.searchParams.append('include', 'orgs,locations,breeds,pictures');
 
     try {
       console.log(`[🦮 RescueGroups] Getting details for animal: ${animalId}`);
       const result = await this.makeRequest(url.toString());
 
       const animal = result.data?.[0] || null;
-      console.log(`[✅ RescueGroups] Got details for: ${animal?.name || 'Unknown'}`);
+      console.log(`[✅ RescueGroups] Got details for: ${animal?.attributes?.name || 'Unknown'}`);
 
       return animal;
     } catch (error) {
@@ -230,56 +264,93 @@ class RescueGroupsAPI {
   }
 
   // Transform RescueGroups animal to our database format
-  transformToDatabaseFormat(animal: RescueGroupsAnimal): any {
-    // Parse photos
+  transformToDatabaseFormat(animal: RescueGroupsAnimal, included: any[] = []): any {
+    const attrs = animal.attributes || {};
+    
+    // Parse photos from included data or attributes
     const photos = [];
-    if (animal.animalPictures && Array.isArray(animal.animalPictures)) {
-      // Sort by order and extract URLs
-      const sortedPictures = animal.animalPictures
-        .sort((a, b) => (a.order || 0) - (b.order || 0));
-
+    
+    // Try to get photos from relationships and included data
+    if (animal.relationships?.pictures?.data && included.length > 0) {
+      const pictureIds = animal.relationships.pictures.data.map((pic: any) => pic.id);
+      const pictureObjects = included.filter((item: any) => 
+        item.type === 'pictures' && pictureIds.includes(item.id)
+      );
+      
+      for (const pic of pictureObjects) {
+        const url = pic.attributes?.large || pic.attributes?.original || pic.attributes?.small;
+        if (url) photos.push(url);
+      }
+    }
+    
+    // Fallback to direct pictures in attributes
+    if (photos.length === 0 && attrs.pictures && Array.isArray(attrs.pictures)) {
+      const sortedPictures = attrs.pictures.sort((a, b) => (a.order || 0) - (b.order || 0));
       for (const pic of sortedPictures) {
         const url = pic.large || pic.original || pic.small;
         if (url) photos.push(url);
       }
     }
 
-    // Add fallback for thumbnail URL if no pictures array
-    if (photos.length === 0 && animal.animalThumbnailUrl) {
-      photos.push(animal.animalThumbnailUrl);
+    // Add fallback for thumbnail URL
+    if (photos.length === 0 && attrs.thumbnailUrl) {
+      photos.push(attrs.thumbnailUrl);
+    }
+
+    // Get organization info from included data
+    let orgId = '';
+    if (animal.relationships?.orgs?.data?.[0] && included.length > 0) {
+      const orgData = included.find((item: any) => 
+        item.type === 'orgs' && item.id === animal.relationships.orgs.data[0].id
+      );
+      orgId = orgData?.id || '';
+    }
+
+    // Get location info from included data
+    let city = 'Unknown', state = 'Unknown', latitude = null, longitude = null;
+    if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
+      const locationData = included.find((item: any) => 
+        item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
+      );
+      if (locationData?.attributes) {
+        city = locationData.attributes.city || 'Unknown';
+        state = locationData.attributes.state || 'Unknown';
+        latitude = locationData.attributes.lat || null;
+        longitude = locationData.attributes.lon || null;
+      }
     }
 
     return {
       rescuegroups_id: animal.id,
       api_source: 'rescuegroups',
-      organization_id: animal.animalOrgID || '',
-      url: animal.animalUrl || '',
-      name: animal.animalName || 'Unknown',
+      organization_id: orgId,
+      url: attrs.url || '',
+      name: attrs.name || 'Unknown',
       type: 'Dog',
       species: 'Dog',
-      primary_breed: animal.animalBreedPrimary || 'Mixed Breed',
-      secondary_breed: animal.animalBreedSecondary || null,
-      is_mixed: animal.animalBreedMixed || false,
+      primary_breed: attrs.breedPrimary || 'Mixed Breed',
+      secondary_breed: attrs.breedSecondary || null,
+      is_mixed: attrs.breedMixed || false,
       is_unknown_breed: false,
-      age: animal.animalAgeGroup || 'Unknown',
-      gender: animal.animalSex || 'Unknown',
-      size: animal.animalSizeGroup || 'Unknown',
+      age: attrs.ageGroup || 'Unknown',
+      gender: attrs.sex || 'Unknown',
+      size: attrs.sizeGroup || 'Unknown',
       status: 'adoptable',
-      spayed_neutered: null, // Not available in v5 API
-      house_trained: animal.animalHouseTrained || null,
-      special_needs: animal.animalSpecialNeeds || null,
-      good_with_children: animal.animalGoodWithChildren || null,
-      good_with_dogs: animal.animalGoodWithDogs || null,
-      good_with_cats: animal.animalGoodWithCats || null,
-      description: animal.animalDescriptionText || null,
+      spayed_neutered: null,
+      house_trained: attrs.houseTrained || null,
+      special_needs: attrs.specialNeeds || null,
+      good_with_children: attrs.goodWithChildren || null,
+      good_with_dogs: attrs.goodWithDogs || null,
+      good_with_cats: attrs.goodWithCats || null,
+      description: attrs.descriptionText || null,
       photos: photos,
       tags: [],
       contact_info: {},
-      city: animal.animalLocation?.city || 'Unknown',
-      state: animal.animalLocation?.state || 'Unknown',
-      postcode: animal.animalLocation?.postalCode || null,
-      latitude: animal.animalLocation?.lat || null,
-      longitude: animal.animalLocation?.lon || null,
+      city: city,
+      state: state,
+      postcode: null,
+      latitude: latitude,
+      longitude: longitude,
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };

@@ -75,42 +75,51 @@ async function rateLimitedDelay(apiType = 'petfinder') {
 async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   await rateLimitedDelay('rescuegroups');
 
-  const limit = isTestMode ? 5 : 100;
+  const limit = isTestMode ? 5 : 50;
   console.log(`🦮 Fetching RescueGroups dogs from: ${location} (limit: ${limit})`);
 
-  // Use GET request with query parameters (RescueGroups v5 API)
-  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
+  // Use the correct v5 API endpoint with proper search path
+  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/haspic');
   const params = url.searchParams;
 
-  // Location filter - try multiple parameter formats since RescueGroups API docs may be inconsistent
-  params.append('filter[locationAddress]', location);
-  params.append('filter[locationDistance]', '100'); // 100 mile radius
-  
-  // Also try alternative location parameter names
+  // Core filters
+  params.append('filter[species]', 'Dog');
+  params.append('filter[status]', 'Available');
+
+  // Location filter with correct v5 parameter name
   params.append('filter[location]', location);
-  params.append('filter[distance]', '100');
+  params.append('filter[distance]', '100'); // 100 mile radius
+
+  // Filter for recently updated animals (last 6 months)
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
 
   // Limit results
   params.append('limit', limit.toString());
 
-  // Note: RescueGroups v5 API has limited sort options, so we'll use default sorting
-
-  // Specify fields to return
+  // Specify fields to return - use correct v5 field names
   const fields = [
-    'id', 'name', 'status', 'species', 'organizations',
+    'id', 'name', 'status', 'species',
     'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
     'breedMixed', 'descriptionText', 'specialNeeds', 'houseTrained',
     'goodWithChildren', 'goodWithCats', 'goodWithDogs',
-    'pictures', 'url', 'distance', 'location'
+    'pictures', 'thumbnailUrl', 'url', 'distance', 'updated', 'created'
   ];
   params.append('fields[animals]', fields.join(','));
+
+  // Include related data
+  params.append('include', 'orgs,locations,breeds,pictures');
+
+  console.log(`🔗 RescueGroups API URL: ${url.toString()}`);
 
   try {
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Authorization': process.env.RESCUEGROUPS_API_KEY,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'User-Agent': 'BarkBase/1.0'
       }
     });
 
@@ -122,16 +131,24 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 
     const result = await response.json();
     const animals = result.data || [];
+    const included = result.included || [];
 
-    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} (API limit may be 25)`);
+    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} with ${included.length} included items`);
 
     // Log first few animals for debugging
     if (animals.length > 0) {
       console.log(`🔍 First dog: ${animals[0].attributes?.name || 'Unknown'} (ID: ${animals[0].id})`);
-      console.log(`🔍 First dog details:`, JSON.stringify(animals[0], null, 2));
+      console.log(`🔍 First dog breed: ${animals[0].attributes?.breedPrimary || 'Unknown'}`);
+      console.log(`🔍 First dog location relationships:`, animals[0].relationships?.locations?.data || 'none');
       
-      if (animals.length > 1) {
-        console.log(`🔍 Second dog: ${animals[1].attributes?.name || 'Unknown'} (ID: ${animals[1].id})`);
+      // Check included location data for the first dog
+      if (animals[0].relationships?.locations?.data?.[0] && included.length > 0) {
+        const locationData = included.find(item => 
+          item.type === 'locations' && item.id === animals[0].relationships.locations.data[0].id
+        );
+        if (locationData) {
+          console.log(`🌍 First dog location: ${locationData.attributes?.city}, ${locationData.attributes?.state}`);
+        }
       }
     }
 
