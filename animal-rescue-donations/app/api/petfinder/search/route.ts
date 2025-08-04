@@ -75,8 +75,30 @@ export async function POST(req: Request) {
             DogFormatter.formatRescueGroupsDog(dog, rgResult.included)
           );
 
+          // Filter and deduplicate RescueGroups results
+          const filteredRgDogs = formattedRgDogs.filter(rgDog => {
+            // Apply breed filter if specified
+            if (normalizedParams.breed) {
+              const searchBreed = normalizedParams.breed.toLowerCase();
+              const primaryBreed = rgDog.breeds.primary.toLowerCase();
+              const secondaryBreed = rgDog.breeds.secondary?.toLowerCase() || '';
+              
+              const breedMatch = primaryBreed.includes(searchBreed) || 
+                               secondaryBreed.includes(searchBreed) ||
+                               searchBreed.includes(primaryBreed) ||
+                               (secondaryBreed && searchBreed.includes(secondaryBreed));
+              
+              if (!breedMatch) {
+                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed}`);
+                return false;
+              }
+            }
+            
+            return true;
+          });
+
           // Deduplicate against existing dogs (by name + basic characteristics)
-          const newRgDogs = formattedRgDogs.filter(rgDog => {
+          const newRgDogs = filteredRgDogs.filter(rgDog => {
             return !allDogs.some(existingDog => {
               const nameMatch = existingDog.name.toLowerCase().trim() === rgDog.name.toLowerCase().trim();
               const breedMatch = existingDog.breeds.primary === rgDog.breeds.primary;

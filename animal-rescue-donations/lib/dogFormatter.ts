@@ -124,18 +124,42 @@ class DogFormatter {
       });
     }
 
-    // Get breed information
+    // Get breed information - try multiple sources
     const breedIds = animal.relationships?.breeds?.data || [];
     const primaryBreedId = breedIds[0]?.id;
     const secondaryBreedId = breedIds[1]?.id;
 
-    const primaryBreed = primaryBreedId ? breedsMap.get(primaryBreedId)?.name : 'Mixed Breed';
-    const secondaryBreed = secondaryBreedId ? breedsMap.get(secondaryBreedId)?.name : null;
+    // Try to get breed from relationships first, then fallback to attributes
+    let primaryBreed = primaryBreedId ? breedsMap.get(primaryBreedId)?.name : null;
+    let secondaryBreed = secondaryBreedId ? breedsMap.get(secondaryBreedId)?.name : null;
 
-    // Get location information
+    // Fallback to direct attributes if relationships don't provide breeds
+    if (!primaryBreed) {
+      primaryBreed = animal.attributes?.breedPrimary || 
+                    animal.attributes?.animalBreedPrimary || 
+                    animal.breedPrimary ||
+                    'Mixed Breed';
+    }
+
+    if (!secondaryBreed) {
+      secondaryBreed = animal.attributes?.breedSecondary || 
+                      animal.attributes?.animalBreedSecondary || 
+                      animal.breedSecondary ||
+                      null;
+    }
+
+    // Get location information - try multiple sources
     const locationIds = animal.relationships?.locations?.data || [];
     const locationId = locationIds[0]?.id;
-    const location = locationId ? locationsMap.get(locationId) : null;
+    let location = locationId ? locationsMap.get(locationId) : null;
+
+    // Fallback to direct attributes if relationships don't provide location
+    if (!location) {
+      location = {
+        city: animal.attributes?.city || animal.attributes?.locationCity || animal.city || 'Unknown',
+        state: animal.attributes?.state || animal.attributes?.locationState || animal.state || 'Unknown'
+      };
+    }
 
     // Get organization information
     const orgIds = animal.relationships?.orgs?.data || [];
@@ -162,14 +186,18 @@ class DogFormatter {
     // Extract name safely - try multiple possible field names
     const dogName = animal.attributes?.name || 
                    animal.attributes?.animalName || 
-                   animal.attributes?.petName || 
+                   animal.attributes?.petName ||
+                   animal.name ||
                    `Dog ${animal.id}`;
 
-    // Extract description safely - try multiple possible field names
+    // Extract description safely - try multiple possible field names  
     const description = animal.attributes?.descriptionText || 
                        animal.attributes?.animalDescriptionText || 
                        animal.attributes?.description || 
-                       animal.attributes?.petDescription || '';
+                       animal.attributes?.petDescription ||
+                       animal.descriptionText ||
+                       animal.description ||
+                       '';
 
     const visibilityScore = DogFormatter.calculateVisibilityScore({
       photos: photos.length,
@@ -189,9 +217,27 @@ class DogFormatter {
         secondary: secondaryBreed,
         mixed: breedIds.length > 1
       },
-      age: DogFormatter.normalizeAge(animal.attributes?.ageGroup || animal.attributes?.animalAgeGroup || animal.attributes?.age),
-      size: DogFormatter.normalizeSize(animal.attributes?.sizeGroup || animal.attributes?.animalSizeGroup || animal.attributes?.size),
-      gender: DogFormatter.normalizeGender(animal.attributes?.sex || animal.attributes?.animalSex || animal.attributes?.gender),
+      age: DogFormatter.normalizeAge(
+        animal.attributes?.ageGroup || 
+        animal.attributes?.animalAgeGroup || 
+        animal.attributes?.age ||
+        animal.ageGroup ||
+        animal.age
+      ),
+      size: DogFormatter.normalizeSize(
+        animal.attributes?.sizeGroup || 
+        animal.attributes?.animalSizeGroup || 
+        animal.attributes?.size ||
+        animal.sizeGroup ||
+        animal.size
+      ),
+      gender: DogFormatter.normalizeGender(
+        animal.attributes?.sex || 
+        animal.attributes?.animalSex || 
+        animal.attributes?.gender ||
+        animal.sex ||
+        animal.gender
+      ),
       photos: photos,
       contact: {
         address: {
@@ -202,11 +248,26 @@ class DogFormatter {
       description: description,
       url: animal.attributes?.url || animal.attributes?.animalUrl || animal.attributes?.petUrl || '',
       characteristics: {
-        goodWithChildren: animal.attributes?.goodWithChildren || animal.attributes?.animalGoodWithChildren || null,
-        goodWithDogs: animal.attributes?.goodWithDogs || animal.attributes?.animalGoodWithDogs || null,
-        goodWithCats: animal.attributes?.goodWithCats || animal.attributes?.animalGoodWithCats || null,
-        houseTrained: animal.attributes?.houseTrained || animal.attributes?.animalHouseTrained || null,
-        specialNeeds: animal.attributes?.specialNeeds || animal.attributes?.animalSpecialNeeds || null
+        goodWithChildren: animal.attributes?.goodWithChildren || 
+                         animal.attributes?.animalGoodWithChildren || 
+                         animal.goodWithChildren || 
+                         null,
+        goodWithDogs: animal.attributes?.goodWithDogs || 
+                     animal.attributes?.animalGoodWithDogs || 
+                     animal.goodWithDogs || 
+                     null,
+        goodWithCats: animal.attributes?.goodWithCats || 
+                     animal.attributes?.animalGoodWithCats || 
+                     animal.goodWithCats || 
+                     null,
+        houseTrained: animal.attributes?.houseTrained || 
+                     animal.attributes?.animalHouseTrained || 
+                     animal.houseTrained || 
+                     null,
+        specialNeeds: animal.attributes?.specialNeeds || 
+                     animal.attributes?.animalSpecialNeeds || 
+                     animal.specialNeeds || 
+                     null
       },
       visibilityScore: visibilityScore,
       verificationBadge: 'Verified by BarkBase'

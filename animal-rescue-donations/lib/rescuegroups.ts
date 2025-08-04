@@ -107,7 +107,7 @@ class RescueGroupsAPI {
       console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
-    // Add breed filter - Use correct field name
+    // Add breed filter - Use correct field name for v5 API
     if (params.breed) {
       // Normalize breed name for better matching
       let breedName = params.breed;
@@ -115,8 +115,9 @@ class RescueGroupsAPI {
         breedName = 'Chihuahua';
       }
 
-      // Use the correct breed filter field name for v5 API
-      searchParams.append('filter[breedPrimary]', breedName);
+      // Use the correct breed filter field name for v5 API - try multiple approaches
+      searchParams.append('filter[breeds.name]', breedName);
+      searchParams.append('filter[breedPrimary.name]', breedName);
       console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
