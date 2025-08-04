@@ -169,57 +169,45 @@ class DogFormatter {
                        animal.attributes?.descriptionText || 
                        animal.attributes?.description || '';
 
+    const visibilityScore = DogFormatter.calculateVisibilityScore({
+      photos: photos.length,
+      description: description,
+      location: location?.city || '',
+      lastUpdated: animal.attributes?.updated || animal.attributes?.created
+    });
+
     return {
       id: animal.id,
+      source: 'rescuegroups' as const,
+      sourceId: animal.id,
+      organizationId: orgId || '',
       name: dogName,
       breeds: {
         primary: primaryBreed || 'Mixed Breed',
         secondary: secondaryBreed,
-        mixed: breedIds.length > 1,
-        unknown: !primaryBreed
+        mixed: breedIds.length > 1
       },
-      age: this.normalizeAge(animal.attributes?.animalAgeGroup || animal.attributes?.ageGroup),
-      size: this.normalizeSize(animal.attributes?.animalSizeGroup || animal.attributes?.sizeGroup),
-      gender: this.normalizeGender(animal.attributes?.animalSex || animal.attributes?.sex),
+      age: DogFormatter.normalizeAge(animal.attributes?.animalAgeGroup || animal.attributes?.ageGroup),
+      size: DogFormatter.normalizeSize(animal.attributes?.animalSizeGroup || animal.attributes?.sizeGroup),
+      gender: DogFormatter.normalizeGender(animal.attributes?.animalSex || animal.attributes?.sex),
       photos: photos,
       contact: {
-        email: organization?.email || '',
-        phone: organization?.phone || '',
         address: {
-          address1: location?.street || '',
-          address2: null,
-          city: location?.city || '',
-          state: location?.state || '',
-          postcode: location?.postalcode || location?.postalCode || '',
-          country: location?.country || 'US'
+          city: location?.city || 'Unknown',
+          state: location?.state || 'Unknown'
         }
       },
       description: description,
       url: animal.attributes?.animalUrl || animal.attributes?.url || '',
-      distance: animal.attributes?.animalDistance || animal.attributes?.distance || null,
-      published_at: animal.attributes?.created || new Date().toISOString(),
-      status: 'adoptable',
-      attributes: {
-        spayed_neutered: null,
-        house_trained: animal.attributes?.animalHouseTrained || animal.attributes?.houseTrained || null,
-        declawed: null,
-        special_needs: animal.attributes?.animalSpecialNeeds || animal.attributes?.specialNeeds || null,
-        shots_current: null
+      characteristics: {
+        goodWithChildren: animal.attributes?.animalGoodWithChildren || animal.attributes?.goodWithChildren || null,
+        goodWithDogs: animal.attributes?.animalGoodWithDogs || animal.attributes?.goodWithDogs || null,
+        goodWithCats: animal.attributes?.animalGoodWithCats || animal.attributes?.goodWithCats || null,
+        houseTrained: animal.attributes?.animalHouseTrained || animal.attributes?.houseTrained || null,
+        specialNeeds: animal.attributes?.animalSpecialNeeds || animal.attributes?.specialNeeds || null
       },
-      environment: {
-        children: animal.attributes?.animalGoodWithChildren || animal.attributes?.goodWithChildren || null,
-        dogs: animal.attributes?.animalGoodWithDogs || animal.attributes?.goodWithDogs || null,
-        cats: animal.attributes?.animalGoodWithCats || animal.attributes?.goodWithCats || null
-      },
-      tags: [],
-      organization_id: orgId || '',
-      source: 'rescuegroups',
-      visibility_score: this.calculateVisibilityScore({
-        photos: photos.length,
-        description: description,
-        location: location?.city || '',
-        lastUpdated: animal.attributes?.updated || animal.attributes?.created
-      })
+      visibilityScore: visibilityScore,
+      verificationBadge: 'Verified by BarkBase'
     };
   }
 
@@ -323,7 +311,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: truncateDesc ? this.truncateDescription(dog.description) : dog.description,
+      description: truncateDesc ? DogFormatter.truncateDescription(dog.description) : dog.description,
       photos: dog.photos,
       contact: dog.contact,
       visibilityScore: dog.visibilityScore,
