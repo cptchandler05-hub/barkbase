@@ -492,10 +492,9 @@ export async function POST(req: Request) {
           }
 
           const dogList = dogListParts.join('\n\n---\n\n');
-          const remainingCount = updatedMemory.cachedDogs.length - updatedMemory.seenDogIds.length;
 
           return NextResponse.json({
-            content: `🐕 More pups coming your way:\n\n${dogList}\n\nKeep asking for more if you want to see all ${remainingCount} remaining dogs! 🐾`,
+            content: `🐕 More pups coming your way:\n\n${dogList}\n\nKeep asking for more if you want to see all ${updatedMemory.cachedDogs.length - updatedMemory.seenDogIds.length} remaining dogs! 🐾`,
             memory: updatedMemory,
           });
         }
@@ -909,7 +908,10 @@ export async function POST(req: Request) {
             const dogList = dogListParts.join('\n\n---\n\n');
 
             return NextResponse.json({
-              content: `🐾 **The Most Invisible Dogs**\n\nThese are the dogs the algorithms forgot. The ones with the highest invisibility scores nationwide.\n\n${dogList}\n\n💡 Ask for more dogs anytime. I have ${formattedDbDogs.length} total invisible dogs waiting. 🧡`,
+              content: `🐾 **The Most Invisible Dogs**
+\n\nThese are the dogs the algorithms forgot. The ones with the highest invisibility scores nationwide.
+\n\n${dogList}
+\n\n💡 Ask for more dogs anytime. I have ${formattedDbDogs.length} total invisible dogs waiting. 🧡`,
               memory: updatedMemory,
             });
           } else {
@@ -938,14 +940,16 @@ export async function POST(req: Request) {
       // 🐾 Prompt for missing inputs
       if (!fullBreed && !fullLocation) {
         return NextResponse.json({
-          content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.\n\nWhat kind of pup are you looking for—and where should I search? Give me a ZIP code or city + state. 🐾`,
+          content: `I can sniff out the most overlooked dogs on the planet 🌍 but I need a bit more to go on.
+\n\nWhat kind of pup are you looking for—and where should I search? Give me a ZIP code or city + state. 🐾`,
           memory: updatedMemory,
         });
       }
 
       if (!fullLocation && fullBreed) {
         return NextResponse.json({
-          content: `Got it — you're hoping to meet some **${fullBreed}** 🐶\n\nNow I just need to know WHERE to search. Give me a ZIP code or city + state, and I'll find the most overlooked ${fullBreed}s in that area. 🐾`,
+          content: `Got it — you're hoping to meet some **${fullBreed}** 🐶
+\n\nNow I just need to know WHERE to search. Give me a ZIP code or city + state, and I'll find the most overlooked ${fullBreed}s in that area. 🐾`,
           memory: updatedMemory,
         });
       }
@@ -1180,10 +1184,11 @@ export async function POST(req: Request) {
                 body: JSON.stringify({
                   location: fullLocation ?? searchLocation ?? '',
                   breed: normalizedBreed ?? '',
-                  size: null,
                   age: null,
+                  size: null,
                   gender: null,
-                  limit: 50,
+                  limit: 25, // This is the crucial change for the chat context
+                  isChat: true, // Add the flag to indicate this is a chat search
                 }),
               });
 

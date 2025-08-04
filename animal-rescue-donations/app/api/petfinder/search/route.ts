@@ -26,6 +26,13 @@ export async function POST(req: Request) {
 
     // Normalize search parameters
     normalizedParams = SearchNormalizer.normalizeSearchParams(requestBody);
+    
+    // Determine if this is a chat request (limit to 25) or adopt page request (allow up to 100)
+    const isChat = requestBody.isChat === true || requestBody.source === 'chat';
+    const maxResults = isChat ? 25 : 100;
+    normalizedParams.limit = Math.min(normalizedParams.limit || maxResults, maxResults);
+    
+    console.log(`[🎯 Context] ${isChat ? 'Chat' : 'Adopt Page'} search - limit: ${normalizedParams.limit}`);
     console.log('[🧼 Normalized Params]', normalizedParams);
 
     // 🏆 PHASE 1: Database Search (Highest Priority)
@@ -115,7 +122,7 @@ export async function POST(req: Request) {
           age: normalizedParams.age,
           size: normalizedParams.size,
           gender: normalizedParams.gender,
-          limit: Math.min(25, normalizedParams.limit! - allDogs.length), // Reduced from 50 to 25
+          limit: Math.min(maxResults, normalizedParams.limit! - allDogs.length),
           radius: normalizedParams.radius,
           latitude: coordinates?.latitude, // Use geocoded latitude if available
           longitude: coordinates?.longitude // Use geocoded longitude if available
@@ -222,7 +229,7 @@ export async function POST(req: Request) {
           const params = new URLSearchParams({
             type: 'dog',
             status: 'adoptable',
-            limit: Math.min(100, normalizedParams.limit! - allDogs.length).toString(),
+            limit: Math.min(maxResults, normalizedParams.limit! - allDogs.length).toString(),
           });
 
           if (normalizedParams.location) {
