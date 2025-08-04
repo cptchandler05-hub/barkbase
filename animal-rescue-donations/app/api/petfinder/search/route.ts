@@ -62,20 +62,37 @@ export async function POST(req: Request) {
         if (normalizedParams.location) {
           try {
             console.log(`[🗺️ Geocoding] Converting "${normalizedParams.location}" to coordinates for RescueGroups`);
-            const geocodeResponse = await fetch(
-              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US`
-            );
             
-            if (geocodeResponse.ok) {
-              const geocodeData = await geocodeResponse.json();
-              if (geocodeData.features && geocodeData.features.length > 0) {
-                const [lng, lat] = geocodeData.features[0].center;
-                coordinates = { latitude: lat, longitude: lng };
-                console.log(`[✅ Geocoded] "${normalizedParams.location}" → ${lat}, ${lng}`);
+            if (!process.env.MAPBOX_ACCESS_TOKEN) {
+              console.error('[❌ Geocoding] MAPBOX_ACCESS_TOKEN environment variable is missing!');
+            } else {
+              const geocodeResponse = await fetch(
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US`
+              );
+              
+              console.log(`[🗺️ Geocoding] Response status: ${geocodeResponse.status}`);
+              
+              if (geocodeResponse.ok) {
+                const geocodeData = await geocodeResponse.json();
+                console.log(`[🗺️ Geocoding] Response data:`, {
+                  features: geocodeData.features?.length || 0,
+                  query: geocodeData.query
+                });
+                
+                if (geocodeData.features && geocodeData.features.length > 0) {
+                  const [lng, lat] = geocodeData.features[0].center;
+                  coordinates = { latitude: lat, longitude: lng };
+                  console.log(`[✅ Geocoded] "${normalizedParams.location}" → ${lat}, ${lng}`);
+                } else {
+                  console.log(`[⚠️ Geocoding] No features found for "${normalizedParams.location}"`);
+                }
+              } else {
+                const errorText = await geocodeResponse.text();
+                console.error(`[❌ Geocoding] API error ${geocodeResponse.status}:`, errorText);
               }
             }
           } catch (error) {
-            console.log(`[⚠️ Geocoding] Failed to geocode "${normalizedParams.location}":`, error);
+            console.error(`[❌ Geocoding] Exception geocoding "${normalizedParams.location}":`, error);
           }
         }
 
@@ -100,19 +117,39 @@ export async function POST(req: Request) {
             DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])
           );
 
-          // Minimal filtering since RescueGroups API should already return correctly filtered results
+          // COMPREHENSIVE filtering since RescueGroups API is returning cats, horses, and wrong breeds
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
-            // Only filter out obvious cats that somehow got through (should not happen with proper API filtering)
             const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
-            const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon'];
-
+            
+            // Filter out cats
+            const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon', 'abyssinian', 'bombay'];
             if (catBreeds.some(catBreed => primaryBreed.includes(catBreed))) {
               console.log(`[🚫 Species Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} appears to be a cat`);
               return false;
             }
 
-            // Trust the API filtering - if RescueGroups returned it, it should match our criteria
-            console.log(`[✅ API Trusted] Including ${rgDog.name} - ${rgDog.breeds.primary} (trusting API filters)`);
+            // Filter out horses and other animals
+            const nonDogBreeds = ['paso fino', 'new zealand', 'thoroughbred', 'quarter horse', 'arabian'];
+            if (nonDogBreeds.some(nonDog => primaryBreed.includes(nonDog))) {
+              console.log(`[🚫 Species Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} is not a dog`);
+              return false;
+            }
+
+            // If we have a specific breed search, enforce it strictly
+            if (normalizedParams.breed) {
+              const searchBreed = normalizedParams.breed.toLowerCase().trim();
+              let apiBreed = searchBreed;
+              if (apiBreed.endsWith('s') && apiBreed.length > 3) {
+                apiBreed = apiBreed.slice(0, -1); // Remove plural
+              }
+              
+              if (!primaryBreed.includes(apiBreed) && !rgDog.breeds.secondary?.toLowerCase().includes(apiBreed)) {
+                console.log(`[🚫 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match search for "${normalizedParams.breed}"`);
+                return false;
+              }
+            }
+
+            console.log(`[✅ Filter Pass] Including ${rgDog.name} - ${rgDog.breeds.primary}`);
             return true;
           });
 

@@ -129,15 +129,15 @@ class RescueGroupsAPI {
       
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
     } else if (params.location) {
-      // Try to extract state and filter by state as fallback
+      // WITHOUT COORDINATES, WE CANNOT EFFECTIVELY FILTER BY LOCATION
+      // RescueGroups will return results from everywhere
+      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - results will be nationwide`);
+      
+      // Try to extract state and use it in post-processing if needed
       const stateMatch = params.location.match(/,\s*([A-Z]{2})$/);
       if (stateMatch) {
         const state = stateMatch[1];
-        console.log(`[🗺️ RescueGroups] No coordinates available, filtering by state: ${state}`);
-        // Note: This is a fallback - RescueGroups doesn't have a direct state filter
-        // The API call will still work but may return broader results
-      } else {
-        console.log(`[⚠️ RescueGroups] Location provided but no coordinates available: ${params.location}`);
+        console.log(`[🗺️ RescueGroups] Will attempt to filter results by state: ${state} in post-processing`);
       }
     }
 
@@ -157,11 +157,11 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // Use both primary and secondary breed filters to catch mixed breeds
+      // ONLY filter by primary breed to be more restrictive
+      // Using both primary and secondary was returning too many mixed breeds
       searchParams.append('filter[breedPrimary]', properCaseBreed);
-      searchParams.append('filter[breedSecondary]', properCaseBreed);
       
-      console.log(`[🔍 RescueGroups] Applying breed filters for: ${properCaseBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying PRIMARY breed filter only for: ${properCaseBreed} (from: ${breedName})`);
     }
 
     // Other filters
