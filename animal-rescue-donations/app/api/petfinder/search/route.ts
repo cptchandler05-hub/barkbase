@@ -75,53 +75,19 @@ export async function POST(req: Request) {
             DogFormatter.formatRescueGroupsDog(dog, rgResult.included)
           );
 
-          // Since we're now applying breed filters at the API level, we should be more lenient with the results
-          // Only do basic validation to ensure we got dogs, not cats
+          // Minimal filtering since RescueGroups API should already return correctly filtered results
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
-            // First, ensure this is actually a dog (filter out cats that somehow got through)
+            // Only filter out obvious cats that somehow got through (should not happen with proper API filtering)
             const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
-            const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon', 'abyssinian', 'bombay', 'new zealand'];
+            const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon'];
             
             if (catBreeds.some(catBreed => primaryBreed.includes(catBreed))) {
               console.log(`[🚫 Species Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} appears to be a cat`);
               return false;
             }
 
-            // If breed was specified, do minimal validation since API should have filtered
-            if (normalizedParams.breed) {
-              const searchBreed = normalizedParams.breed.toLowerCase().trim();
-              const secondaryBreed = (rgDog.breeds.secondary || '').toLowerCase().trim();
-
-              // Handle plural/singular conversions
-              const searchBreedSingular = searchBreed.endsWith('s') && searchBreed.length > 3 ? 
-                searchBreed.slice(0, -1) : searchBreed;
-              const searchBreedPlural = searchBreed.endsWith('s') ? searchBreed : searchBreed + 's';
-
-              // More flexible breed matching - trust the API mostly but do basic validation
-              const breedVariants = [searchBreed, searchBreedSingular, searchBreedPlural];
-
-              const breedMatch = breedVariants.some(variant => {
-                return primaryBreed.includes(variant) || 
-                       secondaryBreed.includes(variant) ||
-                       variant.includes(primaryBreed) ||
-                       (secondaryBreed && variant.includes(secondaryBreed)) ||
-                       // Special case for terriers - match any breed containing "terrier"
-                       (variant === 'terrier' && (primaryBreed.includes('terrier') || secondaryBreed.includes('terrier'))) ||
-                       // Special case for labs
-                       (variant === 'lab' && (primaryBreed.includes('labrador') || secondaryBreed.includes('labrador'))) ||
-                       // Special case for mixed breeds
-                       (variant === 'mixed' && rgDog.breeds.mixed) ||
-                       // Special breed fuzzy matching
-                       (variant === 'chihuahua' && primaryBreed.includes('chihuahua'));
-              });
-
-              if (!breedMatch) {
-                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed}`);
-                return false;
-              } else {
-                console.log(`[✅ Breed Match] Including ${rgDog.name} - ${rgDog.breeds.primary} matches ${normalizedParams.breed}`);
-              }
-            }
+            // Trust the API filtering - if RescueGroups returned it, it should match our criteria
+            console.log(`[✅ API Trusted] Including ${rgDog.name} - ${rgDog.breeds.primary} (trusting API filters)`);
             return true;
           });
 

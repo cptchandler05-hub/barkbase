@@ -115,29 +115,47 @@ class RescueGroupsAPI {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // Location-based filtering
+    // Location-based filtering - RescueGroups v5 requires specific location format
     if (params.location) {
-      searchParams.append('filter[location]', params.location);
-      if (params.radius) {
-        searchParams.append('filter[distance]', params.radius.toString());
-      }
-      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
+      // Ensure location is properly formatted for RescueGroups API
+      const formattedLocation = params.location.replace(/\s+/g, '+');
+      searchParams.append('filter[location]', formattedLocation);
+      
+      // Set distance radius - RescueGroups expects this in miles
+      const radius = params.radius || 100;
+      searchParams.append('filter[distance]', radius.toString());
+      
+      console.log(`[🗺️ RescueGroups] Using location: ${formattedLocation} with radius ${radius}mi`);
     }
 
     // Breed filtering - apply at API level for better results
     if (params.breed) {
-      const breedName = params.breed.trim();
+      const breedName = params.breed.trim().toLowerCase();
       
       // Handle plural to singular conversion for API
       let apiBreed = breedName;
-      if (breedName.toLowerCase().endsWith('s') && breedName.length > 3) {
+      if (breedName.endsWith('s') && breedName.length > 3) {
         // Convert "chihuahuas" -> "chihuahua", "terriers" -> "terrier", etc.
         apiBreed = breedName.slice(0, -1);
       }
       
-      // Apply breed filter - let RescueGroups handle the matching
-      searchParams.append('filter[breedPrimary]', apiBreed);
-      console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
+      // RescueGroups API requires exact breed matching - use proper case
+      const properCaseBreed = apiBreed.charAt(0).toUpperCase() + apiBreed.slice(1);
+      
+      // Apply multiple breed filters to catch variations
+      searchParams.append('filter[breedPrimary]', properCaseBreed);
+      
+      // Also try variations for common breed names
+      if (apiBreed === 'chihuahua') {
+        // Chihuahua variations that might be in the system
+        searchParams.append('filter[breedPrimary]', 'Chihuahua');
+      } else if (apiBreed === 'terrier') {
+        // For terriers, we need to be more specific since there are many types
+        searchParams.append('filter[breedPrimary]', 'Terrier');
+        searchParams.append('filter[breedSecondary]', 'Terrier');
+      }
+      
+      console.log(`[🔍 RescueGroups] Applying breed filter: ${properCaseBreed} (from: ${breedName})`);
     }
 
     // Other filters
@@ -189,6 +207,18 @@ class RescueGroupsAPI {
 
     try {
       console.log('[🦮 RescueGroups] Final search URL:', url.toString());
+      
+      // Debug: Log all applied filters
+      console.log('[🔍 RescueGroups] Applied filters:', {
+        species: searchParams.get('filter[species]'),
+        status: searchParams.get('filter[status]'),
+        location: searchParams.get('filter[location]'),
+        distance: searchParams.get('filter[distance]'),
+        breedPrimary: searchParams.get('filter[breedPrimary]'),
+        breedSecondary: searchParams.get('filter[breedSecondary]'),
+        limit: searchParams.get('limit')
+      });
+      
       const result = await this.makeRequest(url.toString());
 
       const animals = result.data || [];
