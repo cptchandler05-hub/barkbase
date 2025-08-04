@@ -1,0 +1,238 @@
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] Greenville, MS
+[🐾 Barkr Memory] {
+  location: 'Greenville, MS',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Greenville, MS', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Greenville, MS
+[🗄️ Database] Filtering by state: MS
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+[🔍 Enhanced Search] Starting priority waterfall search
+[📋 Raw Input] {
+  location: 'Greenville, MS',
+  breed: 'Chihuahua',
+  size: null,
+  age: null,
+  gender: null,
+  limit: 50
+}
+[🧼 Normalized Params] {
+  location: 'Greenville, MS',
+  breed: 'Chihuahua',
+  limit: 50,
+  radius: 100
+}
+[💾 Database] Searching database first...
+[✅ Database Hit] Found 5 dogs in database
+[🦮 RescueGroups] Searching RescueGroups...
+[🗺️ RescueGroups] Using location: Greenville, MS with radius 100mi
+[🔍 RescueGroups] Applying API breed filter: chihuahua
+[🦮 RescueGroups] Final search URL: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-02-04&filter%5Blocation%5D=Greenville%2C+MS&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=chihuahua&limit=45&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-02-04&filter%5Blocation%5D=Greenville%2C+MS&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=chihuahua&limit=45&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 45,
+  includedCount: 395,
+  meta: {
+    count: 71827,
+    countReturned: 45,
+    pageReturned: 1,
+    limit: 45,
+    pages: 1597,
+    transactionId: 'fkDKKdccYJec'
+  }
+}
+[✅ RescueGroups] Found 45 animals with 395 included items
+[🔍 RescueGroups] Sample animal structure: {
+  id: '10007851',
+  attributes: [
+    'id',
+    'name',
+    'ageGroup',
+    'sex',
+    'breedPrimary',
+    'breedSecondary',
+    'descriptionText'
+  ],
+  relationships: [ 'orgs', 'locations', 'breeds', 'pictures' ]
+}
+[✅ RescueGroups Hit] Found 45 dogs from RescueGroups
+[🦮 RG Format] Processing: Zelda (ID: 10007851)
+[✅ RG Formatted] Zelda: Domestic Short Hair, Senior, Unknown, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Stowaway (ID: 10013509)
+[✅ RG Formatted] Stowaway: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 92.7
+[🦮 RG Format] Processing: Bettis (ID: 10059734)
+[✅ RG Formatted] Bettis: Domestic Short Hair, Unknown, Unknown, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Hannah Steele (ID: 10072481)
+[✅ RG Formatted] Hannah Steele: Labrador Retriever, Senior, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Viola (ID: 10078447)
+[✅ RG Formatted] Viola: Domestic Short Hair, Adult, Small, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Maggie (ID: 10089711)
+[✅ RG Formatted] Maggie: Tortoiseshell, Young, Unknown, Photos: 1, Score: 68.2
+[🦮 RG Format] Processing: Doli (ID: 10131543)
+[✅ RG Formatted] Doli: Husky, Senior, Large, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Cylana (ID: 10138270)
+[✅ RG Formatted] Cylana: Shar Pei, Senior, Large, Photos: 15, Score: 130
+[🦮 RG Format] Processing: Tara (ID: 10178313)
+[✅ RG Formatted] Tara: Tuxedo, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Alafair (ID: 10187884)
+[✅ RG Formatted] Alafair: Domestic Short Hair, Senior, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Zeke (ID: 10197267)
+[✅ RG Formatted] Zeke: American Bulldog, Young, Medium, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Diamond Beaufort (ID: 10206471)
+[✅ RG Formatted] Diamond Beaufort: Shepherd, Senior, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Little One (ID: 10211761)
+[✅ RG Formatted] Little One: Bombay, Senior, Small, Photos: 3, Score: 109.3
+[🦮 RG Format] Processing: Buttercup (ID: 10233885)
+[✅ RG Formatted] Buttercup: Paso Fino, Adult, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Lucky (ID: 10244680)
+[✅ RG Formatted] Lucky: Labrador Retriever, Senior, Medium, Photos: 9, Score: 130
+[🦮 RG Format] Processing: ILISA (ID: 10320361)
+[✅ RG Formatted] ILISA: New Zealand, Adult, Large, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Danette (ID: 10389842)
+[✅ RG Formatted] Danette: Domestic Short Hair, Senior, Unknown, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Rosie (ID: 10393561)
+[✅ RG Formatted] Rosie: American Pit Bull Terrier, Adult, Medium, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Gabrio (ID: 10399885)
+[✅ RG Formatted] Gabrio: American Staffordshire Terrier, Adult, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Arthur (ID: 10432466)
+[✅ RG Formatted] Arthur: Domestic Long Hair, Young, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Sponsor Joe Sanctuary 2016 (ID: 10481659)
+[✅ RG Formatted] Sponsor Joe Sanctuary 2016: Great Pyrenees, Young, Large, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Pre-Approval (ID: 10501644)
+[✅ RG Formatted] Pre-Approval: Mixed Breed, Unknown, Unknown, Photos: 1, Score: 85.4
+[🦮 RG Format] Processing: Savannah (ID: 10526340)
+[✅ RG Formatted] Savannah: Abyssinian, Adult, Large, Photos: 18, Score: 130
+[🦮 RG Format] Processing: Cleopatra - Adopt With Kitten"Smalls" (ID: 10534151)
+[✅ RG Formatted] Cleopatra - Adopt With Kitten"Smalls": Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: SMALLS - Adopt Me With My Mom! (ID: 10534157)
+[✅ RG Formatted] SMALLS - Adopt Me With My Mom!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Shadow- I Can Be A Friend To Your Young Cat! (ID: 10534165)
+[✅ RG Formatted] Shadow- I Can Be A Friend To Your Young Cat!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Bear - Adopt With My Best Playmate Tas! (ID: 10534170)
+[✅ RG Formatted] Bear - Adopt With My Best Playmate Tas!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Tas - Adopt With My Best Playmate Bear! (ID: 10534172)
+[✅ RG Formatted] Tas - Adopt With My Best Playmate Bear!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Jazzy (ID: 10534260)
+[✅ RG Formatted] Jazzy: Tabby, Adult, Medium, Photos: 11, Score: 130
+[🦮 RG Format] Processing: Nova (ID: 10541734)
+[✅ RG Formatted] Nova: Siberian Husky, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Fernanda (ID: 10544313)
+[✅ RG Formatted] Fernanda: Pit Bull Terrier, Adult, Medium, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Bella (ID: 10552500)
+[✅ RG Formatted] Bella: Beagle, Young, Medium, Photos: 6, Score: 130
+[🦮 RG Format] Processing: Ivana (ID: 10555326)
+[✅ RG Formatted] Ivana: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Clyde (ID: 10558699)
+[✅ RG Formatted] Clyde: Cattle Dog, Adult, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Chance (ID: 10574060)
+[✅ RG Formatted] Chance: Labrador Retriever, Senior, Large, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Bourke (ID: 10579440)
+[✅ RG Formatted] Bourke: Dachshund, Senior, Small, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Joe [Permanent Foster] (ID: 10583066)
+[✅ RG Formatted] Joe [Permanent Foster]: Domestic Short Hair, Senior, Medium, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Tucker (ID: 10585046)
+[✅ RG Formatted] Tucker: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Holly (ID: 10665211)
+[✅ RG Formatted] Holly: Boxer, Senior, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Penny (ID: 10687172)
+[✅ RG Formatted] Penny: Domestic Short Hair, Young, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Tyson (ID: 10689034)
+[✅ RG Formatted] Tyson: Staffordshire Bull Terrier, Adult, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Cinnamon (ID: 10709292)
+[✅ RG Formatted] Cinnamon: Domestic Short Hair, Adult, Medium, Photos: 7, Score: 130
+[🦮 RG Format] Processing: Roger (ID: 10719979)
+[✅ RG Formatted] Roger: Tabby, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Kira (ID: 10739064)
+[✅ RG Formatted] Kira: Bull Terrier, Adult, Medium, Photos: 1, Score: 40
+[🦮 RG Format] Processing: Gus (ID: 10741126)
+[✅ RG Formatted] Gus: Pit Bull Terrier, Adult, Large, Photos: 2, Score: 50
+[🔍 Breed Filter] Excluding Zelda - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Stowaway - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Bettis - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Hannah Steele - Labrador Retriever doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Viola - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Maggie - Tortoiseshell doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Doli - Husky doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Cylana - Shar Pei doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Tara - Tuxedo doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Alafair - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Zeke - American Bulldog doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Diamond Beaufort - Shepherd doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Little One - Bombay doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Buttercup - Paso Fino doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Lucky - Labrador Retriever doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding ILISA - New Zealand doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Danette - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Rosie - American Pit Bull Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Gabrio - American Staffordshire Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Arthur - Domestic Long Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Sponsor Joe Sanctuary 2016 - Great Pyrenees doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Pre-Approval - Mixed Breed doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Savannah - Abyssinian doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Cleopatra - Adopt With Kitten"Smalls" - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding SMALLS - Adopt Me With My Mom! - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Shadow- I Can Be A Friend To Your Young Cat! - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Bear - Adopt With My Best Playmate Tas! - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Tas - Adopt With My Best Playmate Bear! - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Jazzy - Tabby doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Nova - Siberian Husky doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Fernanda - Pit Bull Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Bella - Beagle doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Ivana - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Clyde - Cattle Dog doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Chance - Labrador Retriever doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Bourke - Dachshund doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Joe [Permanent Foster] - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Tucker - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Holly - Boxer doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Penny - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Tyson - Staffordshire Bull Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Cinnamon - Domestic Short Hair doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Roger - Tabby doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Kira - Bull Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔍 Breed Filter] Excluding Gus - Pit Bull Terrier doesn't match Chihuahua (variants: chihuahua, chihuahua, chihuahuas)
+[🔄 Deduplication] 45 duplicates removed from RescueGroups
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 5 dogs found so far, need 45 more
+[🎫 Token Manager] Using cached token
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=45&location=Greenville%2C+MS&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 1 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 6 total dogs from sources: database, rescuegroups, petfinder
+[📊 Source Breakdown] database: 5, rescuegroups: 0, petfinder: 1
+ POST /api/petfinder/search 200 in 2346ms
+[✅ Chat Search Success] Found 6 dogs for chihuahuas in Greenville, MS from sources: database, rescuegroups, petfinder
+[✅ Petfinder Integration] Found 6 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 6 Showing: 6
+[✅ Search Complete] Total unique dogs: 6 Showing: 6
+[📊 Scores] Sample scores: [ 'Daniel: 64', 'Tiny Pinson: 62', 'Minnie: 48' ]
+ POST /api/chat 200 in 4255ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: more dogs please
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🐾 More Request] Processing more dogs request
+[🐾 Memory Check] Cached dogs count: 6
+[🐾 Memory Check] Seen dogs count: 6
+[🐾 Memory Check] Location: Greenville, MS
+[🐾 Memory Check] Breed: chihuahuas
+[🐾 Using Cache] Found cached dogs, checking for unseen ones...
+[🐾 Filter Check] Unseen dogs count: 0
+[🐾 No More Cache] All cached dogs have been shown
+ POST /api/chat 200 in 1535ms
