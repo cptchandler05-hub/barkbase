@@ -1,0 +1,114 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 71661 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 71661 (limit: 5)
+📋 Found 5 RescueGroups dogs from 71661 (API limit may be 25)
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog details: {
+  "type": "animals",
+  "id": "10072481",
+  "attributes": {
+    "id": "10072481",
+    "name": "Hannah Steele",
+    "ageGroup": "Senior",
+    "sex": "Female",
+    "sizeGroup": "Medium",
+    "breedPrimary": "Labrador Retriever",
+    "breedSecondary": "Hound",
+    "descriptionText": "After being on the run for 6&nbsp;months&nbsp;- Hannah was trapped by our wonderful Hound Hunter Team, and&nbsp;is now ready for a home of her own!&nbsp;\n\nShe is currently in a foster home learning&nbsp;what it&#39;s like to be a loved member of a family. She must have a secure fully fenced in yard and&nbsp;another dog or dogs that she can bond with - as Hannah is still a flight risk.\n\nHannah loves dogs and all people once she warms up. She is super loving, goofy and playful. Hannah is still a flight risk though and can get nervous, so a family that is willing to work with her and give her time to settle will be a must, and she will love you forever!&nbsp;\n\nShe is housebroken, spayed, microchipped, and up to date on shots. Any interested families will need a home check prior to adopting.\n\nIf Hannah might be the one for you go to EHRDOGS.ORG and submit an application. &nbsp;Don&#39;t forget to ask for HANNAH STEELE!!!\n\n&nbsp;",
+    "url": "https://ehrdogs.rescuegroups.org/animals/detail?AnimalID=10072481"
+  },
+  "relationships": {
+    "breeds": {
+      "data": [
+        {
+          "type": "breeds",
+          "id": "162"
+        },
+        {
+          "type": "breeds",
+          "id": "151"
+        }
+      ]
+    },
+    "colors": {
+      "data": [
+        {
+          "type": "colors",
+          "id": "25"
+        }
+      ]
+    },
+    "species": {
+      "data": [
+        {
+          "type": "species",
+          "id": "8"
+        }
+      ]
+    },
+    "statuses": {
+      "data": [
+        {
+          "type": "statuses",
+          "id": "1"
+        }
+      ]
+    },
+    "locations": {
+      "data": [
+        {
+          "type": "locations",
+          "id": "1000000956"
+        }
+      ]
+    },
+    "orgs": {
+      "data": [
+        {
+          "type": "orgs",
+          "id": "956"
+        }
+      ]
+    },
+    "pictures": {
+      "data": [
+        {
+          "type": "pictures",
+          "id": "41624745"
+        },
+        {
+          "type": "pictures",
+          "id": "63467269"
+        },
+        {
+          "type": "pictures",
+          "id": "35176991"
+        },
+        {
+          "type": "pictures",
+          "id": "35176992"
+        }
+      ]
+    }
+  }
+}
+🔍 Second dog: Doli (ID: 10131543)
+⚠️ RescueGroups failed for 71661: location is not defined
+📊 RescueGroups raw results: 0 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 0 unique RescueGroups dogs (0 duplicates removed)
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+✅ petfinder sync completed: 0 added, 5 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
