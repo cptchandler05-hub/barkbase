@@ -78,8 +78,8 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   const limit = isTestMode ? 5 : 50;
   console.log(`🦮 Fetching RescueGroups dogs from: ${location} (limit: ${limit})`);
 
-  // Use the correct v5 API endpoint with proper search path
-  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/haspic');
+  // Use the correct v5 API endpoint for all available dogs
+  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
   // Core filters
