@@ -93,21 +93,21 @@ class RescueGroupsAPI {
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
     searchParams.append('filter[lastUpdated]', `>${twoYearsAgo.toISOString().split('T')[0]}`);
 
-    // Add location-based filters - RescueGroups v5 uses different parameter names
+    // Add location-based filters - Use correct RescueGroups v5 parameter names
     if (params.latitude && params.longitude) {
-      // Use proper geo-based filtering
-      searchParams.append('filter[latitude]', params.latitude.toString());
-      searchParams.append('filter[longitude]', params.longitude.toString());
-      searchParams.append('filter[radius]', (params.radius || 100).toString());
+      // Use proper geo-based filtering with correct field names
+      searchParams.append('filter[locationLat]', params.latitude.toString());
+      searchParams.append('filter[locationLon]', params.longitude.toString());
+      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${params.radius || 100}mi`);
     } else if (params.location) {
-      // Try location-based search with proper field names
-      searchParams.append('filter[locationAddress]', params.location);
+      // Use location string with proper field name
+      searchParams.append('filter[location]', params.location);
       searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
-    // Add breed filter - RescueGroups might use different field names
+    // Add breed filter - Use correct field name
     if (params.breed) {
       // Normalize breed name for better matching
       let breedName = params.breed;
@@ -115,11 +115,8 @@ class RescueGroupsAPI {
         breedName = 'Chihuahua';
       }
 
-      // RescueGroups v5 might use different breed filter syntax
-      // Try multiple approaches since API docs may be outdated
-      searchParams.append('filter[breedString]', breedName);  // Alternative field name
-      searchParams.append('filter[breedPrimary]', breedName); // Keep original as fallback
-
+      // Use the correct breed filter field name
+      searchParams.append('filter[breedPrimary]', breedName);
       console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
@@ -272,11 +269,11 @@ class RescueGroupsAPI {
       photos: photos,
       tags: [],
       contact_info: {},
-      city: 'Unknown',
-      state: 'Unknown',
-      postcode: null,
-      latitude: null,
-      longitude: null,
+      city: animal.location?.city || 'Unknown',
+      state: animal.location?.state || 'Unknown',
+      postcode: animal.location?.postalCode || null,
+      latitude: animal.location?.lat || null,
+      longitude: animal.location?.lon || null,
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
