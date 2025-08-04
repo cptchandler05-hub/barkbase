@@ -152,7 +152,7 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
       }
     }
 
-    return animals;
+    return { data: animals, included: included };
   } catch (error) {
     console.warn(`⚠️ RescueGroups error for ${location}:`, error.message);
     return [];
@@ -160,18 +160,28 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 }
 
 // Transform RescueGroups animal to database format
-function transformRescueGroupsAnimal(animal) {
+function transformRescueGroupsAnimal(animal, included = []) {
   // RescueGroups v5 API uses attributes object
   const attrs = animal.attributes || {};
 
-  // Parse location from included relationships if available
+  // Parse location from included relationships
   let city = 'Unknown';
   let state = 'Unknown';
+  let latitude = null;
+  let longitude = null;
   
-  // Try to get location from relationships if included data is available
-  // For now use defaults - location can be enhanced later with included data parsing
-  city = 'Unknown';
-  state = 'Unknown';
+  if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
+    const locationData = included.find(item => 
+      item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
+    );
+    if (locationData?.attributes) {
+      const locAttrs = locationData.attributes;
+      city = locAttrs.city || locAttrs.name || locAttrs.citystate?.split(',')[0]?.trim() || 'Unknown';
+      state = locAttrs.state || locAttrs.citystate?.split(',')[1]?.trim() || 'Unknown';
+      latitude = locAttrs.lat || locAttrs.latitude || null;
+      longitude = locAttrs.lon || locAttrs.lng || locAttrs.longitude || null;
+    }
+  }
 
   // Parse photos from relationships - this needs to be handled differently in v5
   const photos = [];
@@ -216,8 +226,8 @@ function transformRescueGroupsAnimal(animal) {
     city: city,
     state: state,
     postcode: null,
-    latitude: null,
-    longitude: null,
+    latitude: latitude,
+    longitude: longitude,
     last_updated_at: new Date().toISOString(),
     created_at: new Date().toISOString()
   };
@@ -413,8 +423,11 @@ async function main() {
 
     for (const location of rescueGroupsLocations) {
       try {
-        const dogs = await fetchDogsFromRescueGroups(location, testMode);
-        const transformedDogs = dogs.map(transformRescueGroupsAnimal);
+        const result = await fetchDogsFromRescueGroups(location, testMode);
+        const dogs = result.data || result; // Handle both response formats
+        const included = result.included || [];
+        
+        const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
 
         // Minimal delay for RescueGroups (they can handle 10 req/sec)

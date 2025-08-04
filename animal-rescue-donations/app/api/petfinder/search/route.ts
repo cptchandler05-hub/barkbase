@@ -62,20 +62,20 @@ export async function POST(req: Request) {
         if (normalizedParams.location) {
           try {
             console.log(`[🗺️ Geocoding] Converting "${normalizedParams.location}" to coordinates for RescueGroups`);
-            
+
             if (!process.env.MAPBOX_ACCESS_TOKEN) {
               console.error('[❌ Geocoding] MAPBOX_ACCESS_TOKEN environment variable is missing!');
             } else {
               const geocodeResponse = await fetch(
                 `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US&limit=1`
               );
-              
+
               console.log(`[🗺️ Geocoding] Response status: ${geocodeResponse.status}`);
-              
+
               if (geocodeResponse.ok) {
                 const geocodeData = await geocodeResponse.json();
                 console.log(`[🗺️ Geocoding] Full response:`, JSON.stringify(geocodeData, null, 2));
-                
+
                 if (geocodeData.features && geocodeData.features.length > 0) {
                   const [lng, lat] = geocodeData.features[0].center;
                   coordinates = { latitude: lat, longitude: lng };
@@ -119,14 +119,35 @@ export async function POST(req: Request) {
         if (rgResult && rgResult.animals && rgResult.animals.length > 0) {
           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
-          const formattedRgDogs = rgResult.animals.map(dog => 
-            DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])
-          );
+          const formattedRgDogs = rgResult.animals
+          .map(dog => DogFormatter.formatRescueGroupsDog(dog, rgResult.included || []))
+          .filter(dog => {
+            // Additional breed filtering for safety
+            if (normalizedParams.breed) {
+              const searchBreed = normalizedParams.breed.toLowerCase();
+              const dogBreed = dog.breeds?.primary?.toLowerCase() || '';
+              const dogBreedSecondary = dog.breeds?.secondary?.toLowerCase() || '';
+
+              // Check if search breed matches primary or secondary breed
+              const isMatch = dogBreed.includes(searchBreed) || 
+                             searchBreed.includes(dogBreed) ||
+                             dogBreedSecondary.includes(searchBreed) ||
+                             searchBreed.includes(dogBreedSecondary);
+
+              if (!isMatch) {
+                console.log(`[🚫 Post-Filter] Excluding ${dog.name} - ${dog.breeds?.primary} doesn't match search for "${normalizedParams.breed}"`);
+                return false;
+              } else {
+                console.log(`[✅ Post-Filter] Including ${dog.name} - ${dog.breeds?.primary} matches search for "${normalizedParams.breed}"`);
+              }
+            }
+            return true;
+          });
 
           // COMPREHENSIVE filtering since RescueGroups API is returning cats, horses, and wrong breeds
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
             const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
-            
+
             // Filter out cats
             const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon', 'abyssinian', 'bombay'];
             if (catBreeds.some(catBreed => primaryBreed.includes(catBreed))) {
@@ -148,7 +169,7 @@ export async function POST(req: Request) {
               if (apiBreed.endsWith('s') && apiBreed.length > 3) {
                 apiBreed = apiBreed.slice(0, -1); // Remove plural
               }
-              
+
               if (!primaryBreed.includes(apiBreed) && !rgDog.breeds.secondary?.toLowerCase().includes(apiBreed)) {
                 console.log(`[🚫 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match search for "${normalizedParams.breed}"`);
                 return false;

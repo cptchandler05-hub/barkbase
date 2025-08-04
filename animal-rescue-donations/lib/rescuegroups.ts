@@ -133,26 +133,42 @@ class RescueGroupsAPI {
       // RescueGroups API requires lat/lng for geographic filtering
     }
 
-    // IMPROVED: Breed filtering with better normalization
+    // FIXED: Breed filtering with proper API breed names
     if (params.breed) {
-      const breedName = params.breed.trim();
+      const breedName = params.breed.trim().toLowerCase();
       
-      // Handle plural to singular conversion for API
-      let apiBreed = breedName.toLowerCase();
-      if (apiBreed.endsWith('s') && apiBreed.length > 3) {
-        // Convert "chihuahuas" -> "chihuahua", "terriers" -> "terrier", etc.
-        apiBreed = apiBreed.slice(0, -1);
-      }
+      // Convert search terms to exact RescueGroups API breed names
+      const breedMappings: { [key: string]: string } = {
+        'chihuahuas': 'Chihuahua',
+        'chihuahua': 'Chihuahua',
+        'labs': 'Labrador Retriever',
+        'lab': 'Labrador Retriever',
+        'labrador': 'Labrador Retriever',
+        'german shepherds': 'German Shepherd Dog',
+        'german shepherd': 'German Shepherd Dog',
+        'pit bulls': 'Pit Bull Terrier',
+        'pitbull': 'Pit Bull Terrier',
+        'pit bull': 'Pit Bull Terrier',
+        'golden retrievers': 'Golden Retriever',
+        'golden retriever': 'Golden Retriever',
+        'huskies': 'Siberian Husky',
+        'husky': 'Siberian Husky',
+        'terriers': 'Terrier',
+        'terrier': 'Terrier',
+        'bulldogs': 'Bulldog',
+        'bulldog': 'Bulldog',
+        'beagles': 'Beagle',
+        'beagle': 'Beagle'
+      };
       
-      // RescueGroups API requires exact breed matching with proper capitalization
-      const properCaseBreed = apiBreed.split(' ').map(word => 
+      const apiBreed = breedMappings[breedName] || breedName.split(' ').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // Use primary breed filter as ChatGPT recommended
-      searchParams.append('filter[breedPrimary]', properCaseBreed);
+      // Use primary breed filter
+      searchParams.append('filter[breedPrimary]', apiBreed);
       
-      console.log(`[🔍 RescueGroups] Applying breed filter: ${properCaseBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
     // Other filters
@@ -352,17 +368,26 @@ class RescueGroupsAPI {
       orgId = orgData?.id || '';
     }
 
-    // Get location info from included data
+    // Get location info from included data with better fallbacks
     let city = 'Unknown', state = 'Unknown', latitude = null, longitude = null;
     if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
       const locationData = included.find((item: any) => 
         item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
       );
       if (locationData?.attributes) {
-        city = locationData.attributes.city || 'Unknown';
-        state = locationData.attributes.state || 'Unknown';
-        latitude = locationData.attributes.lat || null;
-        longitude = locationData.attributes.lon || null;
+        const attrs = locationData.attributes;
+        
+        // Try multiple city fields
+        city = attrs.city || attrs.name || attrs.citystate?.split(',')[0]?.trim() || 'Unknown';
+        
+        // Try multiple state fields
+        state = attrs.state || attrs.citystate?.split(',')[1]?.trim() || 'Unknown';
+        
+        // Get coordinates
+        latitude = attrs.lat || attrs.latitude || null;
+        longitude = attrs.lon || attrs.lng || attrs.longitude || null;
+        
+        console.log(`[🌍 RG Location Enhanced] ${animal.attributes?.name}: ${city}, ${state} (${latitude}, ${longitude})`);
       }
     }
 
