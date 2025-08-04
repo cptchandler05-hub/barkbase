@@ -53,18 +53,32 @@ class DogFormatter {
   static formatDatabaseDog(dog: any): UnifiedDog {
     // Handle photos array properly - ensure we always get strings
     const photos = (dog.photos || []).map((photo: any) => {
+      // Handle string URLs (RescueGroups direct URLs)
       if (typeof photo === 'string') {
         return {
           small: photo,
           medium: photo,
           large: photo
         };
-      } else if (photo && typeof photo === 'object' && photo.medium) {
-        return {
-          small: photo.small || photo.medium || photo.large,
-          medium: photo.medium || photo.large || photo.small,
-          large: photo.large || photo.medium || photo.small
-        };
+      } 
+      // Handle object formats
+      else if (photo && typeof photo === 'object') {
+        // RescueGroups object format: {small: "url", medium: "url", large: "url"}
+        if (photo.small || photo.medium || photo.large) {
+          return {
+            small: photo.small || photo.medium || photo.large,
+            medium: photo.medium || photo.large || photo.small,
+            large: photo.large || photo.medium || photo.small
+          };
+        }
+        // Petfinder nested object format: {medium: {url: "..."}}
+        else if (photo.medium && typeof photo.medium === 'object' && photo.medium.url) {
+          return {
+            small: photo.medium.url,
+            medium: photo.medium.url,
+            large: photo.medium.url
+          };
+        }
       }
       // Fallback for invalid photo data
       return {

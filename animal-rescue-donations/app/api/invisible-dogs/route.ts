@@ -64,10 +64,24 @@ export async function GET(req: Request) {
       size: dog.size,
       photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
         ? dog.photos.map((photo: any) => {
+            // Handle string URLs (RescueGroups format)
             if (typeof photo === 'string') {
               return { medium: photo };
-            } else if (photo && typeof photo === 'object') {
-              return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
+            } 
+            // Handle object format (Petfinder format)
+            else if (photo && typeof photo === 'object') {
+              // For RescueGroups objects: {small: "url", medium: "url", large: "url"}
+              if (photo.medium || photo.large || photo.small) {
+                return { medium: photo.medium || photo.large || photo.small };
+              }
+              // For nested Petfinder objects: {medium: {url: "..."}}
+              else if (photo.medium && typeof photo.medium === 'object' && photo.medium.url) {
+                return { medium: photo.medium.url };
+              }
+              // Direct Petfinder format: already correct
+              else if (typeof photo.medium === 'string') {
+                return { medium: photo.medium };
+              }
             }
             return { medium: '/images/barkr.png' };
           })
