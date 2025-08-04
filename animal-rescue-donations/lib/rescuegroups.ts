@@ -30,6 +30,9 @@ interface RescueGroupsAnimal {
     distance?: number;
     updated: string;
     created: string;
+    animalLocationCity?: string;
+    animalLocationState?: string;
+    animalLocationPostalcode?: string;
   };
   relationships?: {
     orgs?: {
@@ -101,6 +104,63 @@ class RescueGroupsAPI {
   }
 
   async searchAnimals(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
+    console.log(`[🦮 RescueGroups] Starting smart fallback search with params:`, params);
+
+    // Attempt 1: Full filters
+    console.log(`[🎯 RescueGroups] Attempt 1: Full filters`);
+    let result = await this.attemptSearch(params);
+
+    if (result.animals.length > 0) {
+      console.log(`[✅ RescueGroups] Success with full filters: ${result.animals.length} dogs`);
+      return result;
+    }
+
+    // Attempt 2: Remove breed filter if it was used
+    if (params.breed) {
+      console.log(`[🎯 RescueGroups] Attempt 2: Removing strict breed filter "${params.breed}"`);
+      const paramsWithoutBreed = { ...params, breed: undefined };
+      result = await this.attemptSearch(paramsWithoutBreed);
+
+      if (result.animals.length > 0) {
+        console.log(`[✅ RescueGroups] Success without breed filter: ${result.animals.length} dogs`);
+        return result;
+      }
+    }
+
+    // Attempt 3: Expand radius if location was provided
+    if (params.latitude && params.longitude && (params.radius || 100) < 250) {
+      console.log(`[🎯 RescueGroups] Attempt 3: Expanding radius to 250 miles`);
+      const paramsWithLargerRadius = { ...params, breed: undefined, radius: 250 };
+      result = await this.attemptSearch(paramsWithLargerRadius);
+
+      if (result.animals.length > 0) {
+        console.log(`[✅ RescueGroups] Success with expanded radius: ${result.animals.length} dogs`);
+        return result;
+      }
+    }
+
+    // Attempt 4: Location-only search (no breed, no other filters except location)
+    if (params.latitude && params.longitude) {
+      console.log(`[🎯 RescueGroups] Attempt 4: Location-only search (removing all non-location filters)`);
+      const locationOnlyParams = {
+        latitude: params.latitude,
+        longitude: params.longitude,
+        radius: 250,
+        limit: params.limit
+      };
+      result = await this.attemptSearch(locationOnlyParams);
+
+      if (result.animals.length > 0) {
+        console.log(`[✅ RescueGroups] Success with location-only search: ${result.animals.length} dogs`);
+        return result;
+      }
+    }
+
+    console.log(`[❌ RescueGroups] All attempts failed - returning empty results to trigger Petfinder fallback`);
+    return { animals: [], included: [] };
+  }
+
+  private async attemptSearch(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
     // CORRECTED: Use the proper dogs-specific endpoint as recommended by ChatGPT
     const endpoint = `${this.baseURL}/search/available/dogs`;
     const url = new URL(endpoint);
@@ -114,22 +174,21 @@ class RescueGroupsAPI {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // FIXED: Location-based filtering - RescueGroups v5 uses geoLatitude/geoLongitude/geoRadius
+    // FIXED: Location-based filtering - Try multiple parameter formats to find what works
     if (params.latitude && params.longitude) {
-      // Use coordinates for precise filtering - EXACTLY as ChatGPT recommended
-      searchParams.append('filter[geoLatitude]', params.latitude.toString());
-      searchParams.append('filter[geoLongitude]', params.longitude.toString());
-
       const radius = params.radius || 100;
-      searchParams.append('filter[geoRadius]', radius.toString());
+
+      // Try the most common RescueGroups v5 parameter formats
+      searchParams.append('filter[location.latitude]', params.latitude.toString());
+      searchParams.append('filter[location.longitude]', params.longitude.toString());
+      searchParams.append('filter[location.distance]', radius.toString());
+
+      // Also try alternative formats in case the above don't work
+      searchParams.append('filter[latitude]', params.latitude.toString());
+      searchParams.append('filter[longitude]', params.longitude.toString());
+      searchParams.append('filter[distance]', radius.toString());
 
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
-    } else {
-      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - will return nationwide results (may be less targeted)`);
-
-      // Continue without geographic filtering - this will return nationwide results
-      // The upstream geocoding should have provided coordinates, but if it failed, 
-      // we still want to return some results rather than none
     }
 
     // FIXED: Breed filtering using the correct API parameter as per ChatGPT feedback
@@ -164,10 +223,11 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
 
-      // Use correct breed filter parameter - as per ChatGPT feedback
+      // Try multiple breed filter parameter formats
+      searchParams.append('filter[breedPrimary]', apiBreed);
       searchParams.append('filter[animalBreed]', apiBreed);
 
-      console.log(`[🔍 RescueGroups] Applying STRICT breed filter: ${apiBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
     // Other filters
@@ -222,68 +282,84 @@ class RescueGroupsAPI {
     searchParams.append('include', 'orgs,locations,breeds,pictures');
 
     try {
-      console.log('[🦮 RescueGroups] Final search URL:', url.toString());
-
-      // Debug: Log all applied filters
-      console.log('[🔍 RescueGroups] Applied filters:', {
-        species: searchParams.get('filter[species]'),
-        status: searchParams.get('filter[status]'),
-        location: searchParams.get('filter[location]'),
-        distance: searchParams.get('filter[distance]'),
-        breedPrimary: searchParams.get('filter[breedPrimary]'),
-        breedSecondary: searchParams.get('filter[breedSecondary]'),
-        limit: searchParams.get('limit')
-      });
+      console.log('[🦮 RescueGroups] Search URL:', url.toString());
 
       const result = await this.makeRequest(url.toString());
 
       const animals = result.data || [];
       const included = result.included || [];
 
-      console.log(`[✅ RescueGroups] Found ${animals.length} animals with ${included.length} included items`);
+      console.log(`[📊 RescueGroups] Found ${animals.length} animals`);
 
-      // Log sample data structure if we have results
-      if (animals.length > 0) {
-        console.log('[🔍 RescueGroups] Sample animal structure:', {
-          id: animals[0].id,
-          attributes: Object.keys(animals[0].attributes || {}),
-          relationships: Object.keys(animals[0].relationships || {})
-        });
+      // IMPORTANT: Check if results are geographically relevant
+      if (animals.length > 0 && params.latitude && params.longitude) {
+        const relevantAnimals = this.filterGeographicallyRelevant(animals, included, params.latitude, params.longitude, params.radius || 100);
+        console.log(`[🗺️ RescueGroups] Geographic filtering: ${animals.length} → ${relevantAnimals.length} relevant results`);
 
-        // Debug included data types
-        if (included.length > 0) {
-          const includedTypes = included.reduce((acc: any, item: any) => {
-            acc[item.type] = (acc[item.type] || 0) + 1;
-            return acc;
-          }, {});
-          console.log('[🔍 RG Included Types]:', includedTypes);
-
-          // Show sample location data if available
-          const sampleLocation = included.find((item: any) => item.type === 'locations');
-          if (sampleLocation) {
-            console.log('[🌍 RG Sample Location]:', {
-              id: sampleLocation.id,
-              attributes: Object.keys(sampleLocation.attributes || {})
-            });
-          }
-
-          // Show sample picture data if available
-          const samplePicture = included.find((item: any) => item.type === 'pictures');
-          if (samplePicture) {
-            console.log('[📷 RG Sample Picture]:', {
-              id: samplePicture.id,
-              attributes: Object.keys(samplePicture.attributes || {})
-            });
-          }
+        // If most results are irrelevant, treat as failed search
+        if (relevantAnimals.length < animals.length * 0.3) {
+          console.log(`[⚠️ RescueGroups] Too many irrelevant results (${relevantAnimals.length}/${animals.length}) - treating as failed search`);
+          return { animals: [], included: [] };
         }
+
+        return { animals: relevantAnimals, included };
       }
 
       return { animals, included };
     } catch (error) {
-      console.error('[❌ RescueGroups] Search failed:', error);
-      throw error;
+      console.error('[❌ RescueGroups] Search attempt failed:', error);
+      return { animals: [], included: [] };
     }
   }
+
+  private filterGeographicallyRelevant(animals: RescueGroupsAnimal[], included: any[], searchLat: number, searchLng: number, maxRadius: number): RescueGroupsAnimal[] {
+    return animals.filter(animal => {
+      // Try to get location from animal attributes first
+      const attrs = animal.attributes || {};
+      let animalLat = null;
+      let animalLng = null;
+
+      // Check if we have direct coordinates in attributes
+      if (attrs.animalLocationCity || attrs.animalLocationState) {
+          // This is a bit of a hack, but if city/state are present, we assume coordinates might be available or implied for distance calculation.
+          // A more robust solution would involve geocoding these directly if lat/lng are missing.
+          // For now, we'll rely on the included location data if available.
+      }
+
+      // Fallback to included location data if direct attributes don't provide lat/lng
+      if (!animalLat && animal.relationships?.locations?.data?.[0] && included.length > 0) {
+        const locationData = included.find((item: any) =>
+          item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
+        );
+        if (locationData?.attributes) {
+          animalLat = parseFloat(locationData.attributes.lat || locationData.attributes.latitude || 0);
+          animalLng = parseFloat(locationData.attributes.lon || locationData.attributes.lng || locationData.attributes.longitude || 0);
+        }
+      }
+      // If no lat/lng could be determined from attributes or included data, we can't verify relevance, so include it.
+      // This might happen if the API data is incomplete for a specific animal.
+      if (!animalLat || !animalLng) {
+        return true;
+      }
+
+      // Calculate distance
+      const distance = this.calculateDistance(searchLat, searchLng, animalLat, animalLng);
+      return distance <= maxRadius;
+    });
+  }
+
+  private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 3959; // Earth's radius in miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
 
   async getAnimalDetails(animalId: string): Promise<RescueGroupsAnimal | null> {
     const endpoint = `${this.baseURL}/${animalId}`;
@@ -309,7 +385,10 @@ class RescueGroupsAPI {
       'goodWithDogs',
       'pictures',
       'thumbnailUrl',
-      'url'
+      'url',
+      'animalLocationCity',
+      'animalLocationState',
+      'animalLocationPostalcode'
     ];
     url.searchParams.append('fields[animals]', fields.join(','));
     url.searchParams.append('include', 'orgs,locations,breeds,pictures');
@@ -338,7 +417,7 @@ class RescueGroupsAPI {
     // Try to get photos from relationships and included data
     if (animal.relationships?.pictures?.data && included.length > 0) {
       const pictureIds = animal.relationships.pictures.data.map((pic: any) => pic.id);
-      const pictureObjects = included.filter((item: any) => 
+      const pictureObjects = included.filter((item: any) =>
         item.type === 'pictures' && pictureIds.includes(item.id)
       );
 
@@ -365,24 +444,24 @@ class RescueGroupsAPI {
     // Get organization info from included data
     let orgId = '';
     if (animal.relationships?.orgs?.data?.[0] && included.length > 0) {
-      const orgData = included.find((item: any) => 
+      const orgData = included.find((item: any) =>
         item.type === 'orgs' && item.id === animal.relationships.orgs.data[0].id
       );
       orgId = orgData?.id || '';
     }
 
-    // Get location info - FIXED per ChatGPT feedback to use direct animal attributes
+    // Get location info - FIXED per ChatGPT feedback to use direct animal attributes and included data
     let city = 'Unknown', state = 'Unknown', latitude = null, longitude = null;
 
-    // First try direct animal attributes (per ChatGPT feedback)
+    // Try direct animal attributes first
     if (attrs.animalLocationCity || attrs.animalLocationState) {
       city = attrs.animalLocationCity || 'Unknown';
       state = attrs.animalLocationState || 'Unknown';
       console.log(`[🌍 RG Location Direct] ${attrs.name}: ${city}, ${state}`);
     }
-    // Fallback to included data if direct attributes not available
+    // Fallback to included data if direct attributes not available or insufficient
     else if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
-      const locationData = included.find((item: any) => 
+      const locationData = included.find((item: any) =>
         item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
       );
       if (locationData?.attributes) {
@@ -395,12 +474,17 @@ class RescueGroupsAPI {
         state = locationAttrs.state || locationAttrs.citystate?.split(',')[1]?.trim() || 'Unknown';
 
         // Get coordinates
-        latitude = locationAttrs.lat || locationAttrs.latitude || null;
-        longitude = locationAttrs.lon || locationAttrs.lng || locationAttrs.longitude || null;
+        latitude = parseFloat(locationAttrs.lat || locationAttrs.latitude || '0');
+        longitude = parseFloat(locationAttrs.lon || locationAttrs.lng || locationAttrs.longitude || '0');
 
         console.log(`[🌍 RG Location Included] ${attrs.name}: ${city}, ${state} (${latitude}, ${longitude})`);
       }
     }
+
+    // If after checking attributes and included data, we still don't have lat/lng, use 0.0 as default
+    if (latitude === null) latitude = 0.0;
+    if (longitude === null) longitude = 0.0;
+
 
     return {
       rescuegroups_id: animal.id,
@@ -430,7 +514,7 @@ class RescueGroupsAPI {
       contact_info: {},
       city: city,
       state: state,
-      postcode: null,
+      postcode: attrs.animalLocationPostalcode || null,
       latitude: latitude,
       longitude: longitude,
       last_updated_at: new Date().toISOString(),
