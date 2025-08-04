@@ -1,0 +1,75 @@
+✅ Current Logic Summary (rescuegroups.ts)
+You are doing the following:
+
+Query 1: Full params (location + breed)
+
+ts
+Copy
+Edit
+const query1 = await fetchRescueGroupsAnimals({ ...commonParams, breed: breedName });
+✔️ This is strictest. ✅
+
+Query 2: Only breed
+
+ts
+Copy
+Edit
+const query2 = await fetchRescueGroupsAnimals({ ...commonParams, location: undefined, breed: breedName });
+✔️ This relaxes location filtering. ✅
+
+Query 3: Only location
+
+ts
+Copy
+Edit
+const query3 = await fetchRescueGroupsAnimals({ ...commonParams, breed: undefined });
+✔️ This relaxes breed filtering. ✅
+
+Query 4: Neither location nor breed
+
+ts
+Copy
+Edit
+const query4 = await fetchRescueGroupsAnimals({ location: undefined, breed: undefined });
+❌ This query is completely unfiltered — which is not ideal unless you're doing strict deduping and score sorting downstream. It could bring in horses, cats, etc., and will absolutely overload Petfinder if this is passed downstream.
+
+❗Issues & Fixes
+1. 🐴 Non-dog results
+You are not explicitly filtering for species = dog in any of the four queries. You must include this in every RescueGroups query.
+
+Fix:
+Ensure your base query includes a species filter like:
+
+ts
+Copy
+Edit
+animalSpecies: 'Dog'
+You can include it in commonParams or directly inside fetchRescueGroupsAnimals.
+
+2. 📍 Location fallback broken
+If you're passing location: undefined, and RescueGroups requires lat/lng instead of just city/state, then your fallback logic will always fail unless you explicitly fetch and pass valid coordinates.
+
+You should validate or inject coordinates before Query 1, or handle that upstream in normalization.
+
+3. 🚨 Query 4 risk
+Query 4 with no filters may return random animals with low relevance. You should either:
+
+Cap the number of results returned by this query to ~10–20 max.
+
+Filter by status: Available, species: Dog, and sort by distance or recent.
+
+✅ Final Verdict
+Yes, the fallback logic is written correctly in terms of structure, but it’s not effective in practice because:
+
+You’re missing the species filter
+
+You’re not confirming that coordinates are valid
+
+Query 4 is too open-ended
+
+✅ Next Steps
+Add { animalSpecies: 'Dog' } to every call to RescueGroups API.
+
+Confirm that latitude and longitude are always present in commonParams. If not, geocode immediately before query 1.
+
+Consider removing or modifying Query 4 to limit its result size and tighten filters.
