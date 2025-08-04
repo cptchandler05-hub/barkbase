@@ -1,4 +1,3 @@
-
 // RescueGroups v5 REST API Integration
 // Documentation: https://userguide.rescuegroups.org/display/APIDG/API+Developer+Guide
 
@@ -109,7 +108,7 @@ class RescueGroupsAPI {
 
     // CRITICAL: Force dogs only - use the correct field name
     searchParams.append('filter[species]', 'dog'); // lowercase as per API docs
-    
+
     // Filter for recently updated animals (last 3 months to get more relevant results)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -120,23 +119,23 @@ class RescueGroupsAPI {
       // Use coordinates for precise filtering - EXACTLY as ChatGPT recommended
       searchParams.append('filter[geoLatitude]', params.latitude.toString());
       searchParams.append('filter[geoLongitude]', params.longitude.toString());
-      
+
       const radius = params.radius || 100;
       searchParams.append('filter[geoRadius]', radius.toString());
-      
+
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
     } else {
-      // WITHOUT COORDINATES, WE CANNOT FILTER BY LOCATION AT ALL
-      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - results will be nationwide and unfiltered`);
-      
-      // Don't attempt any location filtering without coordinates
-      // RescueGroups API requires lat/lng for geographic filtering
+      console.log(`[⚠️ RescueGroups] No coordinates available for "${params.location}" - will return nationwide results (may be less targeted)`);
+
+      // Continue without geographic filtering - this will return nationwide results
+      // The upstream geocoding should have provided coordinates, but if it failed, 
+      // we still want to return some results rather than none
     }
 
     // FIXED: Breed filtering using the correct API parameter as per ChatGPT feedback
     if (params.breed) {
       const breedName = params.breed.trim().toLowerCase();
-      
+
       // Convert search terms to exact RescueGroups API breed names
       const breedMappings: { [key: string]: string } = {
         'chihuahuas': 'Chihuahua',
@@ -160,14 +159,14 @@ class RescueGroupsAPI {
         'beagles': 'Beagle',
         'beagle': 'Beagle'
       };
-      
+
       const apiBreed = breedMappings[breedName] || breedName.split(' ').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
-      
+
       // Use correct breed filter parameter - as per ChatGPT feedback
       searchParams.append('filter[animalBreed]', apiBreed);
-      
+
       console.log(`[🔍 RescueGroups] Applying STRICT breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
@@ -224,7 +223,7 @@ class RescueGroupsAPI {
 
     try {
       console.log('[🦮 RescueGroups] Final search URL:', url.toString());
-      
+
       // Debug: Log all applied filters
       console.log('[🔍 RescueGroups] Applied filters:', {
         species: searchParams.get('filter[species]'),
@@ -235,14 +234,14 @@ class RescueGroupsAPI {
         breedSecondary: searchParams.get('filter[breedSecondary]'),
         limit: searchParams.get('limit')
       });
-      
+
       const result = await this.makeRequest(url.toString());
 
       const animals = result.data || [];
       const included = result.included || [];
-      
+
       console.log(`[✅ RescueGroups] Found ${animals.length} animals with ${included.length} included items`);
-      
+
       // Log sample data structure if we have results
       if (animals.length > 0) {
         console.log('[🔍 RescueGroups] Sample animal structure:', {
@@ -250,7 +249,7 @@ class RescueGroupsAPI {
           attributes: Object.keys(animals[0].attributes || {}),
           relationships: Object.keys(animals[0].relationships || {})
         });
-        
+
         // Debug included data types
         if (included.length > 0) {
           const includedTypes = included.reduce((acc: any, item: any) => {
@@ -258,7 +257,7 @@ class RescueGroupsAPI {
             return acc;
           }, {});
           console.log('[🔍 RG Included Types]:', includedTypes);
-          
+
           // Show sample location data if available
           const sampleLocation = included.find((item: any) => item.type === 'locations');
           if (sampleLocation) {
@@ -267,7 +266,7 @@ class RescueGroupsAPI {
               attributes: Object.keys(sampleLocation.attributes || {})
             });
           }
-          
+
           // Show sample picture data if available
           const samplePicture = included.find((item: any) => item.type === 'pictures');
           if (samplePicture) {
@@ -332,23 +331,23 @@ class RescueGroupsAPI {
   // Transform RescueGroups animal to our database format
   transformToDatabaseFormat(animal: RescueGroupsAnimal, included: any[] = []): any {
     const attrs = animal.attributes || {};
-    
+
     // Parse photos from included data or attributes
     const photos = [];
-    
+
     // Try to get photos from relationships and included data
     if (animal.relationships?.pictures?.data && included.length > 0) {
       const pictureIds = animal.relationships.pictures.data.map((pic: any) => pic.id);
       const pictureObjects = included.filter((item: any) => 
         item.type === 'pictures' && pictureIds.includes(item.id)
       );
-      
+
       for (const pic of pictureObjects) {
         const url = pic.attributes?.large || pic.attributes?.original || pic.attributes?.small;
         if (url) photos.push(url);
       }
     }
-    
+
     // Fallback to direct pictures in attributes
     if (photos.length === 0 && attrs.pictures && Array.isArray(attrs.pictures)) {
       const sortedPictures = attrs.pictures.sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -374,7 +373,7 @@ class RescueGroupsAPI {
 
     // Get location info - FIXED per ChatGPT feedback to use direct animal attributes
     let city = 'Unknown', state = 'Unknown', latitude = null, longitude = null;
-    
+
     // First try direct animal attributes (per ChatGPT feedback)
     if (attrs.animalLocationCity || attrs.animalLocationState) {
       city = attrs.animalLocationCity || 'Unknown';
@@ -388,17 +387,17 @@ class RescueGroupsAPI {
       );
       if (locationData?.attributes) {
         const locationAttrs = locationData.attributes;
-        
+
         // Try multiple city fields with better fallbacks
         city = locationAttrs.city || locationAttrs.name || locationAttrs.citystate?.split(',')[0]?.trim() || 'Unknown';
-        
+
         // Try multiple state fields
         state = locationAttrs.state || locationAttrs.citystate?.split(',')[1]?.trim() || 'Unknown';
-        
+
         // Get coordinates
         latitude = locationAttrs.lat || locationAttrs.latitude || null;
         longitude = locationAttrs.lon || locationAttrs.lng || locationAttrs.longitude || null;
-        
+
         console.log(`[🌍 RG Location Included] ${attrs.name}: ${city}, ${state} (${latitude}, ${longitude})`);
       }
     }

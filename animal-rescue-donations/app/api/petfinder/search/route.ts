@@ -115,7 +115,7 @@ export async function POST(req: Request) {
           age: normalizedParams.age,
           size: normalizedParams.size,
           gender: normalizedParams.gender,
-          limit: Math.min(50, normalizedParams.limit! - allDogs.length),
+          limit: Math.min(25, normalizedParams.limit! - allDogs.length), // Reduced from 50 to 25
           radius: normalizedParams.radius,
           latitude: coordinates?.latitude, // Use geocoded latitude if available
           longitude: coordinates?.longitude // Use geocoded longitude if available
