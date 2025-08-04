@@ -131,7 +131,12 @@ class SearchNormalizer {
     if (params.location) {
       const loc = this.normalizeLocation(params.location);
       normalized.location = loc.searchString;
-      if (loc.coordinates) {
+
+      // 🧭 Use coordinates passed in or from parsed location
+      if (params.latitude && params.longitude) {
+        normalized.latitude = params.latitude;
+        normalized.longitude = params.longitude;
+      } else if (loc.coordinates) {
         normalized.latitude = loc.coordinates.lat;
         normalized.longitude = loc.coordinates.lng;
       }
