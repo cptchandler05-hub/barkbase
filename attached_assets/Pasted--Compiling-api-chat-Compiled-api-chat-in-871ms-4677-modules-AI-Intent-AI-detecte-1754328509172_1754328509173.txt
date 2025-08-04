@@ -1,0 +1,754 @@
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 871ms (4677 modules)
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Kanb, UT
+[📍 Normalized Location] Kanb, UT
+[🐾 Barkr Memory] {
+  location: 'Kanb, UT',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Kanb, UT', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Kanb, UT
+[🗄️ Database] Filtering by state: UT
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 2.6s (4683 modules)
+[🔍 Enhanced Search] Starting priority waterfall search
+[📋 Raw Input] {
+  location: 'Kanb, UT',
+  breed: 'Chihuahua',
+  size: null,
+  age: null,
+  gender: null,
+  limit: 50
+}
+[🧼 Normalized Params] { location: 'Kanb, UT', breed: 'Chihuahua', limit: 50, radius: 100 }
+[💾 Database] Searching database first...
+[🦮 RescueGroups] Searching RescueGroups...
+[🗺️ RescueGroups] Using location: Kanb,+UT with radius 100mi
+[🔍 RescueGroups] Applying breed filter: Chihuahua (from: chihuahua)
+[🦮 RescueGroups] Final search URL: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-05-04&filter%5Blocation%5D=Kanb%2C%2BUT&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Chihuahua&filter%5BbreedPrimary%5D=Chihuahua&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🔍 RescueGroups] Applied filters: {
+  species: 'Dog',
+  status: 'Available',
+  location: 'Kanb,+UT',
+  distance: '100',
+  breedPrimary: 'Chihuahua',
+  breedSecondary: null,
+  limit: '50'
+}
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-05-04&filter%5Blocation%5D=Kanb%2C%2BUT&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Chihuahua&filter%5BbreedPrimary%5D=Chihuahua&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 50,
+  includedCount: 436,
+  meta: {
+    count: 71931,
+    countReturned: 50,
+    pageReturned: 1,
+    limit: 50,
+    pages: 1439,
+    transactionId: 'pfrGxiMggrXs'
+  }
+}
+[✅ RescueGroups] Found 50 animals with 436 included items
+[🔍 RescueGroups] Sample animal structure: {
+  id: '10007851',
+  attributes: [
+    'id',
+    'name',
+    'ageGroup',
+    'sex',
+    'breedPrimary',
+    'breedSecondary',
+    'descriptionText'
+  ],
+  relationships: [ 'orgs', 'locations', 'breeds', 'pictures' ]
+}
+[🔍 RG Included Types]: { orgs: 33, locations: 33, breeds: 35, pictures: 335 }
+[🌍 RG Sample Location]: {
+  id: '1000006685',
+  attributes: [
+    'street',     'city',
+    'state',      'citystate',
+    'postalcode', 'country',
+    'phone',      'lat',
+    'lon',        'coordinates'
+  ]
+}
+[📷 RG Sample Picture]: {
+  id: '89880808',
+  attributes: [ 'original', 'large', 'small', 'order', 'created', 'updated' ]
+}
+[✅ RescueGroups Hit] Found 50 dogs from RescueGroups
+[🔍 RG Included] Processing with 436 included items
+[🦮 RG Format] Processing: Zelda (ID: 10007851)
+[🔍 RG Photos] Found 13 picture objects for Zelda
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/89880808.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/64712501.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/67676009.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/68630068.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/68630069.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/72562111.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/72562112.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/74856660.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/74856662.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/77190293.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/78575079.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/97591461.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10007/10007851/99403654.jpg?width=500
+[🌍 RG Location] Found location for Zelda: Kanab, UT
+[🔍 RG Debug] Zelda - Photos: 13, Location: Kanab, UT
+[✅ RG Formatted] Zelda: Domestic Short Hair, Senior, Unknown, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Stowaway (ID: 10013509)
+[🔍 RG Photos] Found 3 picture objects for Stowaway
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3077/pictures/animals/10013/10013509/35712496.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3077/pictures/animals/10013/10013509/35712498.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3077/pictures/animals/10013/10013509/56438918.jpg?width=500
+[🌍 RG Location] Found location for Stowaway: Unknown, Unknown
+[🔍 RG Debug] Stowaway - Photos: 3, Location: Unknown, Unknown
+[✅ RG Formatted] Stowaway: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 92.7
+[🦮 RG Format] Processing: Bettis (ID: 10059734)
+[🔍 RG Photos] Found 2 picture objects for Bettis
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/27/pictures/animals/10059/10059734/41339654.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/27/pictures/animals/10059/10059734/41339662.jpg?width=500
+[🌍 RG Location] Found location for Bettis: Sistersville, WV
+[🔍 RG Debug] Bettis - Photos: 2, Location: Sistersville, WV
+[✅ RG Formatted] Bettis: Domestic Short Hair, Unknown, Unknown, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Hannah Steele (ID: 10072481)
+[🔍 RG Photos] Found 4 picture objects for Hannah Steele
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/41624745.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/63467269.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176991.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176992.jpg?width=500
+[🌍 RG Location] Found location for Hannah Steele: Rockaway, NJ
+[🔍 RG Debug] Hannah Steele - Photos: 4, Location: Rockaway, NJ
+[✅ RG Formatted] Hannah Steele: Labrador Retriever, Senior, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Viola (ID: 10078447)
+[🔍 RG Photos] Found 13 picture objects for Viola
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/91611215.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/84150503.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/84150507.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/84150505.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/84150508.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/82783251.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/42378293.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/35221813.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/35221815.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/42378282.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/35221814.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/42378285.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10078/10078447/42378290.jpg?width=500
+[🌍 RG Location] Found location for Viola: Philadelphia, PA
+[🔍 RG Debug] Viola - Photos: 13, Location: Philadelphia, PA
+[✅ RG Formatted] Viola: Domestic Short Hair, Adult, Small, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Maggie (ID: 10089711)
+[🔍 RG Photos] Found 1 picture objects for Maggie
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5167/pictures/animals/10089/10089711/35300283.jpg?width=500
+[🌍 RG Location] Found location for Maggie: Unknown, Unknown
+[🔍 RG Debug] Maggie - Photos: 1, Location: Unknown, Unknown
+[✅ RG Formatted] Maggie: Tortoiseshell, Young, Unknown, Photos: 1, Score: 68.2
+[🦮 RG Format] Processing: Doli (ID: 10131543)
+[🔍 RG Photos] Found 19 picture objects for Doli
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452172.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452180.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452175.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/98244962.png?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/98245040.png?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/98245041.png?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/98245045.png?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452168.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/87154693.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452174.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/89452178.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/88911016.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/88910877.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/88910966.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/87154684.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/88910967.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/87154687.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/87154694.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/35520048.jpg?width=500
+[🌍 RG Location] Found location for Doli: Unknown, Unknown
+[🔍 RG Debug] Doli - Photos: 19, Location: Unknown, Unknown
+[✅ RG Formatted] Doli: Husky, Senior, Large, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Cylana (ID: 10138270)
+[🔍 RG Photos] Found 15 picture objects for Cylana
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/100077476.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/96827212.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/97921793.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/97396761.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/100077475.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/97921794.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/96889290.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/96889291.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/94790546.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/96889289.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/96827111.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/95036173.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/94790547.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/35538797.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/35538798.jpg?width=500
+[🌍 RG Location] Found location for Cylana: Unknown, Unknown
+[🔍 RG Debug] Cylana - Photos: 15, Location: Unknown, Unknown
+[✅ RG Formatted] Cylana: Shar Pei, Senior, Large, Photos: 15, Score: 130
+[🦮 RG Format] Processing: Tara (ID: 10178313)
+[🔍 RG Photos] Found 10 picture objects for Tara
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/89311739.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/76960673.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/62052409.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/87171035.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/97051692.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/89311729.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/89311725.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/87171036.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/87171037.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10178/10178313/58063078.jpg?width=500
+[🌍 RG Location] Found location for Tara: Buford, GA
+[🔍 RG Debug] Tara - Photos: 10, Location: Buford, GA
+[✅ RG Formatted] Tara: Tuxedo, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Alafair (ID: 10187884)
+[🔍 RG Photos] Found 8 picture objects for Alafair
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/54644682.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/54644683.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/54644684.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/74856664.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/74856665.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/76932446.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/76932447.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10187/10187884/76932448.jpg?width=500
+[🌍 RG Location] Found location for Alafair: Kanab, UT
+[🔍 RG Debug] Alafair - Photos: 8, Location: Kanab, UT
+[✅ RG Formatted] Alafair: Domestic Short Hair, Senior, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Zeke (ID: 10197267)
+[🔍 RG Photos] Found 5 picture objects for Zeke
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/35989100.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/35989103.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/35989106.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/35989287.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/45718516.jpg?width=500
+[🌍 RG Location] Found location for Zeke: Ocoee, FL
+[🔍 RG Debug] Zeke - Photos: 5, Location: Ocoee, FL
+[✅ RG Formatted] Zeke: American Bulldog, Young, Medium, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Diamond Beaufort (ID: 10206471)
+[🔍 RG Photos] Found 25 picture objects for Diamond Beaufort
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/70514098.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/58230356.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/67437003.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/72013316.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/69896599.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/54137646.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/70514137.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/48350111.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/67437009.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/67965382.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/67437005.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/92676717.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/69520897.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/65988931.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/58230378.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/58230380.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/48350103.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/52755642.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/55849088.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/52755643.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/52755646.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/45777262.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/51158341.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/45312590.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/52755650.jpg?width=500
+[🌍 RG Location] Found location for Diamond Beaufort: Rockaway, NJ
+[🔍 RG Debug] Diamond Beaufort - Photos: 25, Location: Rockaway, NJ
+[✅ RG Formatted] Diamond Beaufort: Shepherd, Senior, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Little One (ID: 10211761)
+[🔍 RG Photos] Found 3 picture objects for Little One
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1868/pictures/animals/10211/10211761/36092797.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1868/pictures/animals/10211/10211761/36092798.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1868/pictures/animals/10211/10211761/36092799.jpg?width=500
+[🌍 RG Location] Found location for Little One: Lakewood, CA
+[🔍 RG Debug] Little One - Photos: 3, Location: Lakewood, CA
+[✅ RG Formatted] Little One: Bombay, Senior, Small, Photos: 3, Score: 109.3
+[🦮 RG Format] Processing: Buttercup (ID: 10233885)
+[🔍 RG Photos] Found 8 picture objects for Buttercup
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/99695514.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/100110278.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/100110279.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/40482295.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/40482296.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/40482290.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/40482300.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5853/pictures/animals/10233/10233885/100989829.jpg?width=500
+[🌍 RG Location] Found location for Buttercup: Cottontown, TN
+[🔍 RG Debug] Buttercup - Photos: 8, Location: Cottontown, TN
+[✅ RG Formatted] Buttercup: Paso Fino, Adult, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Lucky (ID: 10244680)
+[🔍 RG Photos] Found 9 picture objects for Lucky
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98700832.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98181951.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98107377.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/96788722.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98107342.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/96788740.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/96788749.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/96788760.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98107337.jpg?width=500
+[🌍 RG Location] Found location for Lucky: Yreka, CA
+[🔍 RG Debug] Lucky - Photos: 9, Location: Yreka, CA
+[✅ RG Formatted] Lucky: Labrador Retriever, Senior, Medium, Photos: 9, Score: 130
+[🦮 RG Format] Processing: ILISA (ID: 10320361)
+[🔍 RG Photos] Found 1 picture objects for ILISA
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1948/pictures/animals/10320/10320361/40181438.jpg?width=500
+[🌍 RG Location] Found location for ILISA: Pittsburgh, PA
+[🔍 RG Debug] ILISA - Photos: 1, Location: Pittsburgh, PA
+[✅ RG Formatted] ILISA: New Zealand, Adult, Large, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Danette (ID: 10389842)
+[🔍 RG Photos] Found 5 picture objects for Danette
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10389/10389842/64815489.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10389/10389842/67942792.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10389/10389842/76973631.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10389/10389842/76973632.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6685/pictures/animals/10389/10389842/81355734.jpg?width=500
+[🌍 RG Location] Found location for Danette: Kanab, UT
+[🔍 RG Debug] Danette - Photos: 5, Location: Kanab, UT
+[✅ RG Formatted] Danette: Domestic Short Hair, Senior, Unknown, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Rosie (ID: 10393561)
+[🔍 RG Photos] Found 8 picture objects for Rosie
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/101250999.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/101251002.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/101291197.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/101291198.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/101291201.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/39236922.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/39515786.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/39515787.jpg?width=500
+[🌍 RG Location] Found location for Rosie: Unknown, Unknown
+[🔍 RG Debug] Rosie - Photos: 8, Location: Unknown, Unknown
+[✅ RG Formatted] Rosie: American Pit Bull Terrier, Adult, Medium, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Gabrio (ID: 10399885)
+[🔍 RG Photos] Found 4 picture objects for Gabrio
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10399/10399885/37590655.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10399/10399885/37651609.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10399/10399885/37651610.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5613/pictures/animals/10399/10399885/37651613.jpg?width=500
+[🌍 RG Location] Found location for Gabrio: Ocoee, FL
+[🔍 RG Debug] Gabrio - Photos: 4, Location: Ocoee, FL
+[✅ RG Formatted] Gabrio: American Staffordshire Terrier, Adult, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Arthur (ID: 10432466)
+[🔍 RG Photos] Found 1 picture objects for Arthur
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6514/pictures/animals/10432/10432466/37932319.jpg?width=500
+[🌍 RG Location] Found location for Arthur: Unknown, Unknown
+[🔍 RG Debug] Arthur - Photos: 1, Location: Unknown, Unknown
+[✅ RG Formatted] Arthur: Domestic Long Hair, Young, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Sponsor Joe Sanctuary 2016 (ID: 10481659)
+[🔍 RG Photos] Found 8 picture objects for Sponsor Joe Sanctuary 2016
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/40726232.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/40726320.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/38373043.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/39517813.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/39517828.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/38373044.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/38373045.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/38373047.jpg?width=500
+[🌍 RG Location] Found location for Sponsor Joe Sanctuary 2016: Unknown, Unknown
+[🔍 RG Debug] Sponsor Joe Sanctuary 2016 - Photos: 8, Location: Unknown, Unknown
+[✅ RG Formatted] Sponsor Joe Sanctuary 2016: Great Pyrenees, Young, Large, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Pre-Approval (ID: 10501644)
+[🔍 RG Photos] Found 1 picture objects for Pre-Approval
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6843/pictures/animals/10501/10501644/38476700.jpg?width=500
+[🌍 RG Location] Found location for Pre-Approval: Unknown, Unknown
+[🔍 RG Debug] Pre-Approval - Photos: 1, Location: Unknown, Unknown
+[✅ RG Formatted] Pre-Approval: Mixed Breed, Unknown, Unknown, Photos: 1, Score: 85.4
+[🦮 RG Format] Processing: Savannah (ID: 10526340)
+[🔍 RG Photos] Found 18 picture objects for Savannah
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070321.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070317.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070319.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070313.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070315.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070316.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/100070312.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/98893857.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/96475848.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/96475952.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/86922876.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/97276726.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/95824939.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/92808379.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/95460045.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/92808380.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/92128273.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10526/10526340/86922890.jpg?width=500
+[🌍 RG Location] Found location for Savannah: Buford, GA
+[🔍 RG Debug] Savannah - Photos: 18, Location: Buford, GA
+[✅ RG Formatted] Savannah: Abyssinian, Adult, Large, Photos: 18, Score: 130
+[🦮 RG Format] Processing: Cleopatra - Adopt With Kitten"Smalls" (ID: 10534151)
+[🔍 RG Photos] Found 1 picture objects for Cleopatra - Adopt With Kitten"Smalls"
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1998/pictures/animals/10534/10534151/38691445.jpg?width=500
+[🌍 RG Location] Found location for Cleopatra - Adopt With Kitten"Smalls": Newport Beach, CA
+[🔍 RG Debug] Cleopatra - Adopt With Kitten"Smalls" - Photos: 1, Location: Newport Beach, CA
+[✅ RG Formatted] Cleopatra - Adopt With Kitten"Smalls": Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: SMALLS - Adopt Me With My Mom! (ID: 10534157)
+[🔍 RG Photos] Found 1 picture objects for SMALLS - Adopt Me With My Mom!
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1998/pictures/animals/10534/10534157/38691508.jpg?width=500
+[🌍 RG Location] Found location for SMALLS - Adopt Me With My Mom!: Newport Beach, CA
+[🔍 RG Debug] SMALLS - Adopt Me With My Mom! - Photos: 1, Location: Newport Beach, CA
+[✅ RG Formatted] SMALLS - Adopt Me With My Mom!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Shadow- I Can Be A Friend To Your Young Cat! (ID: 10534165)
+[🔍 RG Photos] Found 1 picture objects for Shadow- I Can Be A Friend To Your Young Cat!
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1998/pictures/animals/10534/10534165/38691543.jpg?width=500
+[🌍 RG Location] Found location for Shadow- I Can Be A Friend To Your Young Cat!: Newport Beach, CA
+[🔍 RG Debug] Shadow- I Can Be A Friend To Your Young Cat! - Photos: 1, Location: Newport Beach, CA
+[✅ RG Formatted] Shadow- I Can Be A Friend To Your Young Cat!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Bear - Adopt With My Best Playmate Tas! (ID: 10534170)
+[🔍 RG Photos] Found 1 picture objects for Bear - Adopt With My Best Playmate Tas!
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1998/pictures/animals/10534/10534170/38691692.jpg?width=500
+[🌍 RG Location] Found location for Bear - Adopt With My Best Playmate Tas!: Newport Beach, CA
+[🔍 RG Debug] Bear - Adopt With My Best Playmate Tas! - Photos: 1, Location: Newport Beach, CA
+[✅ RG Formatted] Bear - Adopt With My Best Playmate Tas!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Tas - Adopt With My Best Playmate Bear! (ID: 10534172)
+[🔍 RG Photos] Found 1 picture objects for Tas - Adopt With My Best Playmate Bear!
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/1998/pictures/animals/10534/10534172/38691700.jpg?width=500
+[🌍 RG Location] Found location for Tas - Adopt With My Best Playmate Bear!: Newport Beach, CA
+[🔍 RG Debug] Tas - Adopt With My Best Playmate Bear! - Photos: 1, Location: Newport Beach, CA
+[✅ RG Formatted] Tas - Adopt With My Best Playmate Bear!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Jazzy (ID: 10534260)
+[🔍 RG Photos] Found 11 picture objects for Jazzy
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/88894932.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/77875888.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/77875887.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/88894948.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/88894939.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/71810725.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/95823271.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/88667237.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/95455314.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/95455310.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5211/pictures/animals/10534/10534260/74489755.jpg?width=500
+[🌍 RG Location] Found location for Jazzy: Buford, GA
+[🔍 RG Debug] Jazzy - Photos: 11, Location: Buford, GA
+[✅ RG Formatted] Jazzy: Tabby, Adult, Medium, Photos: 11, Score: 130
+[🦮 RG Format] Processing: Nova (ID: 10541734)
+[🔍 RG Photos] Found 3 picture objects for Nova
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8154/pictures/animals/10541/10541734/38737566.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8154/pictures/animals/10541/10541734/38737582.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8154/pictures/animals/10541/10541734/38737574.jpg?width=500
+[🌍 RG Location] Found location for Nova: Unknown, Unknown
+[🔍 RG Debug] Nova - Photos: 3, Location: Unknown, Unknown
+[✅ RG Formatted] Nova: Siberian Husky, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Fernanda (ID: 10544313)
+[🔍 RG Photos] Found 19 picture objects for Fernanda
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/62068772.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/61361495.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/61361496.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55219420.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/61361498.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/61361503.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/61361512.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55348007.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55348009.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55348010.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55402887.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/55348011.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/43447726.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/43447727.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/43213588.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/39218928.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/39218929.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/38759798.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/39218935.jpg?width=500
+[🌍 RG Location] Found location for Fernanda: Unknown, Unknown
+[🔍 RG Debug] Fernanda - Photos: 19, Location: Unknown, Unknown
+[✅ RG Formatted] Fernanda: Pit Bull Terrier, Adult, Medium, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Bella (ID: 10552500)
+[🔍 RG Photos] Found 6 picture objects for Bella
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/100885169.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/100885171.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/100885174.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/100885175.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/38813999.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/38813998.jpg?width=500
+[🌍 RG Location] Found location for Bella: Westminster, MD
+[🔍 RG Debug] Bella - Photos: 6, Location: Westminster, MD
+[✅ RG Formatted] Bella: Beagle, Young, Medium, Photos: 6, Score: 130
+[🦮 RG Format] Processing: Ivana (ID: 10555326)
+[🔍 RG Photos] Found 3 picture objects for Ivana
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2070/pictures/animals/10555/10555326/80481805.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2070/pictures/animals/10555/10555326/80481806.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2070/pictures/animals/10555/10555326/80481808.jpg?width=500
+[🌍 RG Location] Found location for Ivana: Frankston, TX
+[🔍 RG Debug] Ivana - Photos: 3, Location: Frankston, TX
+[✅ RG Formatted] Ivana: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Clyde (ID: 10558699)
+[🔍 RG Photos] Found 25 picture objects for Clyde
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/41188932.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/50068565.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/51168166.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/54884666.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/72934909.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/54884665.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/58841195.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/61085549.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/54884663.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/63413880.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/63413887.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/61085181.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/58841199.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/58841201.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/58841202.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/51168168.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/46809585.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/46809588.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/41188933.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/43614523.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/42573289.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/41188935.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/39074078.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/38867644.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/51168167.jpg?width=500
+[🌍 RG Location] Found location for Clyde: Unknown, Unknown
+[🔍 RG Debug] Clyde - Photos: 25, Location: Unknown, Unknown
+[✅ RG Formatted] Clyde: Cattle Dog, Adult, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Chance (ID: 10574060)
+[🔍 RG Photos] Found 5 picture objects for Chance
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/97118763.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/97118767.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/97118773.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/73801312.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/73801314.jpg?width=500
+[🌍 RG Location] Found location for Chance: Lakehills, TX
+[🔍 RG Debug] Chance - Photos: 5, Location: Lakehills, TX
+[✅ RG Formatted] Chance: Labrador Retriever, Senior, Large, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Bourke (ID: 10579440)
+[🔍 RG Photos] Found 4 picture objects for Bourke
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10579/10579440/39092300.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10579/10579440/39092287.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10579/10579440/39092316.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/8099/pictures/animals/10579/10579440/38997456.jpg?width=500
+[🌍 RG Location] Found location for Bourke: Unknown, Unknown
+[🔍 RG Debug] Bourke - Photos: 4, Location: Unknown, Unknown
+[✅ RG Formatted] Bourke: Dachshund, Senior, Small, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Joe [Permanent Foster] (ID: 10583066)
+[🔍 RG Photos] Found 2 picture objects for Joe [Permanent Foster]
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10583/10583066/39019042.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10583/10583066/39019043.jpg?width=500
+[🌍 RG Location] Found location for Joe [Permanent Foster]: SF, NM
+[🔍 RG Debug] Joe [Permanent Foster] - Photos: 2, Location: SF, NM
+[✅ RG Formatted] Joe [Permanent Foster]: Domestic Short Hair, Senior, Medium, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Tucker (ID: 10585046)
+[🔍 RG Photos] Found 3 picture objects for Tucker
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10585/10585046/100734266.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10585/10585046/99956123.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4264/pictures/animals/10585/10585046/95931908.jpg?width=500
+[🌍 RG Location] Found location for Tucker: Westminster, MD
+[🔍 RG Debug] Tucker - Photos: 3, Location: Westminster, MD
+[✅ RG Formatted] Tucker: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Holly (ID: 10665211)
+[🔍 RG Photos] Found 4 picture objects for Holly
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7947/pictures/animals/10665/10665211/101171227.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7947/pictures/animals/10665/10665211/40752876.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7947/pictures/animals/10665/10665211/40731951.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7947/pictures/animals/10665/10665211/101171229.jpg?width=500
+[🌍 RG Location] Found location for Holly: Unknown, Unknown
+[🔍 RG Debug] Holly - Photos: 4, Location: Unknown, Unknown
+[✅ RG Formatted] Holly: Boxer, Senior, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Penny (ID: 10687172)
+[🔍 RG Photos] Found 3 picture objects for Penny
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6528/pictures/animals/10687/10687172/77014750.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6528/pictures/animals/10687/10687172/77014739.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6528/pictures/animals/10687/10687172/77014740.jpg?width=500
+[🌍 RG Location] Found location for Penny: Unknown, Unknown
+[🔍 RG Debug] Penny - Photos: 3, Location: Unknown, Unknown
+[✅ RG Formatted] Penny: Domestic Short Hair, Young, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Tyson (ID: 10689034)
+[🔍 RG Photos] Found 4 picture objects for Tyson
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3241/pictures/animals/10689/10689034/101152906.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3241/pictures/animals/10689/10689034/101152907.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3241/pictures/animals/10689/10689034/101152908.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3241/pictures/animals/10689/10689034/100823140.jpg?width=500
+[🌍 RG Location] Found location for Tyson: Fort Lauderdale, FL
+[🔍 RG Debug] Tyson - Photos: 4, Location: Fort Lauderdale, FL
+[✅ RG Formatted] Tyson: Staffordshire Bull Terrier, Adult, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Cinnamon (ID: 10709292)
+[🔍 RG Photos] Found 7 picture objects for Cinnamon
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/93278126.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/93278119.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/93278106.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/41609120.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/41589129.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/39908497.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/126/pictures/animals/10709/10709292/39908489.jpg?width=500
+[🌍 RG Location] Found location for Cinnamon: Philadelphia, PA
+[🔍 RG Debug] Cinnamon - Photos: 7, Location: Philadelphia, PA
+[✅ RG Formatted] Cinnamon: Domestic Short Hair, Adult, Medium, Photos: 7, Score: 130
+[🦮 RG Format] Processing: Roger (ID: 10719979)
+[🔍 RG Photos] Found 10 picture objects for Roger
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/100596323.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/96085066.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/84419258.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964533.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964534.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964536.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964537.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964538.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964539.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/4519/pictures/animals/10719/10719979/39964540.jpg?width=500
+[🌍 RG Location] Found location for Roger: Unknown, Unknown
+[🔍 RG Debug] Roger - Photos: 10, Location: Unknown, Unknown
+[✅ RG Formatted] Roger: Tabby, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Kira (ID: 10739064)
+[🔍 RG Photos] Found 1 picture objects for Kira
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/2801/pictures/animals/10739/10739064/40867050.jpg?width=500
+[🌍 RG Location] Found location for Kira: Unknown, Unknown
+[🔍 RG Debug] Kira - Photos: 1, Location: Unknown, Unknown
+[✅ RG Formatted] Kira: Bull Terrier, Adult, Medium, Photos: 1, Score: 40
+[🦮 RG Format] Processing: Gus (ID: 10741126)
+[🔍 RG Photos] Found 2 picture objects for Gus
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6817/pictures/animals/10741/10741126/85953410.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6817/pictures/animals/10741/10741126/85953440.jpg?width=500
+[🌍 RG Location] Found location for Gus: Unknown, Unknown
+[🔍 RG Debug] Gus - Photos: 2, Location: Unknown, Unknown
+[✅ RG Formatted] Gus: Pit Bull Terrier, Adult, Large, Photos: 2, Score: 50
+[🦮 RG Format] Processing: Wilson (ID: 10742380)
+[🔍 RG Photos] Found 8 picture objects for Wilson
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/92725051.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/53007172.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/92570460.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/53007169.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/56718253.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/53007175.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/53007182.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/5934/pictures/animals/10742/10742380/47039836.jpg?width=500
+[🌍 RG Location] Found location for Wilson: Unknown, Unknown
+[🔍 RG Debug] Wilson - Photos: 8, Location: Unknown, Unknown
+[✅ RG Formatted] Wilson: Domestic Short Hair, Adult, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Big Boy [Permanent Foster] (ID: 10757873)
+[🔍 RG Photos] Found 4 picture objects for Big Boy [Permanent Foster]
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10757/10757873/64415541.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10757/10757873/40413114.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10757/10757873/40413115.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/676/pictures/animals/10757/10757873/64415550.jpg?width=500
+[🌍 RG Location] Found location for Big Boy [Permanent Foster]: SF, NM
+[🔍 RG Debug] Big Boy [Permanent Foster] - Photos: 4, Location: SF, NM
+[✅ RG Formatted] Big Boy [Permanent Foster]: Domestic Short Hair, Senior, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Emma (ID: 10771756)
+[🔍 RG Photos] Found 3 picture objects for Emma
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3715/pictures/animals/10771/10771756/68817101.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3715/pictures/animals/10771/10771756/68817102.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/3715/pictures/animals/10771/10771756/68817103.jpg?width=500
+[🌍 RG Location] Found location for Emma: Woodstock, GA
+[🔍 RG Debug] Emma - Photos: 3, Location: Woodstock, GA
+[✅ RG Formatted] Emma: Pit Bull Terrier, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Sarah (ID: 10778312)
+[🔍 RG Photos] Found 17 picture objects for Sarah
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/45289566.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/55662457.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42136899.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42136900.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42135329.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42135332.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42135334.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42021728.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/42136934.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/40353140.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/40353142.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/40353145.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/40353146.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/44533052.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/45289504.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/49574576.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/49574577.jpg?width=500
+[🌍 RG Location] Found location for Sarah: Livonia, MI
+[🔍 RG Debug] Sarah - Photos: 17, Location: Livonia, MI
+[✅ RG Formatted] Sarah: Labrador Retriever, Senior, Medium, Photos: 17, Score: 130
+[🦮 RG Format] Processing: Remy (ID: 10788558)
+[🔍 RG Photos] Found 2 picture objects for Remy
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6817/pictures/animals/10788/10788558/51479718.jpg?width=500
+[✅ RG Photo] Added photo: https://cdn.rescuegroups.org/6817/pictures/animals/10788/10788558/51479723.jpg?width=500
+[🌍 RG Location] Found location for Remy: Unknown, Unknown
+[🔍 RG Debug] Remy - Photos: 2, Location: Unknown, Unknown
+[✅ RG Formatted] Remy: Pit Bull Terrier, Young, Unknown, Photos: 2, Score: 100
+[🚫 Species Filter] Excluding Zelda - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Stowaway - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Bettis - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Hannah Steele - Labrador Retriever (trusting API filters)
+[🚫 Species Filter] Excluding Viola - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Maggie - Tortoiseshell appears to be a cat
+[✅ API Trusted] Including Doli - Husky (trusting API filters)
+[✅ API Trusted] Including Cylana - Shar Pei (trusting API filters)
+[🚫 Species Filter] Excluding Tara - Tuxedo appears to be a cat
+[🚫 Species Filter] Excluding Alafair - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Zeke - American Bulldog (trusting API filters)
+[✅ API Trusted] Including Diamond Beaufort - Shepherd (trusting API filters)
+[✅ API Trusted] Including Little One - Bombay (trusting API filters)
+[✅ API Trusted] Including Buttercup - Paso Fino (trusting API filters)
+[✅ API Trusted] Including Lucky - Labrador Retriever (trusting API filters)
+[✅ API Trusted] Including ILISA - New Zealand (trusting API filters)
+[🚫 Species Filter] Excluding Danette - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Rosie - American Pit Bull Terrier (trusting API filters)
+[✅ API Trusted] Including Gabrio - American Staffordshire Terrier (trusting API filters)
+[🚫 Species Filter] Excluding Arthur - Domestic Long Hair appears to be a cat
+[✅ API Trusted] Including Sponsor Joe Sanctuary 2016 - Great Pyrenees (trusting API filters)
+[✅ API Trusted] Including Pre-Approval - Mixed Breed (trusting API filters)
+[✅ API Trusted] Including Savannah - Abyssinian (trusting API filters)
+[🚫 Species Filter] Excluding Cleopatra - Adopt With Kitten"Smalls" - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding SMALLS - Adopt Me With My Mom! - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Shadow- I Can Be A Friend To Your Young Cat! - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Bear - Adopt With My Best Playmate Tas! - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Tas - Adopt With My Best Playmate Bear! - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Jazzy - Tabby appears to be a cat
+[✅ API Trusted] Including Nova - Siberian Husky (trusting API filters)
+[✅ API Trusted] Including Fernanda - Pit Bull Terrier (trusting API filters)
+[✅ API Trusted] Including Bella - Beagle (trusting API filters)
+[🚫 Species Filter] Excluding Ivana - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Clyde - Cattle Dog (trusting API filters)
+[✅ API Trusted] Including Chance - Labrador Retriever (trusting API filters)
+[✅ API Trusted] Including Bourke - Dachshund (trusting API filters)
+[🚫 Species Filter] Excluding Joe [Permanent Foster] - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Tucker - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Holly - Boxer (trusting API filters)
+[🚫 Species Filter] Excluding Penny - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Tyson - Staffordshire Bull Terrier (trusting API filters)
+[🚫 Species Filter] Excluding Cinnamon - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Roger - Tabby appears to be a cat
+[✅ API Trusted] Including Kira - Bull Terrier (trusting API filters)
+[✅ API Trusted] Including Gus - Pit Bull Terrier (trusting API filters)
+[🚫 Species Filter] Excluding Wilson - Domestic Short Hair appears to be a cat
+[🚫 Species Filter] Excluding Big Boy [Permanent Foster] - Domestic Short Hair appears to be a cat
+[✅ API Trusted] Including Emma - Pit Bull Terrier (trusting API filters)
+[✅ API Trusted] Including Sarah - Labrador Retriever (trusting API filters)
+[✅ API Trusted] Including Remy - Pit Bull Terrier (trusting API filters)
+[🔄 Deduplication] 23 duplicates removed from RescueGroups
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 27 dogs found so far, need 23 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=23&location=Kanb%2C+UT&distance=100&breed=Chihuahua
+[⚠️ Petfinder] API response failed: {
+  status: 400,
+  statusText: 'Bad Request',
+  error: '{"type":"https:\\/\\/www.petfinder.com\\/developers\\/v2\\/docs\\/errors\\/ERR-00002\\/","status":400,"title":"Invalid Request","detail":"The request contains invalid parameters.","invalid-params":[{"in":"que'
+}
+[✅ Search Complete] Found 27 total dogs from sources: rescuegroups
+[📊 Source Breakdown] rescuegroups: 27
+ POST /api/petfinder/search 200 in 4691ms
+[✅ Chat Search Success] Found 27 dogs for chihuahuas in Kanb, UT from sources: rescuegroups
+[✅ Petfinder Integration] Found 27 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 27 Showing: 10
+[✅ Search Complete] Total unique dogs: 27 Showing: 10
+[📊 Scores] Sample scores: [ 'Doli: 130', 'Cylana: 130', 'Zeke: 130' ]
+ POST /api/chat 200 in 7756ms
