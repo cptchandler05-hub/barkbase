@@ -147,25 +147,20 @@ function transformRescueGroupsAnimal(animal) {
   // RescueGroups v5 API uses attributes object
   const attrs = animal.attributes || {};
 
-  // Parse location from RescueGroups API response
+  // Parse location from included relationships if available
   let city = 'Unknown';
   let state = 'Unknown';
   
-  // RescueGroups v5 API doesn't include location details in the basic attributes
-  // Location data would need to be fetched separately via relationships
-  // For now, we'll use placeholder values since location isn't critical for sync
+  // Try to get location from relationships if included data is available
+  // For now use defaults - location can be enhanced later with included data parsing
   city = 'Unknown';
   state = 'Unknown';
 
-  // Parse photos
+  // Parse photos from relationships - this needs to be handled differently in v5
   const photos = [];
-  if (attrs.pictures && Array.isArray(attrs.pictures)) {
-    for (const pic of attrs.pictures) {
-      const url = pic.large || pic.original || pic.small;
-      if (url) photos.push(url);
-    }
-  }
-
+  // Photos are in relationships, not directly in attributes
+  // For now, we'll handle this in the main sync function with included data
+  
   const mapBoolean = (value) => {
     if (!value) return null;
     const normalized = value.toString().toLowerCase();
@@ -178,14 +173,14 @@ function transformRescueGroupsAnimal(animal) {
     rescuegroups_id: animal.id,
     api_source: 'rescuegroups',
     api_source_priority: 1, // Higher priority than Petfinder
-    organization_id: attrs.organizations || '',
+    organization_id: animal.relationships?.orgs?.data?.[0]?.id || '',
     url: attrs.url || '',
     name: attrs.name || 'Unknown',
     type: 'Dog',
     species: 'Dog',
     primary_breed: attrs.breedPrimary || 'Mixed Breed',
     secondary_breed: attrs.breedSecondary || null,
-    is_mixed: mapBoolean(attrs.breedMixed) || false,
+    is_mixed: !!attrs.breedSecondary,
     is_unknown_breed: false,
     age: attrs.ageGroup || 'Unknown',
     gender: attrs.sex || 'Unknown',
@@ -198,12 +193,12 @@ function transformRescueGroupsAnimal(animal) {
     good_with_dogs: mapBoolean(attrs.goodWithDogs),
     good_with_cats: mapBoolean(attrs.goodWithCats),
     description: attrs.descriptionText || null,
-    photos: photos,
+    photos: photos, // Will be populated with included data
     tags: [],
     contact_info: {},
     city: city,
     state: state,
-    postcode: null, // RescueGroups v5 API doesn't provide postal code in this format
+    postcode: null,
     latitude: null,
     longitude: null,
     last_updated_at: new Date().toISOString(),

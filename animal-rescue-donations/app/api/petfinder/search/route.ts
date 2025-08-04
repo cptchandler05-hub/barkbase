@@ -77,23 +77,24 @@ export async function POST(req: Request) {
 
           // Filter and deduplicate RescueGroups results
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
-            // Apply breed filter if specified
+            // Apply breed filter if specified - be more flexible
             if (normalizedParams.breed) {
               const searchBreed = normalizedParams.breed.toLowerCase();
-              const primaryBreed = rgDog.breeds.primary.toLowerCase();
-              const secondaryBreed = rgDog.breeds.secondary?.toLowerCase() || '';
-              
+              const primaryBreed = (rgDog.breeds.primary || '').toLowerCase();
+              const secondaryBreed = (rgDog.breeds.secondary || '').toLowerCase();
+
+              // More flexible matching - partial matches in either direction
               const breedMatch = primaryBreed.includes(searchBreed) || 
                                secondaryBreed.includes(searchBreed) ||
-                               searchBreed.includes(primaryBreed) ||
-                               (secondaryBreed && searchBreed.includes(secondaryBreed));
-              
+                               searchBreed.includes(primaryBreed.split(' ')[0]) || // Match first word
+                               (secondaryBreed && searchBreed.includes(secondaryBreed.split(' ')[0]));
+
               if (!breedMatch) {
                 console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed}`);
                 return false;
               }
             }
-            
+
             return true;
           });
 
