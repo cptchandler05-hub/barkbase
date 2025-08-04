@@ -1,0 +1,130 @@
+e pet and the adoptive family to be very happy with each other. ",
+        "services": "adoptions, spay/neuter, transport",
+        "type": "Rescue",
+        "lat": 35.3385009765625,
+        "lon": -80.20999908447266,
+        "coordinates": "35.3385, -80.21",
+        "citystate": "Albemarle, NC"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "72798363",
+      "attributes": {
+        "original": {
+          "filesize": 974024,
+          "resolutionX": 1596,
+          "resolutionY": 2046,
+          "url": "https://cdn.rescuegroups.org/2780/pictures/animals/11190/11190734/72798363.jpg"
+        },
+        "large": {
+          "filesize": 974024,
+          "resolutionX": 500,
+          "resolutionY": 641,
+          "url": "https://cdn.rescuegroups.org/2780/pictures/animals/11190/11190734/72798363.jpg?width=500"
+        },
+        "small": {
+          "filesize": 974024,
+          "resolutionX": 100,
+          "resolutionY": 128,
+          "url": "https://cdn.rescuegroups.org/2780/pictures/animals/11190/11190734/72798363.jpg?width=100"
+        },
+        "order": 1,
+        "created": "2020-06-01T12:09:56Z",
+        "updated": "2020-06-01T12:09:57Z"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "44373254",
+      "attributes": {
+        "original": {
+          "filesize": 2791756,
+          "resolutionX": 4352,
+          "resolutionY": 2904,
+          "url": "https://cdn.rescuegroups.org/268/pictures/animals/11200/11200620/44373254.jpg"
+        },
+        "large": {
+          "filesize": 2791756,
+          "resolutionX": 500,
+          "resolutionY": 334,
+          "url": "https://cdn.rescuegroups.org/268/pictures/animals/11200/11200620/44373254.jpg?width=500"
+        },
+        "small": {
+          "filesize": 2791756,
+          "resolutionX": 100,
+          "resolutionY": 67,
+          "url": "https://cdn.rescuegroups.org/268/pictures/animals/11200/11200620/44373254.jpg?width=100"
+        },
+        "order": 1,
+        "created": "2017-04-12T14:25:44Z",
+        "updated": "2017-04-12T14:25:50Z"
+      }
+    }
+  ]
+}
+[✅ RescueGroups] Found 45 animals with 386 included items
+[✅ RescueGroups Hit] Found 45 dogs from RescueGroups
+[🔍 Breed Filter] Excluding Hannah Steele - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Doli - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Cylana - Shar Pei doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Zeke - American Bulldog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Diamond Beaufort - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Lucky - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Rosie - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Gabrio - American Staffordshire Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Sponsor Joe Sanctuary 2016 - Great Pyrenees doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Pre-Approval - Mixed Breed doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Nova - Siberian Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Fernanda - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bella - Beagle doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Clyde - Cattle Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Chance - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bourke - Dachshund doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Holly - Boxer doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Tyson - Staffordshire Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Kira - Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Gus - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Emma - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Sarah - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Remy - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Harrison - American Staffordshire Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bella Blue - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Toba - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Francesca - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Indy -girl - German Shepherd Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding FOHA Sponsorship Dogs - Boston Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Daya - Vq Litter - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Helga - German Shepherd Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Tanbo - Yq Litter ♥ - Beagle doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Cross - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Marlee (Permanent Foster) - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding 1Dog Not Listed - Mixed Breed doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Joanna - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Leia - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding SARGE - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Kit - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Caboodle - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Mandy - Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding King - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Oreo - Australian Cattle Dog/Blue Heeler doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Hugh - Plott Hound doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Mason/Sanctuary Dog - Terrier doesn't match Chihuahua
+[🔄 Deduplication] 45 duplicates removed from RescueGroups
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 5 dogs found so far, need 45 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Using cached token
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=45&location=Greenville%2C+MS&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 1 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 6 total dogs from sources: database, rescuegroups, petfinder
+[📊 Source Breakdown] database: 5, rescuegroups: 0, petfinder: 1
+ POST /api/petfinder/search 200 in 1942ms
+[✅ Chat Search Success] Found 6 dogs for chihuahuas in Greenville, MS from sources: database, rescuegroups, petfinder
+[✅ Petfinder Integration] Found 6 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 6 Showing: 6
+[✅ Search Complete] Total unique dogs: 6 Showing: 6
+[📊 Scores] Sample scores: [ 'Daniel: 64', 'Tiny Pinson: 62', 'Minnie: 48' ]
+ POST /api/chat 200 in 3815ms
