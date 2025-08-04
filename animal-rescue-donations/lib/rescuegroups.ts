@@ -106,46 +106,38 @@ class RescueGroupsAPI {
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
-    // Core filters for dogs only
+    // CRITICAL: Force dogs only - this was missing the proper enforcement
     searchParams.append('filter[species]', 'Dog');
     searchParams.append('filter[status]', 'Available');
 
-    // Filter for recently updated animals (last 6 months)
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    searchParams.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
+    // Filter for recently updated animals (last 3 months to get more relevant results)
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // Location-based filtering with correct v5 parameter names
+    // Location-based filtering
     if (params.location) {
-      // For v5 API, use the location field directly
       searchParams.append('filter[location]', params.location);
       if (params.radius) {
         searchParams.append('filter[distance]', params.radius.toString());
       }
-      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 50}mi`);
+      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
-    // For generic breed searches, don't apply strict API-level breed filtering
-    // Let the application-level fuzzy matching handle breed filtering instead
+    // Breed filtering - apply at API level for better results
     if (params.breed) {
-      const breedName = params.breed.trim().toLowerCase();
+      const breedName = params.breed.trim();
       
-      // Only apply API-level breed filter for very specific breeds to avoid over-filtering
-      const specificBreeds = ['chihuahua', 'labrador', 'golden retriever', 'german shepherd', 'poodle', 'bulldog'];
-      const isSpecificBreed = specificBreeds.some(breed => 
-        breedName === breed || breedName === breed + 's'
-      );
-      
-      if (isSpecificBreed) {
-        // Use exact breed for specific searches
-        const normalizedBreed = breedName.endsWith('s') && breedName.length > 3 ? 
-          breedName.slice(0, -1) : breedName;
-        searchParams.append('filter[breedPrimary]', normalizedBreed);
-        console.log('[🔍 RescueGroups] Applying API breed filter:', normalizedBreed);
-      } else {
-        // For generic searches like "terriers", don't filter at API level
-        console.log('[🔍 RescueGroups] Generic breed search, skipping API filter for:', breedName);
+      // Handle plural to singular conversion for API
+      let apiBreed = breedName;
+      if (breedName.toLowerCase().endsWith('s') && breedName.length > 3) {
+        // Convert "chihuahuas" -> "chihuahua", "terriers" -> "terrier", etc.
+        apiBreed = breedName.slice(0, -1);
       }
+      
+      // Apply breed filter - let RescueGroups handle the matching
+      searchParams.append('filter[breedPrimary]', apiBreed);
+      console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
     // Other filters

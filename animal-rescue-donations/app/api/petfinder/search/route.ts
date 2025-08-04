@@ -75,12 +75,21 @@ export async function POST(req: Request) {
             DogFormatter.formatRescueGroupsDog(dog, rgResult.included)
           );
 
-          // Filter and deduplicate RescueGroups results using fuzzy matching
+          // Since we're now applying breed filters at the API level, we should be more lenient with the results
+          // Only do basic validation to ensure we got dogs, not cats
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
-            // Apply breed filter if specified - use fuzzy matching
+            // First, ensure this is actually a dog (filter out cats that somehow got through)
+            const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
+            const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon', 'abyssinian', 'bombay', 'new zealand'];
+            
+            if (catBreeds.some(catBreed => primaryBreed.includes(catBreed))) {
+              console.log(`[🚫 Species Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} appears to be a cat`);
+              return false;
+            }
+
+            // If breed was specified, do minimal validation since API should have filtered
             if (normalizedParams.breed) {
               const searchBreed = normalizedParams.breed.toLowerCase().trim();
-              const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
               const secondaryBreed = (rgDog.breeds.secondary || '').toLowerCase().trim();
 
               // Handle plural/singular conversions
@@ -88,7 +97,7 @@ export async function POST(req: Request) {
                 searchBreed.slice(0, -1) : searchBreed;
               const searchBreedPlural = searchBreed.endsWith('s') ? searchBreed : searchBreed + 's';
 
-              // More flexible breed matching
+              // More flexible breed matching - trust the API mostly but do basic validation
               const breedVariants = [searchBreed, searchBreedSingular, searchBreedPlural];
 
               const breedMatch = breedVariants.some(variant => {
@@ -101,11 +110,13 @@ export async function POST(req: Request) {
                        // Special case for labs
                        (variant === 'lab' && (primaryBreed.includes('labrador') || secondaryBreed.includes('labrador'))) ||
                        // Special case for mixed breeds
-                       (variant === 'mixed' && rgDog.breeds.mixed);
+                       (variant === 'mixed' && rgDog.breeds.mixed) ||
+                       // Special breed fuzzy matching
+                       (variant === 'chihuahua' && primaryBreed.includes('chihuahua'));
               });
 
               if (!breedMatch) {
-                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed} (variants: ${breedVariants.join(', ')})`);
+                console.log(`[🔍 Breed Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} doesn't match ${normalizedParams.breed}`);
                 return false;
               } else {
                 console.log(`[✅ Breed Match] Including ${rgDog.name} - ${rgDog.breeds.primary} matches ${normalizedParams.breed}`);
