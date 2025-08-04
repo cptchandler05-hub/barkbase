@@ -103,9 +103,14 @@ class RescueGroupsAPI {
       searchParams.append('filter[distance]', (params.radius || 100).toString());
     }
 
-    // Add breed filter
+    // Add breed filter with better matching
     if (params.breed) {
-      searchParams.append('filter[breedPrimary]', params.breed);
+      // Normalize breed name for better matching
+      let breedName = params.breed;
+      if (breedName.toLowerCase().includes('chihuahua')) {
+        breedName = 'Chihuahua';
+      }
+      searchParams.append('filter[breedPrimary]', breedName);
     }
 
     // Add age filter

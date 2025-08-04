@@ -121,9 +121,14 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
 
     console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} (API limit may be 25)`);
 
-    // Log first animal for debugging
+    // Log first few animals for debugging
     if (animals.length > 0) {
       console.log(`🔍 First dog: ${animals[0].attributes?.name || 'Unknown'} (ID: ${animals[0].id})`);
+      console.log(`🔍 First dog details:`, JSON.stringify(animals[0], null, 2));
+      
+      if (animals.length > 1) {
+        console.log(`🔍 Second dog: ${animals[1].attributes?.name || 'Unknown'} (ID: ${animals[1].id})`);
+      }
     }
 
     return animals;
@@ -138,10 +143,32 @@ function transformRescueGroupsAnimal(animal) {
   // RescueGroups v5 API uses attributes object
   const attrs = animal.attributes || {};
 
-  // Parse location
-  const location = attrs.location || {};
-  const city = location.citystate?.split(',')[0]?.trim() || 'Unknown';
-  const state = location.citystate?.split(',')[1]?.trim() || 'Unknown';
+  // Parse location from RescueGroups API response
+  let city = 'Unknown';
+  let state = 'Unknown';
+  
+  // Try multiple location field variations
+  if (attrs.citystate) {
+    const parts = attrs.citystate.split(',');
+    if (parts.length >= 2) {
+      city = parts[0]?.trim() || 'Unknown';
+      state = parts[1]?.trim() || 'Unknown';
+    }
+  } else if (attrs.location) {
+    if (typeof attrs.location === 'string') {
+      const parts = attrs.location.split(',');
+      if (parts.length >= 2) {
+        city = parts[0]?.trim() || 'Unknown';
+        state = parts[1]?.trim() || 'Unknown';
+      }
+    } else if (attrs.location.citystate) {
+      const parts = attrs.location.citystate.split(',');
+      if (parts.length >= 2) {
+        city = parts[0]?.trim() || 'Unknown';
+        state = parts[1]?.trim() || 'Unknown';
+      }
+    }
+  }
 
   // Parse photos
   const photos = [];
