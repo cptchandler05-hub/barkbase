@@ -57,6 +57,28 @@ export async function POST(req: Request) {
         console.log('[🦮 RescueGroups] Searching RescueGroups...');
         const rescueGroups = new RescueGroupsAPI();
 
+        // Geocode location for RescueGroups if we have a location string
+        let coordinates = null;
+        if (normalizedParams.location) {
+          try {
+            console.log(`[🗺️ Geocoding] Converting "${normalizedParams.location}" to coordinates for RescueGroups`);
+            const geocodeResponse = await fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US`
+            );
+            
+            if (geocodeResponse.ok) {
+              const geocodeData = await geocodeResponse.json();
+              if (geocodeData.features && geocodeData.features.length > 0) {
+                const [lng, lat] = geocodeData.features[0].center;
+                coordinates = { latitude: lat, longitude: lng };
+                console.log(`[✅ Geocoded] "${normalizedParams.location}" → ${lat}, ${lng}`);
+              }
+            }
+          } catch (error) {
+            console.log(`[⚠️ Geocoding] Failed to geocode "${normalizedParams.location}":`, error);
+          }
+        }
+
         const rgParams = {
           location: normalizedParams.location,
           breed: normalizedParams.breed,
@@ -64,7 +86,9 @@ export async function POST(req: Request) {
           size: normalizedParams.size,
           gender: normalizedParams.gender,
           limit: Math.min(50, normalizedParams.limit! - allDogs.length),
-          radius: normalizedParams.radius
+          radius: normalizedParams.radius,
+          latitude: coordinates?.latitude,
+          longitude: coordinates?.longitude
         };
 
         const rgResult = await rescueGroups.searchAnimals(rgParams);
