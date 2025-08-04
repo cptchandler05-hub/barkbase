@@ -133,7 +133,7 @@ class RescueGroupsAPI {
       // RescueGroups API requires lat/lng for geographic filtering
     }
 
-    // FIXED: Breed filtering with proper API breed names
+    // FIXED: Breed filtering using the correct API parameter as per ChatGPT feedback
     if (params.breed) {
       const breedName = params.breed.trim().toLowerCase();
       
@@ -165,8 +165,8 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // Use primary breed filter - STRICT filtering
-      searchParams.append('filter[breedPrimary]', apiBreed);
+      // Use correct breed filter parameter - as per ChatGPT feedback
+      searchParams.append('filter[animalBreed]', apiBreed);
       
       console.log(`[🔍 RescueGroups] Applying STRICT breed filter: ${apiBreed} (from: ${breedName})`);
     }
@@ -188,7 +188,7 @@ class RescueGroupsAPI {
     const limit = Math.min(params.limit || 50, 100);
     searchParams.append('limit', limit.toString());
 
-    // Request specific fields
+    // Request specific fields - FIXED per ChatGPT feedback to include proper location fields
     const fields = [
       'id',
       'name',
@@ -211,7 +211,11 @@ class RescueGroupsAPI {
       'url',
       'distance',
       'updated',
-      'created'
+      'created',
+      // Add location fields per ChatGPT feedback
+      'animalLocationCity',
+      'animalLocationState',
+      'animalLocationPostalcode'
     ];
     searchParams.append('fields[animals]', fields.join(','));
 
@@ -368,38 +372,34 @@ class RescueGroupsAPI {
       orgId = orgData?.id || '';
     }
 
-    // Get location info from included data with better fallbacks
+    // Get location info - FIXED per ChatGPT feedback to use direct animal attributes
     let city = 'Unknown', state = 'Unknown', latitude = null, longitude = null;
-    if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
+    
+    // First try direct animal attributes (per ChatGPT feedback)
+    if (attrs.animalLocationCity || attrs.animalLocationState) {
+      city = attrs.animalLocationCity || 'Unknown';
+      state = attrs.animalLocationState || 'Unknown';
+      console.log(`[🌍 RG Location Direct] ${attrs.name}: ${city}, ${state}`);
+    }
+    // Fallback to included data if direct attributes not available
+    else if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
       const locationData = included.find((item: any) => 
         item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
       );
       if (locationData?.attributes) {
-        const attrs = locationData.attributes;
+        const locationAttrs = locationData.attributes;
         
         // Try multiple city fields with better fallbacks
-        city = attrs.city || attrs.name || attrs.citystate?.split(',')[0]?.trim() || 'Unknown';
+        city = locationAttrs.city || locationAttrs.name || locationAttrs.citystate?.split(',')[0]?.trim() || 'Unknown';
         
         // Try multiple state fields
-        state = attrs.state || attrs.citystate?.split(',')[1]?.trim() || 'Unknown';
-        
-        // Handle special cases where name contains city info
-        if (city === 'Unknown' && attrs.name) {
-          // Try to extract city from name field
-          const nameWords = attrs.name.split(/[\s,-]+/);
-          if (nameWords.length >= 2) {
-            city = nameWords[0];
-            if (nameWords[1] && nameWords[1].length === 2) {
-              state = nameWords[1].toUpperCase();
-            }
-          }
-        }
+        state = locationAttrs.state || locationAttrs.citystate?.split(',')[1]?.trim() || 'Unknown';
         
         // Get coordinates
-        latitude = attrs.lat || attrs.latitude || null;
-        longitude = attrs.lon || attrs.lng || attrs.longitude || null;
+        latitude = locationAttrs.lat || locationAttrs.latitude || null;
+        longitude = locationAttrs.lon || locationAttrs.lng || locationAttrs.longitude || null;
         
-        console.log(`[🌍 RG Location Enhanced] ${animal.attributes?.name}: ${city}, ${state} (${latitude}, ${longitude})`);
+        console.log(`[🌍 RG Location Included] ${attrs.name}: ${city}, ${state} (${latitude}, ${longitude})`);
       }
     }
 
