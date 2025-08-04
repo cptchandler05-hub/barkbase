@@ -51,10 +51,15 @@ interface UnifiedDog {
 class DogFormatter {
   // Format database dog to unified format
   static formatDatabaseDog(dog: any): UnifiedDog {
-    // Handle photos array properly - ensure we always get strings
-    const photos = (dog.photos || []).map((photo: any) => {
+    console.log(`[🗄️ DB Format] Processing: ${dog.name} (ID: ${dog.id}, Source: ${dog.api_source})`);
+    
+    // Handle photos array based on source - ENHANCED FORMATTING
+    const photos = (dog.photos || []).map((photo: any, index: number) => {
+      console.log(`[🖼️ DB Photo ${index}] Raw photo data type: ${typeof photo}`, photo);
+      
       // Handle string URLs (RescueGroups direct URLs)
       if (typeof photo === 'string') {
+        console.log(`[✅ DB Photo ${index}] String URL: ${photo}`);
         return {
           small: photo,
           medium: photo,
@@ -65,28 +70,44 @@ class DogFormatter {
       else if (photo && typeof photo === 'object') {
         // RescueGroups object format: {small: "url", medium: "url", large: "url"}
         if (photo.small || photo.medium || photo.large) {
-          return {
+          const result = {
             small: photo.small || photo.medium || photo.large,
             medium: photo.medium || photo.large || photo.small,
             large: photo.large || photo.medium || photo.small
           };
+          console.log(`[✅ DB Photo ${index}] RescueGroups object format:`, result.medium);
+          return result;
         }
         // Petfinder nested object format: {medium: {url: "..."}}
         else if (photo.medium && typeof photo.medium === 'object' && photo.medium.url) {
+          console.log(`[✅ DB Photo ${index}] Petfinder nested format: ${photo.medium.url}`);
           return {
             small: photo.medium.url,
             medium: photo.medium.url,
             large: photo.medium.url
           };
         }
+        // Petfinder direct object format: {small: "url", medium: "url", large: "url"}
+        else if (typeof photo.medium === 'string') {
+          console.log(`[✅ DB Photo ${index}] Petfinder direct format: ${photo.medium}`);
+          return {
+            small: photo.small || photo.medium || photo.large,
+            medium: photo.medium || photo.large || photo.small,
+            large: photo.large || photo.medium || photo.small
+          };
+        }
       }
+      
       // Fallback for invalid photo data
+      console.log(`[⚠️ DB Photo ${index}] Using fallback image for invalid data`);
       return {
         small: '/images/barkr.png',
         medium: '/images/barkr.png',
         large: '/images/barkr.png'
       };
     });
+
+    console.log(`[🔍 DB Debug] ${dog.name} - Final photos count: ${photos.length}`);
 
     const visibilityScore = dog.visibility_score || calculateVisibilityScore({
       name: dog.name,
@@ -225,18 +246,34 @@ class DogFormatter {
       }
     }
 
-    // Parse location info from included data - FIXED PARSING
+    // Parse location info from included data - ENHANCED PARSING
     let locationInfo = { city: 'Unknown', state: 'Unknown' };
     if (dog.relationships?.locations?.data?.[0] && included.length > 0) {
       const locationData = included.find((item: any) => 
         item.type === 'locations' && item.id === dog.relationships.locations.data[0].id
       );
       if (locationData?.attributes) {
+        // Try multiple field variations for city and state
+        const cityOptions = [
+          locationData.attributes.city,
+          locationData.attributes.cityname,
+          locationData.attributes.name // Some locations use 'name' field
+        ].filter(Boolean);
+        
+        const stateOptions = [
+          locationData.attributes.state,
+          locationData.attributes.statename,
+          locationData.attributes.stateAbbr,
+          locationData.attributes.region
+        ].filter(Boolean);
+
         locationInfo = {
-          city: locationData.attributes.city || locationData.attributes.cityname || 'Unknown',
-          state: locationData.attributes.state || locationData.attributes.statename || 'Unknown'
+          city: cityOptions[0] || 'Unknown',
+          state: stateOptions[0] || 'Unknown'
         };
+        
         console.log(`[🌍 RG Location] Found location for ${name}: ${locationInfo.city}, ${locationInfo.state}`);
+        console.log(`[🔍 RG Location Debug] Available location fields:`, Object.keys(locationData.attributes));
       } else {
         console.log(`[⚠️ RG Location] No location attributes found for ${name}`);
       }
@@ -281,9 +318,12 @@ class DogFormatter {
       },
       url: attrs.url || '',
       source: 'rescuegroups' as const,
+      sourceId: id,
+      organizationId: orgInfo.id,
       distance: attrs.distance || null,
       lastUpdated: attrs.updated || new Date().toISOString(),
-      visibilityScore: 0 // Will be calculated later
+      visibilityScore: 0, // Will be calculated later
+      verificationBadge: 'Verified by BarkBase'
     };
 
     // Calculate visibility score

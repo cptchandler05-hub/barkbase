@@ -211,7 +211,9 @@ const urgencyTriggers = [
   'unseen'
 ];
 
-      export async function POST(req: Request) {
+      import { calculateVisibilityScore } from '@/lib/scoreVisibility';
+import { DogFormatter } from '@/lib/dogFormatter';
+export async function POST(req: Request) {
   try {
     const { messages, memory } = await req.json();
     let updatedMemory = { ...memory }; // ✅ Define updatedMemory first
