@@ -192,7 +192,7 @@ export async function POST(req: Request) {
               statusText: response.statusText,
               error: errorText.substring(0, 200) // First 200 chars of error
             });
-            
+
             // Check if it's a rate limiting error
             if (response.status === 429) {
               console.warn('[🚫 Petfinder Rate Limited] External API rate limit hit');
@@ -228,13 +228,13 @@ export async function POST(req: Request) {
 
   } catch (err) {
     console.error('[❌ Search Error]', err);
-    
+
     // Return partial results if we have any, even with errors
     if (allDogs.length > 0) {
       console.log(`[⚠️ Partial Success] Returning ${allDogs.length} dogs despite errors`);
       const sortedDogs = DogFormatter.sortByVisibilityScore(allDogs.slice(0, normalizedParams.limit));
       const legacyFormattedDogs = sortedDogs.map(DogFormatter.toLegacyFormat);
-      
+
       return NextResponse.json({
         animals: legacyFormattedDogs,
         sources: sources,
@@ -244,7 +244,7 @@ export async function POST(req: Request) {
         error: err instanceof Error ? err.message : 'Partial failure'
       });
     }
-    
+
     return NextResponse.json({
       error: 'Search failed completely',
       details: err instanceof Error ? err.message : 'Unknown error',

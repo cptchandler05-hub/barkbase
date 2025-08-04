@@ -50,7 +50,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
         const formattedDog = DogFormatter.formatDatabaseDog(dbDog);
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog),
+          animal: DogFormatter.toLegacyFormat(formattedDog, false),
           source: 'database'
         });
       }
@@ -68,7 +68,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         console.log('[✅ RescueGroups Hit] Found dog in RescueGroups:', rgDog.name);
         const formattedDog = DogFormatter.formatRescueGroupsDog(rgDog);
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog),
+          animal: DogFormatter.toLegacyFormat(formattedDog, false),
           source: 'rescuegroups'
         });
       }
@@ -98,10 +98,10 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         if (data.animal) {
           console.log('[✅ Petfinder Hit] Found dog in Petfinder:', data.animal.name);
           const formattedDog = DogFormatter.formatPetfinderDog(data.animal);
-          return NextResponse.json({
-            animal: DogFormatter.toLegacyFormat(formattedDog),
-            source: 'petfinder'
-          });
+        return NextResponse.json({
+          animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
+          source: 'petfinder'
+        });
         }
       } else if (response.status === 404) {
         console.log('[❌ Not Found] Dog not found in Petfinder');

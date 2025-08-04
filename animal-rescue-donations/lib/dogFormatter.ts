@@ -108,14 +108,22 @@ class DogFormatter {
     // Extract attributes from the nested structure
     const attrs = dog.attributes || dog;
     
-    const photos = (dog.pictures || [])
-      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-      .map((pic: any) => ({
-        small: pic.small || pic.large || pic.original,
-        medium: pic.large || pic.original || pic.small,
-        large: pic.original || pic.large || pic.small
-      }))
-      .filter((photo: any) => photo.large);
+    // Handle photos from RescueGroups API structure
+    let photos = [];
+    
+    // Check if pictures exist in the attributes or root
+    const pictures = attrs.pictures || dog.pictures || [];
+    
+    if (Array.isArray(pictures) && pictures.length > 0) {
+      photos = pictures
+        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+        .map((pic: any) => ({
+          small: pic.small || pic.medium || pic.large || pic.original,
+          medium: pic.medium || pic.large || pic.original || pic.small,
+          large: pic.large || pic.original || pic.medium || pic.small
+        }))
+        .filter((photo: any) => photo.large || photo.medium || photo.small);
+    }
 
     if (photos.length === 0 && attrs.thumbnailUrl) {
       photos.push({
@@ -238,8 +246,27 @@ class DogFormatter {
     return dogs.sort((a, b) => b.visibilityScore - a.visibilityScore);
   }
 
+  // Truncate description for chat display (preserves full description for dog detail pages)
+  static truncateDescription(description?: string, maxLength: number = 150): string {
+    if (!description) return '';
+    if (description.length <= maxLength) return description;
+    
+    // Find last complete sentence within limit
+    const truncated = description.substring(0, maxLength);
+    const lastSentence = truncated.lastIndexOf('.');
+    const lastSpace = truncated.lastIndexOf(' ');
+    
+    if (lastSentence > maxLength * 0.7) {
+      return description.substring(0, lastSentence + 1);
+    } else if (lastSpace > maxLength * 0.8) {
+      return description.substring(0, lastSpace) + '...';
+    } else {
+      return truncated + '...';
+    }
+  }
+
   // Convert unified format back to legacy API format for backward compatibility
-  static toLegacyFormat(dog: UnifiedDog): any {
+  static toLegacyFormat(dog: UnifiedDog, truncateDesc: boolean = false): any {
     return {
       id: parseInt(dog.id) || dog.id,
       organization_id: dog.organizationId,
@@ -248,7 +275,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: dog.description,
+      description: truncateDesc ? this.truncateDescription(dog.description) : dog.description,
       photos: dog.photos,
       contact: dog.contact,
       visibilityScore: dog.visibilityScore,

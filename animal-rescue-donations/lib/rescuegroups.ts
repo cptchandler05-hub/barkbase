@@ -85,6 +85,14 @@ class RescueGroupsAPI {
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
+    // Ensure we only get adoptable dogs
+    searchParams.append('filter[status]', 'Available');
+    
+    // Filter for dogs updated in the last 2 years to avoid stale listings
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+    searchParams.append('filter[lastUpdated]', `>${twoYearsAgo.toISOString().split('T')[0]}`);
+
     // Add location-based filters
     if (params.latitude && params.longitude) {
       searchParams.append('filter[geoLatitude]', params.latitude.toString());
