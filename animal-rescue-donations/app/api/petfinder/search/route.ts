@@ -106,24 +106,28 @@ export async function POST(req: Request) {
           console.log(`[⚠️ No Coordinates] RescueGroups search will be nationwide (no location filtering)`);
         }
 
+        // Construct RescueGroups API parameters
+        // If coordinates are not available, we pass the location string and radius for potential backend filtering
+        // Otherwise, we use the geocoded coordinates for precise radius search
         const rgParams = {
-          location: normalizedParams.location,
+          location: normalizedParams.location, // Pass location string for potential fallback/context
           breed: normalizedParams.breed,
           age: normalizedParams.age,
           size: normalizedParams.size,
           gender: normalizedParams.gender,
           limit: Math.min(50, normalizedParams.limit! - allDogs.length),
           radius: normalizedParams.radius,
-          latitude: coordinates?.latitude,
-          longitude: coordinates?.longitude
+          latitude: coordinates?.latitude, // Use geocoded latitude if available
+          longitude: coordinates?.longitude // Use geocoded longitude if available
         };
+
 
         const rgResult = await rescueGroups.searchAnimals(rgParams);
 
         if (rgResult && rgResult.animals && rgResult.animals.length > 0) {
           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
-          
+
           const formattedRgDogs = rgResult.animals.map(dog => DogFormatter.formatRescueGroupsDog(dog, rgResult.included || []));
 
           // COMPREHENSIVE filtering since RescueGroups API is returning cats, horses, and wrong breeds
