@@ -151,28 +151,11 @@ function transformRescueGroupsAnimal(animal) {
   let city = 'Unknown';
   let state = 'Unknown';
   
-  // Try multiple location field variations
-  if (attrs.citystate) {
-    const parts = attrs.citystate.split(',');
-    if (parts.length >= 2) {
-      city = parts[0]?.trim() || 'Unknown';
-      state = parts[1]?.trim() || 'Unknown';
-    }
-  } else if (attrs.location) {
-    if (typeof attrs.location === 'string') {
-      const parts = attrs.location.split(',');
-      if (parts.length >= 2) {
-        city = parts[0]?.trim() || 'Unknown';
-        state = parts[1]?.trim() || 'Unknown';
-      }
-    } else if (attrs.location.citystate) {
-      const parts = attrs.location.citystate.split(',');
-      if (parts.length >= 2) {
-        city = parts[0]?.trim() || 'Unknown';
-        state = parts[1]?.trim() || 'Unknown';
-      }
-    }
-  }
+  // RescueGroups v5 API doesn't include location details in the basic attributes
+  // Location data would need to be fetched separately via relationships
+  // For now, we'll use placeholder values since location isn't critical for sync
+  city = 'Unknown';
+  state = 'Unknown';
 
   // Parse photos
   const photos = [];
@@ -220,7 +203,7 @@ function transformRescueGroupsAnimal(animal) {
     contact_info: {},
     city: city,
     state: state,
-    postcode: location.postalcode || null,
+    postcode: null, // RescueGroups v5 API doesn't provide postal code in this format
     latitude: null,
     longitude: null,
     last_updated_at: new Date().toISOString(),
