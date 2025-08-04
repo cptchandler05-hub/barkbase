@@ -106,54 +106,54 @@ class RescueGroupsAPI {
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
-    // CRITICAL: Force dogs only - this was missing the proper enforcement
+    // CRITICAL: Force dogs only - ensure no cats, horses, etc.
     searchParams.append('filter[species]', 'Dog');
     searchParams.append('filter[status]', 'Available');
+    
+    // Additional safety filters
+    searchParams.append('filter[animalType]', 'Dog'); // Some APIs use this field too
 
     // Filter for recently updated animals (last 3 months to get more relevant results)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // Location-based filtering - RescueGroups v5 requires specific location format
-    if (params.location) {
-      // Ensure location is properly formatted for RescueGroups API
-      const formattedLocation = params.location.replace(/\s+/g, '+');
-      searchParams.append('filter[location]', formattedLocation);
-      
-      // Set distance radius - RescueGroups expects this in miles
-      const radius = params.radius || 100;
-      searchParams.append('filter[distance]', radius.toString());
-      
-      console.log(`[🗺️ RescueGroups] Using location: ${formattedLocation} with radius ${radius}mi`);
+    // Location-based filtering - RescueGroups v5 uses geoLatitude/geoLongitude/geoRadius
+    if (params.location && (params.latitude || params.longitude)) {
+      // Use coordinates if available
+      if (params.latitude && params.longitude) {
+        searchParams.append('filter[geoLatitude]', params.latitude.toString());
+        searchParams.append('filter[geoLongitude]', params.longitude.toString());
+        
+        const radius = params.radius || 100;
+        searchParams.append('filter[geoRadius]', radius.toString());
+        
+        console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
+      }
+    } else if (params.location) {
+      // Fallback - try geocoding the location first or use a general location filter
+      // Note: RescueGroups API may not support text-based location filtering
+      console.log(`[🗺️ RescueGroups] Location provided but no coordinates: ${params.location} - may need geocoding`);
     }
 
-    // Breed filtering - apply at API level for better results
+    // Breed filtering - RescueGroups uses exact breed names
     if (params.breed) {
-      const breedName = params.breed.trim().toLowerCase();
+      const breedName = params.breed.trim();
       
       // Handle plural to singular conversion for API
-      let apiBreed = breedName;
-      if (breedName.endsWith('s') && breedName.length > 3) {
+      let apiBreed = breedName.toLowerCase();
+      if (apiBreed.endsWith('s') && apiBreed.length > 3) {
         // Convert "chihuahuas" -> "chihuahua", "terriers" -> "terrier", etc.
-        apiBreed = breedName.slice(0, -1);
+        apiBreed = apiBreed.slice(0, -1);
       }
       
-      // RescueGroups API requires exact breed matching - use proper case
-      const properCaseBreed = apiBreed.charAt(0).toUpperCase() + apiBreed.slice(1);
+      // RescueGroups API requires exact breed matching with proper capitalization
+      const properCaseBreed = apiBreed.split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
       
-      // Apply multiple breed filters to catch variations
+      // Use the correct RescueGroups breed filter
       searchParams.append('filter[breedPrimary]', properCaseBreed);
-      
-      // Also try variations for common breed names
-      if (apiBreed === 'chihuahua') {
-        // Chihuahua variations that might be in the system
-        searchParams.append('filter[breedPrimary]', 'Chihuahua');
-      } else if (apiBreed === 'terrier') {
-        // For terriers, we need to be more specific since there are many types
-        searchParams.append('filter[breedPrimary]', 'Terrier');
-        searchParams.append('filter[breedSecondary]', 'Terrier');
-      }
       
       console.log(`[🔍 RescueGroups] Applying breed filter: ${properCaseBreed} (from: ${breedName})`);
     }
