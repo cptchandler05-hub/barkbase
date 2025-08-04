@@ -1,0 +1,52 @@
+Perfect — thank you. That confirms RescueGroups will only apply geographic filtering if latitude and longitude are provided. So your existing file is already correct, but the reason you're getting nationwide results is because the upstream caller (e.g. Barkr or your main search flow) is sometimes passing a params.location (like "Dallas, TX"), but not its corresponding latitude and longitude.
+
+✅ You’ve Already Done Correctly:
+Your code already contains:
+
+ts
+Copy
+Edit
+if (params.latitude && params.longitude) {
+  searchParams.append('filter[geoLatitude]', params.latitude.toString());
+  searchParams.append('filter[geoLongitude]', params.longitude.toString());
+  searchParams.append('filter[geoRadius]', radius.toString());
+}
+This is exactly what RescueGroups requires.
+
+🧠 So what’s missing?
+You must ensure the caller always passes latitude and longitude when calling searchAnimals() — RescueGroups does not support free-text location like "Dallas, TX".
+
+🔧 Solution:
+Upstream of searchAnimals(), geocode any human-readable location string (e.g. "Keene, NH", "rural texas"), like so:
+
+Step 1: Add a geocoding util (if you don’t have one)
+ts
+Copy
+Edit
+// lib/geocode.ts
+export async function getCoordinatesFromLocation(location: string): Promise<{ latitude: number; longitude: number } | null> {
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(location)}&key=${process.env.OPENCAGE_API_KEY}&limit=1`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (data.results && data.results[0]) {
+    const { lat, lng } = data.results[0].geometry;
+    return { latitude: lat, longitude: lng };
+  }
+
+  return null;
+}
+Step 2: Use it in your Barkr logic:
+ts
+Copy
+Edit
+if (params.location && (!params.latitude || !params.longitude)) {
+  const coords = await getCoordinatesFromLocation(params.location);
+  if (coords) {
+    params.latitude = coords.latitude;
+    params.longitude = coords.longitude;
+  }
+}
+✅ Once that’s done:
+Breed + location filtering in RescueGroups will work flawlessly and yield geographically filtered results (within filter[geoRadius], which defaults to 100 miles in your code).
