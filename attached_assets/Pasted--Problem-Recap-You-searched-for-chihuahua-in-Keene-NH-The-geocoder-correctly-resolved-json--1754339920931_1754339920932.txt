@@ -1,0 +1,103 @@
+🔍 Problem Recap
+You searched for "chihuahua" in "Keene NH"
+
+The geocoder correctly resolved:
+
+json
+Copy
+Edit
+{
+  "lat": 42.9337,
+  "lon": -72.2781
+}
+Claude formatted the RescueGroups API request using:
+
+ts
+Copy
+Edit
+filters: [
+  { fieldName: "animalLocationDistance", operation: "radius", criteria: 100 },
+  { fieldName: "animalLocationCoordinates", operation: "coordinates", criteria: { latitude, longitude } }
+],
+However, results included no chihuahuas, and animalLocation is showing as undefined in the Barkr UI output.
+
+🧠 Diagnosis — What’s Likely Going Wrong
+1. ✅ Geocoding appears to be working
+You're correctly getting lat/lon for "Keene NH".
+
+2. ❓ Breed filter is missing or misformatted
+You're not passing breed (e.g., "Chihuahua") as a filter in the RescueGroups query. That needs to be a dedicated filter like:
+
+ts
+Copy
+Edit
+{
+  fieldName: "animalBreed",
+  operation: "equals",
+  criteria: "Chihuahua"
+}
+RescueGroups expects the primary breed name in a specific format (case-sensitive in some cases). If omitted, your query pulls all breeds.
+
+3. ⚠️ animalLocation may not be in the fields list or not reliably populated
+If animalLocation is undefined:
+
+You may need to request fields like:
+
+ts
+Copy
+Edit
+"animalLocationCity", "animalLocationState", "animalLocationPostalcode"
+animalLocation is not always a real returned field—RescueGroups v5 documentation prefers atomic address fields.
+
+✅ Recommended Fixes
+🔧 In the RescueGroups query:
+Add the breed filter:
+
+ts
+Copy
+Edit
+{
+  fieldName: "animalBreed",
+  operation: "equals",
+  criteria: breed // e.g., "Chihuahua"
+}
+Update the fields list:
+
+ts
+Copy
+Edit
+fields: [
+  "animalID",
+  "animalName",
+  "animalBreed",
+  "animalStatus",
+  "animalLocationCity",
+  "animalLocationState",
+  "animalLocationPostalcode",
+  "animalThumbnailUrl",
+  "animalUrl",
+  ...
+]
+Update your chat renderer to show location from:
+
+ts
+Copy
+Edit
+`${animalLocationCity}, ${animalLocationState}`
+🧪 Suggested Debug Log Insert
+Have Claude add this after fetching RescueGroups results:
+
+ts
+Copy
+Edit
+console.log("🔍 Fetched animal:", {
+  name: animal.animalName,
+  breed: animal.animalBreed,
+  city: animal.animalLocationCity,
+  state: animal.animalLocationState
+});
+✅ Summary
+Issue	Fix
+Breed not being filtered	Add animalBreed filter
+Location undefined	Add animalLocationCity and animalLocationState fields
+UI shows “Unknown”	Update renderer to use animalLocationCity + ", " + animalLocationState
