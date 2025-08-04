@@ -16,16 +16,17 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 export async function POST(req: Request) {
   console.log('[🔍 Enhanced Search] Starting priority waterfall search');
 
+  let allDogs: UnifiedDog[] = [];
+  let sources: string[] = [];
+  let normalizedParams: any = {};
+
   try {
     const requestBody = await req.json();
     console.log('[📋 Raw Input]', requestBody);
 
     // Normalize search parameters
-    const normalizedParams = SearchNormalizer.normalizeSearchParams(requestBody);
+    normalizedParams = SearchNormalizer.normalizeSearchParams(requestBody);
     console.log('[🧼 Normalized Params]', normalizedParams);
-
-    let allDogs: UnifiedDog[] = [];
-    let sources: string[] = [];
 
     // 🏆 PHASE 1: Database Search (Highest Priority)
     if (normalizedParams.location) {
@@ -232,9 +233,9 @@ export async function POST(req: Request) {
     console.error('[❌ Search Error]', err);
 
     // Return partial results if we have any, even with errors
-    if (allDogs.length > 0) {
+    if (allDogs && allDogs.length > 0) {
       console.log(`[⚠️ Partial Success] Returning ${allDogs.length} dogs despite errors`);
-      const sortedDogs = DogFormatter.sortByVisibilityScore(allDogs.slice(0, normalizedParams.limit));
+      const sortedDogs = DogFormatter.sortByVisibilityScore(allDogs.slice(0, normalizedParams.limit || 50));
       const legacyFormattedDogs = sortedDogs.map(DogFormatter.toLegacyFormat);
 
       return NextResponse.json({

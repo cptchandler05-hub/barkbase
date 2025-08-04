@@ -103,110 +103,124 @@ class DogFormatter {
   }
 
   // Format RescueGroups dog to unified format
-  static formatRescueGroupsDog(dog: any, includedData?: any[]): UnifiedDog {
-    const attrs = dog.attributes || {};
+  static formatRescueGroupsDog(animal: any, included: any[] = []): UnifiedDog {
+    // Create lookup maps for included data
+    const breedsMap = new Map();
+    const locationsMap = new Map();
+    const orgsMap = new Map(); 
+    const picturesMap = new Map();
 
-    // Helper function to find included data by type and id
-    const findIncluded = (type: string, id: string) => {
-      if (!includedData) return null;
-      return includedData.find(item => item.type === type && item.id === id);
-    };
-
-    // Handle photos - RescueGroups v5 has photos in relationships
-    const photos = [];
-    if (dog.relationships?.pictures?.data && Array.isArray(dog.relationships.pictures.data)) {
-      for (const photoRef of dog.relationships.pictures.data) {
-        const pictureData = findIncluded('pictures', photoRef.id);
-        if (pictureData?.attributes?.large?.url) {
-          photos.push({ medium: pictureData.attributes.large.url });
-        } else if (pictureData?.attributes?.original?.url) {
-          photos.push({ medium: pictureData.attributes.original.url });
+    if (included && Array.isArray(included)) {
+      included.forEach(item => {
+        if (item.type === 'breeds') {
+          breedsMap.set(item.id, item.attributes);
+        } else if (item.type === 'locations') {
+          locationsMap.set(item.id, item.attributes);
+        } else if (item.type === 'orgs') {
+          orgsMap.set(item.id, item.attributes);
+        } else if (item.type === 'pictures') {
+          picturesMap.set(item.id, item.attributes);
         }
-      }
+      });
     }
 
-    if (photos.length === 0) {
-      photos.push({ medium: '/images/barkr.png' });
-    }
+    // Get breed information
+    const breedIds = animal.relationships?.breeds?.data || [];
+    const primaryBreedId = breedIds[0]?.id;
+    const secondaryBreedId = breedIds[1]?.id;
 
-    // Extract breeds from relationships
-    let primaryBreed = 'Mixed Breed';
-    let secondaryBreed = null;
-    if (dog.relationships?.breeds?.data && Array.isArray(dog.relationships.breeds.data)) {
-      const breed1 = findIncluded('breeds', dog.relationships.breeds.data[0]?.id);
-      const breed2 = findIncluded('breeds', dog.relationships.breeds.data[1]?.id);
+    const primaryBreed = primaryBreedId ? breedsMap.get(primaryBreedId)?.name : 'Mixed Breed';
+    const secondaryBreed = secondaryBreedId ? breedsMap.get(secondaryBreedId)?.name : null;
 
-      if (breed1?.attributes?.name) primaryBreed = breed1.attributes.name;
-      if (breed2?.attributes?.name) secondaryBreed = breed2.attributes.name;
-    }
+    // Get location information
+    const locationIds = animal.relationships?.locations?.data || [];
+    const locationId = locationIds[0]?.id;
+    const location = locationId ? locationsMap.get(locationId) : null;
 
-    // Extract location from relationships
-    let city = 'Unknown';
-    let state = 'Unknown';
-    if (dog.relationships?.locations?.data?.[0]) {
-      const locationData = findIncluded('locations', dog.relationships.locations.data[0].id);
-      if (locationData?.attributes) {
-        city = locationData.attributes.city || 'Unknown';
-        state = locationData.attributes.state || 'Unknown';
-      }
-    }
+    // Get organization information
+    const orgIds = animal.relationships?.orgs?.data || [];
+    const orgId = orgIds[0]?.id;
+    const organization = orgId ? orgsMap.get(orgId) : null;
 
-    // Extract organization from relationships
-    let organizationId = '';
-    if (dog.relationships?.orgs?.data?.[0]) {
-      const orgData = findIncluded('orgs', dog.relationships.orgs.data[0].id);
-      if (orgData?.attributes?.name) {
-        organizationId = orgData.attributes.name;
-      }
-    }
+    // Get photos - handle RescueGroups v5 picture format
+    const pictureIds = animal.relationships?.pictures?.data || [];
+    const photos: any[] = pictureIds
+      .map((picRef: any) => {
+        const pic = picturesMap.get(picRef.id);
+        if (!pic) return null;
 
-    const formatted = {
-      id: dog.id,
-      source: 'rescuegroups' as const,
-      sourceId: dog.id,
-      organizationId: organizationId,
-      name: attrs.name || `Dog ${dog.id}`,
+        return {
+          small: pic.small?.url || pic.large?.url || pic.original?.url,
+          medium: pic.large?.url || pic.original?.url,
+          large: pic.large?.url || pic.original?.url,
+          full: pic.original?.url || pic.large?.url
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 6); // Limit to 6 photos
+
+    // Extract name safely
+    const dogName = animal.attributes?.animalName || 
+                   animal.attributes?.name || 
+                   `Dog ${animal.id}`;
+
+    // Extract description safely  
+    const description = animal.attributes?.animalDescriptionText || 
+                       animal.attributes?.descriptionText || 
+                       animal.attributes?.description || '';
+
+    return {
+      id: animal.id,
+      name: dogName,
       breeds: {
-        primary: primaryBreed,
+        primary: primaryBreed || 'Mixed Breed',
         secondary: secondaryBreed,
-        mixed: !!secondaryBreed
+        mixed: breedIds.length > 1,
+        unknown: !primaryBreed
       },
-      age: attrs.ageGroup || 'Unknown',
-      gender: attrs.sex || 'Unknown',
-      size: attrs.sizeGroup || 'Unknown',
-      description: attrs.descriptionText || 'No description available.',
+      age: this.normalizeAge(animal.attributes?.animalAgeGroup || animal.attributes?.ageGroup),
+      size: this.normalizeSize(animal.attributes?.animalSizeGroup || animal.attributes?.sizeGroup),
+      gender: this.normalizeGender(animal.attributes?.animalSex || animal.attributes?.sex),
       photos: photos,
       contact: {
+        email: organization?.email || '',
+        phone: organization?.phone || '',
         address: {
-          city: city,
-          state: state
+          address1: location?.street || '',
+          address2: null,
+          city: location?.city || '',
+          state: location?.state || '',
+          postcode: location?.postalcode || location?.postalCode || '',
+          country: location?.country || 'US'
         }
       },
-      characteristics: {
-        goodWithChildren: attrs.goodWithChildren,
-        goodWithDogs: attrs.goodWithDogs,
-        goodWithCats: attrs.goodWithCats,
-        houseTrained: attrs.houseTrained,
-        specialNeeds: attrs.specialNeeds
+      description: description,
+      url: animal.attributes?.animalUrl || animal.attributes?.url || '',
+      distance: animal.attributes?.animalDistance || animal.attributes?.distance || null,
+      published_at: animal.attributes?.created || new Date().toISOString(),
+      status: 'adoptable',
+      attributes: {
+        spayed_neutered: null,
+        house_trained: animal.attributes?.animalHouseTrained || animal.attributes?.houseTrained || null,
+        declawed: null,
+        special_needs: animal.attributes?.animalSpecialNeeds || animal.attributes?.specialNeeds || null,
+        shots_current: null
       },
-      url: attrs.url || `https://rescuegroups.org/animals/${dog.id}`,
-      visibilityScore: 0, // Will be calculated
-      verificationBadge: 'Verified by BarkBase'
+      environment: {
+        children: animal.attributes?.animalGoodWithChildren || animal.attributes?.goodWithChildren || null,
+        dogs: animal.attributes?.animalGoodWithDogs || animal.attributes?.goodWithDogs || null,
+        cats: animal.attributes?.animalGoodWithCats || animal.attributes?.goodWithCats || null
+      },
+      tags: [],
+      organization_id: orgId || '',
+      source: 'rescuegroups',
+      visibility_score: this.calculateVisibilityScore({
+        photos: photos.length,
+        description: description,
+        location: location?.city || '',
+        lastUpdated: animal.attributes?.updated || animal.attributes?.created
+      })
     };
-
-    // Calculate visibility score
-    formatted.visibilityScore = calculateVisibilityScore({
-      name: formatted.name,
-      description: formatted.description,
-      photos: formatted.photos,
-      breeds: formatted.breeds,
-      age: formatted.age,
-      gender: formatted.gender,
-      size: formatted.size,
-      contact: formatted.contact
-    });
-
-    return formatted;
   }
 
   // Format Petfinder dog to unified format
@@ -292,6 +306,13 @@ class DogFormatter {
     }
   }
 
+  // Helper method to truncate description
+  static truncateDescriptionNew(description: string, maxLength: number = 200): string {
+    if (!description) return '';
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength).trim() + '...';
+  }
+
   // Convert unified format back to legacy API format for backward compatibility
   static toLegacyFormat(dog: UnifiedDog, truncateDesc: boolean = false): any {
     return {
@@ -310,6 +331,74 @@ class DogFormatter {
       verificationBadge: dog.verificationBadge
     };
   }
+
+    // Helper method to normalize age
+    static normalizeAge(age: string | undefined): string {
+        if (!age) return 'Unknown';
+        const lowerAge = age.toLowerCase();
+        if (lowerAge.includes('baby')) return 'Baby';
+        if (lowerAge.includes('young')) return 'Young';
+        if (lowerAge.includes('adult')) return 'Adult';
+        if (lowerAge.includes('senior')) return 'Senior';
+        return 'Unknown';
+    }
+
+    // Helper method to normalize size
+    static normalizeSize(size: string | undefined): string {
+        if (!size) return 'Unknown';
+        const lowerSize = size.toLowerCase();
+        if (lowerSize.includes('small')) return 'Small';
+        if (lowerSize.includes('medium')) return 'Medium';
+        if (lowerSize.includes('large')) return 'Large';
+        if (lowerSize.includes('extra large')) return 'X-Large';
+        return 'Unknown';
+    }
+
+    // Helper method to normalize gender
+    static normalizeGender(gender: string | undefined): string {
+        if (!gender) return 'Unknown';
+        const lowerGender = gender.toLowerCase();
+        if (lowerGender.includes('male')) return 'Male';
+        if (lowerGender.includes('female')) return 'Female';
+        return 'Unknown';
+    }
+  
+  static calculateVisibilityScore(dog: any): number {
+        let score = 0;
+
+        // Add points for having a description
+        if (dog.description) {
+            score += 20;
+            // Add more points for longer descriptions
+            score += Math.min(dog.description.length / 10, 30); // Up to 30 points
+        }
+
+        // Add points for each photo
+        if (dog.photos && Array.isArray(dog.photos)) {
+            score += Math.min(dog.photos.length * 10, 50); // Up to 50 points
+        }
+
+        // Add points for having a location
+        if (dog.contact?.address?.city) {
+            score += 10;
+        }
+
+        // Add points if the dog was recently updated
+        if (dog.lastUpdated) {
+            const lastUpdated = new Date(dog.lastUpdated);
+            const now = new Date();
+            const diff = now.getTime() - lastUpdated.getTime();
+            const days = diff / (1000 * 3600 * 24);
+
+            if (days < 30) {
+                score += 20;
+            } else if (days < 90) {
+                score += 10;
+            }
+        }
+
+        return score;
+    }
 }
 
 export { DogFormatter, type UnifiedDog };
