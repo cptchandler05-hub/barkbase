@@ -66,6 +66,10 @@ export async function POST(req: Request) {
             if (!process.env.MAPBOX_ACCESS_TOKEN) {
               console.error('[❌ Geocoding] MAPBOX_ACCESS_TOKEN environment variable is missing!');
             } else {
+              // Optional: Track geocoding usage for monitoring
+              console.log(`[📊 Geocoding] Making request ${Date.now()}`);
+
+              // Could add usage counter here if needed
               const geocodeResponse = await fetch(
                 `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(normalizedParams.location)}.json?access_token=${process.env.MAPBOX_ACCESS_TOKEN}&types=place,region,postcode&country=US&limit=1`
               );
@@ -129,7 +133,7 @@ export async function POST(req: Request) {
               const dogBreedSecondary = dog.breeds?.secondary?.toLowerCase() || '';
 
               // Check if search breed matches primary or secondary breed
-              const isMatch = dogBreed.includes(searchBreed) || 
+              const isMatch = dogBreed.includes(searchBreed) ||
                              searchBreed.includes(dogBreed) ||
                              dogBreedSecondary.includes(searchBreed) ||
                              searchBreed.includes(dogBreedSecondary);
