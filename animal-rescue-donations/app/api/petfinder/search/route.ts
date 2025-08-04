@@ -81,7 +81,7 @@ export async function POST(req: Request) {
             // Only filter out obvious cats that somehow got through (should not happen with proper API filtering)
             const primaryBreed = (rgDog.breeds.primary || '').toLowerCase().trim();
             const catBreeds = ['domestic short hair', 'domestic long hair', 'tabby', 'tuxedo', 'tortoiseshell', 'calico', 'siamese', 'persian', 'maine coon'];
-            
+
             if (catBreeds.some(catBreed => primaryBreed.includes(catBreed))) {
               console.log(`[🚫 Species Filter] Excluding ${rgDog.name} - ${rgDog.breeds.primary} appears to be a cat`);
               return false;
