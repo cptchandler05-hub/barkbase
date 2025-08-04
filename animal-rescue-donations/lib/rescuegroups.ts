@@ -165,10 +165,10 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // Use primary breed filter
+      // Use primary breed filter - STRICT filtering
       searchParams.append('filter[breedPrimary]', apiBreed);
       
-      console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying STRICT breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
     // Other filters
@@ -377,11 +377,23 @@ class RescueGroupsAPI {
       if (locationData?.attributes) {
         const attrs = locationData.attributes;
         
-        // Try multiple city fields
+        // Try multiple city fields with better fallbacks
         city = attrs.city || attrs.name || attrs.citystate?.split(',')[0]?.trim() || 'Unknown';
         
         // Try multiple state fields
         state = attrs.state || attrs.citystate?.split(',')[1]?.trim() || 'Unknown';
+        
+        // Handle special cases where name contains city info
+        if (city === 'Unknown' && attrs.name) {
+          // Try to extract city from name field
+          const nameWords = attrs.name.split(/[\s,-]+/);
+          if (nameWords.length >= 2) {
+            city = nameWords[0];
+            if (nameWords[1] && nameWords[1].length === 2) {
+              state = nameWords[1].toUpperCase();
+            }
+          }
+        }
         
         // Get coordinates
         latitude = attrs.lat || attrs.latitude || null;

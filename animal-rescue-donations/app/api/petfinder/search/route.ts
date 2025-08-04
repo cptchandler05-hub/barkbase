@@ -123,30 +123,8 @@ export async function POST(req: Request) {
         if (rgResult && rgResult.animals && rgResult.animals.length > 0) {
           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
-          const formattedRgDogs = rgResult.animals
-          .map(dog => DogFormatter.formatRescueGroupsDog(dog, rgResult.included || []))
-          .filter(dog => {
-            // Additional breed filtering for safety
-            if (normalizedParams.breed) {
-              const searchBreed = normalizedParams.breed.toLowerCase();
-              const dogBreed = dog.breeds?.primary?.toLowerCase() || '';
-              const dogBreedSecondary = dog.breeds?.secondary?.toLowerCase() || '';
-
-              // Check if search breed matches primary or secondary breed
-              const isMatch = dogBreed.includes(searchBreed) ||
-                             searchBreed.includes(dogBreed) ||
-                             dogBreedSecondary.includes(searchBreed) ||
-                             searchBreed.includes(dogBreedSecondary);
-
-              if (!isMatch) {
-                console.log(`[🚫 Post-Filter] Excluding ${dog.name} - ${dog.breeds?.primary} doesn't match search for "${normalizedParams.breed}"`);
-                return false;
-              } else {
-                console.log(`[✅ Post-Filter] Including ${dog.name} - ${dog.breeds?.primary} matches search for "${normalizedParams.breed}"`);
-              }
-            }
-            return true;
-          });
+          
+          const formattedRgDogs = rgResult.animals.map(dog => DogFormatter.formatRescueGroupsDog(dog, rgResult.included || []));
 
           // COMPREHENSIVE filtering since RescueGroups API is returning cats, horses, and wrong breeds
           const filteredRgDogs = formattedRgDogs.filter(rgDog => {
