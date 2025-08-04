@@ -127,25 +127,12 @@ class RescueGroupsAPI {
 
     // Breed filter with correct v5 field name
     if (params.breed) {
-      let breedName = params.breed.trim();
-      
-      // Normalize common breed variations
-      const breedMap: { [key: string]: string } = {
-        'chihuahua': 'Chihuahua',
-        'chihuahuas': 'Chihuahua',
-        'jack russell': 'Jack Russell Terrier',
-        'jack russells': 'Jack Russell Terrier',
-        'jack russell terrier': 'Jack Russell Terrier',
-        'golden retriever': 'Golden Retriever',
-        'lab': 'Labrador Retriever',
-        'labrador': 'Labrador Retriever'
-      };
-
-      const normalizedBreed = breedMap[breedName.toLowerCase()] || breedName;
+      // Just use the breed as-is - let the fuzzy matching handle normalization at the API call level
+      const breedName = params.breed.trim();
       
       // Use the correct breed filter field for v5 API
-      searchParams.append('filter[breedPrimary]', normalizedBreed);
-      console.log('[🔍 RescueGroups] Searching for breed:', normalizedBreed);
+      searchParams.append('filter[breedPrimary]', breedName);
+      console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
     // Other filters
