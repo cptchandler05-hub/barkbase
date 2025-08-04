@@ -133,6 +133,19 @@ class DogFormatter {
       });
     }
 
+    // Parse location from RescueGroups API
+    const location = attrs.location || {};
+    let city = 'Unknown';
+    let state = 'Unknown';
+    
+    if (location.citystate) {
+      const parts = location.citystate.split(',');
+      if (parts.length >= 2) {
+        city = parts[0]?.trim() || 'Unknown';
+        state = parts[1]?.trim() || 'Unknown';
+      }
+    }
+
     const formatted = {
       id: attrs.id || dog.id,
       source: 'rescuegroups' as const,
@@ -151,8 +164,8 @@ class DogFormatter {
       photos: photos,
       contact: {
         address: {
-          city: 'Unknown', // RescueGroups doesn't provide this in search
-          state: 'Unknown'
+          city: city,
+          state: state
         }
       },
       characteristics: {
