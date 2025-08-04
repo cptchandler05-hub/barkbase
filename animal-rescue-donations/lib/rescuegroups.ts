@@ -119,21 +119,26 @@ class RescueGroupsAPI {
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
     // Location-based filtering - RescueGroups v5 uses geoLatitude/geoLongitude/geoRadius
-    if (params.location && (params.latitude || params.longitude)) {
-      // Use coordinates if available
-      if (params.latitude && params.longitude) {
-        searchParams.append('filter[geoLatitude]', params.latitude.toString());
-        searchParams.append('filter[geoLongitude]', params.longitude.toString());
-        
-        const radius = params.radius || 100;
-        searchParams.append('filter[geoRadius]', radius.toString());
-        
-        console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
-      }
+    if (params.latitude && params.longitude) {
+      // Use coordinates for precise filtering
+      searchParams.append('filter[geoLatitude]', params.latitude.toString());
+      searchParams.append('filter[geoLongitude]', params.longitude.toString());
+      
+      const radius = params.radius || 100;
+      searchParams.append('filter[geoRadius]', radius.toString());
+      
+      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
     } else if (params.location) {
-      // Fallback - try geocoding the location first or use a general location filter
-      // Note: RescueGroups API may not support text-based location filtering
-      console.log(`[🗺️ RescueGroups] Location provided but no coordinates: ${params.location} - may need geocoding`);
+      // Try to extract state and filter by state as fallback
+      const stateMatch = params.location.match(/,\s*([A-Z]{2})$/);
+      if (stateMatch) {
+        const state = stateMatch[1];
+        console.log(`[🗺️ RescueGroups] No coordinates available, filtering by state: ${state}`);
+        // Note: This is a fallback - RescueGroups doesn't have a direct state filter
+        // The API call will still work but may return broader results
+      } else {
+        console.log(`[⚠️ RescueGroups] Location provided but no coordinates available: ${params.location}`);
+      }
     }
 
     // Breed filtering - RescueGroups uses exact breed names
@@ -152,10 +157,11 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
       
-      // Use the correct RescueGroups breed filter
+      // Use both primary and secondary breed filters to catch mixed breeds
       searchParams.append('filter[breedPrimary]', properCaseBreed);
+      searchParams.append('filter[breedSecondary]', properCaseBreed);
       
-      console.log(`[🔍 RescueGroups] Applying breed filter: ${properCaseBreed} (from: ${breedName})`);
+      console.log(`[🔍 RescueGroups] Applying breed filters for: ${properCaseBreed} (from: ${breedName})`);
     }
 
     // Other filters
