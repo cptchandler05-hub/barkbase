@@ -62,11 +62,12 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     try {
       console.log('[🦮 RescueGroups] Searching RescueGroups...');
       const rescueGroups = new RescueGroupsAPI();
-      const rgDog = await rescueGroups.getAnimalDetails(dogId);
+      const rgResult = await rescueGroups.getAnimalDetails(dogId);
 
-      if (rgDog) {
-        console.log('[✅ RescueGroups Hit] Found dog in RescueGroups:', rgDog.name);
-        const formattedDog = DogFormatter.formatRescueGroupsDog(rgDog);
+      if (rgResult) {
+        console.log('[✅ RescueGroups Hit] Found dog in RescueGroups');
+        // For single dog details, rgResult would be the animal object directly
+        const formattedDog = DogFormatter.formatRescueGroupsDog(rgResult);
         return NextResponse.json({
           animal: DogFormatter.toLegacyFormat(formattedDog, false),
           source: 'rescuegroups'

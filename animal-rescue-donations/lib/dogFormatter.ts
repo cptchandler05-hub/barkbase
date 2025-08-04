@@ -1,4 +1,3 @@
-
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 
 interface UnifiedDog {
@@ -104,63 +103,78 @@ class DogFormatter {
   }
 
   // Format RescueGroups dog to unified format
-  static formatRescueGroupsDog(dog: any): UnifiedDog {
-    // Extract attributes from the nested structure
-    const attrs = dog.attributes || dog;
-    
-    // Handle photos from RescueGroups API structure
-    let photos = [];
-    
-    // Check if pictures exist in the attributes or root
-    const pictures = attrs.pictures || dog.pictures || [];
-    
-    if (Array.isArray(pictures) && pictures.length > 0) {
-      photos = pictures
-        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-        .map((pic: any) => ({
-          small: pic.small || pic.medium || pic.large || pic.original,
-          medium: pic.medium || pic.large || pic.original || pic.small,
-          large: pic.large || pic.original || pic.medium || pic.small
-        }))
-        .filter((photo: any) => photo.large || photo.medium || photo.small);
+  static formatRescueGroupsDog(dog: any, includedData?: any[]): UnifiedDog {
+    const attrs = dog.attributes || {};
+
+    // Helper function to find included data by type and id
+    const findIncluded = (type: string, id: string) => {
+      if (!includedData) return null;
+      return includedData.find(item => item.type === type && item.id === id);
+    };
+
+    // Handle photos - RescueGroups v5 has photos in relationships
+    const photos = [];
+    if (dog.relationships?.pictures?.data && Array.isArray(dog.relationships.pictures.data)) {
+      for (const photoRef of dog.relationships.pictures.data) {
+        const pictureData = findIncluded('pictures', photoRef.id);
+        if (pictureData?.attributes?.large?.url) {
+          photos.push({ medium: pictureData.attributes.large.url });
+        } else if (pictureData?.attributes?.original?.url) {
+          photos.push({ medium: pictureData.attributes.original.url });
+        }
+      }
     }
 
-    if (photos.length === 0 && attrs.thumbnailUrl) {
-      photos.push({
-        small: attrs.thumbnailUrl,
-        medium: attrs.thumbnailUrl,
-        large: attrs.thumbnailUrl
-      });
+    if (photos.length === 0) {
+      photos.push({ medium: '/images/barkr.png' });
     }
 
-    // Parse location from RescueGroups API
-    const location = attrs.location || {};
+    // Extract breeds from relationships
+    let primaryBreed = 'Mixed Breed';
+    let secondaryBreed = null;
+    if (dog.relationships?.breeds?.data && Array.isArray(dog.relationships.breeds.data)) {
+      const breed1 = findIncluded('breeds', dog.relationships.breeds.data[0]?.id);
+      const breed2 = findIncluded('breeds', dog.relationships.breeds.data[1]?.id);
+
+      if (breed1?.attributes?.name) primaryBreed = breed1.attributes.name;
+      if (breed2?.attributes?.name) secondaryBreed = breed2.attributes.name;
+    }
+
+    // Extract location from relationships
     let city = 'Unknown';
     let state = 'Unknown';
-    
-    if (location.citystate) {
-      const parts = location.citystate.split(',');
-      if (parts.length >= 2) {
-        city = parts[0]?.trim() || 'Unknown';
-        state = parts[1]?.trim() || 'Unknown';
+    if (dog.relationships?.locations?.data?.[0]) {
+      const locationData = findIncluded('locations', dog.relationships.locations.data[0].id);
+      if (locationData?.attributes) {
+        city = locationData.attributes.city || 'Unknown';
+        state = locationData.attributes.state || 'Unknown';
+      }
+    }
+
+    // Extract organization from relationships
+    let organizationId = '';
+    if (dog.relationships?.orgs?.data?.[0]) {
+      const orgData = findIncluded('orgs', dog.relationships.orgs.data[0].id);
+      if (orgData?.attributes?.name) {
+        organizationId = orgData.attributes.name;
       }
     }
 
     const formatted = {
-      id: attrs.id || dog.id,
+      id: dog.id,
       source: 'rescuegroups' as const,
-      sourceId: attrs.id || dog.id,
-      organizationId: dog.organization || '',
-      name: attrs.name || 'Unknown',
+      sourceId: dog.id,
+      organizationId: organizationId,
+      name: attrs.name || `Dog ${dog.id}`,
       breeds: {
-        primary: attrs.breedPrimary || 'Mixed Breed',
-        secondary: attrs.breedSecondary,
-        mixed: attrs.breedMixed || !!attrs.breedSecondary
+        primary: primaryBreed,
+        secondary: secondaryBreed,
+        mixed: !!secondaryBreed
       },
       age: attrs.ageGroup || 'Unknown',
       gender: attrs.sex || 'Unknown',
       size: attrs.sizeGroup || 'Unknown',
-      description: attrs.descriptionText,
+      description: attrs.descriptionText || 'No description available.',
       photos: photos,
       contact: {
         address: {
@@ -175,7 +189,7 @@ class DogFormatter {
         houseTrained: attrs.houseTrained,
         specialNeeds: attrs.specialNeeds
       },
-      url: attrs.url,
+      url: attrs.url || `https://rescuegroups.org/animals/${dog.id}`,
       visibilityScore: 0, // Will be calculated
       verificationBadge: 'Verified by BarkBase'
     };
@@ -263,12 +277,12 @@ class DogFormatter {
   static truncateDescription(description?: string, maxLength: number = 150): string {
     if (!description) return '';
     if (description.length <= maxLength) return description;
-    
+
     // Find last complete sentence within limit
     const truncated = description.substring(0, maxLength);
     const lastSentence = truncated.lastIndexOf('.');
     const lastSpace = truncated.lastIndexOf(' ');
-    
+
     if (lastSentence > maxLength * 0.7) {
       return description.substring(0, lastSentence + 1);
     } else if (lastSpace > maxLength * 0.8) {

@@ -80,7 +80,7 @@ class RescueGroupsAPI {
     return result;
   }
 
-  async searchAnimals(params: RescueGroupsSearchParams): Promise<RescueGroupsAnimal[]> {
+  async searchAnimals(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
     const endpoint = `${this.baseURL}/search/available/dogs`;
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
@@ -171,9 +171,10 @@ class RescueGroupsAPI {
       const result = await this.makeRequest(url.toString());
 
       const animals = result.data || [];
-      console.log(`[✅ RescueGroups] Found ${animals.length} animals`);
+      const included = result.included || [];
+      console.log(`[✅ RescueGroups] Found ${animals.length} animals with ${included.length} included items`);
 
-      return animals;
+      return { animals, included };
     } catch (error) {
       console.error('[❌ RescueGroups] Search failed:', error);
       throw error;

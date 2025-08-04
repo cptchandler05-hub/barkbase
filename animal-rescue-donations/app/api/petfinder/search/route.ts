@@ -66,11 +66,13 @@ export async function POST(req: Request) {
           radius: normalizedParams.radius
         };
 
-        const rgDogs = await rescueGroups.searchAnimals(rgParams);
+        const rgResult = await rescueGroups.searchAnimals(rgParams);
 
-        if (rgDogs && rgDogs.length > 0) {
-          console.log(`[✅ RescueGroups Hit] Found ${rgDogs.length} dogs from RescueGroups`);
-          const formattedRgDogs = rgDogs.map(DogFormatter.formatRescueGroupsDog);
+        if (rgResult && rgResult.animals && rgResult.animals.length > 0) {
+          console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
+          const formattedRgDogs = rgResult.animals.map(dog => 
+            DogFormatter.formatRescueGroupsDog(dog, rgResult.included)
+          );
 
           // Deduplicate against existing dogs (by name + basic characteristics)
           const newRgDogs = formattedRgDogs.filter(rgDog => {
