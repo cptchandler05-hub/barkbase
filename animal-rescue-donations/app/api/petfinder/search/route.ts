@@ -73,7 +73,7 @@ export async function POST(req: Request) {
           console.log(`[✅ RescueGroups Hit] Found ${rgResult.animals.length} dogs from RescueGroups`);
           console.log(`[🔍 RG Included] Processing with ${rgResult.included?.length || 0} included items`);
           const formattedRgDogs = rgResult.animals.map(dog => 
-            DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])Result.included)
+            DogFormatter.formatRescueGroupsDog(dog, rgResult.included || [])
           );
 
           // Minimal filtering since RescueGroups API should already return correctly filtered results
