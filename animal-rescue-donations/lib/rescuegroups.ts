@@ -86,7 +86,7 @@ class RescueGroupsAPI {
     const searchParams = url.searchParams;
 
     // Ensure we only get adoptable dogs
-    searchParams.append('filter[status]', 'Available');
+    searchParams.append('filter[animalStatus]', 'Available');
 
     // Filter for dogs updated in the last 2 years to avoid stale listings
     const twoYearsAgo = new Date();
@@ -96,14 +96,14 @@ class RescueGroupsAPI {
     // Add location-based filters - Use correct RescueGroups v5 parameter names
     if (params.latitude && params.longitude) {
       // Use proper geo-based filtering with correct field names
-      searchParams.append('filter[locationLat]', params.latitude.toString());
-      searchParams.append('filter[locationLon]', params.longitude.toString());
-      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
+      searchParams.append('filter[animalLocationLat]', params.latitude.toString());
+      searchParams.append('filter[animalLocationLon]', params.longitude.toString());
+      searchParams.append('filter[animalLocationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${params.radius || 100}mi`);
     } else if (params.location) {
       // Use location string with proper field name
-      searchParams.append('filter[location]', params.location);
-      searchParams.append('filter[locationDistance]', (params.radius || 100).toString());
+      searchParams.append('filter[animalLocation]', params.location);
+      searchParams.append('filter[animalLocationDistance]', (params.radius || 100).toString());
       console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${params.radius || 100}mi`);
     }
 
@@ -115,24 +115,24 @@ class RescueGroupsAPI {
         breedName = 'Chihuahua';
       }
 
-      // Use the correct breed filter field name
-      searchParams.append('filter[breedPrimary]', breedName);
+      // Use the correct breed filter field name for v5 API
+      searchParams.append('filter[animalBreedPrimary]', breedName);
       console.log('[🔍 RescueGroups] Searching for breed:', breedName);
     }
 
     // Add age filter
     if (params.age) {
-      searchParams.append('filter[ageGroup]', params.age);
+      searchParams.append('filter[animalAgeGroup]', params.age);
     }
 
     // Add size filter
     if (params.size) {
-      searchParams.append('filter[sizeGroup]', params.size);
+      searchParams.append('filter[animalSizeGroup]', params.size);
     }
 
     // Add gender filter
     if (params.gender) {
-      searchParams.append('filter[sex]', params.gender);
+      searchParams.append('filter[animalSex]', params.gender);
     }
 
     // Add limit
@@ -140,29 +140,29 @@ class RescueGroupsAPI {
       searchParams.append('limit', params.limit.toString());
     }
 
-    // Specify fields to return
+    // Specify fields to return - using correct RescueGroups v5 field names
     const fields = [
       'id',
-      'name',
-      'status',
-      'species',
-      'organization',
-      'ageGroup',
-      'sex',
-      'sizeGroup',
-      'breedPrimary',
-      'breedSecondary',
-      'breedMixed',
-      'descriptionText',
-      'specialNeeds',
-      'houseTrained',
-      'goodWithChildren',
-      'goodWithCats',
-      'goodWithDogs',
-      'pictures',
-      'thumbnailUrl',
-      'url',
-      'distance'
+      'animalName',
+      'animalStatus',
+      'animalSpecies',
+      'animalOrgID',
+      'animalAgeGroup',
+      'animalSex',
+      'animalSizeGroup',
+      'animalBreedPrimary',
+      'animalBreedSecondary',
+      'animalBreedMixed',
+      'animalDescriptionText',
+      'animalSpecialNeeds',
+      'animalHouseTrained',
+      'animalGoodWithChildren',
+      'animalGoodWithCats',
+      'animalGoodWithDogs',
+      'animalPictures',
+      'animalThumbnailUrl',
+      'animalUrl',
+      'animalDistance'
     ];
     searchParams.append('fields[animals]', fields.join(','));
 
@@ -227,9 +227,9 @@ class RescueGroupsAPI {
   transformToDatabaseFormat(animal: RescueGroupsAnimal): any {
     // Parse photos
     const photos = [];
-    if (animal.pictures && Array.isArray(animal.pictures)) {
+    if (animal.animalPictures && Array.isArray(animal.animalPictures)) {
       // Sort by order and extract URLs
-      const sortedPictures = animal.pictures
+      const sortedPictures = animal.animalPictures
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
       for (const pic of sortedPictures) {
@@ -239,41 +239,41 @@ class RescueGroupsAPI {
     }
 
     // Add fallback for thumbnail URL if no pictures array
-    if (photos.length === 0 && animal.thumbnailUrl) {
-      photos.push(animal.thumbnailUrl);
+    if (photos.length === 0 && animal.animalThumbnailUrl) {
+      photos.push(animal.animalThumbnailUrl);
     }
 
     return {
       rescuegroups_id: animal.id,
       api_source: 'rescuegroups',
-      organization_id: animal.organization || '',
-      url: animal.url || '',
-      name: animal.name || 'Unknown',
+      organization_id: animal.animalOrgID || '',
+      url: animal.animalUrl || '',
+      name: animal.animalName || 'Unknown',
       type: 'Dog',
       species: 'Dog',
-      primary_breed: animal.breedPrimary || 'Mixed Breed',
-      secondary_breed: animal.breedSecondary || null,
-      is_mixed: animal.breedMixed || false,
+      primary_breed: animal.animalBreedPrimary || 'Mixed Breed',
+      secondary_breed: animal.animalBreedSecondary || null,
+      is_mixed: animal.animalBreedMixed || false,
       is_unknown_breed: false,
-      age: animal.ageGroup || 'Unknown',
-      gender: animal.sex || 'Unknown',
-      size: animal.sizeGroup || 'Unknown',
+      age: animal.animalAgeGroup || 'Unknown',
+      gender: animal.animalSex || 'Unknown',
+      size: animal.animalSizeGroup || 'Unknown',
       status: 'adoptable',
       spayed_neutered: null, // Not available in v5 API
-      house_trained: animal.houseTrained || null,
-      special_needs: animal.specialNeeds || null,
-      good_with_children: animal.goodWithChildren || null,
-      good_with_dogs: animal.goodWithDogs || null,
-      good_with_cats: animal.goodWithCats || null,
-      description: animal.descriptionText || null,
+      house_trained: animal.animalHouseTrained || null,
+      special_needs: animal.animalSpecialNeeds || null,
+      good_with_children: animal.animalGoodWithChildren || null,
+      good_with_dogs: animal.animalGoodWithDogs || null,
+      good_with_cats: animal.animalGoodWithCats || null,
+      description: animal.animalDescriptionText || null,
       photos: photos,
       tags: [],
       contact_info: {},
-      city: animal.location?.city || 'Unknown',
-      state: animal.location?.state || 'Unknown',
-      postcode: animal.location?.postalCode || null,
-      latitude: animal.location?.lat || null,
-      longitude: animal.location?.lon || null,
+      city: animal.animalLocation?.city || 'Unknown',
+      state: animal.animalLocation?.state || 'Unknown',
+      postcode: animal.animalLocation?.postalCode || null,
+      latitude: animal.animalLocation?.lat || null,
+      longitude: animal.animalLocation?.lon || null,
       last_updated_at: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
