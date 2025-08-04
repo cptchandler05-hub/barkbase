@@ -1,0 +1,357 @@
+[✅ RescueGroups] Found 49 animals with 430 included items
+[✅ RescueGroups Hit] Found 49 dogs from RescueGroups
+[🔍 Breed Filter] Excluding Hannah Steele - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Doli - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Cylana - Shar Pei doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Zeke - American Bulldog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Diamond Beaufort - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Lucky - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Rosie - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Gabrio - American Staffordshire Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Sponsor Joe Sanctuary 2016 - Great Pyrenees doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Pre-Approval - Mixed Breed doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Nova - Siberian Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Fernanda - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bella - Beagle doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Clyde - Cattle Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Chance - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bourke - Dachshund doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Holly - Boxer doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Tyson - Staffordshire Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Kira - Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Gus - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Emma - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Sarah - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Remy - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Harrison - American Staffordshire Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Bella Blue - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Toba - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Francesca - Labrador Retriever doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Indy -girl - German Shepherd Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding FOHA Sponsorship Dogs - Boston Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Daya - Vq Litter - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Helga - German Shepherd Dog doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Tanbo - Yq Litter ♥ - Beagle doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Cross - Shepherd doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Marlee (Permanent Foster) - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding 1Dog Not Listed - Mixed Breed doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Joanna - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Leia - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding SARGE - Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Kit - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Caboodle - Husky doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Mandy - Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding King - American Pit Bull Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Oreo - Australian Cattle Dog/Blue Heeler doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Hugh - Plott Hound doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Mason/Sanctuary Dog - Terrier doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Max - Rest in Peace - West Highland White Terrier Westie doesn't match Chihuahua
+[🔍 Breed Filter] Excluding Janie  LOWER FEE!  IN NJ!! - Australian Cattle Dog/Blue Heeler doesn't match Chihuahua
+[🔄 Deduplication] 47 duplicates removed from RescueGroups
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 3 dogs found so far, need 47 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Using cached token
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=47&location=Keene%2C+NH&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 47 dogs from Petfinder
+[🔄 Deduplication] 1 duplicates removed from Petfinder
+[✅ Search Complete] Found 49 total dogs from sources: database, rescuegroups, petfinder
+[📊 Source Breakdown] database: 1, rescuegroups: 2, petfinder: 46
+ POST /api/petfinder/search 200 in 2727ms
+[✅ Chat Search Success] Found 49 dogs for chihuahuas in Keene, NH from sources: database, rescuegroups, petfinder
+[✅ Petfinder Integration] Found 49 Petfinder dogs, 1 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 49 Showing: 10
+[✅ Search Complete] Total unique dogs: 49 Showing: 10
+[📊 Scores] Sample scores: [
+  'Kelly: 76',
+  'Missy in NH! Come Meet our Adoptable Dogs Wednesday-Saturday. More info in Bio!: 70',
+  'NUTELLA: 70'
+]
+ POST /api/chat 200 in 4477ms
+ ✓ Compiled in 1053ms (4400 modules)
+^C
+
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 82007 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 82007 (limit: 5)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=82007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-04&limit=5&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 5 RescueGroups dogs from 82007 with 49 included items
+🔍 First dog: Zelda (ID: 10007851)
+🔍 First dog breed: Domestic Short Hair
+🔍 First dog location relationships: [ { type: 'locations', id: '1000006685' } ]
+🌍 First dog location: Kanab, UT
+📊 RescueGroups raw results: 5 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 5 unique RescueGroups dogs (0 duplicates removed)
+📝 Syncing 5 rescuegroups dogs to database...
+✅ rescuegroups sync completed: 4 added, 1 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+✅ petfinder sync completed: 1 added, 4 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 14s (8586 modules)
+ GET / 200 in 14713ms
+ ✓ Compiled in 1218ms (4186 modules)
+ HEAD / 200 in 31ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1454ms (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hey barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 5855ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Kanab, UT
+[📍 Normalized Location] Kanab, UT
+[🐾 Barkr Memory] {
+  location: 'Kanab, UT',
+  breed: 'terriers',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Kanab, UT', breed: 'terriers' }
+[🧠 Breed Normalization] Input: terriers → Cleaned: Terrier
+[✅ Fallback Breed Match] "Terrier" → "Terrier"
+[✅ Breed Match Success] Matched to: Terrier
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Terrier
+[🗄️ Database] Filtering by location: Kanab, UT
+[🗄️ Database] Filtering by state: UT
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1426ms (4643 modules)
+[🔍 Enhanced Search] Starting priority waterfall search
+[📋 Raw Input] {
+  location: 'Kanab, UT',
+  breed: 'Terrier',
+  size: null,
+  age: null,
+  gender: null,
+  limit: 50
+}
+[🧼 Normalized Params] { location: 'Kanab, UT', breed: 'Terrier', limit: 50, radius: 100 }
+[💾 Database] Searching database first...
+[🦮 RescueGroups] Searching RescueGroups...
+[🗺️ RescueGroups] Using location: Kanab, UT with radius 100mi
+[🔍 RescueGroups] Searching for breed: Terrier
+[🦮 RescueGroups] Final search URL: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-02-04&filter%5Blocation%5D=Kanab%2C+UT&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Terrier&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/haspic?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bupdated%5D=%3E2025-02-04&filter%5Blocation%5D=Kanab%2C+UT&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Terrier&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 50,
+  includedCount: 436,
+  meta: {
+    count: 71827,
+    countReturned: 50,
+    pageReturned: 1,
+    limit: 50,
+    pages: 1437,
+    transactionId: 'OyHExbXtjKNa'
+  }
+}
+[✅ RescueGroups] Found 50 animals with 436 included items
+[🔍 RescueGroups] Sample animal structure: {
+  id: '10007851',
+  attributes: [
+    'id',
+    'name',
+    'ageGroup',
+    'sex',
+    'breedPrimary',
+    'breedSecondary',
+    'descriptionText'
+  ],
+  relationships: [ 'orgs', 'locations', 'breeds', 'pictures' ]
+}
+[✅ RescueGroups Hit] Found 50 dogs from RescueGroups
+[🦮 RG Format] Processing: Zelda (ID: 10007851)
+[✅ RG Formatted] Zelda: Domestic Short Hair, Senior, Unknown, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Stowaway (ID: 10013509)
+[✅ RG Formatted] Stowaway: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 92.7
+[🦮 RG Format] Processing: Bettis (ID: 10059734)
+[✅ RG Formatted] Bettis: Domestic Short Hair, Unknown, Unknown, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Hannah Steele (ID: 10072481)
+[✅ RG Formatted] Hannah Steele: Labrador Retriever, Senior, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Viola (ID: 10078447)
+[✅ RG Formatted] Viola: Domestic Short Hair, Adult, Small, Photos: 13, Score: 130
+[🦮 RG Format] Processing: Maggie (ID: 10089711)
+[✅ RG Formatted] Maggie: Tortoiseshell, Young, Unknown, Photos: 1, Score: 68.2
+[🦮 RG Format] Processing: Doli (ID: 10131543)
+[✅ RG Formatted] Doli: Husky, Senior, Large, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Cylana (ID: 10138270)
+[✅ RG Formatted] Cylana: Shar Pei, Senior, Large, Photos: 15, Score: 130
+[🦮 RG Format] Processing: Tara (ID: 10178313)
+[✅ RG Formatted] Tara: Tuxedo, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Alafair (ID: 10187884)
+[✅ RG Formatted] Alafair: Domestic Short Hair, Senior, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Zeke (ID: 10197267)
+[✅ RG Formatted] Zeke: American Bulldog, Young, Medium, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Diamond Beaufort (ID: 10206471)
+[✅ RG Formatted] Diamond Beaufort: Shepherd, Senior, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Little One (ID: 10211761)
+[✅ RG Formatted] Little One: Bombay, Senior, Small, Photos: 3, Score: 109.3
+[🦮 RG Format] Processing: Buttercup (ID: 10233885)
+[✅ RG Formatted] Buttercup: Paso Fino, Adult, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Lucky (ID: 10244680)
+[✅ RG Formatted] Lucky: Labrador Retriever, Senior, Medium, Photos: 9, Score: 130
+[🦮 RG Format] Processing: ILISA (ID: 10320361)
+[✅ RG Formatted] ILISA: New Zealand, Adult, Large, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Danette (ID: 10389842)
+[✅ RG Formatted] Danette: Domestic Short Hair, Senior, Unknown, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Rosie (ID: 10393561)
+[✅ RG Formatted] Rosie: American Pit Bull Terrier, Adult, Medium, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Gabrio (ID: 10399885)
+[✅ RG Formatted] Gabrio: American Staffordshire Terrier, Adult, Medium, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Arthur (ID: 10432466)
+[✅ RG Formatted] Arthur: Domestic Long Hair, Young, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Sponsor Joe Sanctuary 2016 (ID: 10481659)
+[✅ RG Formatted] Sponsor Joe Sanctuary 2016: Great Pyrenees, Young, Large, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Pre-Approval (ID: 10501644)
+[✅ RG Formatted] Pre-Approval: Mixed Breed, Unknown, Unknown, Photos: 1, Score: 85.4
+[🦮 RG Format] Processing: Savannah (ID: 10526340)
+[✅ RG Formatted] Savannah: Abyssinian, Adult, Large, Photos: 18, Score: 130
+[🦮 RG Format] Processing: Cleopatra - Adopt With Kitten"Smalls" (ID: 10534151)
+[✅ RG Formatted] Cleopatra - Adopt With Kitten"Smalls": Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: SMALLS - Adopt Me With My Mom! (ID: 10534157)
+[✅ RG Formatted] SMALLS - Adopt Me With My Mom!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Shadow- I Can Be A Friend To Your Young Cat! (ID: 10534165)
+[✅ RG Formatted] Shadow- I Can Be A Friend To Your Young Cat!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Bear - Adopt With My Best Playmate Tas! (ID: 10534170)
+[✅ RG Formatted] Bear - Adopt With My Best Playmate Tas!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Tas - Adopt With My Best Playmate Bear! (ID: 10534172)
+[✅ RG Formatted] Tas - Adopt With My Best Playmate Bear!: Domestic Short Hair, Baby, Small, Photos: 1, Score: 90
+[🦮 RG Format] Processing: Jazzy (ID: 10534260)
+[✅ RG Formatted] Jazzy: Tabby, Adult, Medium, Photos: 11, Score: 130
+[🦮 RG Format] Processing: Nova (ID: 10541734)
+[✅ RG Formatted] Nova: Siberian Husky, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Fernanda (ID: 10544313)
+[✅ RG Formatted] Fernanda: Pit Bull Terrier, Adult, Medium, Photos: 19, Score: 130
+[🦮 RG Format] Processing: Bella (ID: 10552500)
+[✅ RG Formatted] Bella: Beagle, Young, Medium, Photos: 6, Score: 130
+[🦮 RG Format] Processing: Ivana (ID: 10555326)
+[✅ RG Formatted] Ivana: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Clyde (ID: 10558699)
+[✅ RG Formatted] Clyde: Cattle Dog, Adult, Medium, Photos: 25, Score: 130
+[🦮 RG Format] Processing: Chance (ID: 10574060)
+[✅ RG Formatted] Chance: Labrador Retriever, Senior, Large, Photos: 5, Score: 130
+[🦮 RG Format] Processing: Bourke (ID: 10579440)
+[✅ RG Formatted] Bourke: Dachshund, Senior, Small, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Joe [Permanent Foster] (ID: 10583066)
+[✅ RG Formatted] Joe [Permanent Foster]: Domestic Short Hair, Senior, Medium, Photos: 2, Score: 100
+[🦮 RG Format] Processing: Tucker (ID: 10585046)
+[✅ RG Formatted] Tucker: Domestic Short Hair, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Holly (ID: 10665211)
+[✅ RG Formatted] Holly: Boxer, Senior, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Penny (ID: 10687172)
+[✅ RG Formatted] Penny: Domestic Short Hair, Young, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Tyson (ID: 10689034)
+[✅ RG Formatted] Tyson: Staffordshire Bull Terrier, Adult, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Cinnamon (ID: 10709292)
+[✅ RG Formatted] Cinnamon: Domestic Short Hair, Adult, Medium, Photos: 7, Score: 130
+[🦮 RG Format] Processing: Roger (ID: 10719979)
+[✅ RG Formatted] Roger: Tabby, Adult, Medium, Photos: 10, Score: 130
+[🦮 RG Format] Processing: Kira (ID: 10739064)
+[✅ RG Formatted] Kira: Bull Terrier, Adult, Medium, Photos: 1, Score: 40
+[🦮 RG Format] Processing: Gus (ID: 10741126)
+[✅ RG Formatted] Gus: Pit Bull Terrier, Adult, Large, Photos: 2, Score: 50
+[🦮 RG Format] Processing: Wilson (ID: 10742380)
+[✅ RG Formatted] Wilson: Domestic Short Hair, Adult, Unknown, Photos: 8, Score: 130
+[🦮 RG Format] Processing: Big Boy [Permanent Foster] (ID: 10757873)
+[✅ RG Formatted] Big Boy [Permanent Foster]: Domestic Short Hair, Senior, Large, Photos: 4, Score: 120
+[🦮 RG Format] Processing: Emma (ID: 10771756)
+[✅ RG Formatted] Emma: Pit Bull Terrier, Adult, Medium, Photos: 3, Score: 110
+[🦮 RG Format] Processing: Sarah (ID: 10778312)
+[✅ RG Formatted] Sarah: Labrador Retriever, Senior, Medium, Photos: 17, Score: 130
+[🦮 RG Format] Processing: Remy (ID: 10788558)
+[✅ RG Formatted] Remy: Pit Bull Terrier, Young, Unknown, Photos: 2, Score: 100
+[🔍 Breed Filter] Excluding Zelda - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Stowaway - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Bettis - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Hannah Steele - Labrador Retriever doesn't match Terrier
+[🔍 Breed Filter] Excluding Viola - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Maggie - Tortoiseshell doesn't match Terrier
+[🔍 Breed Filter] Excluding Doli - Husky doesn't match Terrier
+[🔍 Breed Filter] Excluding Cylana - Shar Pei doesn't match Terrier
+[🔍 Breed Filter] Excluding Tara - Tuxedo doesn't match Terrier
+[🔍 Breed Filter] Excluding Alafair - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Zeke - American Bulldog doesn't match Terrier
+[🔍 Breed Filter] Excluding Little One - Bombay doesn't match Terrier
+[🔍 Breed Filter] Excluding Buttercup - Paso Fino doesn't match Terrier
+[🔍 Breed Filter] Excluding Lucky - Labrador Retriever doesn't match Terrier
+[🔍 Breed Filter] Excluding ILISA - New Zealand doesn't match Terrier
+[🔍 Breed Filter] Excluding Danette - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Arthur - Domestic Long Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Sponsor Joe Sanctuary 2016 - Great Pyrenees doesn't match Terrier
+[🔍 Breed Filter] Excluding Pre-Approval - Mixed Breed doesn't match Terrier
+[🔍 Breed Filter] Excluding Savannah - Abyssinian doesn't match Terrier
+[🔍 Breed Filter] Excluding Cleopatra - Adopt With Kitten"Smalls" - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding SMALLS - Adopt Me With My Mom! - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Shadow- I Can Be A Friend To Your Young Cat! - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Bear - Adopt With My Best Playmate Tas! - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Tas - Adopt With My Best Playmate Bear! - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Jazzy - Tabby doesn't match Terrier
+[🔍 Breed Filter] Excluding Nova - Siberian Husky doesn't match Terrier
+[🔍 Breed Filter] Excluding Bella - Beagle doesn't match Terrier
+[🔍 Breed Filter] Excluding Ivana - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Clyde - Cattle Dog doesn't match Terrier
+[🔍 Breed Filter] Excluding Chance - Labrador Retriever doesn't match Terrier
+[🔍 Breed Filter] Excluding Bourke - Dachshund doesn't match Terrier
+[🔍 Breed Filter] Excluding Joe [Permanent Foster] - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Tucker - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Holly - Boxer doesn't match Terrier
+[🔍 Breed Filter] Excluding Penny - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Cinnamon - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Roger - Tabby doesn't match Terrier
+[🔍 Breed Filter] Excluding Wilson - Domestic Short Hair doesn't match Terrier
+[🔍 Breed Filter] Excluding Big Boy [Permanent Foster] - Domestic Short Hair doesn't match Terrier
+[🔄 Deduplication] 40 duplicates removed from RescueGroups
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 10 dogs found so far, need 40 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Terrier" → "Terrier"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=40&location=Kanab%2C+UT&distance=100&breed=Terrier
+[✅ Petfinder Hit] Found 8 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 18 total dogs from sources: rescuegroups, petfinder
+[📊 Source Breakdown] rescuegroups: 10, petfinder: 8
+ POST /api/petfinder/search 200 in 3907ms
+[✅ Chat Search Success] Found 18 dogs for terriers in Kanab, UT from sources: rescuegroups, petfinder
+[✅ Petfinder Integration] Found 18 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 18 Showing: 10
+[✅ Search Complete] Total unique dogs: 18 Showing: 10
+[📊 Scores] Sample scores: [ 'Diamond Beaufort: 130', 'Rosie: 130', 'Fernanda: 130' ]
+ POST /api/chat 200 in 5683ms
