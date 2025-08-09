@@ -16,6 +16,119 @@ function getRandomZipInState(stateAbbreviation) {
   return zips[Math.floor(Math.random() * zips.length)].zip;
 }
 
+// Function to calculate distance between two ZIP codes using their coordinates
+function getZipCoordinates(zip) {
+  try {
+    const location = zipcodes.lookup(zip);
+    return location ? { lat: location.latitude, lng: location.longitude } : null;
+  } catch {
+    return null;
+  }
+}
+
+function calculateZipDistance(zip1, zip2) {
+  const coord1 = getZipCoordinates(zip1);
+  const coord2 = getZipCoordinates(zip2);
+  
+  if (!coord1 || !coord2) return 0; // If we can't get coordinates, assume they're far apart
+  
+  const R = 3959; // Earth's radius in miles
+  const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+  const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Function to generate geographically distributed rural locations
+function generateDistributedRuralLocations(count) {
+  const ruralStates = [
+    'WY', 'MT', 'ND', 'SD', 'NE', 'KS', 'OK', 'IA', 'MO', 'AR', 'LA', 'MS', 'AL', 'TN', 'KY',
+    'IN', 'OH', 'WV', 'VA', 'NC', 'SC', 'GA', 'FL', 'ME', 'NH', 'VT', 'ID', 'UT', 'NV', 'AZ', 'NM',
+    'TX', 'CO', 'OR', 'WA', 'MI', 'WI', 'MN', 'PA', 'NY'
+  ];
+
+  const selectedZips = [];
+  const minDistance = 25; // Minimum 25 miles between locations
+  const maxAttempts = 5; // Max attempts per state before moving on
+
+  // First, ensure we get at least one location from each state
+  console.log('🗺️ Phase 1: Ensuring state coverage...');
+  const stateRepresentation = {};
+  
+  for (const state of ruralStates) {
+    let attempts = 0;
+    let foundValidZip = false;
+    
+    while (attempts < maxAttempts && !foundValidZip) {
+      const zip = getRandomZipInState(state);
+      if (zip) {
+        // Check if this zip is far enough from existing ones
+        const tooClose = selectedZips.some(existingZip => 
+          calculateZipDistance(zip, existingZip) < minDistance
+        );
+        
+        if (!tooClose || selectedZips.length === 0) {
+          selectedZips.push(zip);
+          stateRepresentation[state] = (stateRepresentation[state] || 0) + 1;
+          foundValidZip = true;
+          console.log(`   ✅ ${state}: ${zip} (${selectedZips.length}/${count})`);
+        }
+      }
+      attempts++;
+    }
+    
+    if (!foundValidZip && selectedZips.length < count) {
+      // Fallback: just add a random zip from this state anyway
+      const zip = getRandomZipInState(state);
+      if (zip) {
+        selectedZips.push(zip);
+        stateRepresentation[state] = (stateRepresentation[state] || 0) + 1;
+        console.log(`   ⚠️ ${state}: ${zip} (fallback - may be close to others)`);
+      }
+    }
+    
+    if (selectedZips.length >= count) break;
+  }
+
+  // Phase 2: Fill remaining slots with distributed locations
+  console.log('🗺️ Phase 2: Filling remaining slots with distributed coverage...');
+  let attempts = 0;
+  const maxTotalAttempts = count * 3; // Prevent infinite loops
+  
+  while (selectedZips.length < count && attempts < maxTotalAttempts) {
+    const randomState = ruralStates[Math.floor(Math.random() * ruralStates.length)];
+    const zip = getRandomZipInState(randomState);
+    
+    if (zip) {
+      // Check distance from all existing zips
+      const distances = selectedZips.map(existingZip => 
+        calculateZipDistance(zip, existingZip)
+      );
+      const minDistanceToExisting = Math.min(...distances);
+      
+      // Accept if far enough, or if we're running low on attempts
+      if (minDistanceToExisting >= minDistance || attempts > maxTotalAttempts * 0.8) {
+        selectedZips.push(zip);
+        stateRepresentation[randomState] = (stateRepresentation[randomState] || 0) + 1;
+        console.log(`   ✅ ${randomState}: ${zip} (dist: ${Math.round(minDistanceToExisting)}mi) (${selectedZips.length}/${count})`);
+      }
+    }
+    attempts++;
+  }
+
+  // Log final distribution
+  console.log('📊 Final geographic distribution:');
+  Object.entries(stateRepresentation).forEach(([state, count]) => {
+    console.log(`   ${state}: ${count} locations`);
+  });
+  
+  console.log(`🎯 Generated ${selectedZips.length} distributed rural locations`);
+  return selectedZips;
+}
+
 // Function to get a random rural ZIP code
 function getRandomRuralZip() {
   const ruralZipCodes = [
@@ -125,22 +238,11 @@ async function syncDogsEnhanced() {
     console.log(`🦮 RescueGroups will search: ${rescueGroupsLocations.join(', ')} (rural)`);
     console.log(`🔍 Petfinder will search: ${petfinderLocations[0]} (urban)`);
   } else {
-    // 🏞️ RescueGroups: MASSIVELY EXPANDED rural coverage (500 rural ZIPs)
+    // 🏞️ RescueGroups: MASSIVELY EXPANDED rural coverage with geographic distribution
     // Since users won't make live calls, we can be very aggressive with syncing
-    console.log('🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...');
-    const ruralStates = [
-      'WY', 'MT', 'ND', 'SD', 'NE', 'KS', 'OK', 'IA', 'MO', 'AR', 'LA', 'MS', 'AL', 'TN', 'KY',
-      'IN', 'OH', 'WV', 'VA', 'NC', 'SC', 'GA', 'FL', 'ME', 'NH', 'VT', 'ID', 'UT', 'NV', 'AZ', 'NM',
-      'TX', 'CO', 'OR', 'WA', 'MI', 'WI', 'MN', 'PA', 'NY'
-    ];
-
-    for (let i = 0; i < 500; i++) {
-      const randomState = ruralStates[Math.floor(Math.random() * ruralStates.length)];
-      const zip = getRandomZipInState(randomState);
-      if (zip) {
-        rescueGroupsLocations.push(zip);
-      }
-    }
+    console.log('🏞️ Generating geographically distributed rural locations for RescueGroups...');
+    
+    rescueGroupsLocations = generateDistributedRuralLocations(500);
 
     // Petfinder: Diverse urban and suburban locations
     const urbanStates = ['CA', 'NY', 'TX', 'IL', 'PA', 'FL', 'GA', 'NC', 'MI', 'OH']; // More populated states
