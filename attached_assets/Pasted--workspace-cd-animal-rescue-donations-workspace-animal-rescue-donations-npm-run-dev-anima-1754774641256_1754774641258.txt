@@ -1,0 +1,250 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.6s (8586 modules)
+ GET / 200 in 13272ms
+ ✓ Compiled in 1189ms (4186 modules)
+ HEAD / 200 in 27ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1231ms (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hi barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 5701ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Berwick, ME
+[📍 Normalized Location] Berwick, ME
+[🐾 Barkr Memory] {
+  location: 'Berwick, ME',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Berwick, ME', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Berwick, ME
+[🗄️ Database] Filtering by state: ME
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 953ms (4643 modules)
+[🔍 Enhanced Search] Starting priority waterfall search
+[📋 Raw Input] {
+  location: 'Berwick, ME',
+  breed: 'Chihuahua',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] { location: 'Berwick, ME', breed: 'Chihuahua', limit: 25, radius: 100 }
+[💾 Database] Searching database first...
+[🦮 RescueGroups] Searching RescueGroups...
+[🗺️ Geocoding] Converting "Berwick, ME" to coordinates for RescueGroups
+[📊 Geocoding] Making request 1754774625634
+[🗺️ Geocoding] Response status: 200
+[🗺️ Geocoding] Full response: {
+  "type": "FeatureCollection",
+  "query": [
+    "berwick",
+    "me"
+  ],
+  "features": [
+    {
+      "id": "place.26536172",
+      "type": "Feature",
+      "place_type": [
+        "place"
+      ],
+      "relevance": 1,
+      "properties": {
+        "mapbox_id": "dXJuOm1ieHBsYzpBWlRvN0E",
+        "wikidata": "Q3451686"
+      },
+      "text": "Berwick",
+      "place_name": "Berwick, Maine, United States",
+      "bbox": [
+        -70.946529,
+        43.237651,
+        -70.760399,
+        43.366776
+      ],
+      "center": [
+        -70.864231,
+        43.265882
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.864231,
+          43.265882
+        ]
+      },
+      "context": [
+        {
+          "id": "district.25675500",
+          "mapbox_id": "dXJuOm1ieHBsYzpBWWZHN0E",
+          "wikidata": "Q390141",
+          "text": "York County"
+        },
+        {
+          "id": "region.337132",
+          "mapbox_id": "dXJuOm1ieHBsYzpCU1Rz",
+          "wikidata": "Q724",
+          "short_code": "US-ME",
+          "text": "Maine"
+        },
+        {
+          "id": "country.8940",
+          "mapbox_id": "dXJuOm1ieHBsYzpJdXc",
+          "wikidata": "Q30",
+          "short_code": "us",
+          "text": "United States"
+        }
+      ]
+    }
+  ],
+  "attribution": "NOTICE: © 2025 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service (https://www.mapbox.com/about/maps/). This response and the information it contains may not be retained."
+}
+[✅ Geocoded] "Berwick, ME" → 43.265882, -70.864231
+[📍 Location Details] Berwick, Maine, United States
+[📍 Final Coordinates] Will search RescueGroups with: 43.265882, -70.864231
+[🦮 RescueGroups] Starting smart fallback search with params: {
+  location: 'Berwick, ME',
+  breed: 'Chihuahua',
+  age: undefined,
+  size: undefined,
+  gender: undefined,
+  limit: 25,
+  radius: 100,
+  latitude: 43.265882,
+  longitude: -70.864231
+}
+[🎯 RescueGroups] Attempt 1: Full filters
+[🗺️ RescueGroups] Using coordinates: 43.265882, -70.864231 with radius 100mi
+[🔍 RescueGroups] Applying breed filter: Chihuahua (from: chihuahua)
+[🦮 RescueGroups] Search URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=100&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Chihuahua&filter%5BanimalBreed%5D=Chihuahua&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=100&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=100&filter%5BbreedPrimary%5D=Chihuahua&filter%5BanimalBreed%5D=Chihuahua&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 25,
+  includedCount: 253,
+  meta: {
+    count: 37463,
+    countReturned: 25,
+    pageReturned: 1,
+    limit: 25,
+    pages: 1499,
+    transactionId: 'PlZGHBMeqOUa'
+  }
+}
+[📊 RescueGroups] Found 25 animals
+[🗺️ RescueGroups] Geographic filtering: 25 → 0 relevant results
+[⚠️ RescueGroups] Too many irrelevant results (0/25) - treating as failed search
+[🎯 RescueGroups] Attempt 2: Removing strict breed filter "Chihuahua"
+[🗺️ RescueGroups] Using coordinates: 43.265882, -70.864231 with radius 100mi
+[🦮 RescueGroups] Search URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=100&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=100&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=100&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=100&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 25,
+  includedCount: 253,
+  meta: {
+    count: 37463,
+    countReturned: 25,
+    pageReturned: 1,
+    limit: 25,
+    pages: 1499,
+    transactionId: 'PIXcNJoIvlsi'
+  }
+}
+[📊 RescueGroups] Found 25 animals
+[🗺️ RescueGroups] Geographic filtering: 25 → 0 relevant results
+[⚠️ RescueGroups] Too many irrelevant results (0/25) - treating as failed search
+[🎯 RescueGroups] Attempt 3: Expanding radius to 250 miles
+[🗺️ RescueGroups] Using coordinates: 43.265882, -70.864231 with radius 250mi
+[🦮 RescueGroups] Search URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=250&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=250&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=250&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=250&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 25,
+  includedCount: 253,
+  meta: {
+    count: 37463,
+    countReturned: 25,
+    pageReturned: 1,
+    limit: 25,
+    pages: 1499,
+    transactionId: 'qOtZSOfuqImt'
+  }
+}
+[📊 RescueGroups] Found 25 animals
+[🗺️ RescueGroups] Geographic filtering: 25 → 2 relevant results
+[⚠️ RescueGroups] Too many irrelevant results (2/25) - treating as failed search
+[🎯 RescueGroups] Attempt 4: Location-only search (removing all non-location filters)
+[🗺️ RescueGroups] Using coordinates: 43.265882, -70.864231 with radius 250mi
+[🦮 RescueGroups] Search URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=250&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=250&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=dog&filter%5Bupdated%5D=%3E2025-05-09&filter%5Blocation.latitude%5D=43.265882&filter%5Blocation.longitude%5D=-70.864231&filter%5Blocation.distance%5D=250&filter%5Blatitude%5D=43.265882&filter%5Blongitude%5D=-70.864231&filter%5Bdistance%5D=250&limit=25&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 25,
+  includedCount: 253,
+  meta: {
+    count: 37463,
+    countReturned: 25,
+    pageReturned: 1,
+    limit: 25,
+    pages: 1499,
+    transactionId: 'AyLaqFVOlHXx'
+  }
+}
+[📊 RescueGroups] Found 25 animals
+[🗺️ RescueGroups] Geographic filtering: 25 → 2 relevant results
+[⚠️ RescueGroups] Too many irrelevant results (2/25) - treating as failed search
+[❌ RescueGroups] All attempts failed - returning empty results to trigger Petfinder fallback
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 0 dogs found so far, need 25 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=25&location=Berwick%2C+ME&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 25 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 25 total dogs from sources: petfinder
+[📊 Source Breakdown] petfinder: 25
+ POST /api/petfinder/search 200 in 5237ms
+[✅ Chat Search Success] Found 25 dogs for chihuahuas in Berwick, ME from sources: petfinder
+[✅ Petfinder Integration] Found 25 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[📊 Scores] Sample scores: [
+  'Eli: 86',
+  'Goomba: 86',
+  'Missy in NH! Come Meet our Adoptable Dogs Wednesday-Saturday. More info in Bio!: 60'
+]
+ POST /api/chat 200 in 7565ms
