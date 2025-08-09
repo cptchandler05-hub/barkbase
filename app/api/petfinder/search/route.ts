@@ -6,7 +6,7 @@ import { DatabaseAPI } from '@/lib/database';
 import { PetfinderAPI } from '@/lib/petfinder';
 import { SearchNormalizer } from '@/lib/searchNormalizer';
 import { DogFormatter } from '@/lib/dogFormatter';
-// Removed RescueGroupsAPI import as per instructions
+// RescueGroups removed from user searches - kept only for database syncing
 
 // Initialize tiktoken for token counting
 const encoder = init(
@@ -166,14 +166,23 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   let allDogs: Dog[] = [];
   const sources: string[] = [];
 
-  // PHASE 1: Database Search (First Priority)
-  const dbDogs = await fetchFromDatabase(normalizedParams);
-  allDogs = allDogs.concat(dbDogs);
-  if (dbDogs.length > 0) {
-    sources.push('database');
+  // PHASE 1: Database Search (Highest Priority)
+  if (normalizedParams.location) {
+    try {
+      console.log('[💾 Database] Searching database first...');
+      const dbDogs = await fetchFromDatabase(normalizedParams);
+
+      if (dbDogs.length > 0) {
+        console.log(`[✅ Database Hit] Found ${dbDogs.length} dogs from database`);
+        allDogs = allDogs.concat(dbDogs);
+        sources.push('database');
+      }
+    } catch (error) {
+      console.warn('[⚠️ Database Error]', error);
+    }
   }
 
-  // PHASE 2: Petfinder Search (Second Priority)
+  // PHASE 2: Petfinder Search (Second Priority) - RescueGroups removed from user searches
   if (allDogs.length < normalizedParams.limit! && normalizedParams.location) {
     const pfDogs = await fetchFromPetfinder(normalizedParams);
     allDogs = allDogs.concat(pfDogs);

@@ -125,15 +125,16 @@ async function syncDogsEnhanced() {
     console.log(`🦮 RescueGroups will search: ${rescueGroupsLocations.join(', ')} (rural)`);
     console.log(`🔍 Petfinder will search: ${petfinderLocations[0]} (urban)`);
   } else {
-    // 🏞️ RescueGroups: EXPANDED rural coverage (200 rural ZIPs)
-    // Since users won't make live calls, we can be more aggressive with syncing
+    // 🏞️ RescueGroups: MASSIVELY EXPANDED rural coverage (500 rural ZIPs)
+    // Since users won't make live calls, we can be very aggressive with syncing
     console.log('🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...');
     const ruralStates = [
       'WY', 'MT', 'ND', 'SD', 'NE', 'KS', 'OK', 'IA', 'MO', 'AR', 'LA', 'MS', 'AL', 'TN', 'KY',
-      'IN', 'OH', 'WV', 'VA', 'NC', 'SC', 'GA', 'FL', 'ME', 'NH', 'VT', 'ID', 'UT', 'NV', 'AZ', 'NM'
+      'IN', 'OH', 'WV', 'VA', 'NC', 'SC', 'GA', 'FL', 'ME', 'NH', 'VT', 'ID', 'UT', 'NV', 'AZ', 'NM',
+      'TX', 'CO', 'OR', 'WA', 'MI', 'WI', 'MN', 'PA', 'NY'
     ];
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 500; i++) {
       const randomState = ruralStates[Math.floor(Math.random() * ruralStates.length)];
       const zip = getRandomZipInState(randomState);
       if (zip) {
@@ -157,8 +158,8 @@ async function syncDogsEnhanced() {
     petfinderLocations.push('Denver, CO');
     petfinderLocations.push('Seattle, WA');
 
-    console.log(`🏞️ RescueGroups will search ${rescueGroupsLocations.length} locations.`);
-    console.log(`🔍 Petfinder will search ${petfinderLocations.length} locations.`);
+    console.log(`🏞️ RescueGroups will search ${rescueGroupsLocations.length} locations (massively expanded rural coverage).`);
+    console.log(`🔍 Petfinder will search ${petfinderLocations.length} locations (keeping current coverage).`);
   }
 
   // --- RescueGroups Sync ---
