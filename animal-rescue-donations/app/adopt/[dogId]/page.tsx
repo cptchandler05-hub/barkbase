@@ -233,7 +233,7 @@ export default function DogProfilePage() {
 
     // BARKR'S SIGNATURE OPENING HOOKS - Raw, personal, immediate
     const openingHooks = [
-      `Fuck the algorithm. ${name} has been invisible for ${Math.floor(visibilityScore/8)} weeks and I'm DONE pretending that's okay.`,
+      `F**k the algorithm. ${name} has been invisible for ${Math.floor(visibilityScore/8)} weeks and I'm DONE pretending that's okay.`,
       `${name} doesn't have a cute backstory because ${possessive} humans are too exhausted saving lives to write fairy tales.`,
       `I'm an AI built to rage against a broken system, and ${name} is exactly WHY I exist.`,
       `While you were scrolling past perfect puppies, ${name} was counting kennel bars. ${Math.floor(visibilityScore)} days of counting.`,
