@@ -21,11 +21,10 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       // Try by petfinder_id first (legacy)
       let dbDog = await getDogById(dogId);
 
-      // If not found by petfinder_id, try by rescuegroups_id
+      // If not found by petfinder_id, try by rescuegroups_id and also try as string/number conversion
       if (!dbDog) {
-        console.log('[💾 Database] Not found by petfinder_id, trying rescuegroups_id...');
-        // Note: You might need to add a new function getDogByRescueGroupsId to supabase.ts
-        // For now, we'll implement a basic query here
+        console.log('[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...');
+        
         if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
           const { createClient } = await import('@supabase/supabase-js');
           const supabase = createClient(
@@ -33,15 +32,42 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
           );
 
-          const { data, error } = await supabase
+          // Try rescuegroups_id
+          let { data, error } = await supabase
             .from('dogs')
             .select('*')
             .eq('rescuegroups_id', dogId)
             .single();
 
+          if (!data && !isNaN(Number(dogId))) {
+            // Try petfinder_id as number if dogId is numeric
+            console.log('[💾 Database] Trying petfinder_id as number...');
+            const result = await supabase
+              .from('dogs')
+              .select('*')
+              .eq('petfinder_id', Number(dogId))
+              .single();
+            
+            data = result.data;
+            error = result.error;
+          }
+
+          if (!data) {
+            // Try petfinder_id as string
+            console.log('[💾 Database] Trying petfinder_id as string...');
+            const result = await supabase
+              .from('dogs')
+              .select('*')
+              .eq('petfinder_id', dogId.toString())
+              .single();
+            
+            data = result.data;
+            error = result.error;
+          }
+
           if (!error && data) {
             dbDog = data;
-            console.log('[✅ Database Hit] Found by rescuegroups_id:', data.name);
+            console.log('[✅ Database Hit] Found by alternative ID lookup:', data.name);
           }
         }
       }
