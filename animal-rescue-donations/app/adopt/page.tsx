@@ -213,7 +213,7 @@ export default function AdoptPage() {
                 const dogAge = dog.age?.toLowerCase();
                 // Handle puppy/baby mapping
                 if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
-                  return dogAge === 'baby' || dogAge === 'puppy';
+                  return dogAge === 'baby' || dogAge === 'puppy' || dogAge === 'young';
                 }
                 return dogAge === normalizedSearchAge;
               });
@@ -460,7 +460,7 @@ export default function AdoptPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="">Any Age</option>
-                  <option value="Baby">Puppy</option>
+                  <option value="Baby">Puppy/Baby</option>
                   <option value="Young">Young</option>
                   <option value="Adult">Adult</option>
                   <option value="Senior">Senior</option>

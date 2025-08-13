@@ -891,7 +891,7 @@ export async function POST(req: Request) {
               const size = dog.size || 'Unknown size';
               const city = dog.contact?.address?.city || 'Unknown city';
               const state = dog.contact?.address?.state || '';
-              
+
               // Truncate description for chat display (max 150 characters)
               const fullDescription = dog.description || 'No description yet.';
               const description = fullDescription.length > 150 

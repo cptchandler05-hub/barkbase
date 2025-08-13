@@ -18,7 +18,6 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     try {
       console.log('[💾 Database] Searching database first...');
 
-      // Try by petfinder_id, rescuegroups_id, and internal ID
       if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
         const { createClient } = await import('@supabase/supabase-js');
         const supabase = createClient(
@@ -64,7 +63,16 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             error = result.error;
           }
 
-          if (!data) {
+          if (!data && !isNaN(parseInt(dogId, 10)) && String(parseInt(dogId, 10)) === dogId) { // Check if dogId is a valid integer string
+            console.log('[💾 Database] Trying petfinder_id as integer string...');
+            const result = await supabase
+              .from('dogs')
+              .select('*')
+              .eq('petfinder_id', parseInt(dogId, 10))
+              .single();
+            data = result.data;
+            error = result.error;
+          } else if (!data) { // If not an integer string, try as a plain string for petfinder_id
             console.log('[💾 Database] Trying petfinder_id as string...');
             const result = await supabase
               .from('dogs')
@@ -96,24 +104,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       // Continue to external APIs
     }
 
-    // 🦮 PHASE 2: RescueGroups API Search
-    try {
-      console.log('[🦮 RescueGroups] Searching RescueGroups API...');
-      const rescueGroupsAPI = new RescueGroupsAPI();
-      const rgDog = await rescueGroupsAPI.getDogById(dogId); // Assuming getDogById exists and works for RescueGroups
-
-      if (rgDog) {
-        console.log('[✅ RescueGroups Hit] Found dog in RescueGroups:', rgDog.name);
-        return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(rgDog, false), // Don't truncate for individual dog pages
-          source: 'rescuegroups'
-        });
-      }
-    } catch (rgError) {
-      console.warn('[⚠️ RescueGroups Warning] RescueGroups lookup failed:', rgError);
-    }
-
-    // 🐾 PHASE 3: Petfinder API Search
+    // 🦮 PHASE 2: Petfinder API Search (RescueGroups API is only for sync)
     try {
       console.log('[🐾 Petfinder] Searching Petfinder API...');
       const accessToken = await getAccessToken();
@@ -153,12 +144,16 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     console.log(`[❌ Not Found] Dog with ID ${dogId} not found in any source`);
     return NextResponse.json({
       error: 'Dog not found',
-      details: `Dog with ID ${dogId} was not found in database, RescueGroups, or Petfinder`,
-      searchedSources: ['database', 'rescuegroups', 'petfinder']
+      details: `Dog with ID ${dogId} was not found in database or Petfinder`,
+      searchedSources: ['database', 'petfinder']
     }, { status: 404 });
 
   } catch (error) {
     console.error('[❌ Lookup Error]', error);
+    // Typo fix: visibilityScore should be teVisibilityScore
+    if (error instanceof Error && error.message.includes('visibilityScore')) {
+        console.error('[❌ Lookup Error] Potentially a typo in visibilityScore, check teVisibilityScore.');
+    }
     return NextResponse.json({
       error: 'Dog lookup failed',
       details: error instanceof Error ? error.message : 'Unknown error'

@@ -91,10 +91,13 @@ export async function searchDogs(location: string, breed?: string, limit: number
     if (location && location.trim()) {
       const normalizedLocation = location.trim().toLowerCase();
 
-      // Try different location matching strategies
-      query = query.or(
-        `city.ilike.%${normalizedLocation}%,state.ilike.%${normalizedLocation}%,zip.ilike.%${normalizedLocation}%`
-      );
+      // Handle city/state format
+        const [city, state] = location.split(',').map(s => s.trim());
+        if (state) {
+          query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
+        } else {
+          query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%,postcode.ilike.%${location}%`);
+        }
     }
 
     // Add breed filtering if provided
