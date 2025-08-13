@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { Dog, DogSync } from './database.types';
+import type { Database } from './database.types';
+import { calculateVisibilityScore } from '@/lib/scoreVisibility';
+import { DogFormatter } from '@/lib/dogFormatter';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -23,72 +25,70 @@ export const isSupabaseAvailable = () => {
 };
 
 // Database helper functions
-export async function getAllDogs(limit = 100, offset = 0) {
-  if (!isSupabaseAvailable()) {
-    console.warn('Supabase is not available.  Returning an empty array.');
+export async function getAllDogs(limit: number = 100): Promise<any[]> {
+  try {
+    console.log(`Fetching ${limit} dogs from database, ordered by visibility_score desc`);
+
+    const { data, error } = await supabase
+      .from('dogs')
+      .select('*')
+      .eq('status', 'adoptable')
+      .not('petfinder_id', 'is', null) // Ensure we have valid IDs
+      .order('visibility_score', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching dogs from database:', error);
+      return [];
+    }
+
+    console.log(`Fetched ${data?.length || 0} dogs from database, ordered by visibility_score desc`);
+
+    // Format the dogs properly using DogFormatter
+    const formattedDogs = (data || []).map(dog => {
+      // Use the DogFormatter to ensure consistent formatting
+      const formatted = DogFormatter.formatDatabaseDog(dog);
+
+      // Convert back to legacy format for the adopt page
+      return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
+    });
+
+    return formattedDogs;
+  } catch (error) {
+    console.error('Error in getAllDogs:', error);
     return [];
   }
-
-  const { data, error } = await supabase
-    .from('dogs')
-    .select('*')
-    .eq('status', 'adoptable')
-    .order('visibility_score', { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  if (error) {
-    console.error('Error fetching dogs:', error);
-    throw error;
-  }
-  
-  console.log(`Fetched ${data?.length || 0} dogs from database, ordered by visibility_score desc`);
-  return data as Dog[];
 }
 
-export async function searchDogs(location: string, breed?: string, limit = 100, size?: string, age?: string) {
-  if (!isSupabaseAvailable()) {
-    console.warn('Supabase is not available. Returning an empty array.');
-    return [];
-  }
-
+export async function searchDogs(location: string, breed?: string, limit: number = 100): Promise<any[]> {
   try {
+    console.log(`Searching for dogs with location: ${location}, breed: ${breed}, limit: ${limit}`);
+
     let query = supabase
       .from('dogs')
       .select('*')
-      .eq('status', 'adoptable');
+      .eq('status', 'adoptable')
+      .not('petfinder_id', 'is', null); // Ensure we have valid IDs
 
-    // Check if location is a ZIP code first
-    if (/^\d{5}$/.test(location)) {
-      console.log('[🗄️ Supabase] Filtering by ZIP code:', location);
-      query = query.eq('postcode', location);
-    } else {
-      // Parse location for city and state
-      const locationParts = location.split(',').map(part => part.trim());
+    // Add location-based filtering if provided
+    if (location && location.trim()) {
+      const normalizedLocation = location.trim().toLowerCase();
 
-      if (locationParts.length >= 2) {
-        // Format: "City, State"
-        const city = locationParts[0];
-        const state = locationParts[1];
-        // Fix the query syntax - use proper PostgreSQL ilike format
-        query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
-      } else {
-        // Single location - check both city and state
-        query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%`);
-      }
+      // Try different location matching strategies
+      query = query.or(
+        `city.ilike.%${normalizedLocation}%,state.ilike.%${normalizedLocation}%,zip.ilike.%${normalizedLocation}%`
+      );
     }
 
-    if (breed) {
-      query = query.or(`primary_breed.ilike.%${breed}%,secondary_breed.ilike.%${breed}%`);
+    // Add breed filtering if provided
+    if (breed && breed.trim()) {
+      const normalizedBreed = breed.trim().toLowerCase();
+      query = query.or(
+        `primary_breed.ilike.%${normalizedBreed}%,secondary_breed.ilike.%${normalizedBreed}%`
+      );
     }
 
-    if (size) {
-      query = query.eq('size', size);
-    }
-
-    if (age) {
-      query = query.eq('age', age);
-    }
-
+    // Order by visibility score and limit results
     query = query
       .order('visibility_score', { ascending: false })
       .limit(limit);
@@ -96,14 +96,25 @@ export async function searchDogs(location: string, breed?: string, limit = 100, 
     const { data, error } = await query;
 
     if (error) {
-      console.error('Supabase search error:', error);
-      throw error;
+      console.error('Error searching dogs:', error);
+      return [];
     }
 
-    return data as Dog[];
+    console.log(`Found ${data?.length || 0} dogs matching search criteria`);
+
+    // Format the dogs properly using DogFormatter
+    const formattedDogs = (data || []).map(dog => {
+      // Use the DogFormatter to ensure consistent formatting
+      const formatted = DogFormatter.formatDatabaseDog(dog);
+
+      // Convert back to legacy format for the adopt page
+      return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
+    });
+
+    return formattedDogs;
   } catch (error) {
-    console.error('Search error:', error);
-    throw error;
+    console.error('Error in searchDogs:', error);
+    return [];
   }
 }
 

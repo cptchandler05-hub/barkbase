@@ -89,44 +89,9 @@ export default function AdoptPage() {
       console.log("Fetched dogs from database:", dbDogs?.length || 0);
 
       if (dbDogs && dbDogs.length > 0) {
-        // Convert database dogs to expected format
-        const formattedDogs = dbDogs.map(dog => ({
-          id: dog.petfinder_id,
-          name: dog.name,
-          breeds: { 
-            primary: dog.primary_breed, 
-            secondary: dog.secondary_breed,
-            mixed: dog.is_mixed 
-          },
-          age: dog.age,
-          size: dog.size,
-          gender: dog.gender,
-          photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-            ? dog.photos.map(photo => {
-                if (typeof photo === 'string') {
-                  return { medium: photo, large: photo, small: photo };
-                } else if (photo && typeof photo === 'object') {
-                  return {
-                    medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
-                    large: photo.large || photo.medium || photo.small || '/images/barkr.png',
-                    small: photo.small || photo.medium || photo.large || '/images/barkr.png'
-                  };
-                }
-                return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
-              })
-            : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
-          contact: { 
-            address: { 
-              city: dog.city || 'Unknown', 
-              state: dog.state || 'Unknown'
-            }
-          },
-          description: dog.description,
-          url: dog.url,
-          visibilityScore: dog.visibility_score
-        }));
-
-        setDogs(formattedDogs);
+        // Dogs are already formatted by getAllDogs function
+        console.log('Using formatted dogs from database:', dbDogs.length);
+        setDogs(dbDogs);
         setLoading(false);
         return;
       }
@@ -279,42 +244,8 @@ export default function AdoptPage() {
         if (dbDogs && dbDogs.length > 0) {
           console.log(`Found ${dbDogs.length} dogs in database for location search`);
 
-          // Convert database dogs to expected format
-          let formattedDogs = dbDogs.map(dog => ({
-            id: dog.petfinder_id,
-            name: dog.name,
-            breeds: { 
-              primary: dog.primary_breed, 
-              secondary: dog.secondary_breed,
-              mixed: dog.is_mixed 
-            },
-            age: dog.age,
-            size: dog.size,
-            gender: dog.gender,
-            photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-              ? dog.photos.map(photo => {
-                  if (typeof photo === 'string') {
-                    return { medium: photo, large: photo, small: photo };
-                  } else if (photo && typeof photo === 'object') {
-                    return {
-                      medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
-                      large: photo.large || photo.medium || photo.small || '/images/barkr.png',
-                      small: photo.small || photo.medium || photo.large || '/images/barkr.png'
-                    };
-                  }
-                  return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
-                })
-              : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
-            contact: { 
-              address: { 
-                city: dog.city || 'Unknown', 
-                state: dog.state || 'Unknown'
-              }
-            },
-            description: dog.description,
-            url: dog.url,
-            visibilityScore: dog.visibility_score
-          }));
+          // Dogs are already formatted by searchDogs function  
+          let formattedDogs = dbDogs;
 
           // Apply additional filters
           if (searchSize) {
@@ -560,7 +491,7 @@ export default function AdoptPage() {
           {!loading && currentDogs.length > 0 && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                {currentDogs.filter(dog => dog.id && dog.id !== 'null' && dog.id !== 'undefined').map((dog, index) => {
+                {currentDogs.map((dog, index) => {
                   // Create a more robust unique key
                   const uniqueKey = dog.id 
                     ? `dog-${dog.id}` 
