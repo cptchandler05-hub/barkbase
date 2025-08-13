@@ -15,7 +15,7 @@ interface Dog {
   age: string;
   size: string;
   photos: { medium: string, large?: string, small?: string }[];
-  contact: { address: { city: string; state: string } };
+  contact: { address: { city: string; state: string }, email?: string, phone?: string };
   description: string;
   url: string;
   visibilityScore: number;
@@ -186,7 +186,9 @@ export default function AdoptPage() {
 
             if (invisibleData.dogs && invisibleData.dogs.length >= 20) {
               // We have enough dogs from database, filter by additional criteria
-              let filteredDogs = invisibleData.dogs;
+              let filteredDogs = invisibleData.dogs.filter(dog => 
+                dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
+              );
 
               if (searchSize) {
                 filteredDogs = filteredDogs.filter((dog: Dog) => 
@@ -243,9 +245,10 @@ export default function AdoptPage() {
 
         if (dbDogs && dbDogs.length > 0) {
           console.log(`Found ${dbDogs.length} dogs in database for location search`);
-
-          // Dogs are already formatted by searchDogs function  
-          let formattedDogs = dbDogs;
+          // Filter out any dogs with null or invalid IDs first
+          let formattedDogs = dbDogs.filter(dog => 
+            dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
+          );
 
           // Apply additional filters
           if (searchSize) {
@@ -281,9 +284,12 @@ export default function AdoptPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.animals) {
-          // Filter by size and age if specified
-          let filteredDogs = data.animals;
+          // Filter out any dogs with null or invalid IDs first
+          let filteredDogs = data.animals.filter(dog => 
+            dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
+          );
 
+          // Filter by size and age if specified
           if (searchSize) {
             filteredDogs = filteredDogs.filter((dog: Dog) => 
               dog.size?.toLowerCase() === searchSize.toLowerCase()
@@ -406,7 +412,7 @@ export default function AdoptPage() {
                 <input
                   type="text"
                   value={searchBreed}
-                  onChange={(e) => setSearchBreed(e.target.value)}
+                  onChange={(e) => setSearchSearchBreed(e.target.value)}
                   placeholder="Any breed"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
@@ -496,7 +502,7 @@ export default function AdoptPage() {
                   const uniqueKey = dog.id 
                     ? `dog-${dog.id}` 
                     : `dog-fallback-${index}-${dog.name || 'unknown'}-${dog.breeds?.primary || 'mixed'}-${dog.age || 'unknown'}`;
-                  
+
                   return (
                     <motion.div
                       key={uniqueKey}
@@ -621,6 +627,31 @@ export default function AdoptPage() {
                             </div>
                           </button>
                         </div>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2">
+                        {dog.contact?.email && (
+                          <a
+                            href={`mailto:${dog.contact.email}`}
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 5h-12a2 2 0 00-1.997 2.003z" />
+                              <path d="M18 10a2 2 0 00-2-2v10a2 2 0 002-2V10z" />
+                            </svg>
+                            Email
+                          </a>
+                        )}
+                        {dog.contact?.phone && (
+                          <a
+                            href={`tel:${dog.contact.phone}`}
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-green-700 bg-green-100 rounded-lg hover:bg-green-200 focus:ring-4 focus:outline-none focus:ring-green-300"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M7 5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a1 1 0 0 1 1-1h1V5zm1 3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H8z" clipRule="evenodd"/>
+                            </svg>
+                            Phone
+                          </a>
+                        )}
                       </div>
                     </div>
                   </motion.div>

@@ -45,13 +45,18 @@ export async function getAllDogs(limit: number = 100): Promise<any[]> {
     console.log(`Fetched ${data?.length || 0} dogs from database, ordered by visibility_score desc`);
 
     // Format the dogs properly using DogFormatter
-    const formattedDogs = (data || []).map(dog => {
-      // Use the DogFormatter to ensure consistent formatting
-      const formatted = DogFormatter.formatDatabaseDog(dog);
+    const formattedDogs = (data || [])
+      .map(dog => {
+        // Use the DogFormatter to ensure consistent formatting
+        const formatted = DogFormatter.formatDatabaseDog(dog);
 
-      // Convert back to legacy format for the adopt page
-      return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
-    });
+        // Convert back to legacy format for the adopt page
+        return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
+      })
+      .filter(dog => {
+        // Filter out null dogs (those with invalid IDs) and dogs with null/invalid IDs
+        return dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null;
+      });
 
     return formattedDogs;
   } catch (error) {
@@ -103,13 +108,18 @@ export async function searchDogs(location: string, breed?: string, limit: number
     console.log(`Found ${data?.length || 0} dogs matching search criteria`);
 
     // Format the dogs properly using DogFormatter
-    const formattedDogs = (data || []).map(dog => {
-      // Use the DogFormatter to ensure consistent formatting
-      const formatted = DogFormatter.formatDatabaseDog(dog);
+    const formattedDogs = (data || [])
+      .map(dog => {
+        // Use the DogFormatter to ensure consistent formatting
+        const formatted = DogFormatter.formatDatabaseDog(dog);
 
-      // Convert back to legacy format for the adopt page
-      return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
-    });
+        // Convert back to legacy format for the adopt page
+        return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
+      })
+      .filter(dog => {
+        // Filter out null dogs (those with invalid IDs) and dogs with null/invalid IDs
+        return dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null;
+      });
 
     return formattedDogs;
   } catch (error) {
@@ -156,7 +166,9 @@ export async function getDogById(petfinderId: string): Promise<Dog | null> {
     }
 
     console.log('Found dog in database:', data?.name);
-    return data as Dog;
+    // Ensure contact info is formatted correctly for clickability
+    const formattedDog = DogFormatter.formatDatabaseDog(data as Dog);
+    return formattedDog;
   } catch (error) {
     console.error('Error getting dog by ID:', error);
     console.error('Unexpected error details:', {
@@ -200,7 +212,9 @@ export async function getDogByRescueGroupsId(rescueGroupsId: string): Promise<Do
     }
 
     console.log('Found dog in database by RescueGroups ID:', data?.name);
-    return data as Dog;
+    // Ensure contact info is formatted correctly for clickability
+    const formattedDog = DogFormatter.formatDatabaseDog(data as Dog);
+    return formattedDog;
   } catch (error) {
     console.error('Error getting dog by RescueGroups ID:', error);
     // Don't throw, return null to allow fallback

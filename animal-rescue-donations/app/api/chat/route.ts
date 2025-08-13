@@ -787,7 +787,7 @@ export async function POST(req: Request) {
 
     // 🐾 ADOPTION MODE
     if (context === 'adoption') {
-      const lastUserMsg = lastMessage.trim().toLowerCase();
+      const lastUserMsg = lastMessage.toLowerCase().trim();
 
       const msg = lastUserMsg;
       const hasRuralIntent = ruralTriggers.some((t) => msg.includes(t));

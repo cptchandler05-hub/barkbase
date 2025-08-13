@@ -625,7 +625,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                     <div className="bg-blue-50 p-4 rounded-lg space-y-2">
                       {dog.contact?.phone && (
                         <a
-                          href={`tel:${dog.contact.phone}`}
+                          href={`tel:${dog.contact.phone.replace(/[^\d+()-]/g, '')}`}
                           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
                         >
                           📞 Call: {dog.contact.phone}
@@ -633,7 +633,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                       )}
                       {dog.contact?.email && (
                         <a
-                          href={`mailto:${dog.contact.email}?subject=Interested in adopting ${dog.name}`}
+                          href={`mailto:${dog.contact.email}?subject=Interested%20in%20adopting%20${encodeURIComponent(dog.name)}&body=Hi%2C%0A%0AI%20am%20interested%20in%20learning%20more%20about%20${encodeURIComponent(dog.name)}%20and%20the%20adoption%20process.%0A%0AThank%20you%21`}
                           className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
                         >
                           ✉️ Email: {dog.contact.email}

@@ -152,9 +152,14 @@ class DogFormatter {
       description: dog.description || '',
       photos: photos,
       contact: {
+        email: dog.email || null,
+        phone: dog.phone || null,
         address: {
+          address1: dog.address1 || null,
           city: dog.city || 'Unknown',
-          state: dog.state || 'Unknown'
+          state: dog.state || 'Unknown',
+          postcode: dog.zip || null,
+          country: 'US'
         }
       },
       characteristics: {
@@ -442,7 +447,12 @@ class DogFormatter {
     // Ensure ID is never null or undefined
     const validId = dog.id && dog.id !== 'null' && dog.id !== 'undefined' 
       ? (isNaN(parseInt(dog.id)) ? dog.id : parseInt(dog.id))
-      : `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      : null; // Return null for invalid IDs so they can be filtered out
+    
+    // Return null if we don't have a valid ID - this will be filtered out
+    if (!validId) {
+      return null;
+    }
     
     return {
       id: validId,
