@@ -21,9 +21,15 @@ interface UnifiedDog {
     large?: string;
   }>;
   contact: {
+    email?: string | null;
+    phone?: string | null;
     address: {
+      address1?: string | null;
+      address2?: string | null;
       city: string;
       state: string;
+      postcode?: string | null;
+      country: string;
     };
   };
   characteristics?: {
@@ -46,17 +52,24 @@ interface UnifiedDog {
   url?: string;
   visibilityScore: number;
   verificationBadge: string;
+  organizationName?: string; // Added for completeness
+  primaryBreed?: string; // Added for completeness
+  secondaryBreed?: string; // Added for completeness
+  isMixed?: boolean; // Added for completeness
+  petfinderId?: string; // Added for completeness
+  rescueGroupsId?: string; // Added for completeness
+  lastUpdated?: string; // Added for completeness
 }
 
 class DogFormatter {
   // Format database dog to unified format
   static formatDatabaseDog(dog: any): UnifiedDog {
     console.log(`[🗄️ DB Format] Processing: ${dog.name} (ID: ${dog.id}, Source: ${dog.api_source})`);
-    
+
     // Handle photos array based on source - ENHANCED FORMATTING
     const photos = (dog.photos || []).map((photo: any, index: number) => {
       console.log(`[🖼️ DB Photo ${index}] Raw photo data type: ${typeof photo}`, photo);
-      
+
       // Handle string URLs (RescueGroups direct URLs)
       if (typeof photo === 'string') {
         console.log(`[✅ DB Photo ${index}] String URL: ${photo}`);
@@ -97,7 +110,7 @@ class DogFormatter {
           };
         }
       }
-      
+
       // Fallback for invalid photo data
       console.log(`[⚠️ DB Photo ${index}] Using fallback image for invalid data`);
       return {
@@ -140,12 +153,11 @@ class DogFormatter {
       source: dog.api_source === 'rescuegroups' ? 'rescuegroups' : 'database',
       sourceId: finalId,
       organizationId: dog.organization_id || '',
+      organizationName: dog.organization_name || '', // Added for completeness
       name: dog.name || 'Unknown',
-      breeds: {
-        primary: dog.primary_breed || 'Mixed Breed',
-        secondary: dog.secondary_breed || null,
-        mixed: !!dog.secondary_breed || dog.is_mixed
-      },
+      primaryBreed: dog.primary_breed || 'Mixed Breed', // Added for completeness
+      secondaryBreed: dog.secondary_breed || null, // Added for completeness
+      isMixed: !!dog.secondary_breed || dog.is_mixed, // Added for completeness
       age: dog.age || 'Unknown',
       gender: dog.gender || 'Unknown',
       size: dog.size || 'Unknown',
@@ -156,6 +168,7 @@ class DogFormatter {
         phone: dog.phone || null,
         address: {
           address1: dog.address1 || null,
+          address2: null, // Added for completeness
           city: dog.city || 'Unknown',
           state: dog.state || 'Unknown',
           postcode: dog.zip || null,
@@ -169,9 +182,22 @@ class DogFormatter {
         houseTrained: dog.house_trained !== undefined ? Boolean(dog.house_trained) : null,
         specialNeeds: dog.special_needs !== undefined ? Boolean(dog.special_needs) : null
       },
+      attributes: {
+        spayedNeutered: dog.spayed_neutered !== undefined ? Boolean(dog.spayed_neutered) : null, // Added for completeness
+        houseTrained: dog.house_trained !== undefined ? Boolean(dog.house_trained) : null,
+        declawed: null, // Added for completeness
+        specialNeeds: dog.special_needs !== undefined ? Boolean(dog.special_needs) : null,
+        shotsCurrent: dog.shots_current !== undefined ? Boolean(dog.shots_current) : null, // Added for completeness
+        goodWithChildren: dog.good_with_children !== undefined ? Boolean(dog.good_with_children) : null,
+        goodWithDogs: dog.good_with_dogs !== undefined ? Boolean(dog.good_with_dogs) : null,
+        goodWithCats: dog.good_with_cats !== undefined ? Boolean(dog.good_with_cats) : null
+      },
       url: dog.url || '',
       visibilityScore: visibilityScore,
-      verificationBadge: dog.api_source === 'rescuegroups' ? 'Verified by BarkBase' : 'In BarkBase Database'
+      verificationBadge: dog.api_source === 'rescuegroups' ? 'Verified by BarkBase' : 'In BarkBase Database',
+      petfinderId: dog.petfinder_id || null, // Added for completeness
+      rescueGroupsId: dog.rescuegroups_id || null, // Added for completeness
+      lastUpdated: dog.last_updated || new Date().toISOString() // Added for completeness
     };
   }
 
@@ -181,7 +207,6 @@ class DogFormatter {
 
     // Use v5 API structure (attributes-based)
     const attrs = dog.attributes || {};
-    const name = attrs.name || 'Unknown';
     const id = dog.id || 'unknown';
 
     // Parse photos with relationship support - FIXED PARSING
@@ -194,7 +219,7 @@ class DogFormatter {
         item.type === 'pictures' && pictureIds.includes(item.id)
       );
 
-      console.log(`[🔍 RG Photos] Found ${pictureObjects.length} picture objects for ${name}`);
+      console.log(`[🔍 RG Photos] Found ${pictureObjects.length} picture objects for ${dog.attributes?.name}`);
 
       for (const pic of pictureObjects) {
         // Try different URL formats from RescueGroups API
@@ -204,7 +229,7 @@ class DogFormatter {
                    pic.attributes?.large || 
                    pic.attributes?.original || 
                    pic.attributes?.small;
-        
+
         if (url) {
           photos.push({
             small: url,
@@ -218,7 +243,7 @@ class DogFormatter {
 
     // Fallback to direct photos in attributes
     if (photos.length === 0 && attrs.pictures && Array.isArray(attrs.pictures)) {
-      console.log(`[🔍 RG Photos] Trying attributes.pictures for ${name}`);
+      console.log(`[🔍 RG Photos] Trying attributes.pictures for ${dog.attributes?.name}`);
       const sortedPictures = attrs.pictures.sort((a, b) => (a.order || 0) - (b.order || 0));
       for (const pic of sortedPictures) {
         const url = pic.large || pic.original || pic.small;
@@ -235,7 +260,7 @@ class DogFormatter {
 
     // Use thumbnail as fallback
     if (photos.length === 0 && attrs.thumbnailUrl) {
-      console.log(`[🔍 RG Photos] Using thumbnail for ${name}: ${attrs.thumbnailUrl}`);
+      console.log(`[🔍 RG Photos] Using thumbnail for ${dog.attributes?.name}: ${attrs.thumbnailUrl}`);
       photos.push({
         small: attrs.thumbnailUrl,
         medium: attrs.thumbnailUrl,
@@ -256,7 +281,7 @@ class DogFormatter {
           email: orgData.attributes.email || orgData.attributes.publicEmail || orgData.attributes.contactEmail || null,
           phone: orgData.attributes.phone || orgData.attributes.phoneNumber || orgData.attributes.contactPhone || null
         };
-        console.log(`[📞 RG Contact] Found org contact for ${name}:`, {
+        console.log(`[📞 RG Contact] Found org contact for ${dog.attributes?.name}:`, {
           name: orgInfo.name,
           email: orgInfo.email,
           phone: orgInfo.phone
@@ -277,7 +302,7 @@ class DogFormatter {
           locationData.attributes.cityname,
           locationData.attributes.name // Some locations use 'name' field
         ].filter(Boolean);
-        
+
         const stateOptions = [
           locationData.attributes.state,
           locationData.attributes.statename,
@@ -289,21 +314,24 @@ class DogFormatter {
           city: cityOptions[0] || 'Unknown',
           state: stateOptions[0] || 'Unknown'
         };
-        
-        console.log(`[🌍 RG Location] Found location for ${name}: ${locationInfo.city}, ${locationInfo.state}`);
+
+        console.log(`[🌍 RG Location] Found location for ${dog.attributes?.name}: ${locationInfo.city}, ${locationInfo.state}`);
         console.log(`[🔍 RG Location Debug] Available location fields:`, Object.keys(locationData.attributes));
       } else {
-        console.log(`[⚠️ RG Location] No location attributes found for ${name}`);
+        console.log(`[⚠️ RG Location] No location attributes found for ${dog.attributes?.name}`);
       }
     } else {
-      console.log(`[⚠️ RG Location] No location relationship found for ${name}`);
+      console.log(`[⚠️ RG Location] No location relationship found for ${dog.attributes?.name}`);
     }
 
-    console.log(`[🔍 RG Debug] ${name} - Photos: ${photos.length}, Location: ${locationInfo.city}, ${locationInfo.state}`);
+    console.log(`[🔍 RG Debug] ${dog.attributes?.name} - Photos: ${photos.length}, Location: ${locationInfo.city}, ${locationInfo.state}`);
 
     const formatted: UnifiedDog = {
       id: id,
-      name: name,
+      name: dog.attributes?.name || 'Unknown',
+      primaryBreed: attrs.breedPrimary || 'Mixed Breed', // Added for completeness
+      secondaryBreed: attrs.breedSecondary || null, // Added for completeness
+      isMixed: Boolean(attrs.breedMixed), // Added for completeness
       breeds: {
         primary: attrs.breedPrimary || 'Mixed Breed',
         secondary: attrs.breedSecondary || null,
@@ -319,17 +347,27 @@ class DogFormatter {
         email: orgInfo.email || null,
         phone: orgInfo.phone || null,
         address: {
+          address1: null, // Added for completeness
+          address2: null, // Added for completeness
           city: locationInfo.city || 'Unknown',
           state: locationInfo.state || 'Unknown',
+          postcode: null, // Added for completeness
           country: 'US'
         }
       },
-      attributes: {
-        spayedNeutered: null,
+      characteristics: {
+        goodWithChildren: attrs.goodWithChildren !== undefined ? Boolean(attrs.goodWithChildren) : null,
+        goodWithDogs: attrs.goodWithDogs !== undefined ? Boolean(attrs.goodWithDogs) : null,
+        goodWithCats: attrs.goodWithCats !== undefined ? Boolean(attrs.goodWithCats) : null,
         houseTrained: attrs.houseTrained !== undefined ? Boolean(attrs.houseTrained) : null,
-        declawed: null,
+        specialNeeds: attrs.specialNeeds !== undefined ? Boolean(attrs.specialNeeds) : null
+      },
+      attributes: {
+        spayedNeutered: null, // Added for completeness
+        houseTrained: attrs.houseTrained !== undefined ? Boolean(attrs.houseTrained) : null,
+        declawed: null, // Added for completeness
         specialNeeds: attrs.specialNeeds !== undefined ? Boolean(attrs.specialNeeds) : null,
-        shotsCurrent: null,
+        shotsCurrent: null, // Added for completeness
         goodWithChildren: attrs.goodWithChildren !== undefined ? Boolean(attrs.goodWithChildren) : null,
         goodWithDogs: attrs.goodWithDogs !== undefined ? Boolean(attrs.goodWithDogs) : null,
         goodWithCats: attrs.goodWithCats !== undefined ? Boolean(attrs.goodWithCats) : null
@@ -338,10 +376,13 @@ class DogFormatter {
       source: 'rescuegroups' as const,
       sourceId: id,
       organizationId: orgInfo.id,
+      organizationName: orgInfo.name, // Added for completeness
       distance: attrs.distance || null,
       lastUpdated: attrs.updated || new Date().toISOString(),
       visibilityScore: 0, // Will be calculated later
-      verificationBadge: 'Verified by BarkBase'
+      verificationBadge: 'Verified by BarkBase',
+      petfinderId: null, // Added for completeness
+      rescueGroupsId: id // Added for completeness
     };
 
     // Calculate visibility score
@@ -360,12 +401,16 @@ class DogFormatter {
       large: photo.large
     }));
 
-    const formatted = {
+    const formatted: UnifiedDog = {
       id: dog.id.toString(),
       source: 'petfinder' as const,
       sourceId: dog.id.toString(),
       organizationId: dog.organization_id || '',
+      organizationName: dog.organization_name || '', // Added for completeness
       name: dog.name,
+      primaryBreed: dog.breeds?.primary || 'Mixed Breed', // Added for completeness
+      secondaryBreed: dog.breeds?.secondary, // Added for completeness
+      isMixed: dog.breeds?.mixed || !!dog.breeds?.secondary, // Added for completeness
       breeds: {
         primary: dog.breeds?.primary || 'Mixed Breed',
         secondary: dog.breeds?.secondary,
@@ -377,9 +422,15 @@ class DogFormatter {
       description: dog.description,
       photos: photos,
       contact: dog.contact || {
+        email: null, // Added for completeness
+        phone: null, // Added for completeness
         address: {
+          address1: null, // Added for completeness
+          address2: null, // Added for completeness
           city: 'Unknown',
-          state: 'Unknown'
+          state: 'Unknown',
+          postcode: null, // Added for completeness
+          country: 'US'
         }
       },
       characteristics: {
@@ -389,23 +440,27 @@ class DogFormatter {
         houseTrained: dog.attributes?.house_trained !== undefined ? Boolean(dog.attributes.house_trained) : null,
         specialNeeds: dog.attributes?.special_needs !== undefined ? Boolean(dog.attributes.special_needs) : null
       },
+      attributes: {
+        spayedNeutered: dog.attributes?.spayed_neutered !== undefined ? Boolean(dog.attributes.spayed_neutered) : null, // Added for completeness
+        houseTrained: dog.attributes?.house_trained !== undefined ? Boolean(dog.attributes.house_trained) : null,
+        declawed: dog.attributes?.declawed !== undefined ? Boolean(dog.attributes.declawed) : null, // Added for completeness
+        specialNeeds: dog.attributes?.special_needs !== undefined ? Boolean(dog.attributes.special_needs) : null,
+        shotsCurrent: dog.attributes?.shots_current !== undefined ? Boolean(dog.attributes.shots_current) : null, // Added for completeness
+        goodWithChildren: dog.attributes?.good_with_children !== undefined ? Boolean(dog.attributes.good_with_children) : null,
+        goodWithDogs: dog.attributes?.good_with_dogs !== undefined ? Boolean(dog.attributes.good_with_dogs) : null,
+        goodWithCats: dog.attributes?.good_with_cats !== undefined ? Boolean(dog.attributes.good_with_cats) : null
+      },
       url: dog.url,
-      visibilityScore: dog.visibilityScore || 0,
-      verificationBadge: 'Verified on Petfinder'
+      visibilityScore: dog.visibilityScore || 0, // Default to 0 if not provided
+      verificationBadge: 'Verified on Petfinder',
+      petfinderId: dog.id.toString(), // Added for completeness
+      rescueGroupsId: null, // Added for completeness
+      lastUpdated: dog.last_updated || new Date().toISOString() // Added for completeness
     };
 
     // Calculate visibility score if not already present
     if (!formatted.visibilityScore) {
-      formatted.visibilityScore = calculateVisibilityScore({
-        name: formatted.name,
-        description: formatted.description,
-        photos: formatted.photos,
-        breeds: formatted.breeds,
-        age: formatted.age,
-        gender: formatted.gender,
-        size: formatted.size,
-        contact: formatted.contact
-      });
+      formatted.visibilityScore = DogFormatter.calculateVisibilityScore(formatted);
     }
 
     return formatted;
@@ -443,27 +498,39 @@ class DogFormatter {
   }
 
   // Convert unified format back to legacy API format for backward compatibility
-  static toLegacyFormat(dog: UnifiedDog, truncateDesc: boolean = false): any {
-    // Ensure ID is never null or undefined
-    const validId = dog.id && dog.id !== 'null' && dog.id !== 'undefined' 
-      ? (isNaN(parseInt(dog.id)) ? dog.id : parseInt(dog.id))
-      : null; // Return null for invalid IDs so they can be filtered out
-    
-    // Return null if we don't have a valid ID - this will be filtered out
-    if (!validId) {
-      return null;
+  static toLegacyFormat(dog: UnifiedDog, truncateDescription: boolean = true): any {
+    // Ensure we always have a valid ID - prefer petfinder_id for legacy compatibility, 
+    // but fall back to rescuegroups_id if needed
+    const validId = dog.petfinderId || dog.rescueGroupsId || dog.id;
+
+    if (!validId || validId === 'null' || validId === 'undefined') {
+      console.warn(`[🚨 DogFormatter] Dog ${dog.name} has no valid ID:`, {
+        petfinderId: dog.petfinderId,
+        rescueGroupsId: dog.rescueGroupsId,
+        id: dog.id
+      });
     }
-    
-    return {
+
+    const legacy = {
       id: validId,
       organization_id: dog.organizationId,
       name: dog.name,
-      breeds: dog.breeds,
+      breeds: {
+        primary: dog.primaryBreed, // Use primaryBreed from UnifiedDog
+        secondary: dog.secondaryBreed, // Use secondaryBreed from UnifiedDog
+        mixed: dog.isMixed // Use isMixed from UnifiedDog
+      },
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: truncateDesc ? DogFormatter.truncateDescription(dog.description) : dog.description,
-      photos: dog.photos,
+      description: truncateDescription && dog.description 
+        ? dog.description.substring(0, 150) + '...'
+        : dog.description,
+      photos: dog.photos.map(photo => ({
+        medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+        large: photo.large || photo.medium || photo.small || '/images/barkr.png',
+        small: photo.small || photo.medium || photo.large || '/images/barkr.png'
+      })),
       contact: {
         email: dog.contact?.email || null,
         phone: dog.contact?.phone || null,
@@ -490,9 +557,11 @@ class DogFormatter {
       },
       url: dog.url,
       visibilityScore: dog.visibilityScore,
-      source: dog.source,
-      verificationBadge: dog.verificationBadge
+      source: dog.source, // Include source
+      verificationBadge: dog.verificationBadge // Include verificationBadge
     };
+
+    return legacy;
   }
 
     // Helper method to normalize age
@@ -578,7 +647,8 @@ class DogFormatter {
             }
         }
 
-        return score;
+        // Ensure score is not negative
+        return Math.max(0, score);
     }
 }
 

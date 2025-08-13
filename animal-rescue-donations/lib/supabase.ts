@@ -54,8 +54,22 @@ export async function getAllDogs(limit: number = 100): Promise<any[]> {
         return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
       })
       .filter(dog => {
-        // Filter out null dogs (those with invalid IDs) and dogs with null/invalid IDs
-        return dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null;
+        // Filter out dogs with truly invalid IDs
+        const hasValidId = dog && dog.id && 
+          dog.id !== 'null' && 
+          dog.id !== 'undefined' && 
+          dog.id !== null && 
+          dog.id.toString().length > 0;
+
+        if (!hasValidId) {
+          console.warn(`[🚨 Supabase] Filtered out dog with invalid ID:`, {
+            name: dog?.name,
+            id: dog?.id,
+            type: typeof dog?.id
+          });
+        }
+
+        return hasValidId;
       });
 
     return formattedDogs;
@@ -117,8 +131,22 @@ export async function searchDogs(location: string, breed?: string, limit: number
         return DogFormatter.toLegacyFormat(formatted, false); // Don't truncate descriptions
       })
       .filter(dog => {
-        // Filter out null dogs (those with invalid IDs) and dogs with null/invalid IDs
-        return dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null;
+        // Filter out dogs with truly invalid IDs
+        const hasValidId = dog && dog.id && 
+          dog.id !== 'null' && 
+          dog.id !== 'undefined' && 
+          dog.id !== null && 
+          dog.id.toString().length > 0;
+
+        if (!hasValidId) {
+          console.warn(`[🚨 Supabase] Filtered out dog with invalid ID:`, {
+            name: dog?.name,
+            id: dog?.id,
+            type: typeof dog?.id
+          });
+        }
+
+        return hasValidId;
       });
 
     return formattedDogs;
