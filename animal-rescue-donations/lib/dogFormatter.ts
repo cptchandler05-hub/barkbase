@@ -129,10 +129,16 @@ class DogFormatter {
       }
     });
 
+    // Ensure we always have a valid ID, fallback to database auto-increment ID if needed
+    const validId = dog.petfinder_id || dog.rescuegroups_id || (dog.id ? dog.id.toString() : null);
+    const finalId = validId && validId !== 'null' && validId !== 'undefined' 
+      ? validId 
+      : `db-${dog.id || Date.now()}`;
+
     return {
-      id: dog.petfinder_id || dog.rescuegroups_id || dog.id.toString(),
+      id: finalId,
       source: dog.api_source === 'rescuegroups' ? 'rescuegroups' : 'database',
-      sourceId: dog.petfinder_id || dog.rescuegroups_id || dog.id.toString(),
+      sourceId: finalId,
       organizationId: dog.organization_id || '',
       name: dog.name || 'Unknown',
       breeds: {
@@ -433,8 +439,13 @@ class DogFormatter {
 
   // Convert unified format back to legacy API format for backward compatibility
   static toLegacyFormat(dog: UnifiedDog, truncateDesc: boolean = false): any {
+    // Ensure ID is never null or undefined
+    const validId = dog.id && dog.id !== 'null' && dog.id !== 'undefined' 
+      ? (isNaN(parseInt(dog.id)) ? dog.id : parseInt(dog.id))
+      : `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
     return {
-      id: parseInt(dog.id) || dog.id,
+      id: validId,
       organization_id: dog.organizationId,
       name: dog.name,
       breeds: dog.breeds,

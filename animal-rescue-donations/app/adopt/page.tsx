@@ -560,7 +560,7 @@ export default function AdoptPage() {
           {!loading && currentDogs.length > 0 && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                {currentDogs.map((dog, index) => {
+                {currentDogs.filter(dog => dog.id && dog.id !== 'null' && dog.id !== 'undefined').map((dog, index) => {
                   // Create a more robust unique key
                   const uniqueKey = dog.id 
                     ? `dog-${dog.id}` 
