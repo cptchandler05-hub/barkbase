@@ -76,7 +76,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
         const formattedDog = DogFormatter.formatDatabaseDog(dbDog);
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog, false),
+          animal: DogFormatter.toLegacyFormat(formattedDog, false), // false = don't truncate description
           source: 'database'
         });
       }
@@ -92,12 +92,14 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
       if (rgResult) {
         console.log('[✅ RescueGroups Hit] Found dog in RescueGroups');
-        console.log('[🔍 Debug] RescueGroups contact data:', JSON.stringify(rgResult.contact_info, null, 2));
-        // For single dog details, rgResult would be the animal object directly
-        const formattedDog = DogFormatter.formatRescueGroupsDog(rgResult);
+        console.log('[🔍 Debug] RescueGroups raw data:', JSON.stringify(rgResult, null, 2));
+        // For single dog details, handle both single animal and search results
+        const animalData = rgResult.data ? rgResult.data[0] : rgResult;
+        const includedData = rgResult.included || [];
+        const formattedDog = DogFormatter.formatRescueGroupsDog(animalData, includedData);
         console.log('[🔍 Debug] Formatted contact data:', JSON.stringify(formattedDog.contact, null, 2));
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog, false),
+          animal: DogFormatter.toLegacyFormat(formattedDog, false), // false = don't truncate description
           source: 'rescuegroups'
         });
       }

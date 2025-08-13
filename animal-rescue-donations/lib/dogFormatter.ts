@@ -232,17 +232,23 @@ class DogFormatter {
       });
     }
 
-    // Parse organization info from included data
-    let orgInfo = { name: 'Unknown Organization', id: '' };
+    // Parse organization info and contact from included data - ENHANCED
+    let orgInfo = { name: 'Unknown Organization', id: '', email: null, phone: null };
     if (dog.relationships?.orgs?.data?.[0] && included.length > 0) {
       const orgData = included.find((item: any) => 
         item.type === 'orgs' && item.id === dog.relationships.orgs.data[0].id
       );
-      if (orgData) {
+      if (orgData?.attributes) {
         orgInfo = {
-          name: orgData.attributes?.name || 'Unknown Organization',
-          id: orgData.id
+          name: orgData.attributes.name || 'Unknown Organization',
+          id: orgData.id,
+          email: orgData.attributes.email || orgData.attributes.publicEmail || null,
+          phone: orgData.attributes.phone || orgData.attributes.phoneNumber || null
         };
+        console.log(`[📞 RG Contact] Found org contact for ${name}:`, {
+          email: orgInfo.email,
+          phone: orgInfo.phone
+        });
       }
     }
 
@@ -298,8 +304,8 @@ class DogFormatter {
       photos: photos,
       description: attrs.descriptionText || null,
       contact: {
-        email: orgInfo.name !== 'Unknown Organization' ? `Contact ${orgInfo.name}` : null,
-        phone: null,
+        email: orgInfo.email || null,
+        phone: orgInfo.phone || null,
         address: {
           city: locationInfo.city || 'Unknown',
           state: locationInfo.state || 'Unknown',
