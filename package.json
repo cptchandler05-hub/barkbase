@@ -13,7 +13,8 @@
     "openai": "^4.97.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.15"
+    "tailwindcss": "^4.0.15",
+    "zipcodes": "^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.11",
