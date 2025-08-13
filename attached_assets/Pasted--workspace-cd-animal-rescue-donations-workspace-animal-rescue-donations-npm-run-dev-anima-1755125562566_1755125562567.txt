@@ -1,0 +1,480 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.7s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.5s (8586 modules)
+ GET / 200 in 13302ms
+ ✓ Compiled in 1261ms (4186 modules)
+ HEAD / 200 in 28ms
+ GET / 200 in 34ms
+ HEAD / 200 in 21ms
+ GET / 200 in 34ms
+ HEAD / 200 in 22ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1678ms (4637 modules)
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Houston, TX
+[📍 Normalized Location] Houston, TX
+[🐾 Barkr Memory] {
+  location: 'Houston, TX',
+  breed: 'labs',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Houston, TX', breed: 'labs' }
+[🧠 Breed Normalization] Input: labs → Cleaned: Lab
+[✅ Fallback Breed Match] "Lab" → "Labrador Retriever"
+[✅ Breed Match Success] Matched to: Labrador Retriever
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Labrador Retriever
+[🗄️ Database] Filtering by location: Houston, TX
+[🗄️ Database] Filtering by state: TX
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1596ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  limit: 25,
+  radius: 100
+}
+[💾 Database] Searching database first...
+Searching for dogs with location: Houston, TX, breed: Labrador Retriever, limit: 50
+Error searching dogs: {
+  code: 'PGRST100',
+  details: 'unexpected "%" expecting letter, digit, "-", "->>", "->" or delimiter (.)',
+  hint: null,
+  message: '"failed to parse logic tree ((city.ilike.%houston, tx%,state.ilike.%houston, tx%,zip.ilike.%houston, tx%))" (line 1, column 27)'
+}
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 0 dogs found so far, need 25 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Labrador Retriever" → "Labrador Retriever"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=25&location=Houston%2C+TX&distance=100&breed=Labrador+Retriever
+[✅ Petfinder Hit] Found 25 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 25 total dogs from sources: petfinder
+[📊 Source Breakdown] petfinder: 25
+ POST /api/petfinder/search 200 in 4199ms
+[✅ Chat Search Success] Found 25 dogs for labs in Houston, TX from sources: petfinder
+[✅ Petfinder Integration] Found 25 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[📊 Scores] Sample scores: [ 'Sylphiette: 111.3', 'Fefe: 110.6', 'Milo: 100.2' ]
+ POST /api/chat 200 in 8754ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 1578ms (8820 modules)
+ GET /adopt/77758190 200 in 2474ms
+ HEAD /adopt/77758190 200 in 35ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 1393ms (4649 modules)
+[🔍 Dog Lookup] Starting search for dogId: 77758190
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77758190
+No dog found with petfinder_id: 77758190
+[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups...
+[🦮 RescueGroups] Getting details for animal: 77758190
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/77758190?fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 0,
+  includedCount: 0,
+  meta: {
+    count: 0,
+    countReturned: 0,
+    pageReturned: 1,
+    limit: 25,
+    pages: 0,
+    transactionId: 'DVxkDejAYHyD'
+  }
+}
+[✅ RescueGroups] Got details for: Unknown
+[🐾 Petfinder] Falling back to Petfinder API...
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77758190 not found in any source
+ GET /api/dog/77758190 404 in 3730ms
+[🔍 Dog Lookup] Starting search for dogId: 77758190
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77758190
+No dog found with petfinder_id: 77758190
+[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups...
+[🦮 RescueGroups] Getting details for animal: 77758190
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/77758190?fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 0,
+  includedCount: 0,
+  meta: {
+    count: 0,
+    countReturned: 0,
+    pageReturned: 1,
+    limit: 25,
+    pages: 0,
+    transactionId: 'DVxkDejAYHyD'
+  }
+}
+[✅ RescueGroups] Got details for: Unknown
+[🐾 Petfinder] Falling back to Petfinder API...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77758190 not found in any source
+ GET /api/dog/77758190 404 in 1147ms
+ GET /adopt/77755523 200 in 318ms
+ HEAD /adopt/77755523 200 in 37ms
+[🔍 Dog Lookup] Starting search for dogId: 77755523
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77755523
+No dog found with petfinder_id: 77755523
+[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups...
+[🦮 RescueGroups] Getting details for animal: 77755523
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/77755523?fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 0,
+  includedCount: 0,
+  meta: {
+    count: 0,
+    countReturned: 0,
+    pageReturned: 1,
+    limit: 25,
+    pages: 0,
+    transactionId: 'piNYqVvnWXjS'
+  }
+}
+[✅ RescueGroups] Got details for: Unknown
+[🐾 Petfinder] Falling back to Petfinder API...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77755523 not found in any source
+ GET /api/dog/77755523 404 in 1891ms
+[🔍 Dog Lookup] Starting search for dogId: 77755523
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77755523
+No dog found with petfinder_id: 77755523
+[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups...
+[🦮 RescueGroups] Getting details for animal: 77755523
+[🦮 RescueGroups] Making GET request to: https://api.rescuegroups.org/v5/public/animals/77755523?fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2CanimalLocationCity%2CanimalLocationState%2CanimalLocationPostalcode&include=orgs%2Clocations%2Cbreeds%2Cpictures
+[🦮 RescueGroups] Response status: 200
+[🦮 RescueGroups] Response result structure: {
+  dataCount: 0,
+  includedCount: 0,
+  meta: {
+    count: 0,
+    countReturned: 0,
+    pageReturned: 1,
+    limit: 25,
+    pages: 0,
+    transactionId: 'piNYqVvnWXjS'
+  }
+}
+[✅ RescueGroups] Got details for: Unknown
+[🐾 Petfinder] Falling back to Petfinder API...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77755523 not found in any source
+ GET /api/dog/77755523 404 in 1306ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: more dogs please
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🐾 More Request] Processing more dogs request
+[🐾 Memory Check] Cached dogs count: 25
+[🐾 Memory Check] Seen dogs count: 10
+[🐾 Memory Check] Location: Houston, TX
+[🐾 Memory Check] Breed: labs
+[🐾 Using Cache] Found cached dogs, checking for unseen ones...
+[🐾 Filter Check] Unseen dogs count: 15
+[🐾 Showing] Displaying 10 more dogs from cache
+ POST /api/chat 200 in 2518ms
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 2.8s (8949 modules)
+ GET /adopt 200 in 3172ms
+ HEAD /adopt 200 in 17ms
+ ○ Compiling /api/invisible-dogs ...
+ ✓ Compiled /api/invisible-dogs in 813ms (4585 modules)
+[🔍 Invisible Dogs API] Fetching most invisible dogs...
+[✅ Invisible Dogs] Found 100 dogs from database
+ GET /api/invisible-dogs 200 in 891ms
+[🔍 Invisible Dogs API] Fetching most invisible dogs...
+[✅ Invisible Dogs] Found 100 dogs from database
+ GET /api/invisible-dogs 200 in 12ms
+ GET / 200 in 257ms
+ HEAD / 200 in 22ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 998ms (4708 modules)
+[🧠 Mission Intent] Invisible dogs request detected, forcing adoption mode
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: show me the most invisible dogs
+[⚠️ Barkr] Invalid breed in memory, wiping: undefined
+[⚠️ Barkr] Invalid location in memory, wiping: undefined
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🔍 Invisible Dogs] Fetching dogs with highest visibility scores...
+[✅ Invisible Dogs] Found 10 dogs from database
+ POST /api/chat 200 in 2493ms
+ ✓ Compiled in 4.3s (8721 modules)
+^C
+
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.2s (8586 modules)
+ GET / 200 in 12963ms
+ ✓ Compiled in 1237ms (4186 modules)
+ HEAD / 200 in 36ms
+ GET / 200 in 34ms
+ HEAD / 200 in 18ms
+^C
+
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 10.6s (8586 modules)
+ GET / 200 in 11424ms
+ ✓ Compiled in 1282ms (4186 modules)
+ HEAD / 200 in 25ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 2.9s (4637 modules)
+[🧠 Mission Intent] Invisible dogs request detected, forcing adoption mode
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🧠 GPT Parser] No clear breed or location found in: show me the most invisible dogs
+[⚠️ Barkr] Invalid breed in memory, wiping: undefined
+[⚠️ Barkr] Invalid location in memory, wiping: undefined
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🔍 Invisible Dogs] Fetching dogs with highest visibility scores...
+[✅ Invisible Dogs] Found 10 dogs from database
+[❌ Invisible Dogs Error] ReferenceError: teVisibilityScore is not defined
+    at POST (webpack-internal:///(rsc)/./app/api/chat/route.ts:870:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+ POST /api/chat 200 in 7161ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Houston, TX
+[📍 Normalized Location] Houston, TX
+[🐾 Barkr Memory] {
+  location: 'Houston, TX',
+  breed: 'labs',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Houston, TX', breed: 'labs' }
+[🧠 Breed Normalization] Input: labs → Cleaned: Lab
+[✅ Fallback Breed Match] "Lab" → "Labrador Retriever"
+[✅ Breed Match Success] Matched to: Labrador Retriever
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Labrador Retriever
+[🗄️ Database] Filtering by location: Houston, TX
+[🗄️ Database] Filtering by state: TX
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1201ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  limit: 25,
+  radius: 100
+}
+[💾 Database] Searching database first...
+Searching for dogs with location: Houston, TX, breed: Labrador Retriever, limit: 50
+Error searching dogs: {
+  code: 'PGRST100',
+  details: 'unexpected "%" expecting letter, digit, "-", "->>", "->" or delimiter (.)',
+  hint: null,
+  message: '"failed to parse logic tree ((city.ilike.%houston, tx%,state.ilike.%houston, tx%,zip.ilike.%houston, tx%))" (line 1, column 27)'
+}
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 0 dogs found so far, need 25 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Labrador Retriever" → "Labrador Retriever"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=25&location=Houston%2C+TX&distance=100&breed=Labrador+Retriever
+[✅ Petfinder Hit] Found 25 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 25 total dogs from sources: petfinder
+[📊 Source Breakdown] petfinder: 25
+ POST /api/petfinder/search 200 in 3643ms
+[✅ Chat Search Success] Found 25 dogs for labs in Houston, TX from sources: petfinder
+[✅ Petfinder Integration] Found 25 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[📊 Scores] Sample scores: [ 'Sylphiette: 111.3', 'Fefe: 110.6', 'Milo: 100.2' ]
+ POST /api/chat 200 in 5446ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 1606ms (8820 modules)
+ GET /adopt/77757919 200 in 2314ms
+ HEAD /adopt/77757919 200 in 35ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 862ms (4649 modules)
+[🔍 Dog Lookup] Starting search for dogId: 77757919
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77757919
+No dog found with petfinder_id: 77757919
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups API...
+[⚠️ RescueGroups Warning] RescueGroups lookup failed: TypeError: rescueGroupsAPI.getDogById is not a function
+    at GET (webpack-internal:///(rsc)/./app/api/dog/[dogId]/route.ts:82:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77757919 not found in any source
+ GET /api/dog/77757919 404 in 3166ms
+[🔍 Dog Lookup] Starting search for dogId: 77757919
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77757919
+No dog found with petfinder_id: 77757919
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as string...
+[🦮 RescueGroups] Searching RescueGroups API...
+[⚠️ RescueGroups Warning] RescueGroups lookup failed: TypeError: rescueGroupsAPI.getDogById is not a function
+    at GET (webpack-internal:///(rsc)/./app/api/dog/[dogId]/route.ts:82:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77757919 not found in any source
+ GET /api/dog/77757919 404 in 1275ms
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 2.4s (8707 modules)
+ GET /adopt 200 in 2856ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ HEAD /adopt 200 in 28ms
