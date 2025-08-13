@@ -242,10 +242,11 @@ class DogFormatter {
         orgInfo = {
           name: orgData.attributes.name || 'Unknown Organization',
           id: orgData.id,
-          email: orgData.attributes.email || orgData.attributes.publicEmail || null,
-          phone: orgData.attributes.phone || orgData.attributes.phoneNumber || null
+          email: orgData.attributes.email || orgData.attributes.publicEmail || orgData.attributes.contactEmail || null,
+          phone: orgData.attributes.phone || orgData.attributes.phoneNumber || orgData.attributes.contactPhone || null
         };
         console.log(`[📞 RG Contact] Found org contact for ${name}:`, {
+          name: orgInfo.name,
           email: orgInfo.email,
           phone: orgInfo.phone
         });
@@ -442,7 +443,18 @@ class DogFormatter {
       size: dog.size,
       description: truncateDesc ? DogFormatter.truncateDescription(dog.description) : dog.description,
       photos: dog.photos,
-      contact: dog.contact,
+      contact: {
+        email: dog.contact?.email || null,
+        phone: dog.contact?.phone || null,
+        address: {
+          address1: dog.contact?.address?.address1 || null,
+          address2: dog.contact?.address?.address2 || null,
+          city: dog.contact?.address?.city || 'Unknown',
+          state: dog.contact?.address?.state || 'Unknown',
+          postcode: dog.contact?.address?.postcode || null,
+          country: dog.contact?.address?.country || 'US'
+        }
+      },
       // Map unified attributes to frontend expected format
       attributes: {
         spayed_neutered: dog.attributes?.spayedNeutered || false,

@@ -143,8 +143,21 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         const includedData = rgResult.included || [];
         const formattedDog = DogFormatter.formatRescueGroupsDog(animalData, includedData);
         console.log('[🔍 Debug] Formatted contact data:', JSON.stringify(formattedDog.contact, null, 2));
+        
+        const legacyFormatted = DogFormatter.toLegacyFormat(formattedDog, false); // false = don't truncate description
+        
+        // Add organization name if available
+        const orgData = includedData.find((item: any) => 
+          item.type === 'orgs' && item.id === formattedDog.organizationId
+        );
+        if (orgData?.attributes?.name) {
+          legacyFormatted.organization = {
+            name: orgData.attributes.name
+          };
+        }
+        
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog, false), // false = don't truncate description
+          animal: legacyFormatted,
           source: 'rescuegroups'
         });
       }
