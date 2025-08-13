@@ -611,13 +611,16 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
 
               {/* Action Buttons */}
               <div className="space-y-4">
-                {dog.contact?.phone || dog.contact?.email ? (
+                {/* Contact Information - Check for phone, email, or contact object */}
+                {(dog.contact?.phone || dog.contact?.email || 
+                  (typeof dog.contact === 'object' && dog.contact !== null && 
+                   Object.values(dog.contact).some(val => val && val !== ''))) ? (
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold text-blue-900 mb-3 text-center">
                       ❤️ Contact About {dog.name}
                     </h3>
                     <div className="bg-blue-50 p-4 rounded-lg space-y-2">
-                      {dog.contact.phone && (
+                      {dog.contact?.phone && (
                         <a
                           href={`tel:${dog.contact.phone}`}
                           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
@@ -625,15 +628,17 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                           📞 Call: {dog.contact.phone}
                         </a>
                       )}
-                      {dog.contact.email && (
+                      {dog.contact?.email && (
                         <a
                           href={`mailto:${dog.contact.email}?subject=Interested in adopting ${dog.name}`}
                           className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition"
-                        >                          ✉️ Email:{dog.contact.email}                        </a>
+                        >
+                          ✉️ Email: {dog.contact.email}
+                        </a>
                       )}
 
-                      {/* Petfinder verification link - required for legal compliance */}
-                      {dog.url && (
+                      {/* Show appropriate verification badge based on data source */}
+                      {dog.url && dog.url.includes('petfinder.com') && (
                         <a
                           href={dog.url}
                           target="_blank"
@@ -642,6 +647,13 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                         >
                           ✅ Verified on Petfinder
                         </a>
+                      )}
+
+                      {/* Show BarkBase verification for database dogs or non-Petfinder sources */}
+                      {(!dog.url || !dog.url.includes('petfinder.com')) && (
+                        <div className="block w-full bg-blue-100 text-blue-700 text-sm font-medium py-2 px-4 rounded-lg text-center border border-blue-300">
+                          🏆 Verified by BarkBase
+                        </div>
                       )}
 
                     </div>
@@ -654,6 +666,24 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                     <p className="text-sm text-gray-500">
                       Try searching for "{dog.name}" on adoption websites or contact local shelters near {dog.contact?.address?.city}, {dog.contact?.address?.state}.
                     </p>
+                    
+                    {/* Still show verification badge even without contact info */}
+                    <div className="mt-3">
+                      {dog.url && dog.url.includes('petfinder.com') ? (
+                        <a
+                          href={dog.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition border border-gray-300"
+                        >
+                          ✅ Verified on Petfinder
+                        </a>
+                      ) : (
+                        <div className="inline-block bg-blue-100 text-blue-700 text-sm font-medium py-2 px-4 rounded-lg border border-blue-300">
+                          🏆 Verified by BarkBase
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -746,16 +776,18 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-blue-900 mb-4">Contact Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {dog.contact?.address && (
+              {/* Location Information */}
+              {(dog.contact?.address || dog.contact?.city || dog.contact?.state) && (
                 <div>
                   <h4 className="font-semibold text-gray-800 mb-2">📍 Location</h4>
                   <p className="text-gray-600">
-                    {dog.contact.address.address1 && `${dog.contact.address.address1}, `}
-                    {dog.contact.address.city}, {dog.contact.address.state} {dog.contact.address.postcode}
+                    {dog.contact?.address?.address1 && `${dog.contact.address.address1}, `}
+                    {dog.contact?.address?.city || dog.contact?.city}, {dog.contact?.address?.state || dog.contact?.state} {dog.contact?.address?.postcode || dog.contact?.postcode || ''}
                   </p>
                 </div>
               )}
 
+              {/* Contact Details */}
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">📞 Contact</h4>
                 {dog.contact?.phone && (
@@ -764,13 +796,23 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 {dog.contact?.email && (
                   <p className="text-gray-600">Email: {dog.contact.email}</p>
                 )}
+                {!dog.contact?.phone && !dog.contact?.email && (
+                  <p className="text-gray-500 italic">Contact info not provided by source</p>
+                )}
               </div>
             </div>
 
+            {/* Action message */}
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
-                💡 <strong>Ready to adopt?</strong> Contact the rescue directly using the information above for the fastest response about {dog.name}.
-              </p>
+              {(dog.contact?.phone || dog.contact?.email) ? (
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Ready to adopt?</strong> Contact the rescue directly using the information above for the fastest response about {dog.name}.
+                </p>
+              ) : (
+                <p className="text-sm text-blue-800">
+                  💡 <strong>Interested in {dog.name}?</strong> Search for "{dog.name}" on {dog.url && dog.url.includes('petfinder.com') ? 'Petfinder' : 'adoption websites'} or contact shelters near {dog.contact?.address?.city || dog.contact?.city || 'this location'}.
+                </p>
+              )}
             </div>
           </div>
 

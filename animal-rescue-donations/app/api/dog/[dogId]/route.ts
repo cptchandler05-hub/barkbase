@@ -24,7 +24,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       // If not found by petfinder_id, try by rescuegroups_id and also try as string/number conversion
       if (!dbDog) {
         console.log('[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...');
-        
+
         if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
           const { createClient } = await import('@supabase/supabase-js');
           const supabase = createClient(
@@ -47,7 +47,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
               .select('*')
               .eq('petfinder_id', Number(dogId))
               .single();
-            
+
             data = result.data;
             error = result.error;
           }
@@ -60,7 +60,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
               .select('*')
               .eq('petfinder_id', dogId.toString())
               .single();
-            
+
             data = result.data;
             error = result.error;
           }
@@ -92,8 +92,10 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
       if (rgResult) {
         console.log('[✅ RescueGroups Hit] Found dog in RescueGroups');
+        console.log('[🔍 Debug] RescueGroups contact data:', JSON.stringify(rgResult.contact_info, null, 2));
         // For single dog details, rgResult would be the animal object directly
         const formattedDog = DogFormatter.formatRescueGroupsDog(rgResult);
+        console.log('[🔍 Debug] Formatted contact data:', JSON.stringify(formattedDog.contact, null, 2));
         return NextResponse.json({
           animal: DogFormatter.toLegacyFormat(formattedDog, false),
           source: 'rescuegroups'
