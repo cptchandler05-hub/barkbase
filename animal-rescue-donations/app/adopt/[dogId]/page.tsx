@@ -42,6 +42,7 @@ interface Dog {
   };
   organization_id: string;
   published_at: string;
+  organization?: { name: string }; // Added organization name for completeness
 }
 
 export default function DogProfilePage() {
@@ -108,7 +109,8 @@ export default function DogProfilePage() {
             photos: (data.animal.photos || []).length > 0 
               ? data.animal.photos 
               : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
-            visibilityScore: data.animal.visibilityScore || 50
+            visibilityScore: data.animal.visibilityScore || 50,
+            organization: data.animal.organization // Include organization details if available
           };
           setDog(processedDog);
           console.log("Set dog from API response:", processedDog.name);
@@ -157,7 +159,8 @@ export default function DogProfilePage() {
                   ...retryData.animal,
                   photos: (retryData.animal.photos || []).length > 0 
                     ? retryData.animal.photos 
-                    : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }]
+                    : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
+                  organization: retryData.animal.organization // Include organization details if available
                 };
                 setDog(processedDog);
                 console.log("Set dog from retry response:", processedDog.name);
@@ -666,7 +669,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                     <p className="text-sm text-gray-500">
                       Try searching for "{dog.name}" on adoption websites or contact local shelters near {dog.contact?.address?.city}, {dog.contact?.address?.state}.
                     </p>
-                    
+
                     {/* Still show verification badge even without contact info */}
                     <div className="mt-3">
                       {dog.url && dog.url.includes('petfinder.com') ? (
@@ -810,7 +813,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 </p>
               ) : (
                 <p className="text-sm text-blue-800">
-                  💡 <strong>Interested in {dog.name}?</strong> Search for "{dog.name}" on {dog.url && dog.url.includes('petfinder.com') ? 'Petfinder' : 'adoption websites'} or contact shelters near {dog.contact?.address?.city || dog.contact?.city || 'this location'}.
+                  💡 <strong>Interested in {dog.name}?</strong> The fastest way to inquire is to reach out directly to the rescue organization. They can provide the most up-to-date information about adoption requirements and availability.
                 </p>
               )}
             </div>

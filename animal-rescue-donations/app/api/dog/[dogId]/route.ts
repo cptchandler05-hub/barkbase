@@ -75,8 +75,53 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       if (dbDog) {
         console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
         const formattedDog = DogFormatter.formatDatabaseDog(dbDog);
+        // Return formatted response
         return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog, false), // false = don't truncate description
+          animal: {
+            id: dbDog.petfinder_id,
+            organization_id: dbDog.organization_id,
+            name: dbDog.name,
+            breeds: {
+              primary: dbDog.primary_breed,
+              secondary: dbDog.secondary_breed,
+              mixed: dbDog.is_mixed
+            },
+            age: dbDog.age,
+            gender: dbDog.gender,
+            size: dbDog.size,
+            description: dbDog.description,
+            photos: dbDog.photos || [],
+            contact: {
+              email: dbDog.contact_email,
+              phone: dbDog.contact_phone,
+              address: {
+                address1: dbDog.contact_address1,
+                address2: dbDog.contact_address2,
+                city: dbDog.city,
+                state: dbDog.state,
+                postcode: dbDog.postcode,
+                country: dbDog.contact_country
+              }
+            },
+            organization: {
+              name: dbDog.organization_name
+            },
+            attributes: {
+              spayed_neutered: dbDog.spayed_neutered,
+              house_trained: dbDog.house_trained,
+              special_needs: dbDog.special_needs,
+              shots_current: dbDog.shots_current
+            },
+            environment: {
+              children: dbDog.good_with_children,
+              dogs: dbDog.good_with_dogs,
+              cats: dbDog.good_with_cats
+            },
+            url: dbDog.url,
+            visibilityScore: dbDog.visibility_score,
+            source: 'database',
+            verificationBadge: 'In BarkBase Database'
+          },
           source: 'database'
         });
       }
@@ -145,7 +190,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
     // 😢 NOT FOUND: Dog not found in any source
     console.log(`[❌ Not Found] Dog with ID ${dogId} not found in any source`);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Dog not found',
       details: `Dog with ID ${dogId} was not found in database, RescueGroups, or Petfinder`,
       searchedSources: ['database', 'rescuegroups', 'petfinder']
