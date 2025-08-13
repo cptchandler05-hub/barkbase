@@ -560,14 +560,20 @@ export default function AdoptPage() {
           {!loading && currentDogs.length > 0 && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                {currentDogs.map((dog, index) => (
-                  <motion.div
-                    key={dog.id || `dog-${index}-${dog.name || 'unknown'}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
-                  >
+                {currentDogs.map((dog, index) => {
+                  // Create a more robust unique key
+                  const uniqueKey = dog.id 
+                    ? `dog-${dog.id}` 
+                    : `dog-fallback-${index}-${dog.name || 'unknown'}-${dog.breeds?.primary || 'mixed'}-${dog.age || 'unknown'}`;
+                  
+                  return (
+                    <motion.div
+                      key={uniqueKey}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
+                    >
                     <div className="relative overflow-hidden">
                       <img
                         src={dog.photos?.[0]?.medium || "/images/barkr.png"}
@@ -687,7 +693,8 @@ export default function AdoptPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Pagination */}

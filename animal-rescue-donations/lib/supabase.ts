@@ -36,7 +36,12 @@ export async function getAllDogs(limit = 100, offset = 0) {
     .order('visibility_score', { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching dogs:', error);
+    throw error;
+  }
+  
+  console.log(`Fetched ${data?.length || 0} dogs from database, ordered by visibility_score desc`);
   return data as Dog[];
 }
 
