@@ -57,14 +57,30 @@ export default function AdoptPage() {
         sessionStorage.removeItem('adoptPageState');
       } catch (error) {
         console.error('Error restoring adoption page state:', error);
-        // Fallback to default behavior
-        handleShowMostInvisible();
+        // Fallback to load 10 dogs initially
+        loadInitialDogs();
       }
     } else {
-      // No saved state, load default invisible dogs
-      handleShowMostInvisible();
+      // No saved state, load initial 10 dogs
+      loadInitialDogs();
     }
   }, []);
+
+  const loadInitialDogs = async () => {
+    setLoading(true);
+    try {
+      console.log("Loading initial 10 dogs...");
+      const dbDogs = await getAllDogs(10); // Load 10 dogs initially
+      console.log("Loaded initial dogs:", dbDogs?.length || 0);
+      if (dbDogs && dbDogs.length > 0) {
+        setDogs(dbDogs);
+      }
+    } catch (error) {
+      console.error("Error loading initial dogs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Scroll to results when page changes
   useEffect(() => {
@@ -84,8 +100,8 @@ export default function AdoptPage() {
     try {
       console.log("Fetching most invisible dogs from database...");
 
-      // First try to get dogs from Supabase dogs table
-      const dbDogs = await getAllDogs(50); // Get top 50 most invisible
+      // Get top 50 most invisible dogs when button is clicked
+      const dbDogs = await getAllDogs(50);
       console.log("Fetched dogs from database:", dbDogs?.length || 0);
 
       if (dbDogs && dbDogs.length > 0) {
@@ -168,62 +184,61 @@ export default function AdoptPage() {
     try {
       let effectiveLocation = searchLocation.trim();
 
-      // If no location provided, check database first for invisible dogs
+      // If no location provided, search database directly with size/age/breed filters
       if (!effectiveLocation) {
         console.log("No location provided, checking database for invisible dogs first");
 
         try {
-          // Check database for most invisible dogs first
-          console.log("Fetching most invisible dogs from database...");
-          const invisibleResponse = await fetch('/api/invisible-dogs', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-          });
+          // Get all dogs from database and filter locally
+          const allDbDogs = await getAllDogs(100);
+          console.log("Fetched dogs from database:", allDbDogs?.length || 0);
 
-          if (invisibleResponse.ok) {
-            const invisibleData = await invisibleResponse.json();
-            console.log("Fetched dogs from database:", invisibleData.dogs?.length || 0);
+          if (allDbDogs && allDbDogs.length > 0) {
+            // Filter out any dogs with null or invalid IDs first
+            let filteredDogs = allDbDogs.filter(dog => 
+              dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
+            );
 
-            if (invisibleData.dogs && invisibleData.dogs.length >= 20) {
-              // We have enough dogs from database, filter by additional criteria
-              let filteredDogs = invisibleData.dogs.filter(dog => 
-                dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
+            // Apply size filter
+            if (searchSize) {
+              filteredDogs = filteredDogs.filter((dog: Dog) => 
+                dog.size?.toLowerCase() === searchSize.toLowerCase()
               );
-
-              if (searchSize) {
-                filteredDogs = filteredDogs.filter((dog: Dog) => 
-                  dog.size?.toLowerCase() === searchSize.toLowerCase()
-                );
-              }
-
-              if (searchAge) {
-                filteredDogs = filteredDogs.filter((dog: Dog) => 
-                  dog.age?.toLowerCase() === searchAge.toLowerCase()
-                );
-              }
-
-              if (searchBreed) {
-                filteredDogs = filteredDogs.filter((dog: Dog) => 
-                  dog.breeds?.primary?.toLowerCase().includes(searchBreed.toLowerCase()) ||
-                  dog.breeds?.secondary?.toLowerCase().includes(searchBreed.toLowerCase())
-                );
-              }
-
-              setDogs(filteredDogs);
-              console.log(`Using ${filteredDogs.length} filtered invisible dogs from database`);
-              return;
-            } else {
-              console.log(`Only ${invisibleData.dogs?.length || 0} dogs in database, supplementing with Petfinder`);
-              // Continue to Petfinder to get more dogs
             }
+
+            // Apply age filter - handle "Baby" mapping to "Puppy"
+            if (searchAge) {
+              const normalizedSearchAge = searchAge.toLowerCase();
+              filteredDogs = filteredDogs.filter((dog: Dog) => {
+                const dogAge = dog.age?.toLowerCase();
+                // Handle puppy/baby mapping
+                if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
+                  return dogAge === 'baby' || dogAge === 'puppy';
+                }
+                return dogAge === normalizedSearchAge;
+              });
+            }
+
+            // Apply breed filter
+            if (searchBreed) {
+              const normalizedBreed = searchBreed.toLowerCase();
+              filteredDogs = filteredDogs.filter((dog: Dog) => 
+                dog.breeds?.primary?.toLowerCase().includes(normalizedBreed) ||
+                dog.breeds?.secondary?.toLowerCase().includes(normalizedBreed)
+              );
+            }
+
+            setDogs(filteredDogs);
+            console.log(`Using ${filteredDogs.length} filtered dogs from database`);
+            return;
           }
         } catch (error) {
           console.error("Database search error:", error);
         }
 
-        // If we reach here, either database had insufficient dogs or failed
+        // If we reach here, database search failed
         // Use Petfinder to get more dogs, but focus on rural areas for invisible dogs
-        console.log("Supplementing with Petfinder API for more invisible dogs");
+        console.log("Database search failed, using Petfinder API");
         effectiveLocation = getRandomRuralZip();
         console.log("Using rural ZIP for Petfinder search:", effectiveLocation);
       }
@@ -412,7 +427,7 @@ export default function AdoptPage() {
                 <input
                   type="text"
                   value={searchBreed}
-                  onChange={(e) => setSearchSearchBreed(e.target.value)}
+                  onChange={(e) => setSearchBreed(e.target.value)}
                   placeholder="Any breed"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />

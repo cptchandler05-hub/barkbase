@@ -33,7 +33,6 @@ export async function getAllDogs(limit: number = 100): Promise<any[]> {
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')
-      .not('petfinder_id', 'is', null) // Ensure we have valid IDs
       .order('visibility_score', { ascending: false })
       .limit(limit);
 
@@ -86,8 +85,7 @@ export async function searchDogs(location: string, breed?: string, limit: number
     let query = supabase
       .from('dogs')
       .select('*')
-      .eq('status', 'adoptable')
-      .not('petfinder_id', 'is', null); // Ensure we have valid IDs
+      .eq('status', 'adoptable');
 
     // Add location-based filtering if provided
     if (location && location.trim()) {

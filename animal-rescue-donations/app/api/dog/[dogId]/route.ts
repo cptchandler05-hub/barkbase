@@ -14,25 +14,39 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       return NextResponse.json({ error: 'Invalid dog ID' }, { status: 400 });
     }
 
-    // 🏆 PHASE 1: Database Search (Check both Petfinder and RescueGroups IDs)
+    // 🏆 PHASE 1: Database Search
     try {
       console.log('[💾 Database] Searching database first...');
 
-      // Try by petfinder_id first (legacy)
-      let dbDog = await getDogById(dogId);
+      // Try by petfinder_id, rescuegroups_id, and internal ID
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        );
 
-      // If not found by petfinder_id, try by rescuegroups_id and also try as string/number conversion
-      if (!dbDog) {
-        console.log('[💾 Database] Not found by petfinder_id, trying rescuegroups_id and alternative formats...');
+        // Try searching by our fallback ID patterns or direct database ID
+        const { data: directDbData, error: directDbError } = await supabase
+          .from('dogs')
+          .select('*')
+          .or(`id.eq.${dogId},petfinder_id.eq.${dogId},rescuegroups_id.eq.${dogId}`)
+          .single();
 
-        if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-          const { createClient } = await import('@supabase/supabase-js');
-          const supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-          );
+        if (!directDbError && directDbData) {
+          console.log('[✅ Database Hit] Found dog by direct ID search:', directDbData.name);
+          const formattedDog = DogFormatter.formatDatabaseDog(directDbData);
+          return NextResponse.json({
+            animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
+            source: 'database'
+          });
+        }
 
-          // Try rescuegroups_id
+        // Legacy checks if direct search fails
+        let dbDog = await getDogById(dogId); // Assumes getDogById handles petfinder_id (string/number)
+
+        if (!dbDog) {
+          console.log('[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...');
           let { data, error } = await supabase
             .from('dogs')
             .select('*')
@@ -40,27 +54,23 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             .single();
 
           if (!data && !isNaN(Number(dogId))) {
-            // Try petfinder_id as number if dogId is numeric
             console.log('[💾 Database] Trying petfinder_id as number...');
             const result = await supabase
               .from('dogs')
               .select('*')
               .eq('petfinder_id', Number(dogId))
               .single();
-
             data = result.data;
             error = result.error;
           }
 
           if (!data) {
-            // Try petfinder_id as string
             console.log('[💾 Database] Trying petfinder_id as string...');
             const result = await supabase
               .from('dogs')
               .select('*')
               .eq('petfinder_id', dogId.toString())
               .single();
-
             data = result.data;
             error = result.error;
           }
@@ -70,94 +80,32 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             console.log('[✅ Database Hit] Found by alternative ID lookup:', data.name);
           }
         }
-      }
 
-      if (dbDog) {
-        console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
-        const formattedDog = DogFormatter.formatDatabaseDog(dbDog);
-        // Return formatted response
-        return NextResponse.json({
-          animal: {
-            id: dbDog.petfinder_id,
-            organization_id: dbDog.organization_id,
-            name: dbDog.name,
-            breeds: {
-              primary: dbDog.primary_breed,
-              secondary: dbDog.secondary_breed,
-              mixed: dbDog.is_mixed
-            },
-            age: dbDog.age,
-            gender: dbDog.gender,
-            size: dbDog.size,
-            description: dbDog.description,
-            photos: dbDog.photos || [],
-            contact: {
-              email: dbDog.contact_email,
-              phone: dbDog.contact_phone,
-              address: {
-                address1: dbDog.contact_address1,
-                address2: dbDog.contact_address2,
-                city: dbDog.city,
-                state: dbDog.state,
-                postcode: dbDog.postcode,
-                country: dbDog.contact_country
-              }
-            },
-            organization: {
-              name: dbDog.organization_name
-            },
-            attributes: {
-              spayed_neutered: dbDog.spayed_neutered,
-              house_trained: dbDog.house_trained,
-              special_needs: dbDog.special_needs,
-              shots_current: dbDog.shots_current
-            },
-            environment: {
-              children: dbDog.good_with_children,
-              dogs: dbDog.good_with_dogs,
-              cats: dbDog.good_with_cats
-            },
-            url: dbDog.url,
-            visibilityScore: dbDog.visibility_score,
-            source: 'database',
-            verificationBadge: 'In BarkBase Database'
-          },
-          source: 'database'
-        });
+        if (dbDog) {
+          console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
+          return NextResponse.json({
+            animal: DogFormatter.toLegacyFormat(dbDog, false), // Don't truncate for individual dog pages
+            source: 'database'
+          });
+        }
+      } else {
+        console.warn('[⚠️ Database Warning] Supabase environment variables not set. Skipping database lookup.');
       }
     } catch (dbError) {
       console.warn('[⚠️ Database Warning] Database lookup failed:', dbError);
+      // Continue to external APIs
     }
 
-    // 🦮 PHASE 2: RescueGroups Search
+    // 🦮 PHASE 2: RescueGroups API Search
     try {
-      console.log('[🦮 RescueGroups] Searching RescueGroups...');
-      const rescueGroups = new RescueGroupsAPI();
-      const rgResult = await rescueGroups.getAnimalDetails(dogId);
+      console.log('[🦮 RescueGroups] Searching RescueGroups API...');
+      const rescueGroupsAPI = new RescueGroupsAPI();
+      const rgDog = await rescueGroupsAPI.getDogById(dogId); // Assuming getDogById exists and works for RescueGroups
 
-      if (rgResult) {
-        console.log('[✅ RescueGroups Hit] Found dog in RescueGroups');
-        console.log('[🔍 Debug] RescueGroups raw data:', JSON.stringify(rgResult, null, 2));
-        // For single dog details, handle both single animal and search results
-        const animalData = rgResult.data ? rgResult.data[0] : rgResult;
-        const includedData = rgResult.included || [];
-        const formattedDog = DogFormatter.formatRescueGroupsDog(animalData, includedData);
-        console.log('[🔍 Debug] Formatted contact data:', JSON.stringify(formattedDog.contact, null, 2));
-        
-        const legacyFormatted = DogFormatter.toLegacyFormat(formattedDog, false); // false = don't truncate description
-        
-        // Add organization name if available
-        const orgData = includedData.find((item: any) => 
-          item.type === 'orgs' && item.id === formattedDog.organizationId
-        );
-        if (orgData?.attributes?.name) {
-          legacyFormatted.organization = {
-            name: orgData.attributes.name
-          };
-        }
-        
+      if (rgDog) {
+        console.log('[✅ RescueGroups Hit] Found dog in RescueGroups:', rgDog.name);
         return NextResponse.json({
-          animal: legacyFormatted,
+          animal: DogFormatter.toLegacyFormat(rgDog, false), // Don't truncate for individual dog pages
           source: 'rescuegroups'
         });
       }
@@ -165,9 +113,9 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       console.warn('[⚠️ RescueGroups Warning] RescueGroups lookup failed:', rgError);
     }
 
-    // 🐾 PHASE 3: Petfinder Fallback
+    // 🐾 PHASE 3: Petfinder API Search
     try {
-      console.log('[🐾 Petfinder] Falling back to Petfinder API...');
+      console.log('[🐾 Petfinder] Searching Petfinder API...');
       const accessToken = await getAccessToken();
 
       if (!accessToken) {
@@ -187,10 +135,10 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         if (data.animal) {
           console.log('[✅ Petfinder Hit] Found dog in Petfinder:', data.animal.name);
           const formattedDog = DogFormatter.formatPetfinderDog(data.animal);
-        return NextResponse.json({
-          animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
-          source: 'petfinder'
-        });
+          return NextResponse.json({
+            animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
+            source: 'petfinder'
+          });
         }
       } else if (response.status === 404) {
         console.log('[❌ Not Found] Dog not found in Petfinder');

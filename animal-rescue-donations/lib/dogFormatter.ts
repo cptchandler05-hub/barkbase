@@ -143,10 +143,11 @@ class DogFormatter {
     });
 
     // Ensure we always have a valid ID, fallback to database auto-increment ID if needed
-    const validId = dog.petfinder_id || dog.rescuegroups_id || (dog.id ? dog.id.toString() : null);
-    const finalId = validId && validId !== 'null' && validId !== 'undefined' 
-      ? validId 
-      : `db-${dog.id || Date.now()}`;
+    const petfinderId = dog.petfinder_id && dog.petfinder_id !== 'null' ? dog.petfinder_id : null;
+    const rescueGroupsId = dog.rescuegroups_id && dog.rescuegroups_id !== 'null' ? dog.rescuegroups_id : null;
+    const dbId = dog.id ? dog.id.toString() : null;
+    
+    const finalId = petfinderId || rescueGroupsId || (dbId ? `db-${dbId}` : `temp-${Date.now()}`);
 
     return {
       id: finalId,
