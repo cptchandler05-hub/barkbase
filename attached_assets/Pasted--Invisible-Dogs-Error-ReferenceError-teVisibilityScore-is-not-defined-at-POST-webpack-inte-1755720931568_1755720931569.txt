@@ -1,0 +1,23 @@
+[❌ Invisible Dogs Error] ReferenceError: teVisibilityScore is not defined
+    at POST (webpack-internal:///(rsc)/./app/api/chat/route.ts:870:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+ POST /api/chat 200 in 2290ms
+ ✓ Compiled in 3.7s (8721 modules)
