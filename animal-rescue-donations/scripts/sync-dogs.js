@@ -432,14 +432,14 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
 async function markRemovedDogs() {
   console.log('🧹 Marking old dogs as removed...');
 
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   const { error } = await supabase
     .from('dogs')
     .update({ status: 'removed' })
-    .lt('last_updated_at', threeDaysAgo.toISOString())
-    .eq('status', 'available');
+    .lt('last_updated_at', thirtyDaysAgo.toISOString())
+    .eq('status', 'adoptable');
 
   if (error) {
     console.error('❌ Error marking old dogs as removed:', error);
