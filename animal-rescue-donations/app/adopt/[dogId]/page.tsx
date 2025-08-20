@@ -756,7 +756,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-blue-900 mb-4">About {dog.name}</h2>
             <div className="text-gray-700">
-              {dog.description ? (
+              {dog.description && dog.description.trim() ? (
                 <div className="whitespace-pre-line text-gray-700 leading-relaxed text-base">
                   {dog.description}
                 </div>

@@ -1057,18 +1057,19 @@ export async function POST(req: Request) {
               // Normalize breed input consistently
               let cleanBreed = fullBreed.toLowerCase().trim();
 
-              // Remove trailing 's' if present and longer than 3 characters
+              // Remove trailing 's' if present and longer than 3 characters to get singular form
+              let singularBreed = cleanBreed;
               if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
-                cleanBreed = cleanBreed.slice(0, -1);
+                singularBreed = cleanBreed.slice(0, -1);
               }
 
               // Capitalize first letter of each word for proper matching
-              cleanBreed = cleanBreed
+              cleanBreed = singularBreed
                 .split(' ')
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ');
 
-              console.log('[🧠 Breed Normalization] Input:', fullBreed, '→ Cleaned:', cleanBreed);
+              console.log('[🧠 Breed Normalization] Input:', fullBreed, '→ Singular:', singularBreed, '→ Cleaned:', cleanBreed);
 
               try {
                 const matchedBreed = await findBestBreedMatch(cleanBreed);
@@ -1332,7 +1333,8 @@ ${dogList}
               updatedMemory.hasSeenResults = true;
             } else {
               // ✅ Subsequent requests - simpler reply
-              reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**:\n\n${dogList}`;
+              const breedText = normalizedBreed ? ` for **${normalizedBreed}**` : '';
+              reply = `🐕 Here's what I dug up from shelters near **${updatedMemory.location}**${breedText}:\n\n${dogList}`;
             }
 
             return NextResponse.json({
