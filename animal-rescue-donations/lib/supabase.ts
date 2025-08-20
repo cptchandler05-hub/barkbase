@@ -89,8 +89,7 @@ export async function searchDogs(location: string, breed?: string, limit: number
     let query = supabase!
       .from('dogs')
       .select('*')
-      .eq('status', 'adoptable')
-      .not('visibility_score', 'is', null);
+      .not('visibility_score', 'is', null);  // Only dogs with visibility scores
 
     // Add location-based filtering if provided
     if (location && location.trim()) {

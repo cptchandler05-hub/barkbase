@@ -93,10 +93,10 @@ async function fetchDogsFromLocation(location, accessToken) {
 
   const data = await response.json();
   const dogs = data.animals || [];
-  
+
   // For each dog, if description is truncated, fetch full details
   const dogsWithFullDetails = [];
-  
+
   for (const dog of dogs) {
     try {
       // Check if description might be truncated (common indicators)
@@ -109,18 +109,18 @@ async function fetchDogsFromLocation(location, accessToken) {
                               description.includes('For more information') ||
                               description.includes('Please contact') ||
                               description.includes('Call for more details');
-      
+
       if (needsFullDetails) {
         console.log(`📝 Fetching full details for ${dog.name} (ID: ${dog.id})`);
         await rateLimitedDelay(); // Rate limit individual dog requests
-        
+
         const dogDetailResponse = await fetch(`https://api.petfinder.com/v2/animals/${dog.id}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         });
-        
+
         if (dogDetailResponse.ok) {
           const dogDetailData = await dogDetailResponse.json();
           dogsWithFullDetails.push(dogDetailData.animal);
@@ -138,7 +138,7 @@ async function fetchDogsFromLocation(location, accessToken) {
       dogsWithFullDetails.push(dog); // Use original data as fallback
     }
   }
-  
+
   console.log(`📋 Processed ${dogsWithFullDetails.length} dogs from ${location}`);
   return dogsWithFullDetails;
 }

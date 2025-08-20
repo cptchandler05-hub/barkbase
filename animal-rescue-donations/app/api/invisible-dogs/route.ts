@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
@@ -30,18 +29,16 @@ async function fetchInvisibleDogs() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
 
-    // Query database for ALL dogs with highest visibility scores (most invisible)
-    // Order by visibility_score DESC to get truly most invisible dogs from entire database
-    console.log('[🔍 Query] Fetching top 100 dogs with highest visibility scores...');
+    // Query database for top 100 dogs by visibility score (highest first)
+    // Include all dogs with visibility scores regardless of status
     const { data: databaseDogs, error: databaseError, count } = await supabase
       .from('dogs')
       .select('*', { count: 'exact' })
-      .eq('status', 'adoptable')
-      .not('visibility_score', 'is', null)
-      .order('visibility_score', { ascending: false }) // Highest scores first
+      .not('visibility_score', 'is', null)  // Must have visibility score
+      .order('visibility_score', { ascending: false })
       .limit(100); // Get top 100 most invisible dogs from entire database
 
-    console.log('[📊 Query Result] Total adoptable dogs with scores in DB:', count);
+    console.log('[📊 Query Result] Total dogs with scores in DB:', count);
     console.log('[📊 Query Result] Returned dogs:', databaseDogs?.length || 0);
 
     if (databaseError) {
