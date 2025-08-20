@@ -92,12 +92,17 @@ export async function searchDogs(location: string, breed?: string, limit: number
       const normalizedLocation = location.trim().toLowerCase();
 
       // Handle city/state format
+      if (location.includes(',')) {
         const [city, state] = location.split(',').map(s => s.trim());
         if (state) {
           query = query.or(`city.ilike.%${city}%,state.ilike.%${state}%`);
         } else {
           query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%,postcode.ilike.%${location}%`);
         }
+      } else {
+        // Single location term - could be city, state, or zip
+        query = query.or(`city.ilike.%${location}%,state.ilike.%${location}%,postcode.ilike.%${location}%`);
+      }
     }
 
     // Add breed filtering if provided

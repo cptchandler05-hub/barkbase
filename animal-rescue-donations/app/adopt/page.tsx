@@ -69,8 +69,8 @@ export default function AdoptPage() {
   const loadInitialDogs = async () => {
     setLoading(true);
     try {
-      console.log("Loading initial 10 dogs...");
-      const dbDogs = await getAllDogs(10); // Load 10 dogs initially
+      console.log("Loading initial most invisible dogs...");
+      const dbDogs = await getAllDogs(50); // Load 50 dogs to get truly invisible ones
       console.log("Loaded initial dogs:", dbDogs?.length || 0);
       if (dbDogs && dbDogs.length > 0) {
         setDogs(dbDogs);
@@ -189,8 +189,8 @@ export default function AdoptPage() {
         console.log("No location provided, checking database for invisible dogs first");
 
         try {
-          // Get all dogs from database and filter locally
-          const allDbDogs = await getAllDogs(100);
+          // Get more dogs from database to ensure we have enough to filter
+          const allDbDogs = await getAllDogs(200);
           console.log("Fetched dogs from database:", allDbDogs?.length || 0);
 
           if (allDbDogs && allDbDogs.length > 0) {
@@ -204,6 +204,7 @@ export default function AdoptPage() {
               filteredDogs = filteredDogs.filter((dog: Dog) => 
                 dog.size?.toLowerCase() === searchSize.toLowerCase()
               );
+              console.log(`After size filter (${searchSize}):`, filteredDogs.length);
             }
 
             // Apply age filter - handle "Baby" mapping to "Puppy"
@@ -217,15 +218,21 @@ export default function AdoptPage() {
                 }
                 return dogAge === normalizedSearchAge;
               });
+              console.log(`After age filter (${searchAge}):`, filteredDogs.length);
             }
 
-            // Apply breed filter
+            // Apply breed filter - improved to handle size searches that might be mistaken for breed
             if (searchBreed) {
               const normalizedBreed = searchBreed.toLowerCase();
-              filteredDogs = filteredDogs.filter((dog: Dog) => 
-                dog.breeds?.primary?.toLowerCase().includes(normalizedBreed) ||
-                dog.breeds?.secondary?.toLowerCase().includes(normalizedBreed)
-              );
+              // Don't filter by breed if the search term is actually a size
+              const sizes = ['small', 'medium', 'large', 'extra large'];
+              if (!sizes.includes(normalizedBreed)) {
+                filteredDogs = filteredDogs.filter((dog: Dog) => 
+                  dog.breeds?.primary?.toLowerCase().includes(normalizedBreed) ||
+                  dog.breeds?.secondary?.toLowerCase().includes(normalizedBreed)
+                );
+                console.log(`After breed filter (${searchBreed}):`, filteredDogs.length);
+              }
             }
 
             setDogs(filteredDogs);
@@ -487,7 +494,7 @@ export default function AdoptPage() {
               <h2 className="text-2xl font-bold text-blue-900 mb-2">
                 {hasSearched 
                   ? `Found ${dogs.length} overlooked dogs` 
-                  : `${dogs.length} most invisible dogs from rural areas`
+                  : `${dogs.length} most invisible dogs needing urgent attention`
                 }
               </h2>
               <p className="text-gray-600">
