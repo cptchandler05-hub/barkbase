@@ -69,26 +69,26 @@ export default function AdoptPage() {
   const loadInitialDogs = async () => {
     setLoading(true);
     try {
-      console.log("Loading initial most invisible dogs...");
-      // Use the dedicated invisible dogs API endpoint
+      console.log("Loading most overlooked dogs from entire database...");
+      // Use the dedicated invisible dogs API endpoint to get top 200 dogs
       const response = await fetch('/api/invisible-dogs');
       if (response.ok) {
         const data = await response.json();
         if (data.dogs && data.dogs.length > 0) {
-          console.log("Loaded initial invisible dogs from API:", data.dogs.length);
+          console.log("Loaded most overlooked dogs from API:", data.dogs.length);
           setDogs(data.dogs);
           return;
         }
       }
       
       // Fallback to getAllDogs if API fails
-      const dbDogs = await getAllDogs(100); // Load more dogs to get truly invisible ones
-      console.log("Loaded initial dogs from fallback:", dbDogs?.length || 0);
+      const dbDogs = await getAllDogs(200);
+      console.log("Loaded dogs from fallback:", dbDogs?.length || 0);
       if (dbDogs && dbDogs.length > 0) {
         setDogs(dbDogs);
       }
     } catch (error) {
-      console.error("Error loading initial dogs:", error);
+      console.error("Error loading most overlooked dogs:", error);
     } finally {
       setLoading(false);
     }
@@ -104,48 +104,7 @@ export default function AdoptPage() {
     }
   }, [currentPage]);
 
-  const handleShowMostInvisible = async () => {
-    setLoading(true);
-    setHasSearched(true);
-    setCurrentPage(1);
-
-    try {
-      console.log("Fetching most invisible dogs using dedicated API...");
-
-      // Use the dedicated invisible dogs API endpoint
-      const response = await fetch('/api/invisible-dogs');
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Invisible dogs API response:", data);
-        
-        if (data.dogs && data.dogs.length > 0) {
-          console.log('Using invisible dogs from API:', data.dogs.length);
-          setDogs(data.dogs);
-          return;
-        }
-      }
-
-      // Fallback to getAllDogs if API fails
-      console.log("API failed, falling back to getAllDogs");
-      const dbDogs = await getAllDogs(100);
-      console.log("Fetched dogs from database fallback:", dbDogs?.length || 0);
-
-      if (dbDogs && dbDogs.length > 0) {
-        setDogs(dbDogs);
-        return;
-      }
-
-      // Final fallback - show message if no dogs found
-      console.error("No dogs found from any source");
-      setDogs([]);
-    } catch (error) {
-      console.error("Error fetching invisible dogs:", error);
-      setDogs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   const fetchDogsFromRuralArea = async () => {
     try {
@@ -384,24 +343,8 @@ export default function AdoptPage() {
                 Every dog deserves to be seen.
               </h1>
               <p className="text-xl md:text-2xl text-gray-700 mb-8">
-                Our visibility algorithm lifts up the dogs at greatest risk of being passed by. This is adoption, rebalanced.
+                Our visibility algorithm lifts up the dogs at greatest risk of being passed by. These are the most overlooked dogs nationwide, shown in order of urgent need.
               </p>
-              <div className="relative inline-block">
-                <button
-                  onClick={handleShowMostInvisible}
-                  onMouseEnter={() => setShowTooltip(true)}
-                  onMouseLeave={() => setShowTooltip(false)}
-                  disabled={loading}
-                  className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg px-8 py-4 rounded-full transition transform hover:scale-105 shadow-lg disabled:opacity-50"
-                >
-                  {loading ? "Finding the Invisible..." : "👻 Show Me the Most Invisible"}
-                </button>
-                {showTooltip && (
-                  <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap z-20">
-                    "These aren't trending. These are forgotten. That's why they're here."
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
@@ -487,12 +430,15 @@ export default function AdoptPage() {
             <div ref={resultsRef} className="mb-6">
               <h2 className="text-2xl font-bold text-blue-900 mb-2">
                 {hasSearched 
-                  ? `Found ${dogs.length} overlooked dogs` 
-                  : `${dogs.length} most invisible dogs needing urgent attention`
+                  ? `Found ${dogs.length} dogs matching your search` 
+                  : `${dogs.length} most overlooked dogs nationwide`
                 }
               </h2>
               <p className="text-gray-600">
-                Sorted by visibility score (highest = most overlooked)
+                {hasSearched 
+                  ? "Results from your search criteria"
+                  : "These dogs have the highest invisibility scores and need urgent attention"
+                }
               </p>
             </div>
           )}
@@ -715,10 +661,10 @@ export default function AdoptPage() {
                 Try adjusting your search criteria or search a different location.
               </p>
               <button
-                onClick={handleShowMostInvisible}
+                onClick={() => window.location.reload()}
                 className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-lg transition"
               >
-                Show Most Invisible Dogs Instead
+                Return to Most Overlooked Dogs
               </button>
             </div>
           )}
