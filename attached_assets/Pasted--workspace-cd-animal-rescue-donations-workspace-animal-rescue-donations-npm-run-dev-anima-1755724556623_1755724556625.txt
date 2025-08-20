@@ -1,0 +1,127 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.7s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.1s (8586 modules)
+ GET / 200 in 12855ms
+ ✓ Compiled in 1244ms (4186 modules)
+ HEAD / 200 in 33ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1875ms (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: hi barkr
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 7502ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Houston, TX
+[📍 Normalized Location] Houston, TX
+[🐾 Barkr Memory] {
+  location: 'Houston, TX',
+  breed: 'labs',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Houston, TX', breed: 'labs' }
+[🧠 Breed Normalization] Input: labs → Cleaned: Lab
+[✅ Fallback Breed Match] "Lab" → "Labrador Retriever"
+[✅ Breed Match Success] Matched to: Labrador Retriever
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Labrador Retriever
+[🗄️ Database] Filtering by location: Houston, TX
+[🗄️ Database] Filtering by state: TX
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1243ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] {
+  location: 'Houston, TX',
+  breed: 'Labrador Retriever',
+  limit: 25,
+  radius: 100
+}
+[💾 Database] Searching database first...
+Searching for dogs with location: Houston, TX, breed: Labrador Retriever, limit: 50
+Found 0 dogs matching search criteria
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 0 dogs found so far, need 25 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Labrador Retriever" → "Labrador Retriever"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=25&location=Houston%2C+TX&distance=100&breed=Labrador+Retriever
+[✅ Petfinder Hit] Found 25 dogs from Petfinder
+[🔄 Deduplication] 0 duplicates removed from Petfinder
+[✅ Search Complete] Found 25 total dogs from sources: petfinder
+[📊 Source Breakdown] petfinder: 25
+ POST /api/petfinder/search 200 in 3563ms
+[✅ Chat Search Success] Found 25 dogs for labs in Houston, TX from sources: petfinder
+[✅ Petfinder Integration] Found 25 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[✅ Search Complete] Total unique dogs: 25 Showing: 10
+[📊 Scores] Sample scores: [ 'Lexi: 112.1', 'Sebastian: 111.9', 'Lasso: 111.5' ]
+ POST /api/chat 200 in 5878ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 2.5s (8578 modules)
+ GET /adopt/77878187 200 in 3442ms
+ HEAD /adopt/77878187 200 in 58ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 890ms (4523 modules)
+[🔍 Dog Lookup] Starting search for dogId: 77878187
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77878187
+No dog found with petfinder_id: 77878187
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as integer string...
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[🔄 Petfinder] Token expired, refreshing...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77878187 not found in any source
+ GET /api/dog/77878187 404 in 4272ms
+[🔍 Dog Lookup] Starting search for dogId: 77878187
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: 77878187
+No dog found with petfinder_id: 77878187
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as number...
+[💾 Database] Trying petfinder_id as integer string...
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Using cached token
+[🔄 Petfinder] Token expired, refreshing...
+[🎫 Token Manager] Using cached token
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID 77878187 not found in any source
+ GET /api/dog/77878187 404 in 1881ms
+ GET / 200 in 380ms
+ HEAD / 200 in 20ms
