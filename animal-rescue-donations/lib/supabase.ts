@@ -27,15 +27,15 @@ export const isSupabaseAvailable = () => {
 // Database helper functions
 export async function getAllDogs(limit: number = 20): Promise<Dog[]> {
   try {
-    console.log(`Fetching ${limit} dogs from database, mixed by visibility and variety`);
+    console.log(`Fetching ${limit} dogs from database, ordered by highest visibility scores`);
 
-    // Get a mix of dogs - not just highest scoring for better search results
+    // Get dogs with highest visibility scores (most invisible/overlooked)
     const { data, error } = await supabase!
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')
       .not('visibility_score', 'is', null)
-      .order('visibility_score', { ascending: false }) // Order by visibility_score for highest scoring dogs
+      .order('visibility_score', { ascending: false }) // Order by visibility_score DESC for highest scoring dogs
       .limit(limit);
 
     if (error) {

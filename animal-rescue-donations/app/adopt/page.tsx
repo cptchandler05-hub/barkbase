@@ -70,19 +70,33 @@ export default function AdoptPage() {
     setLoading(true);
     try {
       console.log("Loading most overlooked dogs from entire database...");
-      // Use the dedicated invisible dogs API endpoint to get top 200 dogs
-      const response = await fetch('/api/invisible-dogs');
+      // Use the dedicated invisible dogs API endpoint to get top 100 dogs
+      const response = await fetch('/api/invisible-dogs', {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      });
+      
       if (response.ok) {
         const data = await response.json();
+        console.log("Invisible dogs API response:", data);
+        
         if (data.dogs && data.dogs.length > 0) {
-          console.log("Loaded most overlooked dogs from API:", data.dogs.length);
+          console.log("Using invisible dogs from API:", data.dogs.length);
+          console.log("Top 5 scores:", data.dogs.slice(0, 5).map(d => `${d.name}: ${d.visibilityScore}`));
           setDogs(data.dogs);
           return;
+        } else {
+          console.log("No dogs returned from invisible dogs API");
         }
+      } else {
+        console.error("Invisible dogs API failed:", response.status, response.statusText);
       }
       
       // Fallback to getAllDogs if API fails
-      const dbDogs = await getAllDogs(200);
+      console.log("Falling back to getAllDogs");
+      const dbDogs = await getAllDogs(100);
       console.log("Loaded dogs from fallback:", dbDogs?.length || 0);
       if (dbDogs && dbDogs.length > 0) {
         setDogs(dbDogs);

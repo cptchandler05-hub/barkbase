@@ -18,7 +18,7 @@ type Dog = {
 
 async function fetchInvisibleDogs() {
   try {
-    console.log('[🔍 Invisible Dogs API] Fetching most invisible dogs from entire database...');
+    console.log('[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...');
 
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.error('[❌ Missing Supabase credentials]');
@@ -37,8 +37,8 @@ async function fetchInvisibleDogs() {
       .select('*')
       .eq('status', 'adoptable')
       .not('visibility_score', 'is', null)
-      .order('visibility_score', { ascending: false }) // Highest scores first - get ALL dogs sorted
-      .limit(200); // Get top 200 most invisible dogs from entire database
+      .order('visibility_score', { ascending: false }) // Highest scores first
+      .limit(100); // Get top 100 most invisible dogs from entire database
 
     if (databaseError) {
       console.error('[❌ Invisible Dogs Database Error]', databaseError);
@@ -56,8 +56,11 @@ async function fetchInvisibleDogs() {
       });
     }
 
-    console.log('[✅ Invisible Dogs] Found', databaseDogs.length, 'invisible dogs from database');
+    console.log('[✅ Invisible Dogs] Found', databaseDogs.length, 'dogs from database');
     console.log('[📊 Score Range] Highest:', databaseDogs[0]?.visibility_score, 'Lowest:', databaseDogs[databaseDogs.length - 1]?.visibility_score);
+
+    // Log the top 10 scores to verify we're getting the highest ones
+    console.log('[📊 Top 10 Scores]', databaseDogs.slice(0, 10).map(d => `${d.name}: ${d.visibility_score}`));
 
     // Format dogs for frontend consumption
     const formattedDogs = databaseDogs
@@ -88,7 +91,7 @@ async function fetchInvisibleDogs() {
       .sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0)); // Ensure proper sorting
 
     console.log('[✅ Final Result] Returning', formattedDogs.length, 'formatted invisible dogs');
-    console.log('[📊 Final Scores] Top 5:', formattedDogs.slice(0, 5).map(d => `${d.name}: ${d.visibilityScore}`));
+    console.log('[📊 Final Top 10 Scores]', formattedDogs.slice(0, 10).map(d => `${d.name}: ${d.visibilityScore}`));
 
     return NextResponse.json({
       dogs: formattedDogs,
