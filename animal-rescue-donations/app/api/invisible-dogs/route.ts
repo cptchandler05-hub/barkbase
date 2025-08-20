@@ -92,11 +92,20 @@ async function fetchInvisibleDogs() {
 
     console.log('[✅ Final Result] Returning', formattedDogs.length, 'formatted invisible dogs');
     console.log('[📊 Final Top 10 Scores]', formattedDogs.slice(0, 10).map(d => `${d.name}: ${d.visibilityScore}`));
+    console.log('[📊 Score Range] Returning dogs with scores from', formattedDogs[0]?.visibilityScore, 'to', formattedDogs[formattedDogs.length - 1]?.visibilityScore);
 
     return NextResponse.json({
       dogs: formattedDogs,
       total: formattedDogs.length,
-      message: `Found ${formattedDogs.length} most invisible dogs from entire database (sorted by highest visibility scores)`
+      message: `Found ${formattedDogs.length} most invisible dogs from entire database (sorted by highest visibility scores)`,
+      debug: {
+        databaseCount: databaseDogs.length,
+        formattedCount: formattedDogs.length,
+        scoreRange: {
+          highest: formattedDogs[0]?.visibilityScore,
+          lowest: formattedDogs[formattedDogs.length - 1]?.visibilityScore
+        }
+      }
     });
 
   } catch (error) {
