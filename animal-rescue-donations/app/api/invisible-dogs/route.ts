@@ -32,13 +32,17 @@ async function fetchInvisibleDogs() {
 
     // Query database for ALL dogs with highest visibility scores (most invisible)
     // Order by visibility_score DESC to get truly most invisible dogs from entire database
-    const { data: databaseDogs, error: databaseError } = await supabase
+    console.log('[🔍 Query] Fetching top 100 dogs with highest visibility scores...');
+    const { data: databaseDogs, error: databaseError, count } = await supabase
       .from('dogs')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('status', 'adoptable')
       .not('visibility_score', 'is', null)
       .order('visibility_score', { ascending: false }) // Highest scores first
       .limit(100); // Get top 100 most invisible dogs from entire database
+
+    console.log('[📊 Query Result] Total adoptable dogs with scores in DB:', count);
+    console.log('[📊 Query Result] Returned dogs:', databaseDogs?.length || 0);
 
     if (databaseError) {
       console.error('[❌ Invisible Dogs Database Error]', databaseError);

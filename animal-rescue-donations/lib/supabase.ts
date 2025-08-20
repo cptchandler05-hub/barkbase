@@ -30,13 +30,15 @@ export async function getAllDogs(limit: number = 20): Promise<Dog[]> {
     console.log(`Fetching ${limit} dogs from database, ordered by highest visibility scores`);
 
     // Get dogs with highest visibility scores (most invisible/overlooked)
-    const { data, error } = await supabase!
+    const { data, error, count } = await supabase!
       .from('dogs')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('status', 'adoptable')
       .not('visibility_score', 'is', null)
       .order('visibility_score', { ascending: false }) // Order by visibility_score DESC for highest scoring dogs
       .limit(limit);
+
+    console.log(`[📊 getAllDogs] Total available dogs: ${count}, Requested: ${limit}, Returned: ${data?.length || 0}`);
 
     if (error) {
       console.error('Error fetching dogs from database:', error);
