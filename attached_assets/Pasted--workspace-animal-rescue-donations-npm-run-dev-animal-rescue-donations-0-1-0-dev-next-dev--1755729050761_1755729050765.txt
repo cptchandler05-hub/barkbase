@@ -1,0 +1,85 @@
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 12.8s (7727 modules)
+ GET /adopt 200 in 13373ms
+ ✓ Compiled in 851ms (3770 modules)
+ GET /adopt 200 in 27ms
+ ○ Compiling /api/invisible-dogs ...
+ ✓ Compiled /api/invisible-dogs in 2s (4073 modules)
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[🔍 Query] Fetching top 100 dogs with highest visibility scores...
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[🔍 Query] Fetching top 100 dogs with highest visibility scores...
+ HEAD /adopt 200 in 2412ms
+[📊 Query Result] Total adoptable dogs with scores in DB: 10
+[📊 Query Result] Returned dogs: 10
+[✅ Invisible Dogs] Found 10 dogs from database
+[📊 Score Range] Highest: 94 Lowest: 31
+[📊 Top 10 Scores] [
+  'BODIN: 94',
+  'Cylana: 75',
+  'Doli: 75',
+  'Hannah Steele: 71',
+  'Hank: 71',
+  'Diamond Beaufort: 71',
+  'Kai: 61',
+  'Zeke: 57',
+  'Ms. Frizzle: 31',
+  'Marilyn: 31'
+]
+[✅ Final Result] Returning 10 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'BODIN: 94',
+  'Cylana: 75',
+  'Doli: 75',
+  'Hannah Steele: 71',
+  'Hank: 71',
+  'Diamond Beaufort: 71',
+  'Kai: 61',
+  'Zeke: 57',
+  'Ms. Frizzle: 31',
+  'Marilyn: 31'
+]
+[📊 Score Range] Returning dogs with scores from 94 to 31
+ GET /api/invisible-dogs 200 in 3408ms
+[📊 Query Result] Total adoptable dogs with scores in DB: 10
+[📊 Query Result] Returned dogs: 10
+[✅ Invisible Dogs] Found 10 dogs from database
+[📊 Score Range] Highest: 94 Lowest: 31
+[📊 Top 10 Scores] [
+  'BODIN: 94',
+  'Cylana: 75',
+  'Doli: 75',
+  'Hannah Steele: 71',
+  'Hank: 71',
+  'Diamond Beaufort: 71',
+  'Kai: 61',
+  'Zeke: 57',
+  'Ms. Frizzle: 31',
+  'Marilyn: 31'
+]
+[✅ Final Result] Returning 10 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'BODIN: 94',
+  'Cylana: 75',
+  'Doli: 75',
+  'Hannah Steele: 71',
+  'Hank: 71',
+  'Diamond Beaufort: 71',
+  'Kai: 61',
+  'Zeke: 57',
+  'Ms. Frizzle: 31',
+  'Marilyn: 31'
+]
+[📊 Score Range] Returning dogs with scores from 94 to 31
+ GET /api/invisible-dogs 200 in 3410ms
