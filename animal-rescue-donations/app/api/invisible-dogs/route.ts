@@ -15,7 +15,7 @@ type Dog = {
   visibilityScore?: number;
 };
 
-export async function GET(req: Request) {
+async function fetchInvisibleDogs() {
   try {
     console.log('[🔍 Invisible Dogs API] Fetching most invisible dogs...');
 
@@ -112,4 +112,12 @@ export async function GET(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(req: Request) {
+  return fetchInvisibleDogs();
+}
+
+export async function POST(req: Request) {
+  return fetchInvisibleDogs();
 }

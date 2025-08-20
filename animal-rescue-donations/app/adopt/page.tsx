@@ -70,8 +70,20 @@ export default function AdoptPage() {
     setLoading(true);
     try {
       console.log("Loading initial most invisible dogs...");
-      const dbDogs = await getAllDogs(50); // Load 50 dogs to get truly invisible ones
-      console.log("Loaded initial dogs:", dbDogs?.length || 0);
+      // Use the dedicated invisible dogs API endpoint
+      const response = await fetch('/api/invisible-dogs');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.dogs && data.dogs.length > 0) {
+          console.log("Loaded initial invisible dogs from API:", data.dogs.length);
+          setDogs(data.dogs);
+          return;
+        }
+      }
+      
+      // Fallback to getAllDogs if API fails
+      const dbDogs = await getAllDogs(100); // Load more dogs to get truly invisible ones
+      console.log("Loaded initial dogs from fallback:", dbDogs?.length || 0);
       if (dbDogs && dbDogs.length > 0) {
         setDogs(dbDogs);
       }
@@ -98,57 +110,38 @@ export default function AdoptPage() {
     setCurrentPage(1);
 
     try {
-      console.log("Fetching most invisible dogs from database...");
+      console.log("Fetching most invisible dogs using dedicated API...");
 
-      // Get top 50 most invisible dogs when button is clicked
-      const dbDogs = await getAllDogs(50);
-      console.log("Fetched dogs from database:", dbDogs?.length || 0);
+      // Use the dedicated invisible dogs API endpoint
+      const response = await fetch('/api/invisible-dogs');
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Invisible dogs API response:", data);
+        
+        if (data.dogs && data.dogs.length > 0) {
+          console.log('Using invisible dogs from API:', data.dogs.length);
+          setDogs(data.dogs);
+          return;
+        }
+      }
+
+      // Fallback to getAllDogs if API fails
+      console.log("API failed, falling back to getAllDogs");
+      const dbDogs = await getAllDogs(100);
+      console.log("Fetched dogs from database fallback:", dbDogs?.length || 0);
 
       if (dbDogs && dbDogs.length > 0) {
-        // Dogs are already formatted by getAllDogs function
-        console.log('Using formatted dogs from database:', dbDogs.length);
         setDogs(dbDogs);
-        setLoading(false);
         return;
       }
 
-      // Fallback to Petfinder API for most invisible dogs
-      console.log("No dogs in database, falling back to Petfinder API");
-      const res = await fetch('/api/invisible-dogs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        // Extract dogs from the markdown content - this is a simplified approach
-        setDogs([]); // For now, show empty as the API returns markdown
-      }
+      // Final fallback - show message if no dogs found
+      console.error("No dogs found from any source");
+      setDogs([]);
     } catch (error) {
       console.error("Error fetching invisible dogs:", error);
-
-      // Final fallback - fetch some dogs from Petfinder
-      try {
-        console.log("Final fallback: fetching from Petfinder search API");
-        const res = await fetch('/api/petfinder/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            location: "10001", // Default to NYC area
-            breed: "" 
-          }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.animals) {
-            setDogs(data.animals.slice(0, 20)); // Limit to 20 dogs
-          }
-        }
-      } catch (fallbackError) {
-        console.error("Fallback search failed:", fallbackError);
-      }
+      setDogs([]);
     } finally {
       setLoading(false);
     }
@@ -189,15 +182,30 @@ export default function AdoptPage() {
         console.log("No location provided, checking database for invisible dogs first");
 
         try {
-          // Get more dogs from database to ensure we have enough to filter
-          const allDbDogs = await getAllDogs(200);
-          console.log("Fetched dogs from database:", allDbDogs?.length || 0);
+          // First try the dedicated invisible dogs API for a larger pool
+          const invisibleResponse = await fetch('/api/invisible-dogs');
+          let allDbDogs = [];
+          
+          if (invisibleResponse.ok) {
+            const invisibleData = await invisibleResponse.json();
+            if (invisibleData.dogs && invisibleData.dogs.length > 0) {
+              allDbDogs = invisibleData.dogs;
+              console.log("Got invisible dogs for filtering:", allDbDogs.length);
+            }
+          }
+          
+          // If no invisible dogs, fall back to getAllDogs
+          if (allDbDogs.length === 0) {
+            allDbDogs = await getAllDogs(200);
+            console.log("Fetched dogs from database fallback:", allDbDogs?.length || 0);
+          }
 
           if (allDbDogs && allDbDogs.length > 0) {
             // Filter out any dogs with null or invalid IDs first
             let filteredDogs = allDbDogs.filter(dog => 
               dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
             );
+            console.log("After ID validation:", filteredDogs.length);
 
             // Apply size filter
             if (searchSize) {

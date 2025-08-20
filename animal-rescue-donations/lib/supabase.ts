@@ -29,10 +29,11 @@ export async function getAllDogs(limit: number = 100): Promise<any[]> {
   try {
     console.log(`Fetching ${limit} dogs from database, ordered by visibility_score desc`);
 
-    const { data, error } = await supabase
+    const { data, error } = await supabase!
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')
+      .not('visibility_score', 'is', null)
       .order('visibility_score', { ascending: false })
       .limit(limit);
 
@@ -82,10 +83,11 @@ export async function searchDogs(location: string, breed?: string, limit: number
   try {
     console.log(`Searching for dogs with location: ${location}, breed: ${breed}, limit: ${limit}`);
 
-    let query = supabase
+    let query = supabase!
       .from('dogs')
       .select('*')
-      .eq('status', 'adoptable');
+      .eq('status', 'adoptable')
+      .not('visibility_score', 'is', null);
 
     // Add location-based filtering if provided
     if (location && location.trim()) {
