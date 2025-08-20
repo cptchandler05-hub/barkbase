@@ -30,7 +30,7 @@ export async function getAllDogs(limit: number = 20): Promise<Dog[]> {
     console.log(`Fetching ${limit} dogs from database, mixed by visibility and variety`);
 
     // Get a mix of dogs - not just highest scoring for better search results
-    const { data, error } = await supabase
+    const { data, error } = await supabase!
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')

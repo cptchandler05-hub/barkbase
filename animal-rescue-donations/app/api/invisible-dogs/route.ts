@@ -32,7 +32,7 @@ async function fetchInvisibleDogs() {
 
     // Query database for ALL dogs with highest visibility scores (most invisible)
     // Order by visibility_score DESC to get truly most invisible dogs from entire database
-    const { data: dbDogsResult, error: dbError } = await supabase
+    const { data: databaseDogs, error: databaseError } = await supabase
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')
@@ -40,15 +40,15 @@ async function fetchInvisibleDogs() {
       .order('visibility_score', { ascending: false }) // Highest scores first - get ALL dogs sorted
       .limit(200); // Get top 200 most invisible dogs from entire database
 
-    if (dbError) {
-      console.error('[❌ Invisible Dogs Database Error]', dbError);
+    if (databaseError) {
+      console.error('[❌ Invisible Dogs Database Error]', databaseError);
       return NextResponse.json(
-        { error: 'Database query failed', details: dbError.message },
+        { error: 'Database query failed', details: databaseError.message },
         { status: 500 }
       );
     }
 
-    if (!dbDogsResult || dbDogsResult.length === 0) {
+    if (!databaseDogs || databaseDogs.length === 0) {
       console.log('[⚠️ Invisible Dogs] No dogs found in database');
       return NextResponse.json({
         dogs: [],
@@ -56,11 +56,11 @@ async function fetchInvisibleDogs() {
       });
     }
 
-    console.log('[✅ Invisible Dogs] Found', dbDogsResult.length, 'invisible dogs from database');
-    console.log('[📊 Score Range] Highest:', dbDogsResult[0]?.visibility_score, 'Lowest:', dbDogsResult[dbDogsResult.length - 1]?.visibility_score);
+    console.log('[✅ Invisible Dogs] Found', databaseDogs.length, 'invisible dogs from database');
+    console.log('[📊 Score Range] Highest:', databaseDogs[0]?.visibility_score, 'Lowest:', databaseDogs[databaseDogs.length - 1]?.visibility_score);
 
     // Format dogs for frontend consumption
-    const formattedDogs = dbDogsResult
+    const formattedDogs = databaseDogs
       .filter(dog => dog && (dog.petfinder_id || dog.rescuegroups_id)) // Must have valid ID
       .map((dog: any) => ({
         id: dog.petfinder_id || dog.rescuegroups_id || dog.id,
