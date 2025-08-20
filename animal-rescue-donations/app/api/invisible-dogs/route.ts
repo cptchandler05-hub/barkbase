@@ -37,9 +37,8 @@ async function fetchInvisibleDogs() {
       .select('*')
       .eq('status', 'adoptable')
       .not('visibility_score', 'is', null)
-      .gte('visibility_score', 80) // Only dogs with score >= 80 (extremely overlooked)
-      .order('visibility_score', { ascending: false }) // Highest scores first
-      .limit(50); // Get more to ensure we have enough after filtering
+      .order('visibility_score', { ascending: false }) // Highest scores first - get ALL dogs sorted
+      .limit(100); // Get more dogs to ensure we have the truly highest scored ones
 
     if (dbError) {
       console.error('[❌ Invisible Dogs Database Error]', dbError);
@@ -50,34 +49,21 @@ async function fetchInvisibleDogs() {
     }
 
     if (!dbDogs || dbDogs.length === 0) {
-      console.log('[⚠️ Invisible Dogs] No extremely invisible dogs found (score >= 80)');
-      
-      // Fallback to any high-scoring dogs if no extremely invisible ones
-      const { data: fallbackDogs, error: fallbackError } = await supabase
-        .from('dogs')
-        .select('*')
-        .eq('status', 'adoptable')
-        .not('visibility_score', 'is', null)
-        .gte('visibility_score', 60) // Lower threshold for fallback
-        .order('visibility_score', { ascending: false })
-        .limit(50);
-
-      if (fallbackError || !fallbackDogs || fallbackDogs.length === 0) {
-        return NextResponse.json({
-          dogs: [],
-          message: 'No invisible dogs found in database. Database may still be syncing.'
-        });
-      }
-
-      console.log('[📊 Fallback] Using', fallbackDogs.length, 'high-scoring dogs (score >= 60)');
-      dbDogs = fallbackDogs;
+      console.log('[⚠️ Invisible Dogs] No dogs found in database');
+      return NextResponse.json({
+        dogs: [],
+        message: 'No dogs found in database. Database may still be syncing.'
+      });
     }
 
-    console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'invisible dogs from database');
-    console.log('[📊 Score Range] Highest:', dbDogs[0]?.visibility_score, 'Lowest:', dbDogs[dbDogs.length - 1]?.visibility_score);
+    // Take the top 50 highest scoring dogs (truly most invisible)
+    const finalDogs = dbDogs.slice(0, 50);
+
+    console.log('[✅ Invisible Dogs] Found', finalDogs.length, 'invisible dogs from database');
+    console.log('[📊 Score Range] Highest:', finalDogs[0]?.visibility_score, 'Lowest:', finalDogs[finalDogs.length - 1]?.visibility_score);
 
     // Format dogs for frontend consumption
-    const formattedDogs = dbDogs
+    const formattedDogs = finalDogs
       .filter(dog => dog && (dog.petfinder_id || dog.rescuegroups_id)) // Must have valid ID
       .map((dog: any) => ({
         id: dog.petfinder_id || dog.rescuegroups_id || dog.id,

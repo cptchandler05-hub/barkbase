@@ -124,6 +124,8 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       if (response.status === 401) {
         console.log('[🔄 Petfinder] Token expired, refreshing...');
         // Force token refresh by clearing cache
+        const { clearTokenCache } = await import('@/app/api/utils/tokenManager');
+        await clearTokenCache();
         accessToken = await getAccessToken();
         if (accessToken) {
           response = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {

@@ -1,4 +1,4 @@
-import { calculateVisibilityScore } from '@/lib/scoreVisibility';
+import { calculateVisibilityScore } from './scoreVisibility';
 
 interface UnifiedDog {
   id: string;
@@ -78,7 +78,7 @@ class DogFormatter {
           medium: photo,
           large: photo
         };
-      } 
+      }
       // Handle object formats
       else if (photo && typeof photo === 'object') {
         // RescueGroups object format: {small: "url", medium: "url", large: "url"}
@@ -146,7 +146,7 @@ class DogFormatter {
     const petfinderId = dog.petfinder_id && dog.petfinder_id !== 'null' ? dog.petfinder_id : null;
     const rescueGroupsId = dog.rescuegroups_id && dog.rescuegroups_id !== 'null' ? dog.rescuegroups_id : null;
     const dbId = dog.id ? dog.id.toString() : null;
-    
+
     const finalId = petfinderId || rescueGroupsId || (dbId ? `db-${dbId}` : `temp-${Date.now()}`);
 
     return {
@@ -216,7 +216,7 @@ class DogFormatter {
     // Try v5 relationship-based photos first
     if (dog.relationships?.pictures?.data && included.length > 0) {
       const pictureIds = dog.relationships.pictures.data.map((pic: any) => pic.id);
-      const pictureObjects = included.filter((item: any) => 
+      const pictureObjects = included.filter((item: any) =>
         item.type === 'pictures' && pictureIds.includes(item.id)
       );
 
@@ -224,17 +224,17 @@ class DogFormatter {
 
       for (const pic of pictureObjects) {
         // Try different URL formats from RescueGroups API
-        const url = pic.attributes?.large?.url || 
-                   pic.attributes?.medium?.url || 
+        const url = pic.attributes?.large?.url ||
+                   pic.attributes?.medium?.url ||
                    pic.attributes?.small?.url ||
-                   pic.attributes?.large || 
-                   pic.attributes?.original || 
+                   pic.attributes?.large ||
+                   pic.attributes?.original ||
                    pic.attributes?.small;
 
         if (url) {
           photos.push({
             small: url,
-            medium: url, 
+            medium: url,
             large: url
           });
           console.log(`[✅ RG Photo] Added photo: ${url}`);
@@ -272,7 +272,7 @@ class DogFormatter {
     // Parse organization info and contact from included data - ENHANCED
     let orgInfo = { name: 'Unknown Organization', id: '', email: null, phone: null };
     if (dog.relationships?.orgs?.data?.[0] && included.length > 0) {
-      const orgData = included.find((item: any) => 
+      const orgData = included.find((item: any) =>
         item.type === 'orgs' && item.id === dog.relationships.orgs.data[0].id
       );
       if (orgData?.attributes) {
@@ -293,7 +293,7 @@ class DogFormatter {
     // Parse location info from included data - ENHANCED PARSING
     let locationInfo = { city: 'Unknown', state: 'Unknown' };
     if (dog.relationships?.locations?.data?.[0] && included.length > 0) {
-      const locationData = included.find((item: any) => 
+      const locationData = included.find((item: any) =>
         item.type === 'locations' && item.id === dog.relationships.locations.data[0].id
       );
       if (locationData?.attributes) {
@@ -340,7 +340,7 @@ class DogFormatter {
         unknown: false
       },
       age: attrs.ageGroup || 'Unknown',
-      gender: attrs.sex || 'Unknown', 
+      gender: attrs.sex || 'Unknown',
       size: attrs.sizeGroup || 'Unknown',
       photos: photos,
       description: attrs.descriptionText || null,
@@ -500,7 +500,7 @@ class DogFormatter {
 
   // Convert unified format back to legacy API format for backward compatibility
   static toLegacyFormat(dog: UnifiedDog, truncateDescription: boolean = false): any {
-    // Ensure we always have a valid ID - prefer petfinder_id for legacy compatibility, 
+    // Ensure we always have a valid ID - prefer petfinder_id for legacy compatibility,
     // but fall back to rescuegroups_id if needed
     const validId = dog.petfinderId || dog.rescueGroupsId || dog.id;
 
@@ -524,7 +524,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: truncateDescription && dog.description 
+      description: truncateDescription && dog.description
         ? dog.description.substring(0, 150) + '...'
         : dog.description,
       photos: dog.photos.map(photo => ({
@@ -565,92 +565,92 @@ class DogFormatter {
     return legacy;
   }
 
-    // Helper method to normalize age
-    static normalizeAge(age: string | undefined): string {
-        if (!age) return 'Unknown';
-        const lowerAge = age.toLowerCase().trim();
-        if (lowerAge.includes('baby') || lowerAge.includes('puppy') || lowerAge.includes('infant')) return 'Baby';
-        if (lowerAge.includes('young') || lowerAge.includes('juvenile')) return 'Young';
-        if (lowerAge.includes('adult') || lowerAge.includes('mature')) return 'Adult';
-        if (lowerAge.includes('senior') || lowerAge.includes('elder') || lowerAge.includes('old')) return 'Senior';
-        // Handle numeric ages
-        if (lowerAge.match(/\d+/)) {
-            const ageNum = parseInt(lowerAge.match(/\d+/)?.[0] || '0');
-            if (ageNum < 1) return 'Baby';
-            if (ageNum < 2) return 'Young';
-            if (ageNum < 7) return 'Adult';
-            return 'Senior';
-        }
-        return age; // Return original if we can't categorize
+  // Helper method to normalize age
+  static normalizeAge(age: string | undefined): string {
+    if (!age) return 'Unknown';
+    const lowerAge = age.toLowerCase().trim();
+    if (lowerAge.includes('baby') || lowerAge.includes('puppy') || lowerAge.includes('infant')) return 'Baby';
+    if (lowerAge.includes('young') || lowerAge.includes('juvenile')) return 'Young';
+    if (lowerAge.includes('adult') || lowerAge.includes('mature')) return 'Adult';
+    if (lowerAge.includes('senior') || lowerAge.includes('elder') || lowerAge.includes('old')) return 'Senior';
+    // Handle numeric ages
+    if (lowerAge.match(/\d+/)) {
+      const ageNum = parseInt(lowerAge.match(/\d+/)?.[0] || '0');
+      if (ageNum < 1) return 'Baby';
+      if (ageNum < 2) return 'Young';
+      if (ageNum < 7) return 'Adult';
+      return 'Senior';
     }
+    return age; // Return original if we can't categorize
+  }
 
-    // Helper method to normalize size
-    static normalizeSize(size: string | undefined): string {
-        if (!size) return 'Unknown';
-        const lowerSize = size.toLowerCase().trim();
-        if (lowerSize.includes('small') || lowerSize.includes('tiny') || lowerSize.includes('mini')) return 'Small';
-        if (lowerSize.includes('medium') || lowerSize.includes('med')) return 'Medium';
-        if (lowerSize.includes('extra large') || lowerSize.includes('xl') || lowerSize.includes('x-large')) return 'X-Large';
-        if (lowerSize.includes('large') || lowerSize.includes('big')) return 'Large';
-        // Handle weight-based sizing
-        if (lowerSize.match(/\d+/)) {
-            const weight = parseInt(lowerSize.match(/\d+/)?.[0] || '0');
-            if (weight < 25) return 'Small';
-            if (weight < 60) return 'Medium';
-            if (weight < 90) return 'Large';
-            return 'X-Large';
-        }
-        return size; // Return original if we can't categorize
+  // Helper method to normalize size
+  static normalizeSize(size: string | undefined): string {
+    if (!size) return 'Unknown';
+    const lowerSize = size.toLowerCase().trim();
+    if (lowerSize.includes('small') || lowerSize.includes('tiny') || lowerSize.includes('mini')) return 'Small';
+    if (lowerSize.includes('medium') || lowerSize.includes('med')) return 'Medium';
+    if (lowerSize.includes('extra large') || lowerSize.includes('xl') || lowerSize.includes('x-large')) return 'X-Large';
+    if (lowerSize.includes('large') || lowerSize.includes('big')) return 'Large';
+    // Handle weight-based sizing
+    if (lowerSize.match(/\d+/)) {
+      const weight = parseInt(lowerSize.match(/\d+/)?.[0] || '0');
+      if (weight < 25) return 'Small';
+      if (weight < 60) return 'Medium';
+      if (weight < 90) return 'Large';
+      return 'X-Large';
     }
+    return size; // Return original if we can't categorize
+  }
 
-    // Helper method to normalize gender
-    static normalizeGender(gender: string | undefined): string {
-        if (!gender) return 'Unknown';
-        const lowerGender = gender.toLowerCase().trim();
-        if (lowerGender.includes('male') && !lowerGender.includes('female')) return 'Male';
-        if (lowerGender.includes('female')) return 'Female';
-        if (lowerGender.includes('m') && lowerGender.length <= 2) return 'Male';
-        if (lowerGender.includes('f') && lowerGender.length <= 2) return 'Female';
-        return gender; // Return original if we can't categorize
-    }
+  // Helper method to normalize gender
+  static normalizeGender(gender: string | undefined): string {
+    if (!gender) return 'Unknown';
+    const lowerGender = gender.toLowerCase().trim();
+    if (lowerGender.includes('male') && !lowerGender.includes('female')) return 'Male';
+    if (lowerGender.includes('female')) return 'Female';
+    if (lowerGender.includes('m') && lowerGender.length <= 2) return 'Male';
+    if (lowerGender.includes('f') && lowerGender.length <= 2) return 'Female';
+    return gender; // Return original if we can't categorize
+  }
 
   static calculateVisibilityScore(dog: any): number {
-        let score = 0;
+    let score = 0;
 
-        // Add points for having a description
-        if (dog.description) {
-            score += 20;
-            // Add more points for longer descriptions
-            score += Math.min(dog.description.length / 10, 30); // Up to 30 points
-        }
-
-        // Add points for each photo
-        if (dog.photos && Array.isArray(dog.photos)) {
-            score += Math.min(dog.photos.length * 10, 50); // Up to 50 points
-        }
-
-        // Add points for having a location
-        if (dog.contact?.address?.city) {
-            score += 10;
-        }
-
-        // Add points if the dog was recently updated
-        if (dog.lastUpdated) {
-            const lastUpdated = new Date(dog.lastUpdated);
-            const now = new Date();
-            const diff = now.getTime() - lastUpdated.getTime();
-            const days = diff / (1000 * 3600 * 24);
-
-            if (days < 30) {
-                score += 20;
-            } else if (days < 90) {
-                score += 10;
-            }
-        }
-
-        // Ensure score is not negative
-        return Math.max(0, score);
+    // Add points for having a description
+    if (dog.description) {
+      score += 20;
+      // Add more points for longer descriptions
+      score += Math.min(dog.description.length / 10, 30); // Up to 30 points
     }
+
+    // Add points for each photo
+    if (dog.photos && Array.isArray(dog.photos)) {
+      score += Math.min(dog.photos.length * 10, 50); // Up to 50 points
+    }
+
+    // Add points for having a location
+    if (dog.contact?.address?.city) {
+      score += 10;
+    }
+
+    // Add points if the dog was recently updated
+    if (dog.lastUpdated) {
+      const lastUpdated = new Date(dog.lastUpdated);
+      const now = new Date();
+      const diff = now.getTime() - lastUpdated.getTime();
+      const days = diff / (1000 * 3600 * 24);
+
+      if (days < 30) {
+        score += 20;
+      } else if (days < 90) {
+        score += 10;
+      }
+    }
+
+    // Ensure score is not negative
+    return Math.max(0, score);
+  }
 }
 
 export { DogFormatter, type UnifiedDog };
