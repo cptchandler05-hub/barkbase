@@ -765,7 +765,6 @@ export async function POST(req: Request) {
 
         // Use the calculated visibility score
         const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
-
         const compositeScore = `**Visibility Score: ${visibilityScore}**`;
         const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
@@ -898,7 +897,7 @@ export async function POST(req: Request) {
                 ? fullDescription.substring(0, 150).trim() + '...'
                 : fullDescription;
 
-              const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);teVisibilityScore(dog);
+              const visibilityScore = dog.visibilityScore || calculateVisibilityScore(dog);
               const compositeScore = `**Visibility Score: ${visibilityScore}**`;
               const tagline = `> _${getRandomTagline(name || 'an overlooked pup')}_`;
 
