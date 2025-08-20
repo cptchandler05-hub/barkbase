@@ -179,26 +179,12 @@ export default function AdoptPage() {
 
       // If no location provided, search database directly with size/age/breed filters
       if (!effectiveLocation) {
-        console.log("No location provided, checking database for invisible dogs first");
+        console.log("No location provided, searching database with filters");
 
         try {
-          // First try the dedicated invisible dogs API for a larger pool
-          const invisibleResponse = await fetch('/api/invisible-dogs');
-          let allDbDogs = [];
-          
-          if (invisibleResponse.ok) {
-            const invisibleData = await invisibleResponse.json();
-            if (invisibleData.dogs && invisibleData.dogs.length > 0) {
-              allDbDogs = invisibleData.dogs;
-              console.log("Got invisible dogs for filtering:", allDbDogs.length);
-            }
-          }
-          
-          // If no invisible dogs, fall back to getAllDogs
-          if (allDbDogs.length === 0) {
-            allDbDogs = await getAllDogs(200);
-            console.log("Fetched dogs from database fallback:", allDbDogs?.length || 0);
-          }
+          // Get a larger pool of dogs from database for filtering
+          let allDbDogs = await getAllDogs(500); // Get more dogs for better filtering
+          console.log("Fetched dogs from database for filtering:", allDbDogs?.length || 0);
 
           if (allDbDogs && allDbDogs.length > 0) {
             // Filter out any dogs with null or invalid IDs first

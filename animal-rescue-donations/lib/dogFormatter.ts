@@ -499,7 +499,7 @@ class DogFormatter {
   }
 
   // Convert unified format back to legacy API format for backward compatibility
-  static toLegacyFormat(dog: UnifiedDog, truncateDescription: boolean = true): any {
+  static toLegacyFormat(dog: UnifiedDog, truncateDescription: boolean = false): any {
     // Ensure we always have a valid ID - prefer petfinder_id for legacy compatibility, 
     // but fall back to rescuegroups_id if needed
     const validId = dog.petfinderId || dog.rescueGroupsId || dog.id;

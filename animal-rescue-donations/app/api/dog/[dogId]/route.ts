@@ -107,18 +107,33 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
     // 🦮 PHASE 2: Petfinder API Search (RescueGroups API is only for sync)
     try {
       console.log('[🐾 Petfinder] Searching Petfinder API...');
-      const accessToken = await getAccessToken();
+      let accessToken = await getAccessToken();
 
       if (!accessToken) {
         throw new Error('Failed to get Petfinder access token');
       }
 
-      const response = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
+      let response = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
+
+      // If we get 401, try refreshing the token once
+      if (response.status === 401) {
+        console.log('[🔄 Petfinder] Token expired, refreshing...');
+        // Force token refresh by clearing cache
+        accessToken = await getAccessToken();
+        if (accessToken) {
+          response = await fetch(`https://api.petfinder.com/v2/animals/${dogId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+        }
+      }
 
       if (response.ok) {
         const data = await response.json();

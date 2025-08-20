@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
@@ -19,18 +20,26 @@ async function fetchInvisibleDogs() {
   try {
     console.log('[🔍 Invisible Dogs API] Fetching most invisible dogs...');
 
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('[❌ Missing Supabase credentials]');
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
 
     // Query database for dogs with highest visibility scores (most invisible)
+    // Order by visibility_score DESC to get truly most invisible dogs
     const { data: dbDogs, error: dbError } = await supabase
       .from('dogs')
       .select('*')
       .eq('status', 'adoptable')
-      .order('visibility_score', { ascending: false })
-      .limit(100);
+      .not('visibility_score', 'is', null)
+      .gte('visibility_score', 80) // Only dogs with score >= 80 (extremely overlooked)
+      .order('visibility_score', { ascending: false }) // Highest scores first
+      .limit(50); // Get more to ensure we have enough after filtering
 
     if (dbError) {
       console.error('[❌ Invisible Dogs Database Error]', dbError);
@@ -41,68 +50,67 @@ async function fetchInvisibleDogs() {
     }
 
     if (!dbDogs || dbDogs.length === 0) {
-      console.log('[⚠️ Invisible Dogs] No dogs found in database');
-      return NextResponse.json({
-        dogs: [],
-        message: 'No dogs found in database. Database may still be syncing.'
-      });
+      console.log('[⚠️ Invisible Dogs] No extremely invisible dogs found (score >= 80)');
+      
+      // Fallback to any high-scoring dogs if no extremely invisible ones
+      const { data: fallbackDogs, error: fallbackError } = await supabase
+        .from('dogs')
+        .select('*')
+        .eq('status', 'adoptable')
+        .not('visibility_score', 'is', null)
+        .gte('visibility_score', 60) // Lower threshold for fallback
+        .order('visibility_score', { ascending: false })
+        .limit(50);
+
+      if (fallbackError || !fallbackDogs || fallbackDogs.length === 0) {
+        return NextResponse.json({
+          dogs: [],
+          message: 'No invisible dogs found in database. Database may still be syncing.'
+        });
+      }
+
+      console.log('[📊 Fallback] Using', fallbackDogs.length, 'high-scoring dogs (score >= 60)');
+      dbDogs = fallbackDogs;
     }
 
-    console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'dogs from database');
+    console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'invisible dogs from database');
+    console.log('[📊 Score Range] Highest:', dbDogs[0]?.visibility_score, 'Lowest:', dbDogs[dbDogs.length - 1]?.visibility_score);
 
-    // Format dogs for consistent API response
-    const formattedDogs: Dog[] = dbDogs.map(dog => ({
-      id: dog.petfinder_id,
-      name: dog.name,
-      breeds: { 
-        primary: dog.primary_breed, 
-        secondary: dog.secondary_breed,
-        mixed: dog.is_mixed 
-      },
-      age: dog.age,
-      size: dog.size,
-      photos: (dog.photos && Array.isArray(dog.photos) && dog.photos.length > 0) 
-        ? dog.photos.map((photo: any) => {
-            // Handle string URLs (RescueGroups format)
-            if (typeof photo === 'string') {
-              return { medium: photo };
-            } 
-            // Handle object format (Petfinder format)
-            else if (photo && typeof photo === 'object') {
-              // For RescueGroups objects: {small: "url", medium: "url", large: "url"}
-              if (photo.medium || photo.large || photo.small) {
-                return { medium: photo.medium || photo.large || photo.small };
-              }
-              // For nested Petfinder objects: {medium: {url: "..."}}
-              else if (photo.medium && typeof photo.medium === 'object' && photo.medium.url) {
-                return { medium: photo.medium.url };
-              }
-              // Direct Petfinder format: already correct
-              else if (typeof photo.medium === 'string') {
-                return { medium: photo.medium };
-              }
-            }
-            return { medium: '/images/barkr.png' };
-          })
-        : [{ medium: '/images/barkr.png' }],
-      contact: { 
-        address: { 
-          city: dog.city || 'Unknown', 
-          state: dog.state || 'Unknown'
-        }
-      },
-      description: dog.description,
-      url: dog.url,
-      visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
-    }));
+    // Format dogs for frontend consumption
+    const formattedDogs = dbDogs
+      .filter(dog => dog && (dog.petfinder_id || dog.rescuegroups_id)) // Must have valid ID
+      .map((dog: any) => ({
+        id: dog.petfinder_id || dog.rescuegroups_id || dog.id,
+        name: dog.name || 'Unnamed',
+        breeds: { 
+          primary: dog.primary_breed || 'Mixed', 
+          secondary: dog.secondary_breed,
+          mixed: !!dog.secondary_breed
+        },
+        age: dog.age || 'Unknown',
+        size: dog.size || 'Unknown',
+        photos: dog.photos && dog.photos.length > 0 
+          ? dog.photos 
+          : [{ medium: '/images/barkr.png' }],
+        contact: { 
+          address: { 
+            city: dog.city || 'Unknown', 
+            state: dog.state || 'Unknown'
+          }
+        },
+        description: dog.description,
+        url: dog.url,
+        visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+      }))
+      .sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0)); // Ensure proper sorting
 
-    // Sort by visibility score (highest first) to ensure proper ordering
-    formattedDogs.sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0));
+    console.log('[✅ Final Result] Returning', formattedDogs.length, 'formatted invisible dogs');
+    console.log('[📊 Final Scores] Top 3:', formattedDogs.slice(0, 3).map(d => `${d.name}: ${d.visibilityScore}`));
 
     return NextResponse.json({
       dogs: formattedDogs,
       total: formattedDogs.length,
-      message: `Found ${formattedDogs.length} invisible dogs with highest visibility scores`
+      message: `Found ${formattedDogs.length} most invisible dogs (sorted by highest visibility scores)`
     });
 
   } catch (error) {
