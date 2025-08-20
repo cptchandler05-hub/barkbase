@@ -179,6 +179,8 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         };
 
         console.log('[📞 Contact Debug] Formatted dog contact info:', formattedDog.contact);
+
+        console.log('[📞 Contact Debug] Formatted dog contact info:', formattedDog.contact);
           return NextResponse.json({
             animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
             source: 'database'
