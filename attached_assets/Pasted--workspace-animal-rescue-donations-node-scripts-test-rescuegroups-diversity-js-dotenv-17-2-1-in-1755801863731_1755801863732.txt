@@ -1,0 +1,126 @@
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-diversity.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: 📡 auto-backup env with Radar: https://dotenvx.com/radar
+🧪 TESTING RESCUEGROUPS DIVERSITY FILTERS
+🎯 This will test if filters are actually returning different dogs
+
+🦮 Testing RescueGroups filter: default
+📋 Filter "default" returned 20 dogs
+🔍 Sample dogs from default:
+   1. HUNTER (ID: 21718788)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. NOVA (ID: 21798560)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. Lady P (ID: 17142641)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "default": 20 dogs
+
+🦮 Testing RescueGroups filter: recent
+📋 Filter "recent" returned 20 dogs
+🔍 Sample dogs from recent:
+   1. Maximus (ID: 21360913)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. Rocky (ID: 13778263)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. Rogue (ID: 21731438)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "recent": 20 dogs
+
+🦮 Testing RescueGroups filter: large_dogs
+📋 Filter "large_dogs" returned 20 dogs
+🔍 Sample dogs from large_dogs:
+   1. MAYO (ID: 21800899)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. Bullwinkle (ID: 20709764)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. BAM BAM (ID: 21703647)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "large_dogs": 20 dogs
+
+🦮 Testing RescueGroups filter: small_dogs
+📋 Filter "small_dogs" returned 20 dogs
+🔍 Sample dogs from small_dogs:
+   1. MARCUS (ID: 20418849)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. Nyla (ID: 21790870)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. JJ (ID: 21806814)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "small_dogs": 20 dogs
+
+🦮 Testing RescueGroups filter: seniors
+📋 Filter "seniors" returned 20 dogs
+🔍 Sample dogs from seniors:
+   1. Hooligan (ID: 21514712)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. Kansas (ID: 21676281)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. Drake - Divinely Handsome! (ID: 21781523)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "seniors": 20 dogs
+
+🦮 Testing RescueGroups filter: special_needs
+📋 Filter "special_needs" returned 20 dogs
+🔍 Sample dogs from special_needs:
+   1. Clint (ID: 21220539)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   2. Finley (ID: 21781091)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+   3. Toby (Nala's Litter) (ID: 21709785)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Updated: undefined
+      Breed: Unknown
+✅ Filter "special_needs": 20 dogs
+
+📊 OVERLAP ANALYSIS:
+🔗 recent vs large_dogs: 0 overlapping dogs out of 20/20
+🔗 large_dogs vs small_dogs: 0 overlapping dogs out of 20/20
+🔗 seniors vs special_needs: 0 overlapping dogs out of 20/20
+🔗 default vs recent: 0 overlapping dogs out of 20/20
+
+🎯 SUMMARY:
+   Total dog instances: 120
+   Unique dogs: 119
+   Duplication rate: 0.8%
+✅ Filters appear to be working - good diversity achieved
+
+🏆 FILTER EFFECTIVENESS:
+   default: 20 dogs
+   recent: 20 dogs
+   large_dogs: 20 dogs
+   small_dogs: 20 dogs
+   seniors: 20 dogs
+   special_needs: 20 dogs
