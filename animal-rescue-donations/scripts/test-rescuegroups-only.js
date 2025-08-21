@@ -18,9 +18,10 @@ function getPicturesForAnimal(animalId, included) {
     .map(pic => {
       const attrs = pic.attributes || {};
       console.log(`   Photo attrs:`, Object.keys(attrs));
+      console.log(`🐶 Matched picture URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
       return {
-        url: attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url || null,
-        thumbnail: attrs.urlSmall || null,
+        url: attrs.url_large || attrs.url_original || attrs.url_small || attrs.url || null,
+        thumbnail: attrs.url_small || null,
         order: attrs.order || 0
       };
     })
@@ -122,7 +123,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   params.append('fields[animals]', fields.join(','));
   
   // Add picture fields separately to ensure photos are included
-  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+  params.append('fields[pictures]', 'id,url,url_large,url_original,url_small,order');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
