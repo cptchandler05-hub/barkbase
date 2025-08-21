@@ -71,22 +71,12 @@ async function rateLimitedDelay(apiType = 'petfinder') {
   }
 }
 
-// RescueGroups API functions
-async function fetchDogsFromRescueGroups(sampleType = 'national', testMode = false, limit = 50) {
+// RescueGroups API functions - Volume-based approach
+async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode = false, limit = 100) {
   await rateLimitedDelay('rescuegroups');
 
-  console.log(`🦮 Fetching RescueGroups ${sampleType} dog sample...`);
+  console.log(`🦮 Fetching RescueGroups dogs with filter: ${diversityFilter} (limit: ${limit})`);
 
-  // Get coordinates for the ZIP code
-  const coordinates = getZipCoordinates(location);
-  if (!coordinates) {
-    console.log(`⚠️ Could not get coordinates for ZIP ${location}, skipping`);
-    return { data: [], included: [] };
-  }
-
-  console.log(`📍 Using coordinates: ${coordinates.lat}, ${coordinates.lng} for ZIP ${location}`);
-
-  // Use the correct v5 API endpoint for all available dogs
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
@@ -94,19 +84,57 @@ async function fetchDogsFromRescueGroups(sampleType = 'national', testMode = fal
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // Skip location filtering since it doesn't work - get a national diverse sample instead
-  // params.append('filter[location]', location); // ZIP code
-  // params.append('filter[locationDistance]', '100'); // 100 mile radius
+  // Apply diversity filters to get different segments of dogs
+  switch (diversityFilter) {
+    case 'recent':
+      // Recently updated (last month)
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      params.append('filter[updated]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      break;
+      
+    case 'older':
+      // Older listings (2-6 months ago) - these are often "invisible" dogs
+      const sixMonthsAgo = new Date();
+      const twoMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+      params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[updated]', `<${twoMonthsAgo.toISOString().split('T')[0]}`);
+      break;
+      
+    case 'large_dogs':
+      // Focus on large dogs (often harder to place)
+      params.append('filter[sizeGroup]', 'Large');
+      break;
+      
+    case 'small_dogs':
+      // Focus on small dogs
+      params.append('filter[sizeGroup]', 'Small');
+      break;
+      
+    case 'seniors':
+      // Senior dogs (often overlooked)
+      params.append('filter[ageGroup]', 'Senior');
+      break;
+      
+    case 'special_needs':
+      // Special needs dogs (invisible dogs priority)
+      params.append('filter[specialNeeds]', 'true');
+      break;
+      
+    default:
+      // Default: just recently updated in last 3 months
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      params.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      break;
+  }
 
-  // Filter for recently updated animals (last 6 months)
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-  params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
+  // Limit results to maximum allowed
+  params.append('limit', Math.min(limit, 100).toString());
 
-  // Limit results
-  params.append('limit', limit.toString());
-
-  // Specify fields to return - use correct v5 field names
+  // Specify fields to return
   const fields = [
     'id', 'name', 'status', 'species',
     'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
@@ -133,7 +161,7 @@ async function fetchDogsFromRescueGroups(sampleType = 'national', testMode = fal
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.warn(`⚠️ RescueGroups API error ${response.status} for ${location}:`, errorText);
+      console.warn(`⚠️ RescueGroups API error ${response.status} for ${diversityFilter}:`, errorText);
       return { data: [], included: [] };
     }
 
@@ -141,17 +169,17 @@ async function fetchDogsFromRescueGroups(sampleType = 'national', testMode = fal
     const animals = result.data || [];
     const included = result.included || [];
 
-    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location} with ${included.length} included items`);
+    console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
 
     // Log first few animals for debugging
     if (animals.length > 0) {
       console.log(`🔍 First dog: ${animals[0].attributes?.name || 'Unknown'} (ID: ${animals[0].id})`);
-      console.log(`🔍 First dog breed: ${animals[0].attributes?.breedPrimary || 'Unknown'}`);
+      console.log(`🔍 Filter type: ${diversityFilter}`);
     }
 
     return { data: animals, included: included };
   } catch (error) {
-    console.warn(`⚠️ RescueGroups error for ${location}:`, error.message);
+    console.warn(`⚠️ RescueGroups error for ${diversityFilter}:`, error.message);
     return { data: [], included: [] };
   }
 }
@@ -416,53 +444,56 @@ async function main() {
   }
 
   try {
-    // Generate location lists
-    let rescueGroupsLocations = [];
+    // Generate location lists (only needed for Petfinder now)
     let petfinderLocations = [];
 
     if (testMode) {
-      // Test Mode: 1 rural + 1 urban (no overlap)
-      rescueGroupsLocations.push(getRandomRuralZip());
+      // Test Mode: Just 1 urban location for Petfinder
       petfinderLocations.push('Austin, TX');
 
-      console.log(`🦮 RescueGroups will search: ${rescueGroupsLocations[0]} (rural)`);
+      console.log(`🦮 RescueGroups will use volume-based diversity filters (no location calls)`);
       console.log(`🔍 Petfinder will search: ${petfinderLocations[0]} (urban)`);
     } else {
       // Production mode
-      console.log('🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...');
-      rescueGroupsLocations = generateRuralZipCodes(150);
-
       console.log('🏙️ Generating urban locations for Petfinder...');
       petfinderLocations = generateUrbanZipCodes(30);
 
       // Coverage validation
       console.log(`📍 Geographic Distribution:`);
-      console.log(`   RescueGroups: ${rescueGroupsLocations.length} rural areas (prioritizing invisible dogs)`);
+      console.log(`   RescueGroups: Volume-based approach with diversity filters (no location limits)`);
       console.log(`   Petfinder: ${petfinderLocations.length} metropolitan areas (urban supplement)`);
 
-      // Check for regional balance
-      const ruralStates = new Set(rescueGroupsLocations.map(loc => loc.slice(0, 2)));
       const urbanStates = new Set(petfinderLocations.map(loc => loc.slice(0, 2)));
-      console.log(`   State Coverage: ${ruralStates.size} rural states, ${urbanStates.size} urban states`);
+      console.log(`   Petfinder State Coverage: ${urbanStates.size} urban states`);
     }
 
-    // Phase 1: RescueGroups Sync
-    console.log('🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)');
+    // Phase 1: RescueGroups Sync (Volume-Based Approach)
+    console.log('🦮 Phase 1: RescueGroups Sync (High-Volume Diverse Dog Rescue)');
     let allRescueGroupsDogs = [];
 
-    for (const location of rescueGroupsLocations) {
+    // Define diversity filters to maximize different types of dogs
+    const diversityFilters = testMode ? 
+      ['recent', 'large_dogs'] : // Test with 2 filters
+      ['default', 'recent', 'older', 'large_dogs', 'small_dogs', 'seniors', 'special_needs']; // Production with 7 filters
+
+    const maxPerFilter = testMode ? 10 : 100; // Limit per filter call
+    
+    for (const filter of diversityFilters) {
       try {
-        const result = await fetchDogsFromRescueGroups(location, testMode);
+        console.log(`🎯 Fetching ${filter} dogs from RescueGroups...`);
+        const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerFilter);
         const dogs = result.data || [];
         const included = result.included || [];
 
         const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
 
-        // Minimal delay for RescueGroups
-        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log(`✅ Got ${dogs.length} dogs from ${filter} filter`);
+
+        // Minimal delay for RescueGroups (they allow 10 req/sec)
+        await new Promise(resolve => setTimeout(resolve, 120));
       } catch (error) {
-        console.warn(`⚠️ RescueGroups failed for ${location}:`, error.message);
+        console.warn(`⚠️ RescueGroups failed for ${filter} filter:`, error.message);
       }
     }
 
@@ -471,9 +502,12 @@ async function main() {
       index === self.findIndex(d => d.rescuegroups_id === dog.rescuegroups_id)
     );
 
-    console.log(`📊 RescueGroups raw results: ${allRescueGroupsDogs.length} total dogs fetched`);
+    console.log(`📊 RescueGroups Volume Results:`);
+    console.log(`   Raw dogs fetched: ${allRescueGroupsDogs.length}`);
+    console.log(`   Filters used: ${diversityFilters.length}`);
+    console.log(`   Avg dogs per filter: ${Math.round(allRescueGroupsDogs.length / diversityFilters.length)}`);
     console.log(`🔍 Duplication analysis: ${allRescueGroupsDogs.length - uniqueRescueGroupsDogs.length} dogs appeared multiple times`);
-    console.log(`🎯 Found ${uniqueRescueGroupsDogs.length} unique RescueGroups dogs (${allRescueGroupsDogs.length - uniqueRescueGroupsDogs.length} duplicates removed)`);
+    console.log(`🎯 Final unique RescueGroups dogs: ${uniqueRescueGroupsDogs.length}`);
 
     if (uniqueRescueGroupsDogs.length > 0) {
       await syncDogsToDatabase(uniqueRescueGroupsDogs, 'rescuegroups');
