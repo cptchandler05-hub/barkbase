@@ -1,0 +1,3866 @@
+~/workspace/animal-rescue-donations$ node scripts/diagnose-rescuegroups-api.js
+🔍 DIAGNOSING RESCUEGROUPS API LOCATION FILTERING ISSUES
+
+🧪 TEST 1: Basic request (no location filters)
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=5&fields%5Banimals%5D=id%2Cname%2CbreedPrimary
+✅ Found 5 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+============================================================
+
+🧪 TEST 2: Different location parameter formats
+
+🔍 Testing: Current format (filter[location.latitude])
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=3&fields%5Banimals%5D=id%2Cname%2CbreedPrimary&filter%5Blocation.latitude%5D=35.2828&filter%5Blocation.longitude%5D=-106.6614&filter%5Blocation.distance%5D=50
+📊 Found 3 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+🔍 Testing: Alternative format (filter[latitude])
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=3&fields%5Banimals%5D=id%2Cname%2CbreedPrimary&filter%5Blatitude%5D=35.2828&filter%5Blongitude%5D=-106.6614&filter%5Bdistance%5D=50
+📊 Found 3 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+🔍 Testing: Location string format
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=3&fields%5Banimals%5D=id%2Cname%2CbreedPrimary&filter%5Blocation%5D=87002
+📊 Found 3 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+🔍 Testing: Postal code format
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=3&fields%5Banimals%5D=id%2Cname%2CbreedPrimary&filter%5Bpostalcode%5D=87002
+📊 Found 3 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+🔍 Testing: City/State format
+🔗 URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&limit=3&fields%5Banimals%5D=id%2Cname%2CbreedPrimary&filter%5Bcity%5D=Belen&filter%5Bstate%5D=NM
+📊 Found 3 dogs
+🔍 First dog: Hannah Steele (ID: 10072481)
+
+============================================================
+
+🧪 TEST 3: Check if API has location documentation
+🔗 Checking: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?help=true
+📖 API Documentation Response:
+{
+  "meta": {
+    "count": 37133,
+    "countReturned": 25,
+    "pageReturned": 1,
+    "limit": 25,
+    "pages": 1486,
+    "transactionId": "joJLsWcYTIdp"
+  },
+  "data": [
+    {
+      "type": "animals",
+      "id": "10072481",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "adoptedDate": "2016-06-10T00:00:00Z",
+        "adoptionFeeString": "$350.00 CASH",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "11 Years 8 Months",
+        "birthDate": "2013-06-03T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Labrador Retriever / Hound / Mixed (medium coat)",
+        "breedPrimary": "Labrador Retriever",
+        "breedPrimaryId": 162,
+        "breedSecondary": "Hound",
+        "breedSecondaryId": 151,
+        "isBreedMixed": true,
+        "coatLength": "Medium",
+        "isCourtesyListing": false,
+        "descriptionHtml": "<p>After being on the run for 6&nbsp;months&nbsp;- Hannah was trapped by our wonderful Hound Hunter Team, and&nbsp;is now ready for a home of her own!&nbsp;</p>\n\n<p>She is currently in a foster home learning&nbsp;what it&#39;s like to be a loved member of a family. She must have a secure fully fenced in yard and&nbsp;another dog or dogs that she can bond with - as Hannah is still a flight risk.</p>\n\n<p>Hannah loves dogs and all people once she warms up. She is super loving, goofy and playful. Hannah is still a flight risk though and can get nervous, so a family that is willing to work with her and give her time to settle will be a must, and she will love you forever!&nbsp;</p>\n\n<p>She is housebroken, spayed, microchipped, and up to date on shots. Any interested families will need a home check prior to adopting.</p>\n\n<p>If Hannah might be the one for you go to EHRDOGS.ORG and submit an application. &nbsp;Don&#39;t forget to ask for HANNAH STEELE!!!</p>\n\n<p>&nbsp;</p><img src=\"https://tracker.rescuegroups.org/pet?10072481\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "After being on the run for 6&nbsp;months&nbsp;- Hannah was trapped by our wonderful Hound Hunter Team, and&nbsp;is now ready for a home of her own!&nbsp;\n\nShe is currently in a foster home learning&nbsp;what it&#39;s like to be a loved member of a family. She must have a secure fully fenced in yard and&nbsp;another dog or dogs that she can bond with - as Hannah is still a flight risk.\n\nHannah loves dogs and all people once she warms up. She is super loving, goofy and playful. Hannah is still a flight risk though and can get nervous, so a family that is willing to work with her and give her time to settle will be a must, and she will love you forever!&nbsp;\n\nShe is housebroken, spayed, microchipped, and up to date on shots. Any interested families will need a home check prior to adopting.\n\nIf Hannah might be the one for you go to EHRDOGS.ORG and submit an application. &nbsp;Don&#39;t forget to ask for HANNAH STEELE!!!\n\n&nbsp;",
+        "isDogsOk": true,
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Moderate",
+        "fenceNeeds": "6 foot",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "killReason": "0",
+        "name": "Hannah Steele",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Has Basic Training",
+        "pictureCount": 4,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176992.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "eagerToPlease",
+          "gentle",
+          "goofy",
+          "lap",
+          "leashtrained",
+          "needsCompanionAnimal",
+          "olderKidsOnly",
+          "playful",
+          "playsToys",
+          "timid"
+        ],
+        "rescueId": "Jen Steele, Newport TN",
+        "searchString": "Hannah Steele   Black with White Female Medium Jen Steele, Newport TN  Dogs Labrador Retriever / Hound / Mixed (medium coat)s",
+        "sex": "Female",
+        "sizeCurrent": 46,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-hannah-steele-labrador-retriever-dog",
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10072481",
+        "url": "https://ehrdogs.rescuegroups.org/animals/detail?AnimalID=10072481",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Some",
+        "isYardRequired": true,
+        "createdDate": "2016-06-02T23:32:55Z",
+        "updatedDate": "2025-01-23T00:46:15Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "162"
+            },
+            {
+              "type": "breeds",
+              "id": "151"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000000956"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "956"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "41624745"
+            },
+            {
+              "type": "pictures",
+              "id": "63467269"
+            },
+            {
+              "type": "pictures",
+              "id": "35176991"
+            },
+            {
+              "type": "pictures",
+              "id": "35176992"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10131543",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "10 Years 10 Months",
+        "birthDate": "2014-06-28T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Husky / Shepherd / Mixed",
+        "breedPrimary": "Husky",
+        "breedPrimaryId": 152,
+        "breedSecondary": "Shepherd",
+        "breedSecondaryId": 411,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p style=\"margin: 0px; font-style: normal; font-variant-caps: normal; font-stretch: normal; font-size: 13px; line-height: normal; font-family: &quot;Helvetica Neue&quot;; font-size-adjust: none; font-kerning: auto; font-variant-alternates: normal; font-variant-ligatures: normal; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-position: normal; font-variant-emoji: normal; font-feature-settings: normal; font-optical-sizing: auto; font-variation-settings: normal;\">\n<span style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">Hi hoomans, my name is Doli, and I&#39;m in the prime of my life at about 11-years-old.&nbsp; Everyone comments on my sky blue eyes and thick husky-type hair that is every shade of gold you can imagine. My tail is like a fox&#39;s - thick, long, and curly. At 50 lbs, I am a fit and healthy girl&nbsp;</span>\n</p>\n\n<div style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">\n<p style=\"margin: 0px; font-stretch: normal; font-size: 14px; line-height: normal; font-family: Arial; color: rgb(60, 54, 64); background-color: rgb(255, 255, 255);\"><br style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px;\">\n<span style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">I am very chill and quiet. That doesn&#39;t mean I don&#39;t get excited because I do! When the &quot;hoomans&quot; come home, I do a fun little wiggle dance to welcome them! I would be a great fit for a shared wall situation (i.e., like an apartment of townhome) since I rarely bark. I LOVE being outside and like going on walks and car rides. When I am inside, I have the very &quot;bestest &quot;manners. I like the security of my crate, but I don&#39;t need to be locked in. I sleep in my crate, on the floor, or in the master walk-in closet that I think is my den. I wouldn&#39;t dream of chewing up anything. Well, maybe I would DREAM it but wouldn&#39;t DO it!</span>\n<br style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px;\">\n<br style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px;\">\n<span style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">I am shy around new people but warm up quickly and have adjusted fine in my foster home. I am not a fan of other animals, but if I see them out, I ignore them and hope they go away!&nbsp;</span>\n</p>\n\n<p style=\"margin: 0px; font-stretch: normal; font-size: 14px; line-height: normal; font-family: Arial; color: rgb(60, 54, 64); background-color: rgb(255, 255, 255);\">\n<span style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">More of my pictures can be found here:&nbsp;</span>\nhttps://flic.kr/s/aHBqjA21ay<br style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px;\">\n<br style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px;\">\n<span style=\"caret-color: rgb(77, 71, 81); color: rgb(77, 71, 81); font-family: &quot;Nexa Regular&quot;, helvetica, arial, sans-serif; font-size: 14px; background-color: rgb(255, 255, 255);\">Hope to meet you soon! Doli</span>\n</p>\n\n<p style=\"margin: 0px; font-stretch: normal; font-size: 14px; line-height: normal; font-family: Arial; color: rgb(60, 54, 64); background-color: rgb(255, 255, 255);\">&nbsp;</p>\n\n<p style=\"margin: 0px; font-stretch: normal; font-size: 14px; line-height: normal; font-family: Arial; color: rgb(60, 54, 64); background-color: rgb(255, 255, 255);\">\n<span style=\"color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">For inquiries, email inquiry@angelsrescue.org</span>\n</p>\n</div>\n\n<p>An Adoption Application for this dog can be found and submitted online: http://www.angelsrescue.org/adopt/adoption-forms</p>\n\n<p>Be sure to like our Facebook page https://www.facebook.com/angelsrescue.</p><img src=\"https://tracker.rescuegroups.org/pet?10131543\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\nHi hoomans, my name is Doli, and I&#39;m in the prime of my life at about 11-years-old.&nbsp; Everyone comments on my sky blue eyes and thick husky-type hair that is every shade of gold you can imagine. My tail is like a fox&#39;s - thick, long, and curly. At 50 lbs, I am a fit and healthy girl&nbsp;\n\n\n\n\nI am very chill and quiet. That doesn&#39;t mean I don&#39;t get excited because I do! When the &quot;hoomans&quot; come home, I do a fun little wiggle dance to welcome them! I would be a great fit for a shared wall situation (i.e., like an apartment of townhome) since I rarely bark. I LOVE being outside and like going on walks and car rides. When I am inside, I have the very &quot;bestest &quot;manners. I like the security of my crate, but I don&#39;t need to be locked in. I sleep in my crate, on the floor, or in the master walk-in closet that I think is my den. I wouldn&#39;t dream of chewing up anything. Well, maybe I would DREAM it but wouldn&#39;t DO it!\n\n\nI am shy around new people but warm up quickly and have adjusted fine in my foster home. I am not a fan of other animals, but if I see them out, I ignore them and hope they go away!&nbsp;\n\n\n\nMore of my pictures can be found here:&nbsp;\nhttps://flic.kr/s/aHBqjA21ay\n\nHope to meet you soon! Doli\n\n\n&nbsp;\n\n\nFor inquiries, email inquiry@angelsrescue.org\n\n\n\nAn Adoption Application for this dog can be found and submitted online: http://www.angelsrescue.org/adopt/adoption-forms\n\nBe sure to like our Facebook page https://www.facebook.com/angelsrescue.",
+        "isDogsOk": false,
+        "energyLevel": "Moderate",
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": false,
+        "killReason": "0",
+        "name": "Doli",
+        "newPeopleReaction": "Friendly",
+        "pictureCount": 19,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/8099/pictures/animals/10131/10131543/35520048.jpg?width=100",
+        "qualities": [
+          "apartment",
+          "cratetrained",
+          "doesWellInCar",
+          "leashtrained",
+          "olderKidsOnly",
+          "timid"
+        ],
+        "rescueId": "*",
+        "searchString": "Doli   Fawn Female Large *  Dogs Husky / Shepherd / Mixeds",
+        "sex": "Female",
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-doli-husky-dog",
+        "specialNeedsDetails": "8/18/23 Returned after 1-month placed on 7-day hold.   3/23/22 - aggressive toward other dog in home;UTD on vaccines",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10131543",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Quiet",
+        "createdDate": "2016-06-12T16:03:25Z",
+        "updatedDate": "2025-04-30T18:08:23Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "152"
+            },
+            {
+              "type": "breeds",
+              "id": "411"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "35"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000008099"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "8099"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "89452172"
+            },
+            {
+              "type": "pictures",
+              "id": "89452180"
+            },
+            {
+              "type": "pictures",
+              "id": "89452175"
+            },
+            {
+              "type": "pictures",
+              "id": "98244962"
+            },
+            {
+              "type": "pictures",
+              "id": "98245040"
+            },
+            {
+              "type": "pictures",
+              "id": "98245041"
+            },
+            {
+              "type": "pictures",
+              "id": "98245045"
+            },
+            {
+              "type": "pictures",
+              "id": "89452168"
+            },
+            {
+              "type": "pictures",
+              "id": "87154693"
+            },
+            {
+              "type": "pictures",
+              "id": "89452174"
+            },
+            {
+              "type": "pictures",
+              "id": "89452178"
+            },
+            {
+              "type": "pictures",
+              "id": "88911016"
+            },
+            {
+              "type": "pictures",
+              "id": "88910877"
+            },
+            {
+              "type": "pictures",
+              "id": "88910966"
+            },
+            {
+              "type": "pictures",
+              "id": "87154684"
+            },
+            {
+              "type": "pictures",
+              "id": "88910967"
+            },
+            {
+              "type": "pictures",
+              "id": "87154687"
+            },
+            {
+              "type": "pictures",
+              "id": "87154694"
+            },
+            {
+              "type": "pictures",
+              "id": "35520048"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10138270",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "11 Years 7 Months",
+        "birthDate": "2013-12-04T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Shar Pei / Boxer / Mixed (short coat)",
+        "breedPrimary": "Shar Pei",
+        "breedPrimaryId": 197,
+        "breedSecondary": "Boxer",
+        "breedSecondaryId": 104,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>\n<span style=\"font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255); caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34);\">Hi there, let me tell you a little about myself. I like nothing better than hanging with my people at home or going on walks. I walk nicely on a leash and love exploring and sniffing while out. I&#39;m a chill girl and very well-behaved in the home.&nbsp;</span>\n</p>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">I do all my pottying outside, and although I don&#39;t need to be crated, and I&nbsp;will even hang out in my crate if you need me to. I sleep in my crate in my foster home and love to lay alongside my people on the couch. I am a gentle girl and take my treats so nicely.</span>\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">I&#39;m an 11-year-old Sharpei/Boxer mix who is very healthy and weighs around 60 lbs. I&#39;m unsure what it means, but my foster mom always tells me how gorgeous I am.</span>\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">I sound just about perfect, don&#39;t I? I like other dogs well enough and don&#39;t mind passing them when we walk, but I would be better in a home without dogs, cats and small children. I can even play in the yard with some, but I&#39;m not particularly eager to share my space or my things with them, so I&#39;m looking for a forever home where I&#39;m the only dog. I should clarify that I don&#39;t mind sharing my things with people; it&#39;s just the other dogs I don&#39;t want to share with.</span>\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">And cats? Well, my foster Mom says I&#39;m way too interested in cats to be able to share a home with any.</span>\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">I don&#39;t have a lot of experience with young children, so&nbsp;my foster mom thinks I should stick to adults and teens because I may not do well with the energy of a younger child.</span>\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<br style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif;\">\n<span style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: &quot;trebuchet ms&quot;, sans-serif; font-size: small; background-color: rgb(255, 255, 255);\">Anyway, that&#39;s my story. I&#39;d love to meet and get to know you.</span>\n</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">&nbsp;</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">&nbsp;</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">&nbsp;</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">&nbsp;</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">See more photos of Cylana by copy and pasting this link into your browser:</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\"><a href=\"https://flic.kr/s/aHBqjAYW7j\" style=\"font-family: Helvetica; font-size: 12px;\">https://flic.kr/s/aHBqjAYW7j</a></div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">&nbsp;</div>\n\n<div dir=\"auto\" style=\"caret-color: rgb(34, 34, 34); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif;\">Apply to adopt me at www. angelsrescue.org/adopt and search for me, Cylana!</div>\n\n<p>Make a donation in this dog&#39;s name at http://www.angelsrescue.org/donate. For inquiries, email inquiry@angelsrescue.org.</p>\n\n<p>An Adoption Application for this dog can be found at http://www.angelsrescue.org/pet-forms/dog-adoption-app.asp and can be submitted online.</p>\n\n<p>Be sure to like our Facebook page at https://www.facebook.com/angelsrescue.<br>\n&nbsp;</p>\n\n<p>&nbsp;</p><img src=\"https://tracker.rescuegroups.org/pet?10138270\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\nHi there, let me tell you a little about myself. I like nothing better than hanging with my people at home or going on walks. I walk nicely on a leash and love exploring and sniffing while out. I&#39;m a chill girl and very well-behaved in the home.&nbsp;\n\n\n\nI do all my pottying outside, and although I don&#39;t need to be crated, and I&nbsp;will even hang out in my crate if you need me to. I sleep in my crate in my foster home and love to lay alongside my people on the couch. I am a gentle girl and take my treats so nicely.\n\n\nI&#39;m an 11-year-old Sharpei/Boxer mix who is very healthy and weighs around 60 lbs. I&#39;m unsure what it means, but my foster mom always tells me how gorgeous I am.\n\n\nI sound just about perfect, don&#39;t I? I like other dogs well enough and don&#39;t mind passing them when we walk, but I would be better in a home without dogs, cats and small children. I can even play in the yard with some, but I&#39;m not particularly eager to share my space or my things with them, so I&#39;m looking for a forever home where I&#39;m the only dog. I should clarify that I don&#39;t mind sharing my things with people; it&#39;s just the other dogs I don&#39;t want to share with.\n\n\nAnd cats? Well, my foster Mom says I&#39;m way too interested in cats to be able to share a home with any.\n\n\nI don&#39;t have a lot of experience with young children, so&nbsp;my foster mom thinks I should stick to adults and teens because I may not do well with the energy of a younger child.\n\n\nAnyway, that&#39;s my story. I&#39;d love to meet and get to know you.\n\n\n&nbsp;\n\n&nbsp;\n\n&nbsp;\n\n&nbsp;\n\nSee more photos of Cylana by copy and pasting this link into your browser:\n\nhttps://flic.kr/s/aHBqjAYW7j\n\n&nbsp;\n\nApply to adopt me at www. angelsrescue.org/adopt and search for me, Cylana!\n\nMake a donation in this dog&#39;s name at http://www.angelsrescue.org/donate. For inquiries, email inquiry@angelsrescue.org.\n\nAn Adoption Application for this dog can be found at http://www.angelsrescue.org/pet-forms/dog-adoption-app.asp and can be submitted online.\n\nBe sure to like our Facebook page at https://www.facebook.com/angelsrescue.\n&nbsp;\n\n&nbsp;",
+        "energyLevel": "Low",
+        "exerciseNeeds": "Low",
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "killReason": "0",
+        "name": "Cylana",
+        "newPeopleReaction": "Friendly",
+        "pictureCount": 15,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/8099/pictures/animals/10138/10138270/35538798.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "intelligent",
+          "leashtrained",
+          "noSmallDogs",
+          "playsToys",
+          "timid"
+        ],
+        "rescueId": "*",
+        "searchString": "Cylana   Black with White Female Large *  Dogs Shar Pei / Boxer / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeCurrent": 60,
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-cylana-shar-pei-dog",
+        "specialNeedsDetails": "6/24/23 returned family situation. Fully vetted",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10138270",
+        "videoCount": 0,
+        "videoUrlCount": 1,
+        "createdDate": "2016-06-12T20:27:50Z",
+        "updatedDate": "2025-07-16T01:56:22Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "197"
+            },
+            {
+              "type": "breeds",
+              "id": "104"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000008099"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "8099"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "100077476"
+            },
+            {
+              "type": "pictures",
+              "id": "96827212"
+            },
+            {
+              "type": "pictures",
+              "id": "97921793"
+            },
+            {
+              "type": "pictures",
+              "id": "97396761"
+            },
+            {
+              "type": "pictures",
+              "id": "100077475"
+            },
+            {
+              "type": "pictures",
+              "id": "97921794"
+            },
+            {
+              "type": "pictures",
+              "id": "96889290"
+            },
+            {
+              "type": "pictures",
+              "id": "96889291"
+            },
+            {
+              "type": "pictures",
+              "id": "94790546"
+            },
+            {
+              "type": "pictures",
+              "id": "96889289"
+            },
+            {
+              "type": "pictures",
+              "id": "96827111"
+            },
+            {
+              "type": "pictures",
+              "id": "95036173"
+            },
+            {
+              "type": "pictures",
+              "id": "94790547"
+            },
+            {
+              "type": "pictures",
+              "id": "35538797"
+            },
+            {
+              "type": "pictures",
+              "id": "35538798"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21246198"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10197267",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "adoptedDate": "2020-05-18T00:00:00Z",
+        "adoptionFeeString": "100",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Young",
+        "isBirthDateExact": false,
+        "breedString": "American Bulldog / Mixed (short coat)",
+        "breedPrimary": "American Bulldog",
+        "breedPrimaryId": 80,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "isDeclawed": false,
+        "descriptionHtml": "<p>Meet Zeke! Zeke was so well loved at the shelter that he lasted six weeks before he was in danger of losing his life. Luckily we stepped in and we definitely lucked out getting this guy. Zeke is a pretty chilled dude. He is a thick, short boy with big, soulful eyes that are hard to say no to. Zeke loves to be close: seeking attention and sitting on your feet. He enjoys being anywhere you are. Zeke gets on with other dogs but hadn&#39;t been well socialized before and still needs work on his manners: slow introductions are best, according to our trainer. He is neutered, up to-date on vaccines and microchipped. Zeke would make someone a great pet and companion! Could that be you?</p><img src=\"https://tracker.rescuegroups.org/pet?10197267\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Meet Zeke! Zeke was so well loved at the shelter that he lasted six weeks before he was in danger of losing his life. Luckily we stepped in and we definitely lucked out getting this guy. Zeke is a pretty chilled dude. He is a thick, short boy with big, soulful eyes that are hard to say no to. Zeke loves to be close: seeking attention and sitting on your feet. He enjoys being anywhere you are. Zeke gets on with other dogs but hadn&#39;t been well socialized before and still needs work on his manners: slow introductions are best, according to our trainer. He is neutered, up to-date on vaccines and microchipped. Zeke would make someone a great pet and companion! Could that be you?",
+        "isDogsOk": true,
+        "earType": "Cropped",
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Low",
+        "eyeColor": "Brown",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": false,
+        "name": "Zeke",
+        "newPeopleReaction": "Friendly",
+        "ownerExperience": "Breed",
+        "pictureCount": 5,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/5613/pictures/animals/10197/10197267/45718516.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "doesWellInCar",
+          "goofy",
+          "intelligent",
+          "lap",
+          "olderKidsOnly"
+        ],
+        "searchString": "Zeke   White with Red, Golden, Orange or Chestnut Male Medium   Dogs American Bulldog / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeCurrent": 50,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-zeke-american-bulldog-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10197267",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Some",
+        "createdDate": "2016-06-25T14:50:07Z",
+        "updatedDate": "2023-07-22T22:41:23Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "80"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "50"
+            }
+          ]
+        },
+        "patterns": {
+          "data": [
+            {
+              "type": "patterns",
+              "id": "1"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000005613"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "5613"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "35989100"
+            },
+            {
+              "type": "pictures",
+              "id": "35989103"
+            },
+            {
+              "type": "pictures",
+              "id": "35989106"
+            },
+            {
+              "type": "pictures",
+              "id": "35989287"
+            },
+            {
+              "type": "pictures",
+              "id": "45718516"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10206471",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "adoptedDate": "2016-09-04T00:00:00Z",
+        "adoptionFeeString": "$450.00 CASH",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "10 Years 7 Months",
+        "birthDate": "2014-06-28T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Shepherd / Terrier / Mixed (short coat)",
+        "breedPrimary": "Shepherd",
+        "breedPrimaryId": 411,
+        "breedSecondary": "Terrier",
+        "breedSecondaryId": 208,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "descriptionHtml": "<p>Our Diamond girl may look like a plain little black dog but she is anything but ordinary!&nbsp; At 10&nbsp;years old, this little munchkin has a 100 watt&nbsp;smile that can light up a room and brighten your day.&nbsp; Despite having lost her home due to serious illness a while back, she is upbeat and entertaining and a joy to be around.&nbsp;</p>\n\n<p>Diamond loves to explore and it&rsquo;s comical to watch her&hellip;.whether she&rsquo;s surveying the play yards, or investigating a pile of blankets on the floor.&nbsp; She also loves car rides and walks with her best volunteer pals.&nbsp; But right at the top of her list of favorite things, is getting loved on by her people!&nbsp; If you talk to her and pet her, she will look into your eyes and hang onto your every word.&nbsp; She&rsquo;s such a special little girl.</p>\n\n<p>Diamond has waited far too long for a home to replace the one she lost.&nbsp; She has so much love to give and we want someone to love her in return.&nbsp; She&rsquo;s a nice tidy size, around 35 lbs. and she knows some basic commands.&nbsp; She needs to be the only dog in the house, so if you&rsquo;re looking for one special friend, she may be perfect for you!</p>\n\n<p>Please give Diamond her second chance at finding a home and family.&nbsp; You can fill out an adoption or foster application at www.ehrdogs.org and mention her name&hellip;.DIAMOND BEAUFORT!!</p><img src=\"https://tracker.rescuegroups.org/pet?10206471\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Our Diamond girl may look like a plain little black dog but she is anything but ordinary!&nbsp; At 10&nbsp;years old, this little munchkin has a 100 watt&nbsp;smile that can light up a room and brighten your day.&nbsp; Despite having lost her home due to serious illness a while back, she is upbeat and entertaining and a joy to be around.&nbsp;\n\nDiamond loves to explore and it&rsquo;s comical to watch her&hellip;.whether she&rsquo;s surveying the play yards, or investigating a pile of blankets on the floor.&nbsp; She also loves car rides and walks with her best volunteer pals.&nbsp; But right at the top of her list of favorite things, is getting loved on by her people!&nbsp; If you talk to her and pet her, she will look into your eyes and hang onto your every word.&nbsp; She&rsquo;s such a special little girl.\n\nDiamond has waited far too long for a home to replace the one she lost.&nbsp; She has so much love to give and we want someone to love her in return.&nbsp; She&rsquo;s a nice tidy size, around 35 lbs. and she knows some basic commands.&nbsp; She needs to be the only dog in the house, so if you&rsquo;re looking for one special friend, she may be perfect for you!\n\nPlease give Diamond her second chance at finding a home and family.&nbsp; You can fill out an adoption or foster application at www.ehrdogs.org and mention her name&hellip;.DIAMOND BEAUFORT!!",
+        "isDogsOk": false,
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Moderate",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "killReason": "0",
+        "name": "Diamond Beaufort",
+        "newPeopleReaction": "Cautious",
+        "obedienceTraining": "Has Basic Training",
+        "pictureCount": 25,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/956/pictures/animals/10206/10206471/52755650.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "eagerToPlease",
+          "eventempered",
+          "gentle",
+          "intelligent",
+          "lap",
+          "leashtrained",
+          "obedient",
+          "olderKidsOnly",
+          "skittish"
+        ],
+        "rescueId": "Beaufort",
+        "searchString": "Diamond Beaufort EHR Tag 16-0543, 201032  Black Female Medium Beaufort  Dogs Shepherd / Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeCurrent": 35,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-diamond-beaufort-shepherd-dog",
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10206471",
+        "url": "https://ehrdogs.rescuegroups.org/animals/detail?AnimalID=10206471",
+        "videoCount": 0,
+        "videoUrlCount": 3,
+        "createdDate": "2016-06-27T19:09:20Z",
+        "updatedDate": "2024-08-05T17:57:56Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "411"
+            },
+            {
+              "type": "breeds",
+              "id": "208"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "23"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000000956"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "956"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "70514098"
+            },
+            {
+              "type": "pictures",
+              "id": "58230356"
+            },
+            {
+              "type": "pictures",
+              "id": "67437003"
+            },
+            {
+              "type": "pictures",
+              "id": "72013316"
+            },
+            {
+              "type": "pictures",
+              "id": "69896599"
+            },
+            {
+              "type": "pictures",
+              "id": "54137646"
+            },
+            {
+              "type": "pictures",
+              "id": "70514137"
+            },
+            {
+              "type": "pictures",
+              "id": "48350111"
+            },
+            {
+              "type": "pictures",
+              "id": "67437009"
+            },
+            {
+              "type": "pictures",
+              "id": "67965382"
+            },
+            {
+              "type": "pictures",
+              "id": "67437005"
+            },
+            {
+              "type": "pictures",
+              "id": "92676717"
+            },
+            {
+              "type": "pictures",
+              "id": "69520897"
+            },
+            {
+              "type": "pictures",
+              "id": "65988931"
+            },
+            {
+              "type": "pictures",
+              "id": "58230378"
+            },
+            {
+              "type": "pictures",
+              "id": "58230380"
+            },
+            {
+              "type": "pictures",
+              "id": "48350103"
+            },
+            {
+              "type": "pictures",
+              "id": "52755642"
+            },
+            {
+              "type": "pictures",
+              "id": "55849088"
+            },
+            {
+              "type": "pictures",
+              "id": "52755643"
+            },
+            {
+              "type": "pictures",
+              "id": "52755646"
+            },
+            {
+              "type": "pictures",
+              "id": "45777262"
+            },
+            {
+              "type": "pictures",
+              "id": "51158341"
+            },
+            {
+              "type": "pictures",
+              "id": "45312590"
+            },
+            {
+              "type": "pictures",
+              "id": "52755650"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21086952"
+            },
+            {
+              "type": "videourls",
+              "id": "21084141"
+            },
+            {
+              "type": "videourls",
+              "id": "21085286"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10244680",
+      "attributes": {
+        "adoptionFeeString": "$250 Senior",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "9 Years 8 Months",
+        "birthDate": "2015-10-06T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Labrador Retriever / Chow Chow / Mixed (medium coat)",
+        "breedPrimary": "Labrador Retriever",
+        "breedPrimaryId": 162,
+        "breedSecondary": "Chow Chow",
+        "breedSecondaryId": 121,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Medium",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">Lucky is a spirited and friendly girl with a little spunk to her personality. She enjoys being active and going for walks.</span>\n</span>\n</p>\n\n<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">Lucky has come back to us due to the health of her owner, and is&nbsp;very motivated by loving attention from her people. </span>\n</span>\n\n<span style=\"font-family: arial, helvetica, sans-serif; font-size: 16px;\">She is leash trained and knows basic commands as well.&nbsp;</span>\n\n<span style=\"font-size:16px;\"> \n<span style=\"font-family:arial,helvetica,sans-serif;\">She thrives as&nbsp;both an inside and an outside dog. While she would prefer to be your one and only she may do well with a calm, independent older female dog.&nbsp;Come meet this little love ball today and see if she is a good fit for you.&nbsp;Call the Ranch to meet sweet Lucky today!</span>\n</span>\n</p>\n\n<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">Thank you for considering adopting a Rescue Ranch dog. While they are with us, each and every rescue dog receives the best of care in a loving and nurturing&nbsp;environment. Their routines include&nbsp;daily playgroups or partnering&nbsp;with dog buddies, quality time walking or being groomed, and two meals a day with dog biscuits for dessert.</span>\n</span>\n</p><img src=\"https://tracker.rescuegroups.org/pet?10244680\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\n\nLucky is a spirited and friendly girl with a little spunk to her personality. She enjoys being active and going for walks.\n\n\n\n\n\nLucky has come back to us due to the health of her owner, and is&nbsp;very motivated by loving attention from her people. \n\n\nShe is leash trained and knows basic commands as well.&nbsp;\n\n \nShe thrives as&nbsp;both an inside and an outside dog. While she would prefer to be your one and only she may do well with a calm, independent older female dog.&nbsp;Come meet this little love ball today and see if she is a good fit for you.&nbsp;Call the Ranch to meet sweet Lucky today!\n\n\n\n\n\nThank you for considering adopting a Rescue Ranch dog. While they are with us, each and every rescue dog receives the best of care in a loving and nurturing&nbsp;environment. Their routines include&nbsp;daily playgroups or partnering&nbsp;with dog buddies, quality time walking or being groomed, and two meals a day with dog biscuits for dessert.\n\n",
+        "energyLevel": "Low",
+        "exerciseNeeds": "Low",
+        "fenceNeeds": "Any Type",
+        "isFound": false,
+        "groomingNeeds": "Moderate",
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor and Outdoor",
+        "isKidsOk": true,
+        "name": "Lucky",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Has Basic Training",
+        "pictureCount": 9,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/1817/pictures/animals/10244/10244680/98107337.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "apartment",
+          "doesWellInCar",
+          "leashtrained",
+          "noMaleDogs",
+          "oKForSeniors"
+        ],
+        "searchString": "Lucky Loki  Black Female Medium   Dogs Labrador Retriever / Chow Chow / Mixed (medium coat)s",
+        "sex": "Female",
+        "sizeCurrent": 45,
+        "sizeGroup": "Medium",
+        "sizePotential": 45,
+        "sizeUOM": "Pounds",
+        "slug": "adopt-lucky-labrador-retriever-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10244680",
+        "videoCount": 1,
+        "videoUrlCount": 1,
+        "vocalLevel": "Some",
+        "createdDate": "2016-07-07T01:12:56Z",
+        "updatedDate": "2025-06-12T18:53:44Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "162"
+            },
+            {
+              "type": "breeds",
+              "id": "121"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "23"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000001817"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "1817"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "98700832"
+            },
+            {
+              "type": "pictures",
+              "id": "98181951"
+            },
+            {
+              "type": "pictures",
+              "id": "98107377"
+            },
+            {
+              "type": "pictures",
+              "id": "96788722"
+            },
+            {
+              "type": "pictures",
+              "id": "98107342"
+            },
+            {
+              "type": "pictures",
+              "id": "96788740"
+            },
+            {
+              "type": "pictures",
+              "id": "96788749"
+            },
+            {
+              "type": "pictures",
+              "id": "96788760"
+            },
+            {
+              "type": "pictures",
+              "id": "98107337"
+            }
+          ]
+        },
+        "videos": {
+          "data": [
+            {
+              "type": "videos",
+              "id": "21095585"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21255188"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10393561",
+      "attributes": {
+        "activityLevel": "Slightly Active",
+        "adoptionFeeString": "$425.00",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Adult",
+        "ageString": "9 Years",
+        "birthDate": "2016-06-28T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "American Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "American Pit Bull Terrier",
+        "breedPrimaryId": 729,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "descriptionHtml": "<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">Hi!&nbsp; My name is Rosie and I am beautiful brindle ,American Pitbull terrier/mix.&nbsp; I am a very sweet and loving girl. &nbsp;My foster parents like to call me Miss. Piggy because when I get excited I snort a little! You see, \n<span style=\"background-color: rgb(255, 255, 255);\">I&rsquo;m just your happy-go-lucky best friend in the making! I find joy in the simple things&mdash;laying in the grass, playing with my little puppy buddy next door, taking short strolls, or proudly destuffing toys like it&rsquo;s an Olympic sport. And cuddles? Always a yes. But if you really want to see me light up, give me a ball. I&rsquo;ll play for hours, making the most ridiculous noises that, sound like a mix between a seal and a pig! I might cry a little when I can&rsquo;t reach it or playtime ends, but I&rsquo;m also perfectly content curling up in my crate for a long nap. I may be getting older, but my heart is forever young and full of love</span>\nyou think I would be a good fit for your home please apply today @buffalocares.org</span>\n</span>\n</p>\n\n<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">My adoption fee is $425.00</span>\n</span>\n</p>\n\n<p>\n<span style=\"font-size:16px;\">\n<span style=\"font-family:arial,helvetica,sans-serif;\">RR48</span>\n</span>\n</p>\n\n<p>&nbsp;</p><img src=\"https://tracker.rescuegroups.org/pet?10393561\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\n\nHi!&nbsp; My name is Rosie and I am beautiful brindle ,American Pitbull terrier/mix.&nbsp; I am a very sweet and loving girl. &nbsp;My foster parents like to call me Miss. Piggy because when I get excited I snort a little! You see, \nI&rsquo;m just your happy-go-lucky best friend in the making! I find joy in the simple things&mdash;laying in the grass, playing with my little puppy buddy next door, taking short strolls, or proudly destuffing toys like it&rsquo;s an Olympic sport. And cuddles? Always a yes. But if you really want to see me light up, give me a ball. I&rsquo;ll play for hours, making the most ridiculous noises that, sound like a mix between a seal and a pig! I might cry a little when I can&rsquo;t reach it or playtime ends, but I&rsquo;m also perfectly content curling up in my crate for a long nap. I may be getting older, but my heart is forever young and full of love\nyou think I would be a good fit for your home please apply today @buffalocares.org\n\n\n\n\n\nMy adoption fee is $425.00\n\n\n\n\n\nRR48\n\n\n\n&nbsp;",
+        "isDogsOk": true,
+        "energyLevel": "Low",
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor Only",
+        "isKidsOk": true,
+        "name": "Rosie",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Has Basic Training",
+        "pictureCount": 8,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/6277/pictures/animals/10393/10393561/39515787.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "eventempered",
+          "gentle",
+          "goofy",
+          "intelligent",
+          "leashtrained",
+          "obedient",
+          "playful",
+          "playsToys"
+        ],
+        "rescueId": "16-0141",
+        "searchString": "Rosie Sandy N  Brindle Female Medium 16-0141  Dogs American Pit Bull Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-rosie-american-pit-bull-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10393561",
+        "url": "https://buffalocares.rescuegroups.org/animals/detail?AnimalID=10393561",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-08-02T23:58:26Z",
+        "updatedDate": "2025-07-07T23:09:45Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "729"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "26"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000006277"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "6277"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "101250999"
+            },
+            {
+              "type": "pictures",
+              "id": "101251002"
+            },
+            {
+              "type": "pictures",
+              "id": "101291197"
+            },
+            {
+              "type": "pictures",
+              "id": "101291198"
+            },
+            {
+              "type": "pictures",
+              "id": "101291201"
+            },
+            {
+              "type": "pictures",
+              "id": "39236922"
+            },
+            {
+              "type": "pictures",
+              "id": "39515786"
+            },
+            {
+              "type": "pictures",
+              "id": "39515787"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10399885",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "American Staffordshire Terrier / Terrier / Mixed (short coat)",
+        "breedPrimary": "American Staffordshire Terrier",
+        "breedPrimaryId": 82,
+        "breedSecondary": "Terrier",
+        "breedSecondaryId": 208,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "isDeclawed": false,
+        "descriptionHtml": "<p>Meet Gabrio! Gabrio is a sweet boy, confiscated after a backyard breeder went to jail. He has several scars, implying that he may&#39;ve been beat up on purpose, though he is one of the most happy-go-lucky dogs you&#39;ll ever meet! Gabrio loves people and gets very excited when shown affection. But, being&nbsp;a bit of an attention-hog, he&nbsp;prefers&nbsp;a house without&nbsp;children. Gabrio enjoys car rides. He would do well with a patient owner as he adjusts to the structure of a new home,&nbsp;but with a great attitude and desire to please, it doesn&#39;t take him long to learn. Gabrio comes neutered, up to-date on shots and microchipped. Won&#39;t you consider giving him the family he never had?</p><img src=\"https://tracker.rescuegroups.org/pet?10399885\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Meet Gabrio! Gabrio is a sweet boy, confiscated after a backyard breeder went to jail. He has several scars, implying that he may&#39;ve been beat up on purpose, though he is one of the most happy-go-lucky dogs you&#39;ll ever meet! Gabrio loves people and gets very excited when shown affection. But, being&nbsp;a bit of an attention-hog, he&nbsp;prefers&nbsp;a house without&nbsp;children. Gabrio enjoys car rides. He would do well with a patient owner as he adjusts to the structure of a new home,&nbsp;but with a great attitude and desire to please, it doesn&#39;t take him long to learn. Gabrio comes neutered, up to-date on shots and microchipped. Won&#39;t you consider giving him the family he never had?",
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Moderate",
+        "eyeColor": "Brown",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor and Outdoor",
+        "isKidsOk": false,
+        "name": "Gabrio",
+        "newPeopleReaction": "Friendly",
+        "pictureCount": 4,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/5613/pictures/animals/10399/10399885/37651613.jpg?width=100",
+        "searchString": "Gabrio   Black with White Male Medium   Dogs American Staffordshire Terrier / Terrier / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-gabrio-american-staffordshire-terrier-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "tailType": "Long",
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10399885",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Quiet",
+        "createdDate": "2016-08-04T17:46:48Z",
+        "updatedDate": "2021-07-28T14:28:49Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "82"
+            },
+            {
+              "type": "breeds",
+              "id": "208"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "patterns": {
+          "data": [
+            {
+              "type": "patterns",
+              "id": "4"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000005613"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "5613"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "37590655"
+            },
+            {
+              "type": "pictures",
+              "id": "37651609"
+            },
+            {
+              "type": "pictures",
+              "id": "37651610"
+            },
+            {
+              "type": "pictures",
+              "id": "37651613"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10481659",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Young",
+        "isBirthDateExact": false,
+        "breedString": "Great Pyrenees / Husky / Mixed (short coat)",
+        "breedPrimary": "Great Pyrenees",
+        "breedPrimaryId": 148,
+        "breedSecondary": "Husky",
+        "breedSecondaryId": 152,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "descriptionHtml": "<p style=\"text-align: center;\"><strong>&nbsp;Sanctuary Animal<br>\nThis Dog Is A Senior and Has Resided&nbsp;<br>\nHere the Majority Of her Life Since 2009&nbsp;and has been deemed&nbsp;</strong><strong>unadoptable.</strong></p>\n\n<p style=\"text-align: center;\"><strong>&nbsp;Since we are a&nbsp;</strong><strong>no kill</strong><strong>&nbsp;we are dedicated to caring for these dogs as long as necessary.<br>\n<br>\nNOT AVAILABLE FOR ADOPTION<br>\n<br>\nYou may Sponsor this dog with a monthly donation<br>\nin their name</strong><strong>&nbsp;if you so desire.<br>\n<br>\nWe Thank You for Helping Us Help Them.</strong></p><img src=\"https://tracker.rescuegroups.org/pet?10481659\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "&nbsp;Sanctuary Animal\nThis Dog Is A Senior and Has Resided&nbsp;\nHere the Majority Of her Life Since 2009&nbsp;and has been deemed&nbsp;unadoptable.\n\n&nbsp;Since we are a&nbsp;no kill&nbsp;we are dedicated to caring for these dogs as long as necessary.\n\nNOT AVAILABLE FOR ADOPTION\n\nYou may Sponsor this dog with a monthly donation\nin their name&nbsp;if you so desire.\n\nWe Thank You for Helping Us Help Them.",
+        "isDogsOk": true,
+        "isFound": false,
+        "priority": 10,
+        "isKidsOk": true,
+        "name": "Sponsor Joe Sanctuary 2016",
+        "pictureCount": 8,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/268/pictures/animals/10481/10481659/38373047.jpg?width=100",
+        "searchString": "Sponsor Joe Sanctuary 2016   White with Gray or Silver Male Large   Dogs Great Pyrenees / Husky / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-sponsor-joe-sanctuary-great-pyrenees-dog",
+        "isSponsorable": true,
+        "sponsorshipDetails": "PAY PAL. oksaveadogsociety@gmail.com",
+        "sponsorshipMinimum": "30.00",
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10481659",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-08-23T18:16:33Z",
+        "updatedDate": "2024-11-22T14:52:13Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "148"
+            },
+            {
+              "type": "breeds",
+              "id": "152"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "51"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000000268"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "268"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "40726232"
+            },
+            {
+              "type": "pictures",
+              "id": "40726320"
+            },
+            {
+              "type": "pictures",
+              "id": "38373043"
+            },
+            {
+              "type": "pictures",
+              "id": "39517813"
+            },
+            {
+              "type": "pictures",
+              "id": "39517828"
+            },
+            {
+              "type": "pictures",
+              "id": "38373044"
+            },
+            {
+              "type": "pictures",
+              "id": "38373045"
+            },
+            {
+              "type": "pictures",
+              "id": "38373047"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10501644",
+      "attributes": {
+        "adoptionFeeString": "0",
+        "isAdoptionPending": false,
+        "isBirthDateExact": false,
+        "breedString": "Unknown breed",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>If you aren&#39;t sure yet what dog/puppy will fit your family,&nbsp;you can still get pre-approved for adoption. Fill out an application letting us know what you are looking for, and then we will help you find a dog that matches your home and lifestyle.</p><img src=\"https://tracker.rescuegroups.org/pet?10501644\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "If you aren&#39;t sure yet what dog/puppy will fit your family,&nbsp;you can still get pre-approved for adoption. Fill out an application letting us know what you are looking for, and then we will help you find a dog that matches your home and lifestyle.",
+        "isFound": false,
+        "priority": 10,
+        "name": "Pre-Approval",
+        "pictureCount": 1,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/6843/pictures/animals/10501/10501644/38476700.jpg?width=100",
+        "searchString": "Pre-Approval        Dogs Unknown breeds",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-pre-approval-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10501644",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-08-28T15:12:09Z",
+        "updatedDate": "2020-07-11T20:50:18Z"
+      },
+      "relationships": {
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000006843"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "6843"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "38476700"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10544313",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Adult",
+        "ageString": "8 Years 9 Months",
+        "birthDate": "2016-06-30T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "Pit Bull Terrier",
+        "breedPrimaryId": 179,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>Hi! I&rsquo;m Fernanda, an eight-year-old gal with a &quot;smile so bright I need shades!&quot;&nbsp;</p>\n\n<p>I&rsquo;m&nbsp;house, crate, and leash-trained, &nbsp;so &nbsp;I am a turn-key, ready-to-go pup. &nbsp;I maintain my girlish figure of 55 lbs with my playful nature, and &nbsp;I&rsquo;m not shy about inviting you to play with me, especially fetch. I&rsquo;m particularly proud of my fetching skills and retrieving every throw without fail. &nbsp;In addition to fielding balls, I love to run and play, so a fenced-in yard would be perfect for me!</p>\n\n<p>My happy demeanor spills over to those around me. &nbsp;My infectious smile and wagging tail will no doubt brighten your mood. &nbsp; I &nbsp;truly am a people pup - &nbsp;I love everyone! &nbsp; I enjoy curling up next to my people, offering warm companionship.</p>\n\n<p>Children are perfect buddies of mine because they love to play, which makes me a big hit with the kiddos! I&nbsp;would flourish in a home with lots of love and attention, especially in a single-pet home. &nbsp;</p>\n\n<p>I&rsquo;m looking forward to bringing sunshine to my forever home soon.</p>\n\n<p style=\"margin-top: 0px; margin-bottom: 0px; line-height: 21.6px; font-size: 18px;\">&nbsp;</p>\n\n<p style=\"margin-top: 0px; margin-bottom: 0px; line-height: 21.6px; font-size: 18px;\">&nbsp;</p>\n\n<p style=\"margin-top: 0px; margin-bottom: 0px; line-height: 21.6px; font-size: 18px;\">&nbsp;</p>\n\n<p>An Adoption Application for this dog can be found and submitted online.&nbsp;<a href=\"http://www.angelsrescue.org/adopt/adoption-forms\" target=\"_blank\">http://www.angelsrescue.org/adopt/adoption-forms</a>&nbsp;</p>\n\n<p>Please be sure to like our Facebook page:&nbsp;<a href=\"https://www.facebook.com/angelsrescue\" target=\"_blank\">https://www.facebook.com/angelsrescue</a>.&nbsp;</p>\n\n<p><strong>Email&nbsp;inquiry@angelsrescue.org&nbsp;</strong></p>\n\n<p><strong><em>Note:</em></strong><em>&nbsp;Some apartments and neighborhoods have breed restrictions. We verify rental policies and adhere to any regulations. Please ensure you understand those restrictions before choosing a dog.</em></p>\n\n<p style=\"margin-top: 0px; margin-bottom: 0px; line-height: 21.6px; font-size: 18px;\">&nbsp;</p><img src=\"https://tracker.rescuegroups.org/pet?10544313\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Hi! I&rsquo;m Fernanda, an eight-year-old gal with a &quot;smile so bright I need shades!&quot;&nbsp;\n\nI&rsquo;m&nbsp;house, crate, and leash-trained, &nbsp;so &nbsp;I am a turn-key, ready-to-go pup. &nbsp;I maintain my girlish figure of 55 lbs with my playful nature, and &nbsp;I&rsquo;m not shy about inviting you to play with me, especially fetch. I&rsquo;m particularly proud of my fetching skills and retrieving every throw without fail. &nbsp;In addition to fielding balls, I love to run and play, so a fenced-in yard would be perfect for me!\n\nMy happy demeanor spills over to those around me. &nbsp;My infectious smile and wagging tail will no doubt brighten your mood. &nbsp; I &nbsp;truly am a people pup - &nbsp;I love everyone! &nbsp; I enjoy curling up next to my people, offering warm companionship.\n\nChildren are perfect buddies of mine because they love to play, which makes me a big hit with the kiddos! I&nbsp;would flourish in a home with lots of love and attention, especially in a single-pet home. &nbsp;\n\nI&rsquo;m looking forward to bringing sunshine to my forever home soon.\n\n&nbsp;\n\n&nbsp;\n\n&nbsp;\n\nAn Adoption Application for this dog can be found and submitted online.&nbsp;http://www.angelsrescue.org/adopt/adoption-forms&nbsp;\n\nPlease be sure to like our Facebook page:&nbsp;https://www.facebook.com/angelsrescue.&nbsp;\n\nEmail&nbsp;inquiry@angelsrescue.org&nbsp;\n\nNote:&nbsp;Some apartments and neighborhoods have breed restrictions. We verify rental policies and adhere to any regulations. Please ensure you understand those restrictions before choosing a dog.\n\n&nbsp;",
+        "isDogsOk": false,
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Moderate",
+        "fenceNeeds": "Any Type",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": true,
+        "name": "Fernanda",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Has Basic Training",
+        "ownerExperience": "None",
+        "pictureCount": 19,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/8099/pictures/animals/10544/10544313/39218935.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "fetches",
+          "doesWellInCar",
+          "intelligent",
+          "lap",
+          "leashtrained",
+          "playful",
+          "playsToys"
+        ],
+        "rescueId": "*",
+        "searchString": "Fernanda Raita Puppy 3   Female Medium *  Dogs Pit Bull Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeCurrent": 55,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-fernanda-pit-bull-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10544313",
+        "videoCount": 0,
+        "videoUrlCount": 1,
+        "isYardRequired": true,
+        "createdDate": "2016-09-08T15:11:13Z",
+        "updatedDate": "2024-12-12T19:59:21Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "179"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000008099"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "8099"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "62068772"
+            },
+            {
+              "type": "pictures",
+              "id": "61361495"
+            },
+            {
+              "type": "pictures",
+              "id": "61361496"
+            },
+            {
+              "type": "pictures",
+              "id": "55219420"
+            },
+            {
+              "type": "pictures",
+              "id": "61361498"
+            },
+            {
+              "type": "pictures",
+              "id": "61361503"
+            },
+            {
+              "type": "pictures",
+              "id": "61361512"
+            },
+            {
+              "type": "pictures",
+              "id": "55348007"
+            },
+            {
+              "type": "pictures",
+              "id": "55348009"
+            },
+            {
+              "type": "pictures",
+              "id": "55348010"
+            },
+            {
+              "type": "pictures",
+              "id": "55402887"
+            },
+            {
+              "type": "pictures",
+              "id": "55348011"
+            },
+            {
+              "type": "pictures",
+              "id": "43447726"
+            },
+            {
+              "type": "pictures",
+              "id": "43447727"
+            },
+            {
+              "type": "pictures",
+              "id": "43213588"
+            },
+            {
+              "type": "pictures",
+              "id": "39218928"
+            },
+            {
+              "type": "pictures",
+              "id": "39218929"
+            },
+            {
+              "type": "pictures",
+              "id": "38759798"
+            },
+            {
+              "type": "pictures",
+              "id": "39218935"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21105894"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10552500",
+      "attributes": {
+        "adoptionFeeString": "300.00",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Young",
+        "ageString": "9 Years 3 Months",
+        "birthDate": "2016-01-04T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Beagle / Brittany",
+        "breedPrimary": "Beagle",
+        "breedPrimaryId": 90,
+        "breedSecondary": "Brittany",
+        "breedSecondaryId": 106,
+        "colorDetails": "Brown with white",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<div dir=\"ltr\"><span class=\"il\">Bella</span>&nbsp;is about 9 years old, but certainly does not act her age! She has been in a loving home for almost 8 years, and is now in need of a home in which the owner is home more often.&nbsp;<span class=\"il\">Bella</span>&nbsp;has been through extensive training, and knows many commands including sit, stay, down, wait, touch, come, place, and crate. &nbsp;She is house-trained, crate trained, and great on a leash. She is up to date on vetting and presently has a clean bill of health. She is great with people and children. She has only been around a baby once, and seemed reserved and a bit scared of her.</div>\n<div dir=\"ltr\">The reason&nbsp;<span class=\"il\">Bella</span>&nbsp;was returned to our rescue is because of her anxiety when left alone for long periods of time. Several medications have been tried, but she may still bark when left alone in her crate. Her foster has one medication which does help her for 2 to 3 hours before she gets anxious. Given her owner moved into a townhouse, and works full time, this will not work with neighbors potentially hearing her barking.&nbsp;</div>\n<div dir=\"ltr\">Presently,&nbsp;<span class=\"il\">Bella</span>&nbsp;stays with one foster, and another one helps if the present foster is gone for a long day and evening. If you are interested in either being her long term foster or adopter, the foster that has her is willing to provide you with support or free boarding for anytime it is needed. This foster lives in Eastern Baltimore County area and says she is just the perfect loving companion for someone who is home most of the time.</div>\n<p><br /> If you are interested in Bella, please contact:</p>\n<p><a> <span>rorrcanine@gmail.com</span> </a> <span>&nbsp;&nbsp; </span></p>\n<p><span style=\"color: black; font-size: 8pt; font-family: georgia, palatino;\"><a href=\"http://www.reachoutrescue.org/info/display?PageID=10360\"> <span style=\"color: black; font-size: 8pt; font-family: georgia, palatino;\">*** Click here to sponsor this dog! ***</span> </a></span></p><img src=\"https://tracker.rescuegroups.org/pet?10552500\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Bella&nbsp;is about 9 years old, but certainly does not act her age! She has been in a loving home for almost 8 years, and is now in need of a home in which the owner is home more often.&nbsp;Bella&nbsp;has been through extensive training, and knows many commands including sit, stay, down, wait, touch, come, place, and crate. &nbsp;She is house-trained, crate trained, and great on a leash. She is up to date on vetting and presently has a clean bill of health. She is great with people and children. She has only been around a baby once, and seemed reserved and a bit scared of her.\nThe reason&nbsp;Bella&nbsp;was returned to our rescue is because of her anxiety when left alone for long periods of time. Several medications have been tried, but she may still bark when left alone in her crate. Her foster has one medication which does help her for 2 to 3 hours before she gets anxious. Given her owner moved into a townhouse, and works full time, this will not work with neighbors potentially hearing her barking.&nbsp;\nPresently,&nbsp;Bella&nbsp;stays with one foster, and another one helps if the present foster is gone for a long day and evening. If you are interested in either being her long term foster or adopter, the foster that has her is willing to provide you with support or free boarding for anytime it is needed. This foster lives in Eastern Baltimore County area and says she is just the perfect loving companion for someone who is home most of the time.\n If you are interested in Bella, please contact:\n rorrcanine@gmail.com  &nbsp;&nbsp; \n *** Click here to sponsor this dog! *** ",
+        "isDogsOk": true,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 1,
+        "isHousetrained": true,
+        "isKidsOk": true,
+        "name": "Bella",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Has Basic Training",
+        "pictureCount": 6,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/4264/pictures/animals/10552/10552500/38813998.jpg?width=100",
+        "qualities": [
+          "cratetrained",
+          "leashtrained"
+        ],
+        "rescueId": "16-146",
+        "searchString": "Bella Jersey Brown with white  Female Medium 16-146 Brown with white Dogs Beagle / Brittanys",
+        "sex": "Female",
+        "sizeCurrent": 33,
+        "sizeGroup": "Medium",
+        "sizePotential": 40,
+        "sizeUOM": "Pounds",
+        "slug": "adopt-bella-beagle-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10552500",
+        "url": "https://reachoutrescue.org/animals/detail?AnimalID=10552500",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Some",
+        "createdDate": "2016-09-10T13:05:32Z",
+        "updatedDate": "2025-04-30T15:52:05Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "90"
+            },
+            {
+              "type": "breeds",
+              "id": "106"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000004264"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "4264"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "100885169"
+            },
+            {
+              "type": "pictures",
+              "id": "100885171"
+            },
+            {
+              "type": "pictures",
+              "id": "100885174"
+            },
+            {
+              "type": "pictures",
+              "id": "100885175"
+            },
+            {
+              "type": "pictures",
+              "id": "38813999"
+            },
+            {
+              "type": "pictures",
+              "id": "38813998"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10558699",
+      "attributes": {
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Adult",
+        "ageString": "9 Years 10 Months",
+        "birthDate": "2015-08-27T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Cattle Dog / Shepherd / Mixed (short coat)",
+        "breedPrimary": "Cattle Dog",
+        "breedPrimaryId": 115,
+        "breedSecondary": "Shepherd",
+        "breedSecondaryId": 411,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p style=\"background-color: rgb(255, 255, 255);\">\n<span style=\"font-size:14px;\">\n<span style=\"font-family:georgia,serif;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">Meet Clyde!</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">You may remember Clyde&rsquo;s sad story of cruelty and neglect.&nbsp; We were shocked when we saw his pictures and heard how he had literally been strangled with a belt by his so called owner.&nbsp; His strangulation caused a massive deep cut all around his neck and caused the blood not be able to circulate resulting in his face ballooning until he was unrecognizable.&nbsp; He was confiscated from his owner and charges are pending.&nbsp; In the meantime, we brought him into our rescue and have nursed him back to health. We could tell he didn&rsquo;t know what it was like to be treated kindly, but after talking to him a bit and giving him love, he started wagging his tail. He is BEYOND sweet!! &nbsp;Check him out <a href=\"https://youtu.be/iG1jSyNjohg\">HERE</a> playing with his friends at daycare!</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">We are happy to report that with the help of the vets, we provided&nbsp;pictures and info on the extent of his injuries to the Harris County DA&#39;s office. His former owner was prosecuted and justice was done!</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">Clyde is about&nbsp;4-5&nbsp;years old and a Cattle Dog mix of sorts.&nbsp; He&rsquo;s&nbsp;friendly and fun-loving but cautious with new people until he knows you mean him no harm.&nbsp; He does great with most other dogs that are medium to large in size.&nbsp; He is high-energy, so he would do best in an active home and with another active dog that can play, and play, and play with him!&nbsp; He&rsquo;s not especially fond of cats, so a home without cats is a must.</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">Clyde is just the sweetest, although he does get his feelings hurts easily when corrected, so he is a quick learner and pleaser.&nbsp; Makes training a piece of cake!</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">Clyde is doing fabulous in his foster home with his 2 canine siblings, but he would really love to find a forever home where he never has to worry again!&nbsp;&nbsp;Contact us at&nbsp;</span>\n<a href=\"mailto:info@scoutshonor.org\" style=\"font-family: arial, sans-serif; font-size: 12.800000190734863px; color: rgb(17, 85, 204);\">info@scoutshonor.org</a> \n<span style=\"color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">if you can help!</span>\n</span>\n</span>\n</p>\n\n<p style=\"background-color: rgb(255, 255, 255);\">\n<span style=\"font-size:14px;\">\n<span style=\"font-family:georgia,serif;\">\n<span style=\"box-sizing: border-box; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255);\">No surprise here in Houston and considering the condition he was in, Clyde&nbsp;is heartworm positive, but don&rsquo;t worry. Scout&rsquo;s Honor is taking care of that for him and if you want to adopt Clyde&nbsp;before he&#39;s all clear (which would be great!) we will continue to cover the expense of his&nbsp;medicine and next heartworm check. We can explain it all but he&#39;s going to&nbsp;be just fine.</span>\n&nbsp; \n<span style=\"color: rgb(59, 45, 29); background-color: rgb(255, 255, 255);\">&nbsp;</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<font color=\"#222222\">Check out Clyde playing with his friends at daycare <a href=\"https://youtu.be/SQsdlMO1-5c\">HERE</a> </font></span>\n</span>\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n<br style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.800000190734863px;\">\n&nbsp;</p>\n\n<div class=\"text_exposed_show\" style=\"font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; font-size: 12px; background-color: rgb(255, 255, 255);\">\n<div>\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">Scout&#39;s Honor Rescue is a 501c3 whose primary focus is rescuing dogs from the euthanasia list from high kill TX shelters.&nbsp;EIN # is 87-0773073<br style=\"color: rgb(77, 71, 81); font-size: 14px;\">\n<br style=\"color: rgb(77, 71, 81); font-size: 14px;\">\nFollow us on Facebook at www.facebook.com/scoutshonorrescue or Instagram at www.instagram.com/scoutshonorrescue</font></span>\n</p>\n\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">We have multiple ways to donate:</font></span>\n</p>\n\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">Venmo:&nbsp; \n<span style=\"color: rgb(59, 45, 29);\">@ScoutsHonor-Rescue</span>\n</font></span>\n</p>\n\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">Paypal: www.paypal.me/scoutshonorrescue</font></span>\n\n<span style=\"font-family: tahoma, sans-serif; font-size: 12px;\">&nbsp;</span>\n</p>\n\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">https://scoutshonor.org/take-action/donate/</font></span>\n</p>\n\n<p style=\"white-space: pre-wrap; background-color: rgb(255, 255, 255); color: rgb(34, 34, 34); font-family: Arial, Helvetica, sans-serif; font-size: small;\">\n<span style=\"font-size: 12px;\"><font face=\"tahoma, sans-serif\">We are strictly volunteer based, no salaries are paid and 100% of donations go towards rescuing dogs</font></span>\n</p>\n</div>\n</div><img src=\"https://tracker.rescuegroups.org/pet?10558699\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\n\n\nMeet Clyde!\n\n\nYou may remember Clyde&rsquo;s sad story of cruelty and neglect.&nbsp; We were shocked when we saw his pictures and heard how he had literally been strangled with a belt by his so called owner.&nbsp; His strangulation caused a massive deep cut all around his neck and caused the blood not be able to circulate resulting in his face ballooning until he was unrecognizable.&nbsp; He was confiscated from his owner and charges are pending.&nbsp; In the meantime, we brought him into our rescue and have nursed him back to health. We could tell he didn&rsquo;t know what it was like to be treated kindly, but after talking to him a bit and giving him love, he started wagging his tail. He is BEYOND sweet!! &nbsp;Check him out HERE playing with his friends at daycare!\n\n\nWe are happy to report that with the help of the vets, we provided&nbsp;pictures and info on the extent of his injuries to the Harris County DA&#39;s office. His former owner was prosecuted and justice was done!\n\n\nClyde is about&nbsp;4-5&nbsp;years old and a Cattle Dog mix of sorts.&nbsp; He&rsquo;s&nbsp;friendly and fun-loving but cautious with new people until he knows you mean him no harm.&nbsp; He does great with most other dogs that are medium to large in size.&nbsp; He is high-energy, so he would do best in an active home and with another active dog that can play, and play, and play with him!&nbsp; He&rsquo;s not especially fond of cats, so a home without cats is a must.\n\n\nClyde is just the sweetest, although he does get his feelings hurts easily when corrected, so he is a quick learner and pleaser.&nbsp; Makes training a piece of cake!\n\n\nClyde is doing fabulous in his foster home with his 2 canine siblings, but he would really love to find a forever home where he never has to worry again!&nbsp;&nbsp;Contact us at&nbsp;\ninfo@scoutshonor.org \nif you can help!\n\n\n\n\n\n\n\nNo surprise here in Houston and considering the condition he was in, Clyde&nbsp;is heartworm positive, but don&rsquo;t worry. Scout&rsquo;s Honor is taking care of that for him and if you want to adopt Clyde&nbsp;before he&#39;s all clear (which would be great!) we will continue to cover the expense of his&nbsp;medicine and next heartworm check. We can explain it all but he&#39;s going to&nbsp;be just fine.\n&nbsp; \n&nbsp;\n\n\nCheck out Clyde playing with his friends at daycare HERE \n\n\n\n&nbsp;\n\n\n\n\nScout&#39;s Honor Rescue is a 501c3 whose primary focus is rescuing dogs from the euthanasia list from high kill TX shelters.&nbsp;EIN # is 87-0773073\n\nFollow us on Facebook at www.facebook.com/scoutshonorrescue or Instagram at www.instagram.com/scoutshonorrescue\n\n\n\nWe have multiple ways to donate:\n\n\n\nVenmo:&nbsp; \n@ScoutsHonor-Rescue\n\n\n\n\nPaypal: www.paypal.me/scoutshonorrescue\n\n&nbsp;\n\n\n\nhttps://scoutshonor.org/take-action/donate/\n\n\n\nWe are strictly volunteer based, no salaries are paid and 100% of donations go towards rescuing dogs\n\n\n",
+        "isDogsOk": true,
+        "energyLevel": "Moderate",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "name": "Clyde",
+        "newPeopleReaction": "Friendly",
+        "pictureCount": 25,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/2426/pictures/animals/10558/10558699/51168167.jpg?width=100",
+        "qualities": [
+          "olderKidsOnly"
+        ],
+        "rescueId": "303",
+        "searchString": "Clyde    Male Medium 303  Dogs Cattle Dog / Shepherd / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-clyde-cattle-dog-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10558699",
+        "videoCount": 1,
+        "videoUrlCount": 1,
+        "createdDate": "2016-09-12T15:51:21Z",
+        "updatedDate": "2025-07-19T05:30:00Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "115"
+            },
+            {
+              "type": "breeds",
+              "id": "411"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000002426"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "2426"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "41188932"
+            },
+            {
+              "type": "pictures",
+              "id": "50068565"
+            },
+            {
+              "type": "pictures",
+              "id": "51168166"
+            },
+            {
+              "type": "pictures",
+              "id": "54884666"
+            },
+            {
+              "type": "pictures",
+              "id": "72934909"
+            },
+            {
+              "type": "pictures",
+              "id": "54884665"
+            },
+            {
+              "type": "pictures",
+              "id": "58841195"
+            },
+            {
+              "type": "pictures",
+              "id": "61085549"
+            },
+            {
+              "type": "pictures",
+              "id": "54884663"
+            },
+            {
+              "type": "pictures",
+              "id": "63413880"
+            },
+            {
+              "type": "pictures",
+              "id": "63413887"
+            },
+            {
+              "type": "pictures",
+              "id": "61085181"
+            },
+            {
+              "type": "pictures",
+              "id": "58841199"
+            },
+            {
+              "type": "pictures",
+              "id": "58841201"
+            },
+            {
+              "type": "pictures",
+              "id": "58841202"
+            },
+            {
+              "type": "pictures",
+              "id": "51168168"
+            },
+            {
+              "type": "pictures",
+              "id": "46809585"
+            },
+            {
+              "type": "pictures",
+              "id": "46809588"
+            },
+            {
+              "type": "pictures",
+              "id": "41188933"
+            },
+            {
+              "type": "pictures",
+              "id": "43614523"
+            },
+            {
+              "type": "pictures",
+              "id": "42573289"
+            },
+            {
+              "type": "pictures",
+              "id": "41188935"
+            },
+            {
+              "type": "pictures",
+              "id": "39074078"
+            },
+            {
+              "type": "pictures",
+              "id": "38867644"
+            },
+            {
+              "type": "pictures",
+              "id": "51168167"
+            }
+          ]
+        },
+        "videos": {
+          "data": [
+            {
+              "type": "videos",
+              "id": "20976282"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21058154"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10574060",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "adoptionFeeString": "200.00",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "10 Years 9 Months",
+        "birthDate": "2014-10-13T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Labrador Retriever / Mixed (short coat)",
+        "breedPrimary": "Labrador Retriever",
+        "breedPrimaryId": 162,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<h3 data-end=\"244\" data-start=\"167\"><strong data-end=\"242\" data-start=\"174\">Meet Chance &ndash; 10 Years Without a Family&hellip; Could You Be His First?</strong></h3>\n\n<p data-end=\"484\" data-start=\"245\"><strong data-end=\"292\" data-start=\"248\">Currently in Texas | Transport Available</strong><br data-end=\"295\" data-start=\"292\">\n<strong data-end=\"315\" data-start=\"298\">Adoption Fee:</strong> $200 for Chance | $200 for Chula | $300 for both<br data-end=\"367\" data-start=\"364\">\n<strong data-end=\"387\" data-start=\"370\">Chance&rsquo;s DOB:</strong> ~2014 | <strong data-end=\"410\" data-start=\"399\">Weight:</strong> 83.6&nbsp;lbs<br data-end=\"422\" data-start=\"419\">\nApply at: <a data-end=\"484\" data-start=\"435\" href=\"http://www.adoggie4you.org\" rel=\"noopener\" target=\"_new\">www.adoggie4you.org</a></p>\n\n<p data-end=\"918\" data-start=\"486\"><strong data-end=\"542\" data-start=\"486\">Can you imagine spending your entire life in rescue?</strong><br data-end=\"545\" data-start=\"542\">\nThat&rsquo;s Chance&rsquo;s reality. Found at just 6 weeks old, the sole survivor of a parvo-stricken litter dumped behind a daycare, <strong data-end=\"734\" data-start=\"667\">Chance beat the odds&mdash;but lost his chance at a normal puppyhood.</strong> His early weeks were spent in hospitals and quarantine, missing critical socialization. While he learned to trust his rescuers, he stayed fearful of strangers, and time passed him by.</p>\n\n<p data-end=\"1239\" data-start=\"920\">But something amazing happened. <strong data-end=\"973\" data-start=\"952\">Chance blossomed.</strong><br data-end=\"976\" data-start=\"973\">\nWith the help of his best friend, Chula, he learned how to walk on leash, explore, play, and even let new people near. He <strong data-end=\"1135\" data-start=\"1098\">adores running beside a golf cart</strong>, exploring the yard, and spending sunny days playing with toys and Chula in the rescue&rsquo;s exercise area.</p>\n\n<p data-end=\"1394\" data-start=\"1241\">Chance is housetrained (never soils his kennel), playful, affectionate once he feels safe, and <strong data-end=\"1393\" data-start=\"1336\">so deserving of a real home after a decade of waiting</strong>.</p>\n\n<p data-end=\"1420\" data-start=\"1396\"><strong data-end=\"1418\" data-start=\"1399\">His Ideal Home:</strong></p>\n\n<ul data-end=\"1638\" data-start=\"1421\">\n<li data-end=\"1488\" data-start=\"1421\">\n<p data-end=\"1488\" data-start=\"1423\">Quiet, adult-only home (no small children, cats, or small dogs)</p>\n</li>\n<li data-end=\"1524\" data-start=\"1489\">\n<p data-end=\"1524\" data-start=\"1491\">Fenced yard to play and explore</p>\n</li>\n<li data-end=\"1586\" data-start=\"1525\">\n<p data-end=\"1586\" data-start=\"1527\">A calm, confident companion dog&mdash;<em data-end=\"1584\" data-start=\"1559\">Chula would be perfect!</em></p>\n</li>\n<li data-end=\"1638\" data-start=\"1587\">\n<p data-end=\"1638\" data-start=\"1589\">Patient adopter willing to give him time and love</p>\n</li>\n</ul>\n\n<p data-end=\"1917\" data-start=\"1640\"><strong data-end=\"1698\" data-start=\"1640\">Chula is also older and well-behaved in a home setting</strong>, making them an incredible pair. While we know it&#39;s rare to adopt two seniors, <strong data-end=\"1853\" data-start=\"1778\">we&rsquo;re offering a reduced adoption fee if you take them both&mdash;$300 total.</strong> They&rsquo;ve spent a lifetime together, and their bond is beautiful.</p>\n\n<p data-end=\"2032\" data-start=\"1919\">✨ <em data-end=\"2005\" data-start=\"1921\">Chance has waited 10 years for someone to see past his shyness and into his heart.</em> Could that someone be you?</p>\n\n<p data-end=\"2149\" data-start=\"2034\">Transport available to WA, OR, Midwest, and East Coast (excluding RI &amp; MA)<br data-end=\"2113\" data-start=\"2110\">\n<strong data-end=\"2134\" data-start=\"2116\">Transport Fee:</strong> $225 if needed</p><img src=\"https://tracker.rescuegroups.org/pet?10574060\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Meet Chance &ndash; 10 Years Without a Family&hellip; Could You Be His First?\n\nCurrently in Texas | Transport Available\nAdoption Fee: $200 for Chance | $200 for Chula | $300 for both\nChance&rsquo;s DOB: ~2014 | Weight: 83.6&nbsp;lbs\nApply at: www.adoggie4you.org\n\nCan you imagine spending your entire life in rescue?\nThat&rsquo;s Chance&rsquo;s reality. Found at just 6 weeks old, the sole survivor of a parvo-stricken litter dumped behind a daycare, Chance beat the odds&mdash;but lost his chance at a normal puppyhood. His early weeks were spent in hospitals and quarantine, missing critical socialization. While he learned to trust his rescuers, he stayed fearful of strangers, and time passed him by.\n\nBut something amazing happened. Chance blossomed.\nWith the help of his best friend, Chula, he learned how to walk on leash, explore, play, and even let new people near. He adores running beside a golf cart, exploring the yard, and spending sunny days playing with toys and Chula in the rescue&rsquo;s exercise area.\n\nChance is housetrained (never soils his kennel), playful, affectionate once he feels safe, and so deserving of a real home after a decade of waiting.\n\nHis Ideal Home:\n\n\n\nQuiet, adult-only home (no small children, cats, or small dogs)\n\n\nFenced yard to play and explore\n\n\nA calm, confident companion dog&mdash;Chula would be perfect!\n\n\nPatient adopter willing to give him time and love\n\n\n\nChula is also older and well-behaved in a home setting, making them an incredible pair. While we know it&#39;s rare to adopt two seniors, we&rsquo;re offering a reduced adoption fee if you take them both&mdash;$300 total. They&rsquo;ve spent a lifetime together, and their bond is beautiful.\n\n✨ Chance has waited 10 years for someone to see past his shyness and into his heart. Could that someone be you?\n\nTransport available to WA, OR, Midwest, and East Coast (excluding RI &amp; MA)\nTransport Fee: $225 if needed",
+        "isDogsOk": true,
+        "energyLevel": "Low",
+        "exerciseNeeds": "Low",
+        "fenceNeeds": "6 foot",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "groomingNeeds": "Not Required",
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor and Outdoor",
+        "isKidsOk": true,
+        "name": "Chance",
+        "newPeopleReaction": "Cautious",
+        "obedienceTraining": "Has Basic Training",
+        "ownerExperience": "None",
+        "pictureCount": 5,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/7929/pictures/animals/10574/10574060/73801314.jpg?width=100",
+        "qualities": [
+          "cratetrained",
+          "fetches",
+          "gentle",
+          "intelligent",
+          "leashtrained",
+          "noSmallDogs",
+          "oKForSeniors",
+          "olderKidsOnly",
+          "playful",
+          "playsToys"
+        ],
+        "rescueId": "16-0010",
+        "searchString": "Chance   Black with White Male Large 16-0010  Dogs Labrador Retriever / Mixed (short coat)s",
+        "sex": "Male",
+        "sheddingLevel": "Moderate",
+        "sizeCurrent": 83.5999984741211,
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-chance-labrador-retriever-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": true,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10574060",
+        "url": "https://ADoggie4You.rescuegroups.org/animals/detail?AnimalID=10574060",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Some",
+        "isYardRequired": true,
+        "createdDate": "2016-09-16T15:21:39Z",
+        "updatedDate": "2025-08-05T15:14:00Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "162"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000007929"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "7929"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "97118763"
+            },
+            {
+              "type": "pictures",
+              "id": "97118767"
+            },
+            {
+              "type": "pictures",
+              "id": "97118773"
+            },
+            {
+              "type": "pictures",
+              "id": "73801312"
+            },
+            {
+              "type": "pictures",
+              "id": "73801314"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10665211",
+      "attributes": {
+        "adoptedDate": "2016-12-03T00:00:00Z",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "8 Years 9 Months",
+        "birthDate": "2016-09-27T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Boxer / Australian Shepherd / Mixed (short coat)",
+        "breedPrimary": "Boxer",
+        "breedPrimaryId": 104,
+        "breedSecondary": "Australian Shepherd",
+        "breedSecondaryId": 86,
+        "isBreedMixed": true,
+        "isCatsOk": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>\n<span style=\"font-family: Georgia, serif; font-size: 14px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal;\">~~For information on our adoption process and/or to submit an adoption application, please visit our website&nbsp;<a href=\"http://www.campchaospuppyrescue.org\">www.campchaospuppyrescue.org</a>~~</span>\n</p>\n\n<p>\n<span style=\"font-family: Georgia, serif; font-size: 14px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal;\">Please Like our Facebook page:&nbsp;<a href=\"http://www.facebook.com/campchaospuppyrescue\">www.facebook.com/campchaospuppyrescue</a></span>\n</p>\n\n<p>\n<span style=\"font-family: Georgia, serif; font-size: 14px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal;\">Watch our Facebook page and/or our website for locations and event details.&nbsp;</span>\n</p>\n\n<p>\n<span style=\"font-family: Georgia, serif; font-size: 14px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal;\">Our adoption fee is $300 for dogs/puppies. We only adopt to MO or IL residents. We do not ship or transport our dogs to other parts of the country.</span>\n</p><img src=\"https://tracker.rescuegroups.org/pet?10665211\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\n~~For information on our adoption process and/or to submit an adoption application, please visit our website&nbsp;www.campchaospuppyrescue.org~~\n\n\n\nPlease Like our Facebook page:&nbsp;www.facebook.com/campchaospuppyrescue\n\n\n\nWatch our Facebook page and/or our website for locations and event details.&nbsp;\n\n\n\nOur adoption fee is $300 for dogs/puppies. We only adopt to MO or IL residents. We do not ship or transport our dogs to other parts of the country.\n",
+        "isDogsOk": true,
+        "exerciseNeeds": "Low",
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": true,
+        "name": "Holly",
+        "pictureCount": 4,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/7947/pictures/animals/10665/10665211/101171229.jpg?width=100",
+        "qualities": [
+          "affectionate",
+          "cratetrained",
+          "gentle",
+          "doesWellInCar",
+          "obedient"
+        ],
+        "rescueId": "2025-053",
+        "searchString": "Holly Nina 2016-430  Black with White Female Large 2025-053  Dogs Boxer / Australian Shepherd / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeCurrent": 42,
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-holly-boxer-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10665211",
+        "url": "https://CampChaosPuppyRescue.rescuegroups.org/animals/detail?AnimalID=10665211",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Quiet",
+        "createdDate": "2016-10-12T15:13:55Z",
+        "updatedDate": "2025-06-28T14:05:21Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "104"
+            },
+            {
+              "type": "breeds",
+              "id": "86"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000007947"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "7947"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "101171227"
+            },
+            {
+              "type": "pictures",
+              "id": "40752876"
+            },
+            {
+              "type": "pictures",
+              "id": "40731951"
+            },
+            {
+              "type": "pictures",
+              "id": "101171229"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10689034",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "Staffordshire Bull Terrier",
+        "breedPrimary": "Staffordshire Bull Terrier",
+        "breedPrimaryId": 207,
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<div>There must be one big hearted person out there who is looking to do a beautiful thing for a beautiful, dear, gentle soul, and love and care for him in his senior years ahead. Even after waiting 7 years for his forever family, Tyson remains very warm, friendly, and sweet. He is a mellow, easy going gentleman, who is a delight to be with. Tyson loves to go for walks and mostly just wants to hang out with his person, giving and receiving lots of love and affection. He is so appreciative of the attention he receives, it simply warms the heart.</div>\n<div>&nbsp;</div>\n<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Tyson is about 12 years old and about</div>\n<div>70 pounds. He is calm and well mannered, and will make a great companion to keep you company throughout the day and on walks. He gets along with other dogs, females more so than males, but is not interested in being a playmate. Won&rsquo;t you consider opening your heart and home to this truly wonderful and well-deserving senior? &nbsp;If so, please put in an application today. Please watch the video at the end of the photos to see Tyson enjoying and appreciating his time with our staff and volunteers.</div>\n<p>&nbsp;</p><img src=\"https://tracker.rescuegroups.org/pet?10689034\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "There must be one big hearted person out there who is looking to do a beautiful thing for a beautiful, dear, gentle soul, and love and care for him in his senior years ahead. Even after waiting 7 years for his forever family, Tyson remains very warm, friendly, and sweet. He is a mellow, easy going gentleman, who is a delight to be with. Tyson loves to go for walks and mostly just wants to hang out with his person, giving and receiving lots of love and affection. He is so appreciative of the attention he receives, it simply warms the heart.\n&nbsp;\n&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Tyson is about 12 years old and about\n70 pounds. He is calm and well mannered, and will make a great companion to keep you company throughout the day and on walks. He gets along with other dogs, females more so than males, but is not interested in being a playmate. Won&rsquo;t you consider opening your heart and home to this truly wonderful and well-deserving senior? &nbsp;If so, please put in an application today. Please watch the video at the end of the photos to see Tyson enjoying and appreciating his time with our staff and volunteers.\n&nbsp;",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isKidsOk": false,
+        "name": "Tyson",
+        "pictureCount": 4,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/3241/pictures/animals/10689/10689034/100823140.jpg?width=100",
+        "searchString": "Tyson    Male Large   Dogs Staffordshire Bull Terriers",
+        "sex": "Male",
+        "sizeGroup": "Large",
+        "slug": "adopt-tyson-staffordshire-bull-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10689034",
+        "videoCount": 1,
+        "videoUrlCount": 1,
+        "createdDate": "2016-10-18T19:58:05Z",
+        "updatedDate": "2025-06-14T22:44:48Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "207"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000003241"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "3241"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "101152906"
+            },
+            {
+              "type": "pictures",
+              "id": "101152907"
+            },
+            {
+              "type": "pictures",
+              "id": "101152908"
+            },
+            {
+              "type": "pictures",
+              "id": "100823140"
+            }
+          ]
+        },
+        "videos": {
+          "data": [
+            {
+              "type": "videos",
+              "id": "21099667"
+            }
+          ]
+        },
+        "videourls": {
+          "data": [
+            {
+              "type": "videourls",
+              "id": "21260504"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10739064",
+      "attributes": {
+        "activityLevel": "Highly Active",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "Bull Terrier (short coat)",
+        "breedPrimary": "Bull Terrier",
+        "breedPrimaryId": 108,
+        "isBreedMixed": false,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "descriptionHtml": "<img src=\"https://tracker.rescuegroups.org/pet?10739064\" width=\"0\" height=\"0\" alt=\"\" />",
+        "energyLevel": "High",
+        "fenceNeeds": "6 foot",
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor Only",
+        "isKidsOk": true,
+        "name": "Kira",
+        "newPeopleReaction": "Friendly",
+        "obedienceTraining": "Needs Training",
+        "ownerExperience": "Breed",
+        "pictureCount": 1,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/2801/pictures/animals/10739/10739064/40867050.jpg?width=100",
+        "searchString": "Kira   Brindle with White Female Medium   Dogs Bull Terrier (short coat)s",
+        "sex": "Female",
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-kira-bull-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10739064",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-11-01T14:00:53Z",
+        "updatedDate": "2022-02-12T05:46:09Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "108"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "27"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000002801"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "2801"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "40867050"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10741126",
+      "attributes": {
+        "adoptionFeeString": "175.00",
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "ageString": "11 Years 3 Months",
+        "birthDate": "2012-09-19T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "Pit Bull Terrier",
+        "breedPrimaryId": 179,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "isDeclawed": false,
+        "descriptionHtml": "<img src=\"https://tracker.rescuegroups.org/pet?10741126\" width=\"0\" height=\"0\" alt=\"\" />",
+        "earType": "Droopy",
+        "eyeColor": "Copper",
+        "fenceNeeds": "Any Type",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor Only",
+        "name": "Gus",
+        "pictureCount": 2,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/6817/pictures/animals/10741/10741126/85953440.jpg?width=100",
+        "rescueId": "96520",
+        "searchString": "Gus Balder  Brown/Chocolate with White  Large 96520  Dogs Pit Bull Terrier / Mixed (short coat)s",
+        "sizeCurrent": 61,
+        "sizeGroup": "Large",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-gus-pit-bull-terrier-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "tailType": "Long",
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10741126",
+        "url": "https://IHADRO.rescuegroups.org/animals/detail?AnimalID=10741126",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "isYardRequired": true,
+        "createdDate": "2016-11-01T20:31:31Z",
+        "updatedDate": "2022-01-26T17:53:06Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "179"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "30"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000006817"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "6817"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "85953410"
+            },
+            {
+              "type": "pictures",
+              "id": "85953440"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10771756",
+      "attributes": {
+        "adoptedDate": "2021-01-25T00:00:00Z",
+        "adoptionFeeString": "300.00",
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "ageString": "6 Years 8 Months",
+        "birthDate": "2016-08-05T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "Pit Bull Terrier",
+        "breedPrimaryId": 179,
+        "isBreedMixed": true,
+        "isCatsOk": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p><strong>Breed: Pit Bull Terrier<br>\nGender: Female<br>\nEstimated Date of Birth: August 5, 2016<br>\nSize:&nbsp; 50 lbs<br>\nLocation: &nbsp;Dallas,&nbsp;GA</strong></p>\n\n<p>\n<span data-mce-mark=\"1\"><strong>RESCUING EMMA</strong></span>\n</p>\n\n<p>Emma was found in the woods at a park in Austell by a kind family. We just so happened to have a foster family available and were able to take little Emma into the Forlorn Family. Emma was adopted and returned as she needs to be the only dog in the home.</p>\n\n<p>\n<span data-mce-mark=\"1\"><strong>ABOUT EMMA</strong></span>\n</p>\n\n<p>Emma is a sweet lady who adores her people and will adorn you with kisses. She is fun, loves to go for hikes, and she walks well on a leash. Emma is also a great swimmer and loves water activities. She loves a good car ride too! Activities are fun, but Emma is also quick to settle and more than happy to relax with the family. This girl is well mannered, listens well, and is not destructive. She is crate trained and housebroken, although she does fine being left out in the living room when alone. She usually sleeps on the couch or dog bed at night. Emma was recently cat tested and she showed no interest in them at all so we think she may be okay in a home with cats.</p>\n\n<p><strong>Our adoption fee is $300. All dogs are current on vaccinations, spayed or neutered, micro-chipped, on heartworm prevention, and are fed top of the line grain-free food.</strong></p><img src=\"https://tracker.rescuegroups.org/pet?10771756\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Breed: Pit Bull Terrier\nGender: Female\nEstimated Date of Birth: August 5, 2016\nSize:&nbsp; 50 lbs\nLocation: &nbsp;Dallas,&nbsp;GA\n\n\nRESCUING EMMA\n\n\nEmma was found in the woods at a park in Austell by a kind family. We just so happened to have a foster family available and were able to take little Emma into the Forlorn Family. Emma was adopted and returned as she needs to be the only dog in the home.\n\n\nABOUT EMMA\n\n\nEmma is a sweet lady who adores her people and will adorn you with kisses. She is fun, loves to go for hikes, and she walks well on a leash. Emma is also a great swimmer and loves water activities. She loves a good car ride too! Activities are fun, but Emma is also quick to settle and more than happy to relax with the family. This girl is well mannered, listens well, and is not destructive. She is crate trained and housebroken, although she does fine being left out in the living room when alone. She usually sleeps on the couch or dog bed at night. Emma was recently cat tested and she showed no interest in them at all so we think she may be okay in a home with cats.\n\nOur adoption fee is $300. All dogs are current on vaccinations, spayed or neutered, micro-chipped, on heartworm prevention, and are fed top of the line grain-free food.",
+        "isDogsOk": false,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": true,
+        "name": "Emma",
+        "pictureCount": 3,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/3715/pictures/animals/10771/10771756/68817103.jpg?width=100",
+        "rescueId": "803 (737) (482)",
+        "searchString": "Emma   Brindle Female Medium 803 (737) (482)  Dogs Pit Bull Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-emma-pit-bull-terrier-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10771756",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-11-09T22:23:22Z",
+        "updatedDate": "2023-04-14T15:33:38Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "179"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "26"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "17070"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "3715"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "68817101"
+            },
+            {
+              "type": "pictures",
+              "id": "68817102"
+            },
+            {
+              "type": "pictures",
+              "id": "68817103"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10778312",
+      "attributes": {
+        "activityLevel": "Moderately Active",
+        "adoptionFeeString": "$100",
+        "isAdoptionPending": false,
+        "adultSexesOk": "All",
+        "ageGroup": "Senior",
+        "ageString": "8 Years 6 Months",
+        "availableDate": "2016-11-06T00:00:00Z",
+        "birthDate": "2016-05-29T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Labrador Retriever / Jack Russell Terrier / Mixed (short coat)",
+        "breedPrimary": "Labrador Retriever",
+        "breedPrimaryId": 162,
+        "breedSecondary": "Jack Russell Terrier",
+        "breedSecondaryId": 157,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<div style=\"font-size: 16px; text-align: justify;\">\n<p class=\"m_-153702964753993639gmail-x_MsoNormal\" style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8px; background-color: rgb(255, 255, 255);\">\n<span style=\"font-size:16px;\">\n<span style=\"font-family:tahoma,geneva,sans-serif;\">Hi, please let me introduce myself, my name is Sarah and I am a Lab/Jack Russell Terrier. I am house trained and crate trained, and love to go on walks and sniff around a securely fenced backyard.&nbsp; Did I tell you that its me that pick all the tomatoes from the plants in the yard ? I am also spayed and have had all of my shots.</span>\n</span>\n</p>\n\n<p class=\"m_-153702964753993639gmail-x_MsoNormal\" style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8px; background-color: rgb(255, 255, 255);\">\n<span style=\"font-size:16px;\">\n<span style=\"font-family:tahoma,geneva,sans-serif;\">Sarah was abused by her first human family, so&nbsp;she finds it hard to trust new people and has fear aggression. It will take time to gain Sarah&#39;s trust and multiple meetings.&nbsp; She needs an owner that can give her guidance (and plenty of treats) in situations when she feels insecure. After meeting a trainer Sarah have improved a lot and she responds to her special verbal command.&nbsp; A training class would be a great adventure for Sarah and her new family. She will excel and perform as an A-student, she likes to learn and is eager to please. Building a relationship with Sarah will be time well spent, once she has overcome her insecurity and fear she is a GREAT active, loyal, and loving dog.&nbsp;</span>\n</span>\n</p>\n\n<p class=\"m_-153702964753993639gmail-x_MsoNormal\" style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8px; background-color: rgb(255, 255, 255);\">\n<span style=\"font-size:16px;\">\n<span style=\"font-family:tahoma,geneva,sans-serif;\">Please come and meet me,&nbsp; I need is a chance to find my permanent home. Older children only pleas</span>\n</span>\ne.&nbsp;</p>\n\n<p class=\"m_-153702964753993639gmail-x_MsoNormal\" style=\"color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.8px; background-color: rgb(255, 255, 255);\">&nbsp;</p>\n\n<p><strong style=\"text-align: justify;\">\n<span style=\"color: #8b4513;\">\n<span style=\"font-family: arial, sans-serif; font-size: 8pt;\">Happy Days Dog and Cat Rescue microchips all dogs and cats before adoption. Microchips are implanted between the shoulder blades and are another form of identification should the animal get lost. The microchips are registered to&nbsp;</span>\n\n<span style=\"font-family: arial, sans-serif; font-size: 8pt;\">Happy Days Dog and Cat Rescue. The adopter&#39;s information is added once the adoption is complete. The adopter is responsible for a $19.99/Year registration&nbsp;fee or a $69.00/Lifetime registration fee to change&nbsp;information.&nbsp;</span>\n\n<span style=\"font-family: arial, sans-serif; font-size: 8pt; background-color: #ffffff;\">Dogs and Cats&nbsp;still need to have collar with tags should they get lost.</span>\n</span>\n</strong></p>\n</div><img src=\"https://tracker.rescuegroups.org/pet?10778312\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "\n\n\nHi, please let me introduce myself, my name is Sarah and I am a Lab/Jack Russell Terrier. I am house trained and crate trained, and love to go on walks and sniff around a securely fenced backyard.&nbsp; Did I tell you that its me that pick all the tomatoes from the plants in the yard ? I am also spayed and have had all of my shots.\n\n\n\n\n\nSarah was abused by her first human family, so&nbsp;she finds it hard to trust new people and has fear aggression. It will take time to gain Sarah&#39;s trust and multiple meetings.&nbsp; She needs an owner that can give her guidance (and plenty of treats) in situations when she feels insecure. After meeting a trainer Sarah have improved a lot and she responds to her special verbal command.&nbsp; A training class would be a great adventure for Sarah and her new family. She will excel and perform as an A-student, she likes to learn and is eager to please. Building a relationship with Sarah will be time well spent, once she has overcome her insecurity and fear she is a GREAT active, loyal, and loving dog.&nbsp;\n\n\n\n\n\nPlease come and meet me,&nbsp; I need is a chance to find my permanent home. Older children only pleas\n\ne.&nbsp;\n\n&nbsp;\n\n\n\nHappy Days Dog and Cat Rescue microchips all dogs and cats before adoption. Microchips are implanted between the shoulder blades and are another form of identification should the animal get lost. The microchips are registered to&nbsp;\n\nHappy Days Dog and Cat Rescue. The adopter&#39;s information is added once the adoption is complete. The adopter is responsible for a $19.99/Year registration&nbsp;fee or a $69.00/Lifetime registration fee to change&nbsp;information.&nbsp;\n\nDogs and Cats&nbsp;still need to have collar with tags should they get lost.\n\n\n",
+        "isDogsOk": true,
+        "earType": "Semi-erect",
+        "energyLevel": "Moderate",
+        "exerciseNeeds": "Moderate",
+        "eyeColor": "Brown",
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor Only",
+        "name": "Sarah",
+        "newPeopleReaction": "Cautious",
+        "pictureCount": 17,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/7921/pictures/animals/10778/10778312/49574577.jpg?width=100",
+        "qualities": [
+          "cratetrained",
+          "timid"
+        ],
+        "rescueId": "D160340",
+        "searchString": "Sarah   Brindle Female Medium D160340  Dogs Labrador Retriever / Jack Russell Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeCurrent": 30,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-sarah-labrador-retriever-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": true,
+        "sponsorshipMinimum": "1.00",
+        "tailType": "Long",
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10778312",
+        "url": "https://hddcr.rescuegroups.org/animals/detail?AnimalID=10778312",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-11-11T03:21:40Z",
+        "updatedDate": "2025-07-19T14:54:22Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "162"
+            },
+            {
+              "type": "breeds",
+              "id": "157"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "26"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000007921"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "7921"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "45289566"
+            },
+            {
+              "type": "pictures",
+              "id": "55662457"
+            },
+            {
+              "type": "pictures",
+              "id": "42136899"
+            },
+            {
+              "type": "pictures",
+              "id": "42136900"
+            },
+            {
+              "type": "pictures",
+              "id": "42135329"
+            },
+            {
+              "type": "pictures",
+              "id": "42135332"
+            },
+            {
+              "type": "pictures",
+              "id": "42135334"
+            },
+            {
+              "type": "pictures",
+              "id": "42021728"
+            },
+            {
+              "type": "pictures",
+              "id": "42136934"
+            },
+            {
+              "type": "pictures",
+              "id": "40353140"
+            },
+            {
+              "type": "pictures",
+              "id": "40353142"
+            },
+            {
+              "type": "pictures",
+              "id": "40353145"
+            },
+            {
+              "type": "pictures",
+              "id": "40353146"
+            },
+            {
+              "type": "pictures",
+              "id": "44533052"
+            },
+            {
+              "type": "pictures",
+              "id": "45289504"
+            },
+            {
+              "type": "pictures",
+              "id": "49574576"
+            },
+            {
+              "type": "pictures",
+              "id": "49574577"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10788558",
+      "attributes": {
+        "activityLevel": "Highly Active",
+        "adoptionFeeString": "175.00",
+        "isAdoptionPending": false,
+        "ageGroup": "Young",
+        "ageString": "7 Years 10 Months",
+        "birthDate": "2016-02-01T00:00:00Z",
+        "isBirthDateExact": true,
+        "breedString": "Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "Pit Bull Terrier",
+        "breedPrimaryId": 179,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "isDeclawed": false,
+        "descriptionHtml": "<p>Hi, my name is Remy and I love to run and play in the yard.&nbsp; I would make a great running partner since I have lots of energy.&nbsp; I&#39;m not a fan of kitties but I do like some dogs, with a slow introduction.&nbsp; I would do best with older kids since I get very excited and might knock the little ones down by accident.&nbsp; I am anxiously looking for my forever home and I hope you are the one that will give me a chance.&nbsp; I am still pretty young and have lots of love to give.&nbsp; Remy&#39;s adoption fee is $175; he is neutered, micro-chipped, and up-to-date on all of his vaccines. If you are interested in meeting Remy, please contact us at adoption@ihadro.org or, you can find an adoption application at www.ihadro.org/form</p><img src=\"https://tracker.rescuegroups.org/pet?10788558\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Hi, my name is Remy and I love to run and play in the yard.&nbsp; I would make a great running partner since I have lots of energy.&nbsp; I&#39;m not a fan of kitties but I do like some dogs, with a slow introduction.&nbsp; I would do best with older kids since I get very excited and might knock the little ones down by accident.&nbsp; I am anxiously looking for my forever home and I hope you are the one that will give me a chance.&nbsp; I am still pretty young and have lots of love to give.&nbsp; Remy&#39;s adoption fee is $175; he is neutered, micro-chipped, and up-to-date on all of his vaccines. If you are interested in meeting Remy, please contact us at adoption@ihadro.org or, you can find an adoption application at www.ihadro.org/form",
+        "earType": "Droopy",
+        "energyLevel": "High",
+        "exerciseNeeds": "High",
+        "fenceNeeds": "Any Type",
+        "isNeedingFoster": true,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "indoorOutdoor": "Indoor Only",
+        "name": "Remy",
+        "pictureCount": 2,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/6817/pictures/animals/10788/10788558/51479723.jpg?width=100",
+        "qualities": [
+          "cratetrained",
+          "leashtrained"
+        ],
+        "rescueId": "97739",
+        "searchString": "Remy   White with Brown or Chocolate Male  97739  Dogs Pit Bull Terrier / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeCurrent": 57,
+        "sizeUOM": "Pounds",
+        "slug": "adopt-remy-pit-bull-terrier-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "tailType": "Long",
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10788558",
+        "url": "https://IHADRO.rescuegroups.org/animals/detail?AnimalID=10788558",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "vocalLevel": "Some",
+        "isYardRequired": true,
+        "createdDate": "2016-11-14T21:52:32Z",
+        "updatedDate": "2021-02-05T22:26:01Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "179"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "40"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000006817"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "6817"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "51479718"
+            },
+            {
+              "type": "pictures",
+              "id": "51479723"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10819783",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "American Staffordshire Terrier / Mixed (short coat)",
+        "breedPrimary": "American Staffordshire Terrier",
+        "breedPrimaryId": 82,
+        "isBreedMixed": true,
+        "isCatsOk": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>Harrison was confiscated from a home where he was being abused with many other dogs and cats. he gets along great with both species...he is a good boy, house trained and well mannered.</p>\n<p>Just amazing how sweet they can be after being treated so badly.</p>\n<p>Look at that face, he is one happy dog!</p><img src=\"https://tracker.rescuegroups.org/pet?10819783\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Harrison was confiscated from a home where he was being abused with many other dogs and cats. he gets along great with both species...he is a good boy, house trained and well mannered.\nJust amazing how sweet they can be after being treated so badly.\nLook at that face, he is one happy dog!",
+        "isDogsOk": true,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "isKidsOk": true,
+        "name": "Harrison",
+        "pictureCount": 1,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/805/pictures/animals/10819/10819783/40669755.jpg?width=100",
+        "searchString": "Harrison   Black with White Male Medium   Dogs American Staffordshire Terrier / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeGroup": "Medium",
+        "slug": "adopt-harrison-american-staffordshire-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10819783",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-11-23T19:16:38Z",
+        "updatedDate": "2016-11-23T19:16:39Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "82"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000000805"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "805"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "40669755"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10819835",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "American Pit Bull Terrier / Mixed (short coat)",
+        "breedPrimary": "American Pit Bull Terrier",
+        "breedPrimaryId": 729,
+        "isBreedMixed": true,
+        "isCatsOk": false,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "descriptionHtml": "<p>Bella Blue is a 2 year old Blue Brindle PitBull Terrier female. She is super friendly with ALL people and only weighs 43lbs. She is house trained, loves car rides enjoys snuggle time with her peeps and is adorable.</p>\n<p>Come on give her a home</p><img src=\"https://tracker.rescuegroups.org/pet?10819835\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Bella Blue is a 2 year old Blue Brindle PitBull Terrier female. She is super friendly with ALL people and only weighs 43lbs. She is house trained, loves car rides enjoys snuggle time with her peeps and is adorable.\nCome on give her a home",
+        "isDogsOk": false,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isKidsOk": true,
+        "name": "Bella Blue",
+        "pictureCount": 1,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/805/pictures/animals/10819/10819835/40670210.jpg?width=100",
+        "searchString": "Bella Blue   Brindle Female Medium   Dogs American Pit Bull Terrier / Mixed (short coat)s",
+        "sex": "Female",
+        "sizeGroup": "Medium",
+        "slug": "adopt-bella-blue-american-pit-bull-terrier-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10819835",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-11-23T19:44:37Z",
+        "updatedDate": "2016-11-23T19:44:44Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "729"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "26"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000000805"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "805"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "40670210"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10882226",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Adult",
+        "isBirthDateExact": false,
+        "breedString": "Shepherd / Australian Cattle Dog/Blue Heeler / Mixed (short coat)",
+        "breedPrimary": "Shepherd",
+        "breedPrimaryId": 411,
+        "breedSecondary": "Australian Cattle Dog/Blue Heeler",
+        "breedSecondaryId": 84,
+        "isBreedMixed": true,
+        "coatLength": "Short",
+        "isCourtesyListing": false,
+        "isCurrentVaccinations": true,
+        "isDeclawed": false,
+        "descriptionHtml": "<p><span style=\"font-family: arial,helvetica,sans-serif; font-size: 12pt;\">DOB: 1/22/2016</span></p>\n<p><span style=\"font-family: arial,helvetica,sans-serif; font-size: 12pt;\"><span><span>Toba is a very sweet boy, loves people; wants to be a lap dog. He is gentle, well mannered, house/leash trained, obeys basic commands. Would be a great companion for a senior citizen, TV buddy, loves to go for walks.&nbsp;&nbsp;</span>Owner had to move in with family after husband died; couldn't have the dogs.&nbsp;</span></span></p><img src=\"https://tracker.rescuegroups.org/pet?10882226\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "DOB: 1/22/2016\nToba is a very sweet boy, loves people; wants to be a lap dog. He is gentle, well mannered, house/leash trained, obeys basic commands. Would be a great companion for a senior citizen, TV buddy, loves to go for walks.&nbsp;&nbsp;Owner had to move in with family after husband died; couldn't have the dogs.&nbsp;",
+        "isDogsOk": true,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "isHousetrained": true,
+        "name": "Toba",
+        "pictureCount": 2,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/618/pictures/animals/10882/10882226/99776207.jpg?width=100",
+        "searchString": "Toba   Black with Brown, Red, Golden, Orange or Chestnut Male Medium   Dogs Shepherd / Australian Cattle Dog/Blue Heeler / Mixed (short coat)s",
+        "sex": "Male",
+        "sizeGroup": "Medium",
+        "slug": "adopt-toba-shepherd-dog",
+        "isSpecialNeeds": false,
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10882226",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-12-12T22:32:11Z",
+        "updatedDate": "2024-10-28T18:20:09Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "411"
+            },
+            {
+              "type": "breeds",
+              "id": "84"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "41"
+            }
+          ]
+        },
+        "patterns": {
+          "data": [
+            {
+              "type": "patterns",
+              "id": "5"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "fosters": {
+          "data": [
+            {
+              "type": "fosters",
+              "id": "2402487"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "23123"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "618"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "99776206"
+            },
+            {
+              "type": "pictures",
+              "id": "99776207"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "animals",
+      "id": "10886637",
+      "attributes": {
+        "isAdoptionPending": false,
+        "ageGroup": "Senior",
+        "ageString": "9 Years 11 Months",
+        "birthDate": "2015-08-19T00:00:00Z",
+        "isBirthDateExact": false,
+        "breedString": "Labrador Retriever / Collie / Mixed (medium coat)",
+        "breedPrimary": "Labrador Retriever",
+        "breedPrimaryId": 162,
+        "breedSecondary": "Collie",
+        "breedSecondaryId": 124,
+        "isBreedMixed": true,
+        "coatLength": "Medium",
+        "isCourtesyListing": false,
+        "descriptionHtml": "Francesca is an energetic and smart girl who loves to be with her people. She can be cautious of new people at first, but once she&#39;s decided that you&#39;re in her circle, she&#39;ll love you forever.  Francesca also loves her toys and after her walks, she likes to curl up on her bed or in a patch of sun with her stuffed teddy bear. She can be nervous with new situations such as entering or exiting new places, but she loves learning new things (clicker training is her favorite game!) and will work through anything with someone that she trusts. This sweet girl would love for you to be her person, so come and meet her today! <br><img src=\"https://tracker.rescuegroups.org/pet?10886637\" width=\"0\" height=\"0\" alt=\"\" />",
+        "descriptionText": "Francesca is an energetic and smart girl who loves to be with her people. She can be cautious of new people at first, but once she&#39;s decided that you&#39;re in her circle, she&#39;ll love you forever.  Francesca also loves her toys and after her walks, she likes to curl up on her bed or in a patch of sun with her stuffed teddy bear. She can be nervous with new situations such as entering or exiting new places, but she loves learning new things (clicker training is her favorite game!) and will work through anything with someone that she trusts. This sweet girl would love for you to be her person, so come and meet her today! ",
+        "isDogsOk": false,
+        "isNeedingFoster": false,
+        "isFound": false,
+        "priority": 10,
+        "name": "Francesca",
+        "pictureCount": 9,
+        "pictureThumbnailUrl": "https://cdn.rescuegroups.org/6685/pictures/animals/10886/10886637/96861236.jpg?width=100",
+        "rescueId": "SVR-24583",
+        "searchString": "Francesca   Black with White Female Medium SVR-24583  Dogs Labrador Retriever / Collie / Mixed (medium coat)s",
+        "sex": "Female",
+        "sizeCurrent": 42.549198150634766,
+        "sizeGroup": "Medium",
+        "sizeUOM": "Pounds",
+        "slug": "adopt-francesca-labrador-retriever-dog",
+        "isSponsorable": false,
+        "trackerimageUrl": "https://tracker.rescuegroups.org/pet?10886637",
+        "videoCount": 0,
+        "videoUrlCount": 0,
+        "createdDate": "2016-12-14T05:22:13Z",
+        "updatedDate": "2025-08-17T00:50:04Z"
+      },
+      "relationships": {
+        "breeds": {
+          "data": [
+            {
+              "type": "breeds",
+              "id": "162"
+            },
+            {
+              "type": "breeds",
+              "id": "124"
+            }
+          ]
+        },
+        "colors": {
+          "data": [
+            {
+              "type": "colors",
+              "id": "25"
+            }
+          ]
+        },
+        "patterns": {
+          "data": [
+            {
+              "type": "patterns",
+              "id": "5"
+            }
+          ]
+        },
+        "species": {
+          "data": [
+            {
+              "type": "species",
+              "id": "8"
+            }
+          ]
+        },
+        "statuses": {
+          "data": [
+            {
+              "type": "statuses",
+              "id": "1"
+            }
+          ]
+        },
+        "locations": {
+          "data": [
+            {
+              "type": "locations",
+              "id": "1000006685"
+            }
+          ]
+        },
+        "orgs": {
+          "data": [
+            {
+              "type": "orgs",
+              "id": "6685"
+            }
+          ]
+        },
+        "pictures": {
+          "data": [
+            {
+              "type": "pictures",
+              "id": "73962825"
+            },
+            {
+              "type": "pictures",
+              "id": "69535599"
+            },
+            {
+              "type": "pictures",
+              "id": "64898613"
+            },
+            {
+              "type": "pictures",
+              "id": "67499728"
+            },
+            {
+              "type": "pictures",
+              "id": "72981550"
+            },
+            {
+              "type": "pictures",
+              "id": "73947729"
+            },
+            {
+              "type": "pictures",
+              "id": "73962824"
+            },
+            {
+              "type": "pictures",
+              "id": "87693846"
+            },
+            {
+              "type": "pictures",
+              "id": "96861236"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "breeds",
+      "id": "162",
+      "attributes": {
+        "name": "Labrador Retriever"
+      },
+      "links": {
+        "self": "/public/animals/breeds/162"
+      }
+    },
+    {
+      "type": "breeds",
+      "id": "151",
+      "attributes": {
+        "name": "Hound"
+      },
+      "links": {
+        "self": "/public/animals/breeds/151"
+      }
+    },
+    {
+      "type": "colors",
+      "id": "25",
+      "attributes": {
+        "name": "Black with White"
+      },
+      "links": {
+        "self": "/public/animals/colors/25"
+      }
+    },
+    {
+      "type": "species",
+      "id": "8",
+      "attributes": {
+        "singular": "Dog",
+        "plural": "Dogs",
+        "youngSingular": "Puppy",
+        "youngPlural": "Puppies"
+      },
+      "links": {
+        "self": "/public/animals/species/8"
+      }
+    },
+    {
+      "type": "statuses",
+      "id": "1",
+      "attributes": {
+        "name": "Available",
+        "description": "Available for Adoption"
+      },
+      "links": {
+        "self": "/public/animals/statuses/1"
+      }
+    },
+    {
+      "type": "locations",
+      "id": "1000000956",
+      "attributes": {
+        "street": "P.O. Box 218",
+        "city": "Rockaway",
+        "state": "NJ",
+        "citystate": "Rockaway, NJ",
+        "postalcode": "07866",
+        "country": "United States",
+        "lat": 40.9577,
+        "lon": -74.4919,
+        "coordinates": "40.9577, -74.4919"
+      }
+    },
+    {
+      "type": "orgs",
+      "id": "956",
+      "attributes": {
+        "name": "Eleventh Hour Rescue",
+        "street": "P.O. Box 218",
+        "city": "Rockaway",
+        "state": "NJ",
+        "postalcode": "07866",
+        "country": "United States",
+        "email": "MainOffice@ehrdogs.org",
+        "url": "http://www.ehrdogs.org",
+        "facebookUrl": "http://www.facebook.com/home.php?#!/pages/Eleventh-Hour-Rescue/152809369832",
+        "services": "Adoptions",
+        "type": "Rescue",
+        "lat": 40.957698822021484,
+        "lon": -74.49189758300781,
+        "coordinates": "40.9577, -74.4919",
+        "citystate": "Rockaway, NJ"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "41624745",
+      "attributes": {
+        "original": {
+          "filesize": 1258633,
+          "resolutionX": 1601,
+          "resolutionY": 2241,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/41624745.jpg"
+        },
+        "large": {
+          "filesize": 1258633,
+          "resolutionX": 500,
+          "resolutionY": 700,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/41624745.jpg?width=500"
+        },
+        "small": {
+          "filesize": 1258633,
+          "resolutionX": 100,
+          "resolutionY": 140,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/41624745.jpg?width=100"
+        },
+        "order": 1,
+        "created": "2017-01-07T22:09:15Z",
+        "updated": "2017-01-07T22:09:17Z"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "63467269",
+      "attributes": {
+        "original": {
+          "filesize": 3638128,
+          "resolutionX": 3019,
+          "resolutionY": 3431,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/63467269.jpg"
+        },
+        "large": {
+          "filesize": 3638128,
+          "resolutionX": 500,
+          "resolutionY": 568,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/63467269.jpg?width=500"
+        },
+        "small": {
+          "filesize": 3638128,
+          "resolutionX": 100,
+          "resolutionY": 114,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/63467269.jpg?width=100"
+        },
+        "order": 2,
+        "created": "2019-01-05T16:42:34Z",
+        "updated": "2019-01-05T16:43:46Z"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "35176991",
+      "attributes": {
+        "original": {
+          "filesize": 659471,
+          "resolutionX": 1640,
+          "resolutionY": 1873,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176991.jpg"
+        },
+        "large": {
+          "filesize": 659471,
+          "resolutionX": 500,
+          "resolutionY": 571,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176991.jpg?width=500"
+        },
+        "small": {
+          "filesize": 659471,
+          "resolutionX": 100,
+          "resolutionY": 114,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176991.jpg?width=100"
+        },
+        "order": 3,
+        "created": "2016-06-02T23:32:55Z",
+        "updated": "2019-01-05T16:43:46Z"
+      }
+    },
+    {
+      "type": "pictures",
+      "id": "35176992",
+      "attributes": {
+        "original": {
+          "filesize": 1013809,
+          "resolutionX": 2800,
+          "resolutionY": 2100,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176992.jpg"
+        },
+        "large": {
+          "filesize": 1013809,
+          "resolutionX": 500,
+          "resolutionY": 375,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176992.jpg?width=500"
+        },
+        "small": {
+          "filesize": 1013809,
+          "resolutionX": 100,
+          "resolutionY": 75,
+          "url": "https://cdn.rescuegroups.org/956/pictures/animals/10072/10072481/35176992.jpg?width=100"
+        },
+        "order": 4,
+        "created": "2016-06-02T23:32:56Z",
+        "updated": "2019-01-05T16:43:41Z"
+      }
+    },
+    {
+      "type": "breeds",
+      "id": "152",
+      "attributes": {
+        "name": "Husky"
+      },
+      "links": {
+        "self": "/public/animals/breeds/152"
+      }
+    },
+    {
+      "type": "breeds",
+      "id": "411",
+      "attributes": {
+        "name": "Shepherd"
+      },
+      "links": {
+        "self": "/public/animals/breeds/411"
+      }
+    },
+    {
+      "type": "colors",
+      "id": "35",
+      "attributes": {
+        "name": "Fawn"
+      },
+      "links": {
+        "self": "/public/animals/colors/35"
+      }
+    },
+    {
+      "type": "locations",
+      "id": "1000008099",
+      "attributes": {
+        "street": "PO Box 821",
+        "phone": "(877) 404-5874",
+        "lat": 34.0244,
+        "lon": -84.2524,
+        "coordinates": "34.0244, -84.2524"
+      }
+    },
+    {
+      "type": "orgs",
+      "id": "8099",
+      "attributes": {
+        "name": "Angels Among Us Pet Rescue",
+        "street": "PO Box 821",
+        "city": "Alpharetta",
+        "state": "GA",
+        "postalcode": "30009",
+        "country": "United States",
+        "phone": "(877) 404-5874",
+        "email": "inquiry@angelsrescue.org",
+        "url": "http://www.angelsrescue.org",
+        "facebookUrl": "http://www.facebook.com/angelsrescue & www.facebook.com/angelsrescue.cats",
+        "adoptionProcess": "Applications can be filled out at www.angelsrescue.org/adopt.  We require all pets in the home (barring medical and age exceptions) to be up to date on vaccinations and spayed/neutered.  ",
+        "about": " Angels Among Us Pet Rescue, Inc. is a 501(c)(3), non-profit, volunteer-based organization dedicated to rescuing dogs and cats from high-kill shelters in North Georgia. It was created in February 2009 by a group of people in the Atlanta area who wanted to do more to save the many adoptable dogs and cats who found themselves on death row in Georgia animal control facilities. Our motto is âRescue One Until There are None.â~/workspace/animal-rescue-donations$ 
