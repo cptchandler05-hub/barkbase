@@ -1,0 +1,2726 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-only.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: ⚙️  enable debug logging with { debug: true }
+🐕 RESCUEGROUPS API TEST SUITE
+📋 Testing with corrected API v5 field names and enhanced filters
+
+🧪 TESTING RESCUEGROUPS API WITH CORRECTED FIELD NAMES
+🎯 This uses the same corrected logic as the main sync script
+
+
+🎯 Testing filter: default
+🦮 Testing RescueGroups filter: default
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalUpdatedDate%5D=%3E2025-05-21&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with default filter (285 included items)
+🔍 Sample dogs from default:
+
+🆔 Animal ID Debug: ID="21140074", Type: string, Length: 8
+🔍 Animal 21140074 has 1 picture references: [ '100111762' ]
+   📸 Found picture 100111762 with URL: null
+🖼️ Animal 21140074: 0 valid pictures found
+   1. CARMELA (ID: 21140074)
+      Size: Medium, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: Black Mouth Cur, Updated: 2025-04-29T19:57:25Z
+      📸 Pictures: 0 found
+         No photos found for ID 21140074
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21140074
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="21781934", Type: string, Length: 8
+🔍 Animal 21781934 has 3 picture references: [ '101573965', '101573966', '101573967' ]
+   📸 Found picture 101573965 with URL: null
+   📸 Found picture 101573966 with URL: null
+   📸 Found picture 101573967 with URL: null
+🖼️ Animal 21781934: 0 valid pictures found
+   2. Xena & Hercules-Bonded Pair (ID: 21781934)
+      Size: Unknown, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: Chihuahua, Updated: 2025-08-13T01:20:09Z
+      📸 Pictures: 0 found
+         No photos found for ID 21781934
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21781934
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate, sex
+
+🆔 Animal ID Debug: ID="21371458", Type: string, Length: 8
+🔍 Animal 21371458 has 4 picture references: [ '100653881', '100653882', '100653884', '100653885' ]
+   📸 Found picture 100653881 with URL: null
+   📸 Found picture 100653882 with URL: null
+   📸 Found picture 100653884 with URL: null
+   📸 Found picture 100653885 with URL: null
+🖼️ Animal 21371458: 0 valid pictures found
+   3. Penelopi (Courtesy Post) (ID: 21371458)
+      Size: Large, Age: Young
+      Special Needs: false, Mixed: true
+      Breed: Boxer, Updated: 2025-03-22T21:09:24Z
+      📸 Pictures: 0 found
+         No photos found for ID 21371458
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21371458
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, descriptionText, createdDate
+✅ Filter "default": 50 dogs, 285 included items
+
+🎯 Testing filter: recent
+🦮 Testing RescueGroups filter: recent
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalUpdatedDate%5D=%3E2025-07-21&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with recent filter (234 included items)
+🔍 Sample dogs from recent:
+
+🆔 Animal ID Debug: ID="21696160", Type: string, Length: 8
+🔍 Animal 21696160 has 1 picture references: [ '101412294' ]
+   📸 Found picture 101412294 with URL: null
+🖼️ Animal 21696160: 0 valid pictures found
+   1. CANDY (ID: 21696160)
+      Size: Small, Age: Young
+      Special Needs: false, Mixed: true
+      Breed: German Shepherd Dog, Updated: 2025-08-01T09:02:59Z
+      📸 Pictures: 0 found
+         No photos found for ID 21696160
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21696160
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="20583117", Type: string, Length: 8
+🔍 Animal 20583117 has 4 picture references: [ '98641469', '98641470', '98641471', '98641472' ]
+   📸 Found picture 98641469 with URL: null
+   📸 Found picture 98641470 with URL: null
+   📸 Found picture 98641471 with URL: null
+   📸 Found picture 98641472 with URL: null
+🖼️ Animal 20583117: 0 valid pictures found
+   2. Malloy (ID: 20583117)
+      Size: Small, Age: Young
+      Special Needs: false, Mixed: false
+      Breed: Pug, Updated: 2025-08-11T05:18:06Z
+      📸 Pictures: 0 found
+         No photos found for ID 20583117
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=20583117
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="21771496", Type: string, Length: 8
+🔍 Animal 21771496 has 1 picture references: [ '101552192' ]
+   📸 Found picture 101552192 with URL: null
+🖼️ Animal 21771496: 0 valid pictures found
+   3. A045546 (ID: 21771496)
+      Size: Small, Age: Young
+      Special Needs: false, Mixed: false
+      Breed: Chihuahua, Updated: 2025-08-10T22:09:22Z
+      📸 Pictures: 0 found
+         No photos found for ID 21771496
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21771496
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate
+✅ Filter "recent": 50 dogs, 234 included items
+
+🎯 Testing filter: large_dogs
+🦮 Testing RescueGroups filter: large_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSizes%5D=Large&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with large_dogs filter (276 included items)
+🔍 Sample dogs from large_dogs:
+
+🆔 Animal ID Debug: ID="21626789", Type: string, Length: 8
+🔍 Animal 21626789 has 1 picture references: [ '101219338' ]
+   📸 Found picture 101219338 with URL: null
+🖼️ Animal 21626789: 0 valid pictures found
+   1. MOI (ID: 21626789)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: false
+      Breed: Siberian Husky, Updated: 2025-06-25T17:43:41Z
+      📸 Pictures: 0 found
+         No photos found for ID 21626789
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21626789
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, createdDate, updatedDate, sex
+
+🆔 Animal ID Debug: ID="12933713", Type: string, Length: 8
+🔍 Animal 12933713 has 2 picture references: [ '56522893', '56522894' ]
+   📸 Found picture 56522893 with URL: null
+   📸 Found picture 56522894 with URL: null
+🖼️ Animal 12933713: 0 valid pictures found
+   2. SOPHIE (ID: 12933713)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Cattle Dog, Updated: 2021-06-15T00:51:10Z
+      📸 Pictures: 0 found
+         No photos found for ID 12933713
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=12933713
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, descriptionText, createdDate
+
+🆔 Animal ID Debug: ID="21745515", Type: string, Length: 8
+🔍 Animal 21745515 has 1 picture references: [ '101488998' ]
+   📸 Found picture 101488998 with URL: null
+🖼️ Animal 21745515: 0 valid pictures found
+   3. PETRA (ID: 21745515)
+      Size: Large, Age: Young
+      Special Needs: false, Mixed: true
+      Breed: German Shepherd Dog, Updated: 2025-08-02T22:59:27Z
+      📸 Pictures: 0 found
+         No photos found for ID 21745515
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21745515
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, createdDate, updatedDate, sex
+✅ Filter "large_dogs": 50 dogs, 276 included items
+
+🎯 Testing filter: small_dogs
+🦮 Testing RescueGroups filter: small_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSizes%5D=Small&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with small_dogs filter (250 included items)
+🔍 Sample dogs from small_dogs:
+
+🆔 Animal ID Debug: ID="19700246", Type: string, Length: 8
+🔍 Animal 19700246 has 1 picture references: [ '95974391' ]
+   📸 Found picture 95974391 with URL: null
+🖼️ Animal 19700246: 0 valid pictures found
+   1. Lorenzo (ID: 19700246)
+      Size: Medium, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: German Shepherd Dog, Updated: 2023-08-28T15:19:11Z
+      📸 Pictures: 0 found
+         No photos found for ID 19700246
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=19700246
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, energyLevel, activityLevel
+
+🆔 Animal ID Debug: ID="21703799", Type: string, Length: 8
+🔍 Animal 21703799 has 6 picture references: [
+  '101388182',
+  '101388183',
+  '101388186',
+  '101388188',
+  '101388190',
+  '101388192'
+]
+   📸 Found picture 101388182 with URL: null
+   📸 Found picture 101388183 with URL: null
+   📸 Found picture 101388186 with URL: null
+   📸 Found picture 101388188 with URL: null
+   📸 Found picture 101388190 with URL: null
+   📸 Found picture 101388192 with URL: null
+🖼️ Animal 21703799: 0 valid pictures found
+   2. Maggie Moo and Sammy (ID: 21703799)
+      Size: Small, Age: Senior
+      Special Needs: false, Mixed: false
+      Breed: Pekingese, Updated: 2025-07-22T14:51:50Z
+      📸 Pictures: 0 found
+         No photos found for ID 21703799
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21703799
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="17187306", Type: string, Length: 8
+🔍 Animal 17187306 has 3 picture references: [ '85898261', '81767650', '85384863' ]
+   📸 Found picture 85898261 with URL: null
+   📸 Found picture 81767650 with URL: null
+   📸 Found picture 85384863 with URL: null
+🖼️ Animal 17187306: 0 valid pictures found
+   3. Satou (ID: 17187306)
+      Size: Large, Age: Adult
+      Special Needs: false, Mixed: false
+      Breed: Akita, Updated: 2024-09-25T02:51:41Z
+      📸 Pictures: 0 found
+         No photos found for ID 17187306
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=17187306
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, descriptionHtml, descriptionText, createdDate, updatedDate, sex
+✅ Filter "small_dogs": 50 dogs, 250 included items
+
+🎯 Testing filter: seniors
+🦮 Testing RescueGroups filter: seniors
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalGeneralAge%5D=Senior&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with seniors filter (263 included items)
+🔍 Sample dogs from seniors:
+
+🆔 Animal ID Debug: ID="21740242", Type: string, Length: 8
+🔍 Animal 21740242 has 1 picture references: [ '101478966' ]
+   📸 Found picture 101478966 with URL: null
+🖼️ Animal 21740242: 0 valid pictures found
+   1. A162368 (ID: 21740242)
+      Size: Medium, Age: Young
+      Special Needs: false, Mixed: false
+      Breed: Chihuahua, Updated: 2025-08-21T16:57:05Z
+      📸 Pictures: 0 found
+         No photos found for ID 21740242
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21740242
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, createdDate, updatedDate, sex
+
+🆔 Animal ID Debug: ID="21765865", Type: string, Length: 8
+🔍 Animal 21765865 has 1 picture references: [ '101572077' ]
+   📸 Found picture 101572077 with URL: null
+🖼️ Animal 21765865: 0 valid pictures found
+   2. BENTLEY (ID: 21765865)
+      Size: Large, Age: Young
+      Special Needs: false, Mixed: true
+      Breed: Pit Bull Terrier, Updated: 2025-08-15T16:44:55Z
+      📸 Pictures: 0 found
+         No photos found for ID 21765865
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21765865
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="21774255", Type: string, Length: 8
+🔍 Animal 21774255 has 1 picture references: [ '101558733' ]
+   📸 Found picture 101558733 with URL: null
+🖼️ Animal 21774255: 0 valid pictures found
+   3. *RIKA (ID: 21774255)
+      Size: Small, Age: Young
+      Special Needs: false, Mixed: true
+      Breed: Pit Bull Terrier, Updated: 2025-08-11T21:05:35Z
+      📸 Pictures: 0 found
+         No photos found for ID 21774255
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21774255
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, createdDate, updatedDate, sex
+✅ Filter "seniors": 50 dogs, 263 included items
+
+🎯 Testing filter: special_needs
+🦮 Testing RescueGroups filter: special_needs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSpecialneeds%5D=true&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with special_needs filter (237 included items)
+🔍 Sample dogs from special_needs:
+
+🆔 Animal ID Debug: ID="21747278", Type: string, Length: 8
+🔍 Animal 21747278 has 1 picture references: [ '101493605' ]
+   📸 Found picture 101493605 with URL: null
+🖼️ Animal 21747278: 0 valid pictures found
+   1. Jim Bob - FOSTER URGENTLY NEEDED!!! (ID: 21747278)
+      Size: Small, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: Terrier, Updated: 2025-08-03T18:58:25Z
+      📸 Pictures: 0 found
+         No photos found for ID 21747278
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21747278
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, descriptionText, createdDate
+
+🆔 Animal ID Debug: ID="21444247", Type: string, Length: 8
+🖼️ No picture references found for animal 21444247
+   2. Mac (ID: 21444247)
+      Size: X-Large, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: English Mastiff, Updated: 2025-04-18T21:09:23Z
+      📸 Pictures: 0 found
+         No photos found for ID 21444247
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21444247
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, descriptionText, createdDate
+
+🆔 Animal ID Debug: ID="21564860", Type: string, Length: 8
+🔍 Animal 21564860 has 1 picture references: [ '101103420' ]
+   📸 Found picture 101103420 with URL: null
+🖼️ Animal 21564860: 0 valid pictures found
+   3. MARGOT (ID: 21564860)
+      Size: Small, Age: Adult
+      Special Needs: false, Mixed: false
+      Breed: Yorkshire Terrier Yorkie, Updated: 2025-06-06T21:03:59Z
+      📸 Pictures: 0 found
+         No photos found for ID 21564860
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21564860
+      📝 Description: None (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, createdDate, updatedDate, sex
+✅ Filter "special_needs": 50 dogs, 237 included items
+
+🎯 Testing filter: puppies
+🦮 Testing RescueGroups filter: puppies
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalGeneralAge%5D=Baby&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with puppies filter (254 included items)
+🔍 Sample dogs from puppies:
+
+🆔 Animal ID Debug: ID="21721739", Type: string, Length: 8
+🔍 Animal 21721739 has 1 picture references: [ '101431225' ]
+   📸 Found picture 101431225 with URL: null
+🖼️ Animal 21721739: 0 valid pictures found
+   1. Dumpling (Ritzy) (ID: 21721739)
+      Size: Small, Age: Adult
+      Special Needs: false, Mixed: false
+      Breed: Pug, Updated: 2025-07-27T01:54:08Z
+      📸 Pictures: 0 found
+         No photos found for ID 21721739
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21721739
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, descriptionHtml, descriptionText, activityLevel, createdDate, updatedDate
+
+🆔 Animal ID Debug: ID="16238928", Type: string, Length: 8
+🔍 Animal 16238928 has 5 picture references: [ '100994885', '90937814', '80588571', '75339331', '75422006' ]
+   📸 Found picture 100994885 with URL: null
+   📸 Found picture 90937814 with URL: null
+   📸 Found picture 80588571 with URL: null
+   📸 Found picture 75339331 with URL: null
+   📸 Found picture 75422006 with URL: null
+🖼️ Animal 16238928: 0 valid pictures found
+   2. Amtrak (ID: 16238928)
+      Size: Unknown, Age: Adult
+      Special Needs: false, Mixed: false
+      Breed: Siberian Husky, Updated: 2025-05-19T15:02:37Z
+      📸 Pictures: 0 found
+         No photos found for ID 16238928
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=16238928
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, breedPrimary, descriptionHtml, descriptionText, createdDate, updatedDate, sex, isAdoptionPending
+
+🆔 Animal ID Debug: ID="21139151", Type: string, Length: 8
+🔍 Animal 21139151 has 3 picture references: [ '100455891', '100455894', '100110188' ]
+   📸 Found picture 100455891 with URL: null
+   📸 Found picture 100455894 with URL: null
+   📸 Found picture 100110188 with URL: null
+🖼️ Animal 21139151: 0 valid pictures found
+   3. Sable (ID: 21139151)
+      Size: Medium, Age: Adult
+      Special Needs: false, Mixed: true
+      Breed: Collie, Updated: 2025-02-16T17:30:19Z
+      📸 Pictures: 0 found
+         No photos found for ID 21139151
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21139151
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, energyLevel, createdDate
+✅ Filter "puppies": 50 dogs, 254 included items
+
+🎯 Testing filter: mixed_breeds
+🦮 Testing RescueGroups filter: mixed_breeds
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalBreedMixed%5D=true&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionHtml%2CdescriptionText%2CenergyLevel%2CactivityLevel%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2CspecialNeeds%2CadoptionFeeString%2CisAdoptionPending&fields%5Bpictures%5D=id%2Curl%2Curl_large%2Curl_original%2Curl_small%2Corder&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with mixed_breeds filter (282 included items)
+🔍 Sample dogs from mixed_breeds:
+
+🆔 Animal ID Debug: ID="21794626", Type: string, Length: 8
+🔍 Animal 21794626 has 3 picture references: [ '101603213', '101603214', '101603215' ]
+   📸 Found picture 101603213 with URL: null
+   📸 Found picture 101603214 with URL: null
+   📸 Found picture 101603215 with URL: null
+🖼️ Animal 21794626: 0 valid pictures found
+   1. Danny Kay (ID: 21794626)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: true
+      Breed: Terrier, Updated: 2025-08-17T17:51:33Z
+      📸 Pictures: 0 found
+         No photos found for ID 21794626
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21794626
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate, sex, isAdoptionPending
+
+🆔 Animal ID Debug: ID="20070973", Type: string, Length: 8
+🔍 Animal 20070973 has 4 picture references: [ '97439884', '97457507', '97457509', '97457512' ]
+   📸 Found picture 97439884 with URL: null
+   📸 Found picture 97457507 with URL: null
+   📸 Found picture 97457509 with URL: null
+   📸 Found picture 97457512 with URL: null
+🖼️ Animal 20070973: 0 valid pictures found
+   2. Bambi (ID: 20070973)
+      Size: Small, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Maltese, Updated: 2024-01-05T04:06:08Z
+      📸 Pictures: 0 found
+         No photos found for ID 20070973
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=20070973
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionHtml, descriptionText, createdDate
+
+🆔 Animal ID Debug: ID="21360426", Type: string, Length: 8
+🔍 Animal 21360426 has 8 picture references: [
+  '100630114',
+  '100630104',
+  '100630105',
+  '100630107',
+  '100630106',
+  '100630111',
+  '100630112',
+  '100630113'
+]
+   📸 Found picture 100630114 with URL: null
+   📸 Found picture 100630104 with URL: null
+   📸 Found picture 100630105 with URL: null
+   📸 Found picture 100630107 with URL: null
+   📸 Found picture 100630106 with URL: null
+   📸 Found picture 100630111 with URL: null
+   📸 Found picture 100630112 with URL: null
+   📸 Found picture 100630113 with URL: null
+🖼️ Animal 21360426: 0 valid pictures found
+   3. Russell (ID: 21360426)
+      Size: X-Large, Age: Young
+      Special Needs: false, Mixed: false
+      Breed: Cane Corso Mastiff, Updated: 2025-03-19T03:55:10Z
+      📸 Pictures: 0 found
+         No photos found for ID 21360426
+      🔗 Profile URL: https://www.rescuegroups.org/animals/detail?AnimalID=21360426
+      📝 Description: Available (HTML: Available)
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary, descriptionHtml, descriptionText, activityLevel, createdDate, updatedDate
+✅ Filter "mixed_breeds": 50 dogs, 282 included items
+
+📊 RESCUEGROUPS TEST RESULTS:
+   API requests made: 8
+   Total dog instances: 400
+   Unique dogs: 398
+   Duplicates removed: 2
+   Duplication rate: 0.5%
+🔍 Animal 21140074 has 1 picture references: [ '100111762' ]
+   📸 Found picture 100111762 with URL: null
+🖼️ Animal 21140074: 0 valid pictures found
+🔍 Animal 21781934 has 3 picture references: [ '101573965', '101573966', '101573967' ]
+   📸 Found picture 101573965 with URL: null
+   📸 Found picture 101573966 with URL: null
+   📸 Found picture 101573967 with URL: null
+🖼️ Animal 21781934: 0 valid pictures found
+🔍 Animal 21371458 has 4 picture references: [ '100653881', '100653882', '100653884', '100653885' ]
+   📸 Found picture 100653881 with URL: null
+   📸 Found picture 100653882 with URL: null
+   📸 Found picture 100653884 with URL: null
+   📸 Found picture 100653885 with URL: null
+🖼️ Animal 21371458: 0 valid pictures found
+🔍 Animal 10399885 has 4 picture references: [ '37590655', '37651609', '37651610', '37651613' ]
+   📸 Found picture 37590655 with URL: null
+   📸 Found picture 37651609 with URL: null
+   📸 Found picture 37651610 with URL: null
+   📸 Found picture 37651613 with URL: null
+🖼️ Animal 10399885: 0 valid pictures found
+🔍 Animal 21751490 has 1 picture references: [ '101519293' ]
+   📸 Found picture 101519293 with URL: null
+🖼️ Animal 21751490: 0 valid pictures found
+🔍 Animal 21805585 has 1 picture references: [ '101629324' ]
+   📸 Found picture 101629324 with URL: null
+🖼️ Animal 21805585: 0 valid pictures found
+🔍 Animal 20532748 has 1 picture references: [ '101365703' ]
+   📸 Found picture 101365703 with URL: null
+🖼️ Animal 20532748: 0 valid pictures found
+🔍 Animal 21779384 has 1 picture references: [ '101569348' ]
+   📸 Found picture 101569348 with URL: null
+🖼️ Animal 21779384: 0 valid pictures found
+🔍 Animal 21426878 has 2 picture references: [ '100785122', '100785123' ]
+   📸 Found picture 100785122 with URL: null
+   📸 Found picture 100785123 with URL: null
+🖼️ Animal 21426878: 0 valid pictures found
+🔍 Animal 21785704 has 4 picture references: [ '101582923', '101582924', '101582926', '101582927' ]
+   📸 Found picture 101582923 with URL: null
+   📸 Found picture 101582924 with URL: null
+   📸 Found picture 101582926 with URL: null
+   📸 Found picture 101582927 with URL: null
+🖼️ Animal 21785704: 0 valid pictures found
+🔍 Animal 21693208 has 4 picture references: [ '101364108', '101364109', '101364110', '101364111' ]
+   📸 Found picture 101364108 with URL: null
+   📸 Found picture 101364109 with URL: null
+   📸 Found picture 101364110 with URL: null
+   📸 Found picture 101364111 with URL: null
+🖼️ Animal 21693208: 0 valid pictures found
+🔍 Animal 19032707 has 4 picture references: [ '94947447', '94947449', '94947450', '94947452' ]
+   📸 Found picture 94947447 with URL: null
+   📸 Found picture 94947449 with URL: null
+   📸 Found picture 94947450 with URL: null
+   📸 Found picture 94947452 with URL: null
+🖼️ Animal 19032707: 0 valid pictures found
+🔍 Animal 21799684 has 1 picture references: [ '101628980' ]
+   📸 Found picture 101628980 with URL: null
+🖼️ Animal 21799684: 0 valid pictures found
+🔍 Animal 21672118 has 8 picture references: [
+  '101346468',
+  '101346486',
+  '101332426',
+  '101332429',
+  '101332430',
+  '101332431',
+  '101315903',
+  '101315904'
+]
+   📸 Found picture 101346468 with URL: null
+   📸 Found picture 101346486 with URL: null
+   📸 Found picture 101332426 with URL: null
+   📸 Found picture 101332429 with URL: null
+   📸 Found picture 101332430 with URL: null
+   📸 Found picture 101332431 with URL: null
+   📸 Found picture 101315903 with URL: null
+   📸 Found picture 101315904 with URL: null
+🖼️ Animal 21672118: 0 valid pictures found
+🔍 Animal 17494730 has 4 picture references: [ '91048015', '84263143', '84263144', '86008278' ]
+   📸 Found picture 91048015 with URL: null
+   📸 Found picture 84263143 with URL: null
+   📸 Found picture 84263144 with URL: null
+   📸 Found picture 86008278 with URL: null
+🖼️ Animal 17494730: 0 valid pictures found
+🔍 Animal 21649923 has 5 picture references: [ '101535620', '101535631', '101535643', '101535652', '101535658' ]
+   📸 Found picture 101535620 with URL: null
+   📸 Found picture 101535631 with URL: null
+   📸 Found picture 101535643 with URL: null
+   📸 Found picture 101535652 with URL: null
+   📸 Found picture 101535658 with URL: null
+🖼️ Animal 21649923: 0 valid pictures found
+🔍 Animal 21161537 has 1 picture references: [ '100207174' ]
+   📸 Found picture 100207174 with URL: null
+🖼️ Animal 21161537: 0 valid pictures found
+🔍 Animal 21783890 has 1 picture references: [ '101578743' ]
+   📸 Found picture 101578743 with URL: null
+🖼️ Animal 21783890: 0 valid pictures found
+🔍 Animal 21738530 has 6 picture references: [
+  '101473964',
+  '101473965',
+  '101473966',
+  '101473967',
+  '101473969',
+  '101473970'
+]
+   📸 Found picture 101473964 with URL: null
+   📸 Found picture 101473965 with URL: null
+   📸 Found picture 101473966 with URL: null
+   📸 Found picture 101473967 with URL: null
+   📸 Found picture 101473969 with URL: null
+   📸 Found picture 101473970 with URL: null
+🖼️ Animal 21738530: 0 valid pictures found
+🔍 Animal 21745039 has 1 picture references: [ '101488526' ]
+   📸 Found picture 101488526 with URL: null
+🖼️ Animal 21745039: 0 valid pictures found
+🔍 Animal 21760784 has 1 picture references: [ '101625741' ]
+   📸 Found picture 101625741 with URL: null
+🖼️ Animal 21760784: 0 valid pictures found
+🔍 Animal 20981795 has 3 picture references: [ '100377174', '99732425', '99732423' ]
+   📸 Found picture 100377174 with URL: null
+   📸 Found picture 99732425 with URL: null
+   📸 Found picture 99732423 with URL: null
+🖼️ Animal 20981795: 0 valid pictures found
+🔍 Animal 21795923 has 1 picture references: [ '101606836' ]
+   📸 Found picture 101606836 with URL: null
+🖼️ Animal 21795923: 0 valid pictures found
+🔍 Animal 19383656 has 25 picture references: [
+  '94733405', '95184098', '95184099',
+  '95184100', '95184101', '95184102',
+  '97636872', '97636876', '97636878',
+  '97636879', '97636880', '97636881',
+  '97636882', '97636883', '97636884',
+  '97636885', '97636886', '97636887',
+  '97636888', '97636889', '97636890',
+  '97646042', '97646043', '97646044',
+  '97646046'
+]
+   📸 Found picture 94733405 with URL: null
+   📸 Found picture 95184098 with URL: null
+   📸 Found picture 95184099 with URL: null
+   📸 Found picture 95184100 with URL: null
+   📸 Found picture 95184101 with URL: null
+   📸 Found picture 95184102 with URL: null
+   📸 Found picture 97636872 with URL: null
+   📸 Found picture 97636876 with URL: null
+   📸 Found picture 97636878 with URL: null
+   📸 Found picture 97636879 with URL: null
+   📸 Found picture 97636880 with URL: null
+   📸 Found picture 97636881 with URL: null
+   📸 Found picture 97636882 with URL: null
+   📸 Found picture 97636883 with URL: null
+   📸 Found picture 97636884 with URL: null
+   📸 Found picture 97636885 with URL: null
+   📸 Found picture 97636886 with URL: null
+   📸 Found picture 97636887 with URL: null
+   📸 Found picture 97636888 with URL: null
+   📸 Found picture 97636889 with URL: null
+   📸 Found picture 97636890 with URL: null
+   📸 Found picture 97646042 with URL: null
+   📸 Found picture 97646043 with URL: null
+   📸 Found picture 97646044 with URL: null
+   📸 Found picture 97646046 with URL: null
+🖼️ Animal 19383656: 0 valid pictures found
+🔍 Animal 21802070 has 1 picture references: [ '101620476' ]
+   📸 Found picture 101620476 with URL: null
+🖼️ Animal 21802070: 0 valid pictures found
+🔍 Animal 21760763 has 3 picture references: [ '101525798', '101525799', '101525801' ]
+   📸 Found picture 101525798 with URL: null
+   📸 Found picture 101525799 with URL: null
+   📸 Found picture 101525801 with URL: null
+🖼️ Animal 21760763: 0 valid pictures found
+🔍 Animal 21790294 has 1 picture references: [ '101593243' ]
+   📸 Found picture 101593243 with URL: null
+🖼️ Animal 21790294: 0 valid pictures found
+🔍 Animal 20610641 has 3 picture references: [ '99400520', '99400536', '98960880' ]
+   📸 Found picture 99400520 with URL: null
+   📸 Found picture 99400536 with URL: null
+   📸 Found picture 98960880 with URL: null
+🖼️ Animal 20610641: 0 valid pictures found
+🔍 Animal 21630062 has 1 picture references: [ '101226369' ]
+   📸 Found picture 101226369 with URL: null
+🖼️ Animal 21630062: 0 valid pictures found
+🔍 Animal 21363242 has 4 picture references: [ '100637270', '100637271', '100637272', '100637273' ]
+   📸 Found picture 100637270 with URL: null
+   📸 Found picture 100637271 with URL: null
+   📸 Found picture 100637272 with URL: null
+   📸 Found picture 100637273 with URL: null
+🖼️ Animal 21363242: 0 valid pictures found
+🔍 Animal 21458731 has 2 picture references: [ '100855284', '100855285' ]
+   📸 Found picture 100855284 with URL: null
+   📸 Found picture 100855285 with URL: null
+🖼️ Animal 21458731: 0 valid pictures found
+🔍 Animal 19262092 has 20 picture references: [
+  '96076978', '94004635',
+  '94004636', '94004637',
+  '94007302', '94063395',
+  '94063397', '94063398',
+  '94063399', '94063400',
+  '96076979', '96867035',
+  '96867036', '97591573',
+  '97591574', '97591575',
+  '97591576', '97591577',
+  '97591578', '100378906'
+]
+   📸 Found picture 96076978 with URL: null
+   📸 Found picture 94004635 with URL: null
+   📸 Found picture 94004636 with URL: null
+   📸 Found picture 94004637 with URL: null
+   📸 Found picture 94007302 with URL: null
+   📸 Found picture 94063395 with URL: null
+   📸 Found picture 94063397 with URL: null
+   📸 Found picture 94063398 with URL: null
+   📸 Found picture 94063399 with URL: null
+   📸 Found picture 94063400 with URL: null
+   📸 Found picture 96076979 with URL: null
+   📸 Found picture 96867035 with URL: null
+   📸 Found picture 96867036 with URL: null
+   📸 Found picture 97591573 with URL: null
+   📸 Found picture 97591574 with URL: null
+   📸 Found picture 97591575 with URL: null
+   📸 Found picture 97591576 with URL: null
+   📸 Found picture 97591577 with URL: null
+   📸 Found picture 97591578 with URL: null
+   📸 Found picture 100378906 with URL: null
+🖼️ Animal 19262092: 0 valid pictures found
+🔍 Animal 19452549 has 1 picture references: [ '94886319' ]
+   📸 Found picture 94886319 with URL: null
+🖼️ Animal 19452549: 0 valid pictures found
+🔍 Animal 21779089 has 4 picture references: [ '101568225', '101568226', '101568227', '101568228' ]
+   📸 Found picture 101568225 with URL: null
+   📸 Found picture 101568226 with URL: null
+   📸 Found picture 101568227 with URL: null
+   📸 Found picture 101568228 with URL: null
+🖼️ Animal 21779089: 0 valid pictures found
+🔍 Animal 21778251 has 1 picture references: [ '101565921' ]
+   📸 Found picture 101565921 with URL: null
+🖼️ Animal 21778251: 0 valid pictures found
+🔍 Animal 21713224 has 4 picture references: [ '101622312', '101622313', '101622314', '101622315' ]
+   📸 Found picture 101622312 with URL: null
+   📸 Found picture 101622313 with URL: null
+   📸 Found picture 101622314 with URL: null
+   📸 Found picture 101622315 with URL: null
+🖼️ Animal 21713224: 0 valid pictures found
+🔍 Animal 21793263 has 1 picture references: [ '101599220' ]
+   📸 Found picture 101599220 with URL: null
+🖼️ Animal 21793263: 0 valid pictures found
+🔍 Animal 21709162 has 1 picture references: [ '101405031' ]
+   📸 Found picture 101405031 with URL: null
+🖼️ Animal 21709162: 0 valid pictures found
+🔍 Animal 21806544 has 1 picture references: [ '101631241' ]
+   📸 Found picture 101631241 with URL: null
+🖼️ Animal 21806544: 0 valid pictures found
+🔍 Animal 21652128 has 4 picture references: [ '101567665', '101567666', '101567667', '101567668' ]
+   📸 Found picture 101567665 with URL: null
+   📸 Found picture 101567666 with URL: null
+   📸 Found picture 101567667 with URL: null
+   📸 Found picture 101567668 with URL: null
+🖼️ Animal 21652128: 0 valid pictures found
+🖼️ No picture references found for animal 21725910
+🔍 Animal 20863326 has 3 picture references: [ '99428991', '99428993', '99428994' ]
+   📸 Found picture 99428991 with URL: null
+   📸 Found picture 99428993 with URL: null
+   📸 Found picture 99428994 with URL: null
+🖼️ Animal 20863326: 0 valid pictures found
+🔍 Animal 20168514 has 4 picture references: [ '101605931', '101605932', '101605933', '101605934' ]
+   📸 Found picture 101605931 with URL: null
+   📸 Found picture 101605932 with URL: null
+   📸 Found picture 101605933 with URL: null
+   📸 Found picture 101605934 with URL: null
+🖼️ Animal 20168514: 0 valid pictures found
+🔍 Animal 21794119 has 2 picture references: [ '101601991', '101601992' ]
+   📸 Found picture 101601991 with URL: null
+   📸 Found picture 101601992 with URL: null
+🖼️ Animal 21794119: 0 valid pictures found
+🔍 Animal 21626557 has 4 picture references: [ '101239049', '101218515', '101239047', '101239048' ]
+   📸 Found picture 101239049 with URL: null
+   📸 Found picture 101218515 with URL: null
+   📸 Found picture 101239047 with URL: null
+   📸 Found picture 101239048 with URL: null
+🖼️ Animal 21626557: 0 valid pictures found
+🔍 Animal 21501877 has 1 picture references: [ '101489880' ]
+   📸 Found picture 101489880 with URL: null
+🖼️ Animal 21501877: 0 valid pictures found
+🔍 Animal 21802609 has 4 picture references: [ '101632685', '101632686', '101632687', '101632688' ]
+   📸 Found picture 101632685 with URL: null
+   📸 Found picture 101632686 with URL: null
+   📸 Found picture 101632687 with URL: null
+   📸 Found picture 101632688 with URL: null
+🖼️ Animal 21802609: 0 valid pictures found
+🔍 Animal 21754537 has 1 picture references: [ '101511332' ]
+   📸 Found picture 101511332 with URL: null
+🖼️ Animal 21754537: 0 valid pictures found
+🔍 Animal 21768089 has 1 picture references: [ '101544558' ]
+   📸 Found picture 101544558 with URL: null
+🖼️ Animal 21768089: 0 valid pictures found
+🔍 Animal 21722353 has 4 picture references: [ '101618946', '101608295', '101608296', '101486444' ]
+   📸 Found picture 101618946 with URL: null
+   📸 Found picture 101608295 with URL: null
+   📸 Found picture 101608296 with URL: null
+   📸 Found picture 101486444 with URL: null
+🖼️ Animal 21722353: 0 valid pictures found
+🔍 Animal 21696160 has 1 picture references: [ '101412294' ]
+   📸 Found picture 101412294 with URL: null
+🖼️ Animal 21696160: 0 valid pictures found
+🔍 Animal 20583117 has 4 picture references: [ '98641469', '98641470', '98641471', '98641472' ]
+   📸 Found picture 98641469 with URL: null
+   📸 Found picture 98641470 with URL: null
+   📸 Found picture 98641471 with URL: null
+   📸 Found picture 98641472 with URL: null
+🖼️ Animal 20583117: 0 valid pictures found
+🔍 Animal 21771496 has 1 picture references: [ '101552192' ]
+   📸 Found picture 101552192 with URL: null
+🖼️ Animal 21771496: 0 valid pictures found
+🔍 Animal 21672230 has 4 picture references: [ '101613254', '101613255', '101613256', '101613257' ]
+   📸 Found picture 101613254 with URL: null
+   📸 Found picture 101613255 with URL: null
+   📸 Found picture 101613256 with URL: null
+   📸 Found picture 101613257 with URL: null
+🖼️ Animal 21672230: 0 valid pictures found
+🔍 Animal 21167470 has 1 picture references: [ '100175355' ]
+   📸 Found picture 100175355 with URL: null
+🖼️ Animal 21167470: 0 valid pictures found
+🔍 Animal 21491267 has 1 picture references: [ '101055658' ]
+   📸 Found picture 101055658 with URL: null
+🖼️ Animal 21491267: 0 valid pictures found
+🔍 Animal 21728654 has 1 picture references: [ '101472113' ]
+   📸 Found picture 101472113 with URL: null
+🖼️ Animal 21728654: 0 valid pictures found
+🔍 Animal 21697699 has 1 picture references: [ '101373115' ]
+   📸 Found picture 101373115 with URL: null
+🖼️ Animal 21697699: 0 valid pictures found
+🔍 Animal 21808484 has 1 picture references: [ '101635694' ]
+   📸 Found picture 101635694 with URL: null
+🖼️ Animal 21808484: 0 valid pictures found
+🔍 Animal 21237534 has 1 picture references: [ '100404324' ]
+   📸 Found picture 100404324 with URL: null
+🖼️ Animal 21237534: 0 valid pictures found
+🔍 Animal 21807889 has 1 picture references: [ '101634400' ]
+   📸 Found picture 101634400 with URL: null
+🖼️ Animal 21807889: 0 valid pictures found
+🔍 Animal 21494578 has 4 picture references: [ '101476870', '101476871', '101476872', '101476873' ]
+   📸 Found picture 101476870 with URL: null
+   📸 Found picture 101476871 with URL: null
+   📸 Found picture 101476872 with URL: null
+   📸 Found picture 101476873 with URL: null
+🖼️ Animal 21494578: 0 valid pictures found
+🔍 Animal 21769521 has 1 picture references: [ '101547387' ]
+   📸 Found picture 101547387 with URL: null
+🖼️ Animal 21769521: 0 valid pictures found
+🔍 Animal 21713027 has 5 picture references: [ '101594288', '101515699', '101515697', '101515715', '101413089' ]
+   📸 Found picture 101594288 with URL: null
+   📸 Found picture 101515699 with URL: null
+   📸 Found picture 101515697 with URL: null
+   📸 Found picture 101515715 with URL: null
+   📸 Found picture 101413089 with URL: null
+🖼️ Animal 21713027: 0 valid pictures found
+🔍 Animal 21303869 has 1 picture references: [ '100845577' ]
+   📸 Found picture 100845577 with URL: null
+🖼️ Animal 21303869: 0 valid pictures found
+🔍 Animal 21799653 has 4 picture references: [ '101615643', '101615645', '101615646', '101615648' ]
+   📸 Found picture 101615643 with URL: null
+   📸 Found picture 101615645 with URL: null
+   📸 Found picture 101615646 with URL: null
+   📸 Found picture 101615648 with URL: null
+🖼️ Animal 21799653: 0 valid pictures found
+🔍 Animal 20402003 has 2 picture references: [ '100884392', '98200346' ]
+   📸 Found picture 100884392 with URL: null
+   📸 Found picture 98200346 with URL: null
+🖼️ Animal 20402003: 0 valid pictures found
+🔍 Animal 21749731 has 1 picture references: [ '101516931' ]
+   📸 Found picture 101516931 with URL: null
+🖼️ Animal 21749731: 0 valid pictures found
+🔍 Animal 17761529 has 3 picture references: [ '86422095', '86956704', '100081247' ]
+   📸 Found picture 86422095 with URL: null
+   📸 Found picture 86956704 with URL: null
+   📸 Found picture 100081247 with URL: null
+🖼️ Animal 17761529: 0 valid pictures found
+🔍 Animal 21422831 has 4 picture references: [ '100858814', '100775668', '100858818', '100858819' ]
+   📸 Found picture 100858814 with URL: null
+   📸 Found picture 100775668 with URL: null
+   📸 Found picture 100858818 with URL: null
+   📸 Found picture 100858819 with URL: null
+🖼️ Animal 21422831: 0 valid pictures found
+🔍 Animal 20853643 has 1 picture references: [ '99730903' ]
+   📸 Found picture 99730903 with URL: null
+🖼️ Animal 20853643: 0 valid pictures found
+🔍 Animal 21469084 has 1 picture references: [ '101546612' ]
+   📸 Found picture 101546612 with URL: null
+🖼️ Animal 21469084: 0 valid pictures found
+🔍 Animal 21803990 has 1 picture references: [ '101625190' ]
+   📸 Found picture 101625190 with URL: null
+🖼️ Animal 21803990: 0 valid pictures found
+🔍 Animal 21806063 has 1 picture references: [ '101630414' ]
+   📸 Found picture 101630414 with URL: null
+🖼️ Animal 21806063: 0 valid pictures found
+🔍 Animal 21794002 has 1 picture references: [ '101601635' ]
+   📸 Found picture 101601635 with URL: null
+🖼️ Animal 21794002: 0 valid pictures found
+🔍 Animal 21254298 has 4 picture references: [ '101302029', '101302030', '101302031', '101302032' ]
+   📸 Found picture 101302029 with URL: null
+   📸 Found picture 101302030 with URL: null
+   📸 Found picture 101302031 with URL: null
+   📸 Found picture 101302032 with URL: null
+🖼️ Animal 21254298: 0 valid pictures found
+🔍 Animal 21157929 has 1 picture references: [ '101489666' ]
+   📸 Found picture 101489666 with URL: null
+🖼️ Animal 21157929: 0 valid pictures found
+🔍 Animal 21697068 has 3 picture references: [ '101372228', '101372229', '101372230' ]
+   📸 Found picture 101372228 with URL: null
+   📸 Found picture 101372229 with URL: null
+   📸 Found picture 101372230 with URL: null
+🖼️ Animal 21697068: 0 valid pictures found
+🔍 Animal 21781857 has 1 picture references: [ '101573877' ]
+   📸 Found picture 101573877 with URL: null
+🖼️ Animal 21781857: 0 valid pictures found
+🔍 Animal 19915462 has 1 picture references: [ '96937076' ]
+   📸 Found picture 96937076 with URL: null
+🖼️ Animal 19915462: 0 valid pictures found
+🖼️ No picture references found for animal 6182712
+🔍 Animal 21791270 has 1 picture references: [ '101594994' ]
+   📸 Found picture 101594994 with URL: null
+🖼️ Animal 21791270: 0 valid pictures found
+🔍 Animal 21703304 has 1 picture references: [ '101510875' ]
+   📸 Found picture 101510875 with URL: null
+🖼️ Animal 21703304: 0 valid pictures found
+🔍 Animal 21728874 has 1 picture references: [ '101472369' ]
+   📸 Found picture 101472369 with URL: null
+🖼️ Animal 21728874: 0 valid pictures found
+🔍 Animal 21803395 has 3 picture references: [ '101623845', '101623846', '101623847' ]
+   📸 Found picture 101623845 with URL: null
+   📸 Found picture 101623846 with URL: null
+   📸 Found picture 101623847 with URL: null
+🖼️ Animal 21803395: 0 valid pictures found
+🔍 Animal 21783542 has 1 picture references: [ '101578042' ]
+   📸 Found picture 101578042 with URL: null
+🖼️ Animal 21783542: 0 valid pictures found
+🔍 Animal 21748466 has 1 picture references: [ '101497287' ]
+   📸 Found picture 101497287 with URL: null
+🖼️ Animal 21748466: 0 valid pictures found
+🔍 Animal 21686945 has 6 picture references: [
+  '101598948',
+  '101500737',
+  '101433679',
+  '101433673',
+  '101433674',
+  '101433677'
+]
+   📸 Found picture 101598948 with URL: null
+   📸 Found picture 101500737 with URL: null
+   📸 Found picture 101433679 with URL: null
+   📸 Found picture 101433673 with URL: null
+   📸 Found picture 101433674 with URL: null
+   📸 Found picture 101433677 with URL: null
+🖼️ Animal 21686945: 0 valid pictures found
+🔍 Animal 18702759 has 4 picture references: [ '100404479', '100404480', '100404481', '100404482' ]
+   📸 Found picture 100404479 with URL: null
+   📸 Found picture 100404480 with URL: null
+   📸 Found picture 100404481 with URL: null
+   📸 Found picture 100404482 with URL: null
+🖼️ Animal 18702759: 0 valid pictures found
+🔍 Animal 21357749 has 3 picture references: [ '101073556', '100634667', '100658178' ]
+   📸 Found picture 101073556 with URL: null
+   📸 Found picture 100634667 with URL: null
+   📸 Found picture 100658178 with URL: null
+🖼️ Animal 21357749: 0 valid pictures found
+🔍 Animal 21552248 has 1 picture references: [ '101080372' ]
+   📸 Found picture 101080372 with URL: null
+🖼️ Animal 21552248: 0 valid pictures found
+🔍 Animal 18741924 has 5 picture references: [ '91217310', '91217311', '91217312', '91217313', '91217314' ]
+   📸 Found picture 91217310 with URL: null
+   📸 Found picture 91217311 with URL: null
+   📸 Found picture 91217312 with URL: null
+   📸 Found picture 91217313 with URL: null
+   📸 Found picture 91217314 with URL: null
+🖼️ Animal 18741924: 0 valid pictures found
+🔍 Animal 20415502 has 4 picture references: [ '101415490', '101206213', '98415522', '101206212' ]
+   📸 Found picture 101415490 with URL: null
+   📸 Found picture 101206213 with URL: null
+   📸 Found picture 98415522 with URL: null
+   📸 Found picture 101206212 with URL: null
+🖼️ Animal 20415502: 0 valid pictures found
+🔍 Animal 17895911 has 3 picture references: [ '87171305', '87171317', '89790948' ]
+   📸 Found picture 87171305 with URL: null
+   📸 Found picture 87171317 with URL: null
+   📸 Found picture 89790948 with URL: null
+🖼️ Animal 17895911: 0 valid pictures found
+🔍 Animal 21671440 has 1 picture references: [ '101314357' ]
+   📸 Found picture 101314357 with URL: null
+🖼️ Animal 21671440: 0 valid pictures found
+🔍 Animal 21702860 has 1 picture references: [ '101411437' ]
+   📸 Found picture 101411437 with URL: null
+🖼️ Animal 21702860: 0 valid pictures found
+🔍 Animal 20051453 has 2 picture references: [ '97306764', '97306765' ]
+   📸 Found picture 97306764 with URL: null
+   📸 Found picture 97306765 with URL: null
+🖼️ Animal 20051453: 0 valid pictures found
+🔍 Animal 21158490 has 6 picture references: [
+  '100153975',
+  '100153976',
+  '100153977',
+  '100153978',
+  '100153979',
+  '100153980'
+]
+   📸 Found picture 100153975 with URL: null
+   📸 Found picture 100153976 with URL: null
+   📸 Found picture 100153977 with URL: null
+   📸 Found picture 100153978 with URL: null
+   📸 Found picture 100153979 with URL: null
+   📸 Found picture 100153980 with URL: null
+🖼️ Animal 21158490: 0 valid pictures found
+🔍 Animal 20676436 has 7 picture references: [
+  '100271513',
+  '100238478',
+  '100238494',
+  '99186990',
+  '99186987',
+  '99186993',
+  '99187002'
+]
+   📸 Found picture 100271513 with URL: null
+   📸 Found picture 100238478 with URL: null
+   📸 Found picture 100238494 with URL: null
+   📸 Found picture 99186990 with URL: null
+   📸 Found picture 99186987 with URL: null
+   📸 Found picture 99186993 with URL: null
+   📸 Found picture 99187002 with URL: null
+🖼️ Animal 20676436: 0 valid pictures found
+🔍 Animal 21660795 has 2 picture references: [ '101336098', '101293351' ]
+   📸 Found picture 101336098 with URL: null
+   📸 Found picture 101293351 with URL: null
+🖼️ Animal 21660795: 0 valid pictures found
+🔍 Animal 21626789 has 1 picture references: [ '101219338' ]
+   📸 Found picture 101219338 with URL: null
+🖼️ Animal 21626789: 0 valid pictures found
+🔍 Animal 12933713 has 2 picture references: [ '56522893', '56522894' ]
+   📸 Found picture 56522893 with URL: null
+   📸 Found picture 56522894 with URL: null
+🖼️ Animal 12933713: 0 valid pictures found
+🔍 Animal 21745515 has 1 picture references: [ '101488998' ]
+   📸 Found picture 101488998 with URL: null
+🖼️ Animal 21745515: 0 valid pictures found
+🔍 Animal 21796036 has 1 picture references: [ '101607032' ]
+   📸 Found picture 101607032 with URL: null
+🖼️ Animal 21796036: 0 valid pictures found
+🔍 Animal 21785504 has 1 picture references: [ '101609473' ]
+   📸 Found picture 101609473 with URL: null
+🖼️ Animal 21785504: 0 valid pictures found
+🔍 Animal 21598550 has 6 picture references: [
+  '101200878',
+  '101200888',
+  '101156948',
+  '101156945',
+  '101156946',
+  '101156947'
+]
+   📸 Found picture 101200878 with URL: null
+   📸 Found picture 101200888 with URL: null
+   📸 Found picture 101156948 with URL: null
+   📸 Found picture 101156945 with URL: null
+   📸 Found picture 101156946 with URL: null
+   📸 Found picture 101156947 with URL: null
+🖼️ Animal 21598550: 0 valid pictures found
+🔍 Animal 16464281 has 8 picture references: [
+  '78371036',
+  '78371037',
+  '76574214',
+  '76574211',
+  '76574212',
+  '76574213',
+  '76574215',
+  '76574216'
+]
+   📸 Found picture 78371036 with URL: null
+   📸 Found picture 78371037 with URL: null
+   📸 Found picture 76574214 with URL: null
+   📸 Found picture 76574211 with URL: null
+   📸 Found picture 76574212 with URL: null
+   📸 Found picture 76574213 with URL: null
+   📸 Found picture 76574215 with URL: null
+   📸 Found picture 76574216 with URL: null
+🖼️ Animal 16464281: 0 valid pictures found
+🔍 Animal 19637259 has 5 picture references: [ '99503820', '99503829', '99503834', '95677663', '95677661' ]
+   📸 Found picture 99503820 with URL: null
+   📸 Found picture 99503829 with URL: null
+   📸 Found picture 99503834 with URL: null
+   📸 Found picture 95677663 with URL: null
+   📸 Found picture 95677661 with URL: null
+🖼️ Animal 19637259: 0 valid pictures found
+🔍 Animal 21796580 has 1 picture references: [ '101608082' ]
+   📸 Found picture 101608082 with URL: null
+🖼️ Animal 21796580: 0 valid pictures found
+🔍 Animal 20250758 has 3 picture references: [ '101549938', '101549939', '101549940' ]
+   📸 Found picture 101549938 with URL: null
+   📸 Found picture 101549939 with URL: null
+   📸 Found picture 101549940 with URL: null
+🖼️ Animal 20250758: 0 valid pictures found
+🔍 Animal 17106931 has 7 picture references: [
+  '98626479',
+  '98626480',
+  '98626481',
+  '81065854',
+  '81065853',
+  '81065851',
+  '81065852'
+]
+   📸 Found picture 98626479 with URL: null
+   📸 Found picture 98626480 with URL: null
+   📸 Found picture 98626481 with URL: null
+   📸 Found picture 81065854 with URL: null
+   📸 Found picture 81065853 with URL: null
+   📸 Found picture 81065851 with URL: null
+   📸 Found picture 81065852 with URL: null
+🖼️ Animal 17106931: 0 valid pictures found
+🔍 Animal 21579930 has 1 picture references: [ '101472266' ]
+   📸 Found picture 101472266 with URL: null
+🖼️ Animal 21579930: 0 valid pictures found
+🔍 Animal 21745054 has 1 picture references: [ '101488541' ]
+   📸 Found picture 101488541 with URL: null
+🖼️ Animal 21745054: 0 valid pictures found
+🔍 Animal 21096582 has 4 picture references: [ '100085257', '100085258', '100085259', '100085260' ]
+   📸 Found picture 100085257 with URL: null
+   📸 Found picture 100085258 with URL: null
+   📸 Found picture 100085259 with URL: null
+   📸 Found picture 100085260 with URL: null
+🖼️ Animal 21096582: 0 valid pictures found
+🔍 Animal 21690236 has 2 picture references: [ '101358101', '101358102' ]
+   📸 Found picture 101358101 with URL: null
+   📸 Found picture 101358102 with URL: null
+🖼️ Animal 21690236: 0 valid pictures found
+🔍 Animal 20442252 has 1 picture references: [ '98291703' ]
+   📸 Found picture 98291703 with URL: null
+🖼️ Animal 20442252: 0 valid pictures found
+🔍 Animal 21801152 has 1 picture references: [ '101618672' ]
+   📸 Found picture 101618672 with URL: null
+🖼️ Animal 21801152: 0 valid pictures found
+🔍 Animal 21555056 has 1 picture references: [ '101180560' ]
+   📸 Found picture 101180560 with URL: null
+🖼️ Animal 21555056: 0 valid pictures found
+🔍 Animal 21651409 has 2 picture references: [ '101271840', '101271841' ]
+   📸 Found picture 101271840 with URL: null
+   📸 Found picture 101271841 with URL: null
+🖼️ Animal 21651409: 0 valid pictures found
+🔍 Animal 19376066 has 4 picture references: [ '94564054', '94564055', '94564056', '94564057' ]
+   📸 Found picture 94564054 with URL: null
+   📸 Found picture 94564055 with URL: null
+   📸 Found picture 94564056 with URL: null
+   📸 Found picture 94564057 with URL: null
+🖼️ Animal 19376066: 0 valid pictures found
+🔍 Animal 21626863 has 4 picture references: [ '101219411', '101219413', '101219414', '101358108' ]
+   📸 Found picture 101219411 with URL: null
+   📸 Found picture 101219413 with URL: null
+   📸 Found picture 101219414 with URL: null
+   📸 Found picture 101358108 with URL: null
+🖼️ Animal 21626863: 0 valid pictures found
+🔍 Animal 21744132 has 1 picture references: [ '101605635' ]
+   📸 Found picture 101605635 with URL: null
+🖼️ Animal 21744132: 0 valid pictures found
+🔍 Animal 21700850 has 1 picture references: [ '101381357' ]
+   📸 Found picture 101381357 with URL: null
+🖼️ Animal 21700850: 0 valid pictures found
+🔍 Animal 19593351 has 1 picture references: [ '95490140' ]
+   📸 Found picture 95490140 with URL: null
+🖼️ Animal 19593351: 0 valid pictures found
+🔍 Animal 21302197 has 1 picture references: [ '100491420' ]
+   📸 Found picture 100491420 with URL: null
+🖼️ Animal 21302197: 0 valid pictures found
+🔍 Animal 19416789 has 25 picture references: [
+  '98202783', '98993440', '98882387',
+  '98882388', '98681663', '98681664',
+  '97281182', '97281183', '97281181',
+  '96709284', '96709290', '96709307',
+  '96504459', '96504461', '96504462',
+  '94917599', '94745118', '94745119',
+  '94822611', '94822613', '94937057',
+  '96709392', '94937058', '94937059',
+  '94937061'
+]
+   📸 Found picture 98202783 with URL: null
+   📸 Found picture 98993440 with URL: null
+   📸 Found picture 98882387 with URL: null
+   📸 Found picture 98882388 with URL: null
+   📸 Found picture 98681663 with URL: null
+   📸 Found picture 98681664 with URL: null
+   📸 Found picture 97281182 with URL: null
+   📸 Found picture 97281183 with URL: null
+   📸 Found picture 97281181 with URL: null
+   📸 Found picture 96709284 with URL: null
+   📸 Found picture 96709290 with URL: null
+   📸 Found picture 96709307 with URL: null
+   📸 Found picture 96504459 with URL: null
+   📸 Found picture 96504461 with URL: null
+   📸 Found picture 96504462 with URL: null
+   📸 Found picture 94917599 with URL: null
+   📸 Found picture 94745118 with URL: null
+   📸 Found picture 94745119 with URL: null
+   📸 Found picture 94822611 with URL: null
+   📸 Found picture 94822613 with URL: null
+   📸 Found picture 94937057 with URL: null
+   📸 Found picture 96709392 with URL: null
+   📸 Found picture 94937058 with URL: null
+   📸 Found picture 94937059 with URL: null
+   📸 Found picture 94937061 with URL: null
+🖼️ Animal 19416789: 0 valid pictures found
+🔍 Animal 21796120 has 1 picture references: [ '101607183' ]
+   📸 Found picture 101607183 with URL: null
+🖼️ Animal 21796120: 0 valid pictures found
+🔍 Animal 20776371 has 1 picture references: [ '99944877' ]
+   📸 Found picture 99944877 with URL: null
+🖼️ Animal 20776371: 0 valid pictures found
+🔍 Animal 21793863 has 4 picture references: [ '101601001', '101601002', '101601003', '101601004' ]
+   📸 Found picture 101601001 with URL: null
+   📸 Found picture 101601002 with URL: null
+   📸 Found picture 101601003 with URL: null
+   📸 Found picture 101601004 with URL: null
+🖼️ Animal 21793863: 0 valid pictures found
+🔍 Animal 21583117 has 1 picture references: [ '101280348' ]
+   📸 Found picture 101280348 with URL: null
+🖼️ Animal 21583117: 0 valid pictures found
+🔍 Animal 21265873 has 4 picture references: [ '100407223', '100407226', '100407230', '100407456' ]
+   📸 Found picture 100407223 with URL: null
+   📸 Found picture 100407226 with URL: null
+   📸 Found picture 100407230 with URL: null
+   📸 Found picture 100407456 with URL: null
+🖼️ Animal 21265873: 0 valid pictures found
+🔍 Animal 21800870 has 1 picture references: [ '101617932' ]
+   📸 Found picture 101617932 with URL: null
+🖼️ Animal 21800870: 0 valid pictures found
+🖼️ No picture references found for animal 21736850
+🔍 Animal 9348565 has 4 picture references: [ '40455988', '71404761', '71404762', '40455989' ]
+   📸 Found picture 40455988 with URL: null
+   📸 Found picture 71404761 with URL: null
+   📸 Found picture 71404762 with URL: null
+   📸 Found picture 40455989 with URL: null
+🖼️ Animal 9348565: 0 valid pictures found
+🔍 Animal 21797773 has 1 picture references: [ '101610491' ]
+   📸 Found picture 101610491 with URL: null
+🖼️ Animal 21797773: 0 valid pictures found
+🔍 Animal 19180715 has 1 picture references: [ '93590964' ]
+   📸 Found picture 93590964 with URL: null
+🖼️ Animal 19180715: 0 valid pictures found
+🔍 Animal 21542144 has 1 picture references: [ '101036816' ]
+   📸 Found picture 101036816 with URL: null
+🖼️ Animal 21542144: 0 valid pictures found
+🔍 Animal 21524896 has 4 picture references: [ '101513730', '101513731', '101513732', '101513733' ]
+   📸 Found picture 101513730 with URL: null
+   📸 Found picture 101513731 with URL: null
+   📸 Found picture 101513732 with URL: null
+   📸 Found picture 101513733 with URL: null
+🖼️ Animal 21524896: 0 valid pictures found
+🔍 Animal 19015110 has 25 picture references: [
+  '99720624', '99593933', '98830563',
+  '98830565', '98830562', '97398882',
+  '97398881', '97398883', '97398884',
+  '94292357', '95701215', '94292366',
+  '94292491', '95701216', '93529548',
+  '93068542', '93068543', '93068544',
+  '92941075', '92856278', '92856279',
+  '92856280', '92856281', '92698860',
+  '94292358'
+]
+   📸 Found picture 99720624 with URL: null
+   📸 Found picture 99593933 with URL: null
+   📸 Found picture 98830563 with URL: null
+   📸 Found picture 98830565 with URL: null
+   📸 Found picture 98830562 with URL: null
+   📸 Found picture 97398882 with URL: null
+   📸 Found picture 97398881 with URL: null
+   📸 Found picture 97398883 with URL: null
+   📸 Found picture 97398884 with URL: null
+   📸 Found picture 94292357 with URL: null
+   📸 Found picture 95701215 with URL: null
+   📸 Found picture 94292366 with URL: null
+   📸 Found picture 94292491 with URL: null
+   📸 Found picture 95701216 with URL: null
+   📸 Found picture 93529548 with URL: null
+   📸 Found picture 93068542 with URL: null
+   📸 Found picture 93068543 with URL: null
+   📸 Found picture 93068544 with URL: null
+   📸 Found picture 92941075 with URL: null
+   📸 Found picture 92856278 with URL: null
+   📸 Found picture 92856279 with URL: null
+   📸 Found picture 92856280 with URL: null
+   📸 Found picture 92856281 with URL: null
+   📸 Found picture 92698860 with URL: null
+   📸 Found picture 94292358 with URL: null
+🖼️ Animal 19015110: 0 valid pictures found
+🔍 Animal 21512841 has 3 picture references: [ '100972617', '100972618', '100972619' ]
+   📸 Found picture 100972617 with URL: null
+   📸 Found picture 100972618 with URL: null
+   📸 Found picture 100972619 with URL: null
+🖼️ Animal 21512841: 0 valid pictures found
+🔍 Animal 21801986 has 1 picture references: [ '101620386' ]
+   📸 Found picture 101620386 with URL: null
+🖼️ Animal 21801986: 0 valid pictures found
+🔍 Animal 17100132 has 3 picture references: [ '83990509', '83990510', '86953460' ]
+   📸 Found picture 83990509 with URL: null
+   📸 Found picture 83990510 with URL: null
+   📸 Found picture 86953460 with URL: null
+🖼️ Animal 17100132: 0 valid pictures found
+🔍 Animal 21711146 has 1 picture references: [ '101474733' ]
+   📸 Found picture 101474733 with URL: null
+🖼️ Animal 21711146: 0 valid pictures found
+🔍 Animal 21797168 has 1 picture references: [ '101609218' ]
+   📸 Found picture 101609218 with URL: null
+🖼️ Animal 21797168: 0 valid pictures found
+🔍 Animal 21615774 has 5 picture references: [ '101194076', '101194077', '101194078', '101194079', '101194080' ]
+   📸 Found picture 101194076 with URL: null
+   📸 Found picture 101194077 with URL: null
+   📸 Found picture 101194078 with URL: null
+   📸 Found picture 101194079 with URL: null
+   📸 Found picture 101194080 with URL: null
+🖼️ Animal 21615774: 0 valid pictures found
+🔍 Animal 21668038 has 1 picture references: [ '101516896' ]
+   📸 Found picture 101516896 with URL: null
+🖼️ Animal 21668038: 0 valid pictures found
+🔍 Animal 21773003 has 1 picture references: [ '101556497' ]
+   📸 Found picture 101556497 with URL: null
+🖼️ Animal 21773003: 0 valid pictures found
+🔍 Animal 21406806 has 5 picture references: [ '100825591', '100825240', '100825241', '100825242', '100825243' ]
+   📸 Found picture 100825591 with URL: null
+   📸 Found picture 100825240 with URL: null
+   📸 Found picture 100825241 with URL: null
+   📸 Found picture 100825242 with URL: null
+   📸 Found picture 100825243 with URL: null
+🖼️ Animal 21406806: 0 valid pictures found
+🔍 Animal 19415582 has 1 picture references: [ '94740357' ]
+   📸 Found picture 94740357 with URL: null
+🖼️ Animal 19415582: 0 valid pictures found
+🔍 Animal 21661002 has 5 picture references: [ '101294169', '101294170', '101294171', '101294172', '101294173' ]
+   📸 Found picture 101294169 with URL: null
+   📸 Found picture 101294170 with URL: null
+   📸 Found picture 101294171 with URL: null
+   📸 Found picture 101294172 with URL: null
+   📸 Found picture 101294173 with URL: null
+🖼️ Animal 21661002: 0 valid pictures found
+🔍 Animal 19700246 has 1 picture references: [ '95974391' ]
+   📸 Found picture 95974391 with URL: null
+🖼️ Animal 19700246: 0 valid pictures found
+🔍 Animal 21703799 has 6 picture references: [
+  '101388182',
+  '101388183',
+  '101388186',
+  '101388188',
+  '101388190',
+  '101388192'
+]
+   📸 Found picture 101388182 with URL: null
+   📸 Found picture 101388183 with URL: null
+   📸 Found picture 101388186 with URL: null
+   📸 Found picture 101388188 with URL: null
+   📸 Found picture 101388190 with URL: null
+   📸 Found picture 101388192 with URL: null
+🖼️ Animal 21703799: 0 valid pictures found
+🔍 Animal 17187306 has 3 picture references: [ '85898261', '81767650', '85384863' ]
+   📸 Found picture 85898261 with URL: null
+   📸 Found picture 81767650 with URL: null
+   📸 Found picture 85384863 with URL: null
+🖼️ Animal 17187306: 0 valid pictures found
+🔍 Animal 21778220 has 1 picture references: [ '101587801' ]
+   📸 Found picture 101587801 with URL: null
+🖼️ Animal 21778220: 0 valid pictures found
+🔍 Animal 21628896 has 3 picture references: [ '101223551', '101223552', '101223553' ]
+   📸 Found picture 101223551 with URL: null
+   📸 Found picture 101223552 with URL: null
+   📸 Found picture 101223553 with URL: null
+🖼️ Animal 21628896: 0 valid pictures found
+🔍 Animal 21666345 has 1 picture references: [ '101489554' ]
+   📸 Found picture 101489554 with URL: null
+🖼️ Animal 21666345: 0 valid pictures found
+🔍 Animal 21738043 has 1 picture references: [ '101472866' ]
+   📸 Found picture 101472866 with URL: null
+🖼️ Animal 21738043: 0 valid pictures found
+🔍 Animal 21635058 has 6 picture references: [
+  '101421118',
+  '101421119',
+  '101421121',
+  '101236780',
+  '101236781',
+  '101236782'
+]
+   📸 Found picture 101421118 with URL: null
+   📸 Found picture 101421119 with URL: null
+   📸 Found picture 101421121 with URL: null
+   📸 Found picture 101236780 with URL: null
+   📸 Found picture 101236781 with URL: null
+   📸 Found picture 101236782 with URL: null
+🖼️ Animal 21635058: 0 valid pictures found
+🔍 Animal 21757601 has 1 picture references: [ '101518222' ]
+   📸 Found picture 101518222 with URL: null
+🖼️ Animal 21757601: 0 valid pictures found
+🔍 Animal 21773572 has 1 picture references: [ '101557462' ]
+   📸 Found picture 101557462 with URL: null
+🖼️ Animal 21773572: 0 valid pictures found
+🖼️ No picture references found for animal 21765182
+🔍 Animal 21801020 has 1 picture references: [ '101618114' ]
+   📸 Found picture 101618114 with URL: null
+🖼️ Animal 21801020: 0 valid pictures found
+🔍 Animal 21806488 has 1 picture references: [ '101631183' ]
+   📸 Found picture 101631183 with URL: null
+🖼️ Animal 21806488: 0 valid pictures found
+🔍 Animal 21750977 has 1 picture references: [ '101600952' ]
+   📸 Found picture 101600952 with URL: null
+🖼️ Animal 21750977: 0 valid pictures found
+🔍 Animal 21745846 has 1 picture references: [ '101489334' ]
+   📸 Found picture 101489334 with URL: null
+🖼️ Animal 21745846: 0 valid pictures found
+🔍 Animal 21697068 has 3 picture references: [ '101372228', '101372229', '101372230' ]
+   📸 Found picture 101372228 with URL: null
+   📸 Found picture 101372229 with URL: null
+   📸 Found picture 101372230 with URL: null
+🖼️ Animal 21697068: 0 valid pictures found
+🔍 Animal 21697949 has 1 picture references: [ '101373634' ]
+   📸 Found picture 101373634 with URL: null
+🖼️ Animal 21697949: 0 valid pictures found
+🔍 Animal 21781983 has 2 picture references: [ '101574280', '101574281' ]
+   📸 Found picture 101574280 with URL: null
+   📸 Found picture 101574281 with URL: null
+🖼️ Animal 21781983: 0 valid pictures found
+🔍 Animal 21798503 has 1 picture references: [ '101611891' ]
+   📸 Found picture 101611891 with URL: null
+🖼️ Animal 21798503: 0 valid pictures found
+🔍 Animal 21601392 has 4 picture references: [ '101164025', '101164026', '101164027', '101164028' ]
+   📸 Found picture 101164025 with URL: null
+   📸 Found picture 101164026 with URL: null
+   📸 Found picture 101164027 with URL: null
+   📸 Found picture 101164028 with URL: null
+🖼️ Animal 21601392: 0 valid pictures found
+🔍 Animal 21514149 has 1 picture references: [ '100975451' ]
+   📸 Found picture 100975451 with URL: null
+🖼️ Animal 21514149: 0 valid pictures found
+🔍 Animal 16902236 has 4 picture references: [ '86458581', '86458582', '86458583', '86458584' ]
+   📸 Found picture 86458581 with URL: null
+   📸 Found picture 86458582 with URL: null
+   📸 Found picture 86458583 with URL: null
+   📸 Found picture 86458584 with URL: null
+🖼️ Animal 16902236: 0 valid pictures found
+🔍 Animal 21768950 has 1 picture references: [ '101546401' ]
+   📸 Found picture 101546401 with URL: null
+🖼️ Animal 21768950: 0 valid pictures found
+🔍 Animal 17683313 has 2 picture references: [ '85891303', '85891310' ]
+   📸 Found picture 85891303 with URL: null
+   📸 Found picture 85891310 with URL: null
+🖼️ Animal 17683313: 0 valid pictures found
+🔍 Animal 21806617 has 1 picture references: [ '101631313' ]
+   📸 Found picture 101631313 with URL: null
+🖼️ Animal 21806617: 0 valid pictures found
+🔍 Animal 21351864 has 11 picture references: [
+  '101271059', '100613217',
+  '100913013', '101511613',
+  '100913073', '100613215',
+  '100913068', '100737799',
+  '100737792', '100737796',
+  '100737803'
+]
+   📸 Found picture 101271059 with URL: null
+   📸 Found picture 100613217 with URL: null
+   📸 Found picture 100913013 with URL: null
+   📸 Found picture 101511613 with URL: null
+   📸 Found picture 100913073 with URL: null
+   📸 Found picture 100613215 with URL: null
+   📸 Found picture 100913068 with URL: null
+   📸 Found picture 100737799 with URL: null
+   📸 Found picture 100737792 with URL: null
+   📸 Found picture 100737796 with URL: null
+   📸 Found picture 100737803 with URL: null
+🖼️ Animal 21351864: 0 valid pictures found
+🔍 Animal 21617626 has 1 picture references: [ '101439332' ]
+   📸 Found picture 101439332 with URL: null
+🖼️ Animal 21617626: 0 valid pictures found
+🔍 Animal 21444042 has 1 picture references: [ '100822631' ]
+   📸 Found picture 100822631 with URL: null
+🖼️ Animal 21444042: 0 valid pictures found
+🔍 Animal 21268408 has 4 picture references: [ '100835496', '100835499', '100843915', '101604065' ]
+   📸 Found picture 100835496 with URL: null
+   📸 Found picture 100835499 with URL: null
+   📸 Found picture 100843915 with URL: null
+   📸 Found picture 101604065 with URL: null
+🖼️ Animal 21268408: 0 valid pictures found
+🔍 Animal 21799851 has 1 picture references: [ '101615843' ]
+   📸 Found picture 101615843 with URL: null
+🖼️ Animal 21799851: 0 valid pictures found
+🔍 Animal 21333359 has 1 picture references: [ '101352755' ]
+   📸 Found picture 101352755 with URL: null
+🖼️ Animal 21333359: 0 valid pictures found
+🔍 Animal 21666845 has 1 picture references: [ '101305268' ]
+   📸 Found picture 101305268 with URL: null
+🖼️ Animal 21666845: 0 valid pictures found
+🔍 Animal 20523348 has 5 picture references: [ '99691431', '99691432', '98817508', '98479334', '99691434' ]
+   📸 Found picture 99691431 with URL: null
+   📸 Found picture 99691432 with URL: null
+   📸 Found picture 98817508 with URL: null
+   📸 Found picture 98479334 with URL: null
+   📸 Found picture 99691434 with URL: null
+🖼️ Animal 20523348: 0 valid pictures found
+🔍 Animal 21741398 has 4 picture references: [ '101481065', '101481066', '101481067', '101481068' ]
+   📸 Found picture 101481065 with URL: null
+   📸 Found picture 101481066 with URL: null
+   📸 Found picture 101481067 with URL: null
+   📸 Found picture 101481068 with URL: null
+🖼️ Animal 21741398: 0 valid pictures found
+🔍 Animal 21313446 has 8 picture references: [
+  '101336651',
+  '101336647',
+  '101336645',
+  '101336648',
+  '100858224',
+  '100858225',
+  '100858226',
+  '100573266'
+]
+   📸 Found picture 101336651 with URL: null
+   📸 Found picture 101336647 with URL: null
+   📸 Found picture 101336645 with URL: null
+   📸 Found picture 101336648 with URL: null
+   📸 Found picture 100858224 with URL: null
+   📸 Found picture 100858225 with URL: null
+   📸 Found picture 100858226 with URL: null
+   📸 Found picture 100573266 with URL: null
+🖼️ Animal 21313446: 0 valid pictures found
+🔍 Animal 21102042 has 7 picture references: [
+  '100303562',
+  '100303563',
+  '100303564',
+  '100303565',
+  '100303566',
+  '100303567',
+  '100303568'
+]
+   📸 Found picture 100303562 with URL: null
+   📸 Found picture 100303563 with URL: null
+   📸 Found picture 100303564 with URL: null
+   📸 Found picture 100303565 with URL: null
+   📸 Found picture 100303566 with URL: null
+   📸 Found picture 100303567 with URL: null
+   📸 Found picture 100303568 with URL: null
+🖼️ Animal 21102042: 0 valid pictures found
+🔍 Animal 21730121 has 4 picture references: [ '101451608', '101451610', '101493238', '101493243' ]
+   📸 Found picture 101451608 with URL: null
+   📸 Found picture 101451610 with URL: null
+   📸 Found picture 101493238 with URL: null
+   📸 Found picture 101493243 with URL: null
+🖼️ Animal 21730121: 0 valid pictures found
+🔍 Animal 21656760 has 1 picture references: [ '101284272' ]
+   📸 Found picture 101284272 with URL: null
+🖼️ Animal 21656760: 0 valid pictures found
+🔍 Animal 21779449 has 1 picture references: [ '101594866' ]
+   📸 Found picture 101594866 with URL: null
+🖼️ Animal 21779449: 0 valid pictures found
+🔍 Animal 21745854 has 1 picture references: [ '101489342' ]
+   📸 Found picture 101489342 with URL: null
+🖼️ Animal 21745854: 0 valid pictures found
+🔍 Animal 19745558 has 4 picture references: [ '99670230', '99670231', '99670232', '99670233' ]
+   📸 Found picture 99670230 with URL: null
+   📸 Found picture 99670231 with URL: null
+   📸 Found picture 99670232 with URL: null
+   📸 Found picture 99670233 with URL: null
+🖼️ Animal 19745558: 0 valid pictures found
+🔍 Animal 21235679 has 7 picture references: [
+  '101246652',
+  '101246660',
+  '100936650',
+  '100812763',
+  '100687202',
+  '100579561',
+  '100333922'
+]
+   📸 Found picture 101246652 with URL: null
+   📸 Found picture 101246660 with URL: null
+   📸 Found picture 100936650 with URL: null
+   📸 Found picture 100812763 with URL: null
+   📸 Found picture 100687202 with URL: null
+   📸 Found picture 100579561 with URL: null
+   📸 Found picture 100333922 with URL: null
+🖼️ Animal 21235679: 0 valid pictures found
+🔍 Animal 21665723 has 2 picture references: [ '101303817', '101303818' ]
+   📸 Found picture 101303817 with URL: null
+   📸 Found picture 101303818 with URL: null
+🖼️ Animal 21665723: 0 valid pictures found
+🔍 Animal 21426804 has 1 picture references: [ '100878053' ]
+   📸 Found picture 100878053 with URL: null
+🖼️ Animal 21426804: 0 valid pictures found
+🔍 Animal 20424528 has 16 picture references: [
+  '98263068', '98263073',
+  '98263075', '98263079',
+  '98263081', '98263087',
+  '98263083', '98263086',
+  '98263078', '98252402',
+  '98263076', '98252403',
+  '98252404', '98252405',
+  '98252407', '98263077'
+]
+   📸 Found picture 98263068 with URL: null
+   📸 Found picture 98263073 with URL: null
+   📸 Found picture 98263075 with URL: null
+   📸 Found picture 98263079 with URL: null
+   📸 Found picture 98263081 with URL: null
+   📸 Found picture 98263087 with URL: null
+   📸 Found picture 98263083 with URL: null
+   📸 Found picture 98263086 with URL: null
+   📸 Found picture 98263078 with URL: null
+   📸 Found picture 98252402 with URL: null
+   📸 Found picture 98263076 with URL: null
+   📸 Found picture 98252403 with URL: null
+   📸 Found picture 98252404 with URL: null
+   📸 Found picture 98252405 with URL: null
+   📸 Found picture 98252407 with URL: null
+   📸 Found picture 98263077 with URL: null
+🖼️ Animal 20424528: 0 valid pictures found
+🔍 Animal 21744186 has 1 picture references: [ '101486833' ]
+   📸 Found picture 101486833 with URL: null
+🖼️ Animal 21744186: 0 valid pictures found
+🔍 Animal 21688855 has 5 picture references: [ '101482978', '101482980', '101482981', '101482982', '101354519' ]
+   📸 Found picture 101482978 with URL: null
+   📸 Found picture 101482980 with URL: null
+   📸 Found picture 101482981 with URL: null
+   📸 Found picture 101482982 with URL: null
+   📸 Found picture 101354519 with URL: null
+🖼️ Animal 21688855: 0 valid pictures found
+🔍 Animal 21513775 has 1 picture references: [ '101053569' ]
+   📸 Found picture 101053569 with URL: null
+🖼️ Animal 21513775: 0 valid pictures found
+🔍 Animal 17192772 has 3 picture references: [ '81826432', '81826433', '81826434' ]
+   📸 Found picture 81826432 with URL: null
+   📸 Found picture 81826433 with URL: null
+   📸 Found picture 81826434 with URL: null
+🖼️ Animal 17192772: 0 valid pictures found
+🔍 Animal 21465125 has 2 picture references: [ '101329230', '101329231' ]
+   📸 Found picture 101329230 with URL: null
+   📸 Found picture 101329231 with URL: null
+🖼️ Animal 21465125: 0 valid pictures found
+🔍 Animal 21740242 has 1 picture references: [ '101478966' ]
+   📸 Found picture 101478966 with URL: null
+🖼️ Animal 21740242: 0 valid pictures found
+🔍 Animal 21765865 has 1 picture references: [ '101572077' ]
+   📸 Found picture 101572077 with URL: null
+🖼️ Animal 21765865: 0 valid pictures found
+🔍 Animal 21774255 has 1 picture references: [ '101558733' ]
+   📸 Found picture 101558733 with URL: null
+🖼️ Animal 21774255: 0 valid pictures found
+🔍 Animal 21719548 has 4 picture references: [ '101484775', '101484776', '101484777', '101484778' ]
+   📸 Found picture 101484775 with URL: null
+   📸 Found picture 101484776 with URL: null
+   📸 Found picture 101484777 with URL: null
+   📸 Found picture 101484778 with URL: null
+🖼️ Animal 21719548: 0 valid pictures found
+🔍 Animal 21560969 has 3 picture references: [ '101077248', '101077221', '101077222' ]
+   📸 Found picture 101077248 with URL: null
+   📸 Found picture 101077221 with URL: null
+   📸 Found picture 101077222 with URL: null
+🖼️ Animal 21560969: 0 valid pictures found
+🔍 Animal 21133290 has 4 picture references: [ '100095408', '100095409', '100095411', '100095414' ]
+   📸 Found picture 100095408 with URL: null
+   📸 Found picture 100095409 with URL: null
+   📸 Found picture 100095411 with URL: null
+   📸 Found picture 100095414 with URL: null
+🖼️ Animal 21133290: 0 valid pictures found
+🔍 Animal 21220085 has 4 picture references: [ '100385038', '100296490', '100296492', '100296493' ]
+   📸 Found picture 100385038 with URL: null
+   📸 Found picture 100296490 with URL: null
+   📸 Found picture 100296492 with URL: null
+   📸 Found picture 100296493 with URL: null
+🖼️ Animal 21220085: 0 valid pictures found
+🔍 Animal 21553045 has 2 picture references: [ '101060074', '101060075' ]
+   📸 Found picture 101060074 with URL: null
+   📸 Found picture 101060075 with URL: null
+🖼️ Animal 21553045: 0 valid pictures found
+🔍 Animal 21620104 has 8 picture references: [
+  '101240720',
+  '101240721',
+  '101204693',
+  '101204694',
+  '101204695',
+  '101204696',
+  '101204697',
+  '101204699'
+]
+   📸 Found picture 101240720 with URL: null
+   📸 Found picture 101240721 with URL: null
+   📸 Found picture 101204693 with URL: null
+   📸 Found picture 101204694 with URL: null
+   📸 Found picture 101204695 with URL: null
+   📸 Found picture 101204696 with URL: null
+   📸 Found picture 101204697 with URL: null
+   📸 Found picture 101204699 with URL: null
+🖼️ Animal 21620104: 0 valid pictures found
+🔍 Animal 21804052 has 1 picture references: [ '101633464' ]
+   📸 Found picture 101633464 with URL: null
+🖼️ Animal 21804052: 0 valid pictures found
+🔍 Animal 20288074 has 2 picture references: [ '98063628', '97939602' ]
+   📸 Found picture 98063628 with URL: null
+   📸 Found picture 97939602 with URL: null
+🖼️ Animal 20288074: 0 valid pictures found
+🔍 Animal 21666886 has 1 picture references: [ '101305314' ]
+   📸 Found picture 101305314 with URL: null
+🖼️ Animal 21666886: 0 valid pictures found
+🔍 Animal 21476654 has 4 picture references: [ '100974450', '100974468', '100974488', '100974503' ]
+   📸 Found picture 100974450 with URL: null
+   📸 Found picture 100974468 with URL: null
+   📸 Found picture 100974488 with URL: null
+   📸 Found picture 100974503 with URL: null
+🖼️ Animal 21476654: 0 valid pictures found
+🔍 Animal 21691538 has 1 picture references: [ '101382051' ]
+   📸 Found picture 101382051 with URL: null
+🖼️ Animal 21691538: 0 valid pictures found
+🔍 Animal 14117005 has 1 picture references: [ '64455699' ]
+   📸 Found picture 64455699 with URL: null
+🖼️ Animal 14117005: 0 valid pictures found
+🔍 Animal 19294919 has 1 picture references: [ '94741188' ]
+   📸 Found picture 94741188 with URL: null
+🖼️ Animal 19294919: 0 valid pictures found
+🔍 Animal 21374970 has 1 picture references: [ '100834518' ]
+   📸 Found picture 100834518 with URL: null
+🖼️ Animal 21374970: 0 valid pictures found
+🔍 Animal 20795925 has 3 picture references: [ '99245194', '99245192', '99245197' ]
+   📸 Found picture 99245194 with URL: null
+   📸 Found picture 99245192 with URL: null
+   📸 Found picture 99245197 with URL: null
+🖼️ Animal 20795925: 0 valid pictures found
+🔍 Animal 21686458 has 3 picture references: [ '101575791', '101575792', '101575793' ]
+   📸 Found picture 101575791 with URL: null
+   📸 Found picture 101575792 with URL: null
+   📸 Found picture 101575793 with URL: null
+🖼️ Animal 21686458: 0 valid pictures found
+🔍 Animal 21795143 has 1 picture references: [ '101604202' ]
+   📸 Found picture 101604202 with URL: null
+🖼️ Animal 21795143: 0 valid pictures found
+🔍 Animal 20696470 has 6 picture references: [
+  '100228926',
+  '100222613',
+  '98969971',
+  '99048855',
+  '98969970',
+  '98982236'
+]
+   📸 Found picture 100228926 with URL: null
+   📸 Found picture 100222613 with URL: null
+   📸 Found picture 98969971 with URL: null
+   📸 Found picture 99048855 with URL: null
+   📸 Found picture 98969970 with URL: null
+   📸 Found picture 98982236 with URL: null
+🖼️ Animal 20696470: 0 valid pictures found
+🔍 Animal 20617040 has 3 picture references: [ '98737291', '98737292', '98737293' ]
+   📸 Found picture 98737291 with URL: null
+   📸 Found picture 98737292 with URL: null
+   📸 Found picture 98737293 with URL: null
+🖼️ Animal 20617040: 0 valid pictures found
+🔍 Animal 15597963 has 25 picture references: [
+  '100196389', '100196392', '93674758',
+  '100196391', '100196373', '96446878',
+  '96446882',  '96411327',  '96411328',
+  '96411329',  '96411330',  '96446876',
+  '96446879',  '95585287',  '94048012',
+  '92495142',  '96446881',  '85470141',
+  '85470149',  '85470155',  '85470142',
+  '85470135',  '84088520',  '79782938',
+  '84088519'
+]
+   📸 Found picture 100196389 with URL: null
+   📸 Found picture 100196392 with URL: null
+   📸 Found picture 93674758 with URL: null
+   📸 Found picture 100196391 with URL: null
+   📸 Found picture 100196373 with URL: null
+   📸 Found picture 96446878 with URL: null
+   📸 Found picture 96446882 with URL: null
+   📸 Found picture 96411327 with URL: null
+   📸 Found picture 96411328 with URL: null
+   📸 Found picture 96411329 with URL: null
+   📸 Found picture 96411330 with URL: null
+   📸 Found picture 96446876 with URL: null
+   📸 Found picture 96446879 with URL: null
+   📸 Found picture 95585287 with URL: null
+   📸 Found picture 94048012 with URL: null
+   📸 Found picture 92495142 with URL: null
+   📸 Found picture 96446881 with URL: null
+   📸 Found picture 85470141 with URL: null
+   📸 Found picture 85470149 with URL: null
+   📸 Found picture 85470155 with URL: null
+   📸 Found picture 85470142 with URL: null
+   📸 Found picture 85470135 with URL: null
+   📸 Found picture 84088520 with URL: null
+   📸 Found picture 79782938 with URL: null
+   📸 Found picture 84088519 with URL: null
+🖼️ Animal 15597963: 0 valid pictures found
+🔍 Animal 21765926 has 1 picture references: [ '101630778' ]
+   📸 Found picture 101630778 with URL: null
+🖼️ Animal 21765926: 0 valid pictures found
+🔍 Animal 21793863 has 4 picture references: [ '101601001', '101601002', '101601003', '101601004' ]
+   📸 Found picture 101601001 with URL: null
+   📸 Found picture 101601002 with URL: null
+   📸 Found picture 101601003 with URL: null
+   📸 Found picture 101601004 with URL: null
+🖼️ Animal 21793863: 0 valid pictures found
+🔍 Animal 21717967 has 1 picture references: [ '101497935' ]
+   📸 Found picture 101497935 with URL: null
+🖼️ Animal 21717967: 0 valid pictures found
+🔍 Animal 20930656 has 4 picture references: [ '101358841', '101358842', '101358843', '101358844' ]
+   📸 Found picture 101358841 with URL: null
+   📸 Found picture 101358842 with URL: null
+   📸 Found picture 101358843 with URL: null
+   📸 Found picture 101358844 with URL: null
+🖼️ Animal 20930656: 0 valid pictures found
+🔍 Animal 21728609 has 1 picture references: [ '101472046' ]
+   📸 Found picture 101472046 with URL: null
+🖼️ Animal 21728609: 0 valid pictures found
+🔍 Animal 21046489 has 4 picture references: [ '99890797', '99890798', '99890799', '99890800' ]
+   📸 Found picture 99890797 with URL: null
+   📸 Found picture 99890798 with URL: null
+   📸 Found picture 99890799 with URL: null
+   📸 Found picture 99890800 with URL: null
+🖼️ Animal 21046489: 0 valid pictures found
+🔍 Animal 21728595 has 1 picture references: [ '101472023' ]
+   📸 Found picture 101472023 with URL: null
+🖼️ Animal 21728595: 0 valid pictures found
+🔍 Animal 21658585 has 1 picture references: [ '101289244' ]
+   📸 Found picture 101289244 with URL: null
+🖼️ Animal 21658585: 0 valid pictures found
+🔍 Animal 21774179 has 1 picture references: [ '101558644' ]
+   📸 Found picture 101558644 with URL: null
+🖼️ Animal 21774179: 0 valid pictures found
+🔍 Animal 21666591 has 1 picture references: [ '101489979' ]
+   📸 Found picture 101489979 with URL: null
+🖼️ Animal 21666591: 0 valid pictures found
+🔍 Animal 21663648 has 1 picture references: [ '101299483' ]
+   📸 Found picture 101299483 with URL: null
+🖼️ Animal 21663648: 0 valid pictures found
+🔍 Animal 21319220 has 3 picture references: [ '100532178', '100532179', '100532180' ]
+   📸 Found picture 100532178 with URL: null
+   📸 Found picture 100532179 with URL: null
+   📸 Found picture 100532180 with URL: null
+🖼️ Animal 21319220: 0 valid pictures found
+🔍 Animal 20855518 has 6 picture references: [
+  '99406266',
+  '99406267',
+  '99406268',
+  '99406269',
+  '99406270',
+  '99406271'
+]
+   📸 Found picture 99406266 with URL: null
+   📸 Found picture 99406267 with URL: null
+   📸 Found picture 99406268 with URL: null
+   📸 Found picture 99406269 with URL: null
+   📸 Found picture 99406270 with URL: null
+   📸 Found picture 99406271 with URL: null
+🖼️ Animal 20855518: 0 valid pictures found
+🔍 Animal 21728623 has 1 picture references: [ '101472058' ]
+   📸 Found picture 101472058 with URL: null
+🖼️ Animal 21728623: 0 valid pictures found
+🔍 Animal 18148408 has 3 picture references: [ '101632280', '101632281', '101632282' ]
+   📸 Found picture 101632280 with URL: null
+   📸 Found picture 101632281 with URL: null
+   📸 Found picture 101632282 with URL: null
+🖼️ Animal 18148408: 0 valid pictures found
+🔍 Animal 21737480 has 1 picture references: [ '101471602' ]
+   📸 Found picture 101471602 with URL: null
+🖼️ Animal 21737480: 0 valid pictures found
+🔍 Animal 21754279 has 1 picture references: [ '101511032' ]
+   📸 Found picture 101511032 with URL: null
+🖼️ Animal 21754279: 0 valid pictures found
+🔍 Animal 21653565 has 4 picture references: [ '101276722', '101276723', '101276724', '101276725' ]
+   📸 Found picture 101276722 with URL: null
+   📸 Found picture 101276723 with URL: null
+   📸 Found picture 101276724 with URL: null
+   📸 Found picture 101276725 with URL: null
+🖼️ Animal 21653565: 0 valid pictures found
+🔍 Animal 21686460 has 4 picture references: [ '101581527', '101581528', '101581529', '101581530' ]
+   📸 Found picture 101581527 with URL: null
+   📸 Found picture 101581528 with URL: null
+   📸 Found picture 101581529 with URL: null
+   📸 Found picture 101581530 with URL: null
+🖼️ Animal 21686460: 0 valid pictures found
+🔍 Animal 20345219 has 9 picture references: [
+  '99696486', '98079276',
+  '98079273', '98885019',
+  '98885021', '98885020',
+  '98885029', '98885031',
+  '98885032'
+]
+   📸 Found picture 99696486 with URL: null
+   📸 Found picture 98079276 with URL: null
+   📸 Found picture 98079273 with URL: null
+   📸 Found picture 98885019 with URL: null
+   📸 Found picture 98885021 with URL: null
+   📸 Found picture 98885020 with URL: null
+   📸 Found picture 98885029 with URL: null
+   📸 Found picture 98885031 with URL: null
+   📸 Found picture 98885032 with URL: null
+🖼️ Animal 20345219: 0 valid pictures found
+🔍 Animal 21483469 has 2 picture references: [ '100907407', '100907408' ]
+   📸 Found picture 100907407 with URL: null
+   📸 Found picture 100907408 with URL: null
+🖼️ Animal 21483469: 0 valid pictures found
+🔍 Animal 19613072 has 1 picture references: [ '95870349' ]
+   📸 Found picture 95870349 with URL: null
+🖼️ Animal 19613072: 0 valid pictures found
+🔍 Animal 21744910 has 1 picture references: [ '101488390' ]
+   📸 Found picture 101488390 with URL: null
+🖼️ Animal 21744910: 0 valid pictures found
+🔍 Animal 21576907 has 5 picture references: [ '101109226', '101109227', '101109228', '101109229', '101109230' ]
+   📸 Found picture 101109226 with URL: null
+   📸 Found picture 101109227 with URL: null
+   📸 Found picture 101109228 with URL: null
+   📸 Found picture 101109229 with URL: null
+   📸 Found picture 101109230 with URL: null
+🖼️ Animal 21576907: 0 valid pictures found
+🔍 Animal 21249014 has 4 picture references: [ '100650699', '100650700', '100365753', '100365749' ]
+   📸 Found picture 100650699 with URL: null
+   📸 Found picture 100650700 with URL: null
+   📸 Found picture 100365753 with URL: null
+   📸 Found picture 100365749 with URL: null
+🖼️ Animal 21249014: 0 valid pictures found
+🔍 Animal 18417441 has 1 picture references: [ '89677851' ]
+   📸 Found picture 89677851 with URL: null
+🖼️ Animal 18417441: 0 valid pictures found
+🔍 Animal 21301964 has 1 picture references: [ '101226486' ]
+   📸 Found picture 101226486 with URL: null
+🖼️ Animal 21301964: 0 valid pictures found
+🔍 Animal 21747278 has 1 picture references: [ '101493605' ]
+   📸 Found picture 101493605 with URL: null
+🖼️ Animal 21747278: 0 valid pictures found
+🖼️ No picture references found for animal 21444247
+🔍 Animal 21564860 has 1 picture references: [ '101103420' ]
+   📸 Found picture 101103420 with URL: null
+🖼️ Animal 21564860: 0 valid pictures found
+🔍 Animal 21775640 has 1 picture references: [ '101561354' ]
+   📸 Found picture 101561354 with URL: null
+🖼️ Animal 21775640: 0 valid pictures found
+🔍 Animal 21757499 has 1 picture references: [ '101518120' ]
+   📸 Found picture 101518120 with URL: null
+🖼️ Animal 21757499: 0 valid pictures found
+🖼️ No picture references found for animal 21781114
+🔍 Animal 21693600 has 1 picture references: [ '101365173' ]
+   📸 Found picture 101365173 with URL: null
+🖼️ Animal 21693600: 0 valid pictures found
+🔍 Animal 21666603 has 1 picture references: [ '101489990' ]
+   📸 Found picture 101489990 with URL: null
+🖼️ Animal 21666603: 0 valid pictures found
+🔍 Animal 21501700 has 1 picture references: [ '100958693' ]
+   📸 Found picture 100958693 with URL: null
+🖼️ Animal 21501700: 0 valid pictures found
+🔍 Animal 21648169 has 1 picture references: [ '101265292' ]
+   📸 Found picture 101265292 with URL: null
+🖼️ Animal 21648169: 0 valid pictures found
+🔍 Animal 21730419 has 3 picture references: [ '101501391', '101452885', '101452886' ]
+   📸 Found picture 101501391 with URL: null
+   📸 Found picture 101452885 with URL: null
+   📸 Found picture 101452886 with URL: null
+🖼️ Animal 21730419: 0 valid pictures found
+🔍 Animal 21784996 has 4 picture references: [ '101580651', '101580652', '101580653', '101580654' ]
+   📸 Found picture 101580651 with URL: null
+   📸 Found picture 101580652 with URL: null
+   📸 Found picture 101580653 with URL: null
+   📸 Found picture 101580654 with URL: null
+🖼️ Animal 21784996: 0 valid pictures found
+🔍 Animal 21585744 has 1 picture references: [ '101152480' ]
+   📸 Found picture 101152480 with URL: null
+🖼️ Animal 21585744: 0 valid pictures found
+🔍 Animal 21782667 has 4 picture references: [ '101576360', '101576344', '101576345', '101576343' ]
+   📸 Found picture 101576360 with URL: null
+   📸 Found picture 101576344 with URL: null
+   📸 Found picture 101576345 with URL: null
+   📸 Found picture 101576343 with URL: null
+🖼️ Animal 21782667: 0 valid pictures found
+🔍 Animal 16093209 has 6 picture references: [
+  '76425999',
+  '75241677',
+  '75497722',
+  '75241678',
+  '75497729',
+  '74587799'
+]
+   📸 Found picture 76425999 with URL: null
+   📸 Found picture 75241677 with URL: null
+   📸 Found picture 75497722 with URL: null
+   📸 Found picture 75241678 with URL: null
+   📸 Found picture 75497729 with URL: null
+   📸 Found picture 74587799 with URL: null
+🖼️ Animal 16093209: 0 valid pictures found
+🔍 Animal 21176335 has 8 picture references: [
+  '100295625',
+  '100195618',
+  '100195620',
+  '100295619',
+  '100295623',
+  '100295621',
+  '100195619',
+  '100295622'
+]
+   📸 Found picture 100295625 with URL: null
+   📸 Found picture 100195618 with URL: null
+   📸 Found picture 100195620 with URL: null
+   📸 Found picture 100295619 with URL: null
+   📸 Found picture 100295623 with URL: null
+   📸 Found picture 100295621 with URL: null
+   📸 Found picture 100195619 with URL: null
+   📸 Found picture 100295622 with URL: null
+🖼️ Animal 21176335: 0 valid pictures found
+🔍 Animal 21775544 has 1 picture references: [ '101630744' ]
+   📸 Found picture 101630744 with URL: null
+🖼️ Animal 21775544: 0 valid pictures found
+🔍 Animal 21611082 has 4 picture references: [ '101184445', '101225353', '101225355', '101225356' ]
+   📸 Found picture 101184445 with URL: null
+   📸 Found picture 101225353 with URL: null
+   📸 Found picture 101225355 with URL: null
+   📸 Found picture 101225356 with URL: null
+🖼️ Animal 21611082: 0 valid pictures found
+🖼️ No picture references found for animal 21443904
+🔍 Animal 21750838 has 2 picture references: [ '101554999', '101555000' ]
+   📸 Found picture 101554999 with URL: null
+   📸 Found picture 101555000 with URL: null
+🖼️ Animal 21750838: 0 valid pictures found
+🔍 Animal 15384312 has 4 picture references: [ '83903006', '91412404', '91412405', '91412522' ]
+   📸 Found picture 83903006 with URL: null
+   📸 Found picture 91412404 with URL: null
+   📸 Found picture 91412405 with URL: null
+   📸 Found picture 91412522 with URL: null
+🖼️ Animal 15384312: 0 valid pictures found
+🔍 Animal 21745537 has 1 picture references: [ '101489023' ]
+   📸 Found picture 101489023 with URL: null
+🖼️ Animal 21745537: 0 valid pictures found
+🔍 Animal 21799507 has 3 picture references: [ '101616133', '101616134', '101616135' ]
+   📸 Found picture 101616133 with URL: null
+   📸 Found picture 101616134 with URL: null
+   📸 Found picture 101616135 with URL: null
+🖼️ Animal 21799507: 0 valid pictures found
+🔍 Animal 21772569 has 1 picture references: [ '101555460' ]
+   📸 Found picture 101555460 with URL: null
+🖼️ Animal 21772569: 0 valid pictures found
+🔍 Animal 21758122 has 1 picture references: [ '101519404' ]
+   📸 Found picture 101519404 with URL: null
+🖼️ Animal 21758122: 0 valid pictures found
+🔍 Animal 21718830 has 1 picture references: [ '101602551' ]
+   📸 Found picture 101602551 with URL: null
+🖼️ Animal 21718830: 0 valid pictures found
+🔍 Animal 21286661 has 3 picture references: [ '100454143', '100454144', '100454145' ]
+   📸 Found picture 100454143 with URL: null
+   📸 Found picture 100454144 with URL: null
+   📸 Found picture 100454145 with URL: null
+🖼️ Animal 21286661: 0 valid pictures found
+🔍 Animal 20453099 has 1 picture references: [ '98317982' ]
+   📸 Found picture 98317982 with URL: null
+🖼️ Animal 20453099: 0 valid pictures found
+🔍 Animal 21496180 has 7 picture references: [
+  '100936568',
+  '100936569',
+  '100936570',
+  '100936571',
+  '100936574',
+  '100936576',
+  '100936577'
+]
+   📸 Found picture 100936568 with URL: null
+   📸 Found picture 100936569 with URL: null
+   📸 Found picture 100936570 with URL: null
+   📸 Found picture 100936571 with URL: null
+   📸 Found picture 100936574 with URL: null
+   📸 Found picture 100936576 with URL: null
+   📸 Found picture 100936577 with URL: null
+🖼️ Animal 21496180: 0 valid pictures found
+🔍 Animal 21136545 has 1 picture references: [ '100105332' ]
+   📸 Found picture 100105332 with URL: null
+🖼️ Animal 21136545: 0 valid pictures found
+🔍 Animal 21798265 has 1 picture references: [ '101611439' ]
+   📸 Found picture 101611439 with URL: null
+🖼️ Animal 21798265: 0 valid pictures found
+🔍 Animal 21806341 has 1 picture references: [ '101630726' ]
+   📸 Found picture 101630726 with URL: null
+🖼️ Animal 21806341: 0 valid pictures found
+🔍 Animal 21555399 has 4 picture references: [ '101064858', '101064851', '101064855', '101064853' ]
+   📸 Found picture 101064858 with URL: null
+   📸 Found picture 101064851 with URL: null
+   📸 Found picture 101064855 with URL: null
+   📸 Found picture 101064853 with URL: null
+🖼️ Animal 21555399: 0 valid pictures found
+🖼️ No picture references found for animal 6178942
+🔍 Animal 21150469 has 4 picture references: [ '100930972', '100930975', '101453824', '101453852' ]
+   📸 Found picture 100930972 with URL: null
+   📸 Found picture 100930975 with URL: null
+   📸 Found picture 101453824 with URL: null
+   📸 Found picture 101453852 with URL: null
+🖼️ Animal 21150469: 0 valid pictures found
+🔍 Animal 21723188 has 4 picture references: [ '101436210', '101436211', '101436212', '101436213' ]
+   📸 Found picture 101436210 with URL: null
+   📸 Found picture 101436211 with URL: null
+   📸 Found picture 101436212 with URL: null
+   📸 Found picture 101436213 with URL: null
+🖼️ Animal 21723188: 0 valid pictures found
+🔍 Animal 21808337 has 1 picture references: [ '101635195' ]
+   📸 Found picture 101635195 with URL: null
+🖼️ Animal 21808337: 0 valid pictures found
+🔍 Animal 21769964 has 1 picture references: [ '101557735' ]
+   📸 Found picture 101557735 with URL: null
+🖼️ Animal 21769964: 0 valid pictures found
+🔍 Animal 21791118 has 1 picture references: [ '101594627' ]
+   📸 Found picture 101594627 with URL: null
+🖼️ Animal 21791118: 0 valid pictures found
+🖼️ No picture references found for animal 20439871
+🔍 Animal 20733406 has 2 picture references: [ '99072805', '99072806' ]
+   📸 Found picture 99072805 with URL: null
+   📸 Found picture 99072806 with URL: null
+🖼️ Animal 20733406: 0 valid pictures found
+🔍 Animal 21795919 has 1 picture references: [ '101607488' ]
+   📸 Found picture 101607488 with URL: null
+🖼️ Animal 21795919: 0 valid pictures found
+🔍 Animal 21530071 has 4 picture references: [ '101009513', '101009514', '101009515', '101009516' ]
+   📸 Found picture 101009513 with URL: null
+   📸 Found picture 101009514 with URL: null
+   📸 Found picture 101009515 with URL: null
+   📸 Found picture 101009516 with URL: null
+🖼️ Animal 21530071: 0 valid pictures found
+🔍 Animal 21747563 has 1 picture references: [ '101494275' ]
+   📸 Found picture 101494275 with URL: null
+🖼️ Animal 21747563: 0 valid pictures found
+🔍 Animal 19184208 has 5 picture references: [ '93621807', '93621802', '93621808', '93621810', '93621812' ]
+   📸 Found picture 93621807 with URL: null
+   📸 Found picture 93621802 with URL: null
+   📸 Found picture 93621808 with URL: null
+   📸 Found picture 93621810 with URL: null
+   📸 Found picture 93621812 with URL: null
+🖼️ Animal 19184208: 0 valid pictures found
+🔍 Animal 21745059 has 4 picture references: [ '101619216', '101621483', '101527837', '101512513' ]
+   📸 Found picture 101619216 with URL: null
+   📸 Found picture 101621483 with URL: null
+   📸 Found picture 101527837 with URL: null
+   📸 Found picture 101512513 with URL: null
+🖼️ Animal 21745059: 0 valid pictures found
+🔍 Animal 21761241 has 5 picture references: [ '101526293', '101526294', '101526295', '101547275', '101526296' ]
+   📸 Found picture 101526293 with URL: null
+   📸 Found picture 101526294 with URL: null
+   📸 Found picture 101526295 with URL: null
+   📸 Found picture 101547275 with URL: null
+   📸 Found picture 101526296 with URL: null
+🖼️ Animal 21761241: 0 valid pictures found
+🔍 Animal 20942532 has 2 picture references: [ '99632680', '99632681' ]
+   📸 Found picture 99632680 with URL: null
+   📸 Found picture 99632681 with URL: null
+🖼️ Animal 20942532: 0 valid pictures found
+🖼️ No picture references found for animal 21732701
+🔍 Animal 21725608 has 1 picture references: [ '101584435' ]
+   📸 Found picture 101584435 with URL: null
+🖼️ Animal 21725608: 0 valid pictures found
+🔍 Animal 21721739 has 1 picture references: [ '101431225' ]
+   📸 Found picture 101431225 with URL: null
+🖼️ Animal 21721739: 0 valid pictures found
+🔍 Animal 16238928 has 5 picture references: [ '100994885', '90937814', '80588571', '75339331', '75422006' ]
+   📸 Found picture 100994885 with URL: null
+   📸 Found picture 90937814 with URL: null
+   📸 Found picture 80588571 with URL: null
+   📸 Found picture 75339331 with URL: null
+   📸 Found picture 75422006 with URL: null
+🖼️ Animal 16238928: 0 valid pictures found
+🔍 Animal 21139151 has 3 picture references: [ '100455891', '100455894', '100110188' ]
+   📸 Found picture 100455891 with URL: null
+   📸 Found picture 100455894 with URL: null
+   📸 Found picture 100110188 with URL: null
+🖼️ Animal 21139151: 0 valid pictures found
+🔍 Animal 19088765 has 5 picture references: [ '100337065', '100337066', '94980692', '93049356', '93049357' ]
+   📸 Found picture 100337065 with URL: null
+   📸 Found picture 100337066 with URL: null
+   📸 Found picture 94980692 with URL: null
+   📸 Found picture 93049356 with URL: null
+   📸 Found picture 93049357 with URL: null
+🖼️ Animal 19088765: 0 valid pictures found
+🔍 Animal 21521050 has 3 picture references: [ '100990521', '100990522', '100990523' ]
+   📸 Found picture 100990521 with URL: null
+   📸 Found picture 100990522 with URL: null
+   📸 Found picture 100990523 with URL: null
+🖼️ Animal 21521050: 0 valid pictures found
+🔍 Animal 14867147 has 2 picture references: [ '101499161', '101499162' ]
+   📸 Found picture 101499161 with URL: null
+   📸 Found picture 101499162 with URL: null
+🖼️ Animal 14867147: 0 valid pictures found
+🔍 Animal 17559316 has 15 picture references: [
+  '84824435', '84804890',
+  '84824436', '85989705',
+  '85989708', '85989710',
+  '87604583', '98062232',
+  '98062234', '98062235',
+  '98062236', '98062237',
+  '98062238', '98062239',
+  '99493603'
+]
+   📸 Found picture 84824435 with URL: null
+   📸 Found picture 84804890 with URL: null
+   📸 Found picture 84824436 with URL: null
+   📸 Found picture 85989705 with URL: null
+   📸 Found picture 85989708 with URL: null
+   📸 Found picture 85989710 with URL: null
+   📸 Found picture 87604583 with URL: null
+   📸 Found picture 98062232 with URL: null
+   📸 Found picture 98062234 with URL: null
+   📸 Found picture 98062235 with URL: null
+   📸 Found picture 98062236 with URL: null
+   📸 Found picture 98062237 with URL: null
+   📸 Found picture 98062238 with URL: null
+   📸 Found picture 98062239 with URL: null
+   📸 Found picture 99493603 with URL: null
+🖼️ Animal 17559316: 0 valid pictures found
+🔍 Animal 20551021 has 7 picture references: [
+  '98927349',
+  '98609677',
+  '98556178',
+  '98624591',
+  '98592345',
+  '98592350',
+  '98927350'
+]
+   📸 Found picture 98927349 with URL: null
+   📸 Found picture 98609677 with URL: null
+   📸 Found picture 98556178 with URL: null
+   📸 Found picture 98624591 with URL: null
+   📸 Found picture 98592345 with URL: null
+   📸 Found picture 98592350 with URL: null
+   📸 Found picture 98927350 with URL: null
+🖼️ Animal 20551021: 0 valid pictures found
+🔍 Animal 21807461 has 1 picture references: [ '101633731' ]
+   📸 Found picture 101633731 with URL: null
+🖼️ Animal 21807461: 0 valid pictures found
+🔍 Animal 21758749 has 1 picture references: [ '101521264' ]
+   📸 Found picture 101521264 with URL: null
+🖼️ Animal 21758749: 0 valid pictures found
+🔍 Animal 21624626 has 1 picture references: [ '101442083' ]
+   📸 Found picture 101442083 with URL: null
+🖼️ Animal 21624626: 0 valid pictures found
+🔍 Animal 21613775 has 1 picture references: [ '101239818' ]
+   📸 Found picture 101239818 with URL: null
+🖼️ Animal 21613775: 0 valid pictures found
+🔍 Animal 21754227 has 2 picture references: [ '101510937', '101573751' ]
+   📸 Found picture 101510937 with URL: null
+   📸 Found picture 101573751 with URL: null
+🖼️ Animal 21754227: 0 valid pictures found
+🔍 Animal 21656771 has 4 picture references: [ '101284340', '101284342', '101284344', '101284347' ]
+   📸 Found picture 101284340 with URL: null
+   📸 Found picture 101284342 with URL: null
+   📸 Found picture 101284344 with URL: null
+   📸 Found picture 101284347 with URL: null
+🖼️ Animal 21656771: 0 valid pictures found
+🔍 Animal 21795908 has 1 picture references: [ '101606816' ]
+   📸 Found picture 101606816 with URL: null
+🖼️ Animal 21795908: 0 valid pictures found
+🖼️ No picture references found for animal 21737903
+🔍 Animal 21470697 has 3 picture references: [ '100881790', '100881792', '100881794' ]
+   📸 Found picture 100881790 with URL: null
+   📸 Found picture 100881792 with URL: null
+   📸 Found picture 100881794 with URL: null
+🖼️ Animal 21470697: 0 valid pictures found
+🔍 Animal 21785469 has 2 picture references: [ '101582524', '101582525' ]
+   📸 Found picture 101582524 with URL: null
+   📸 Found picture 101582525 with URL: null
+🖼️ Animal 21785469: 0 valid pictures found
+🔍 Animal 21396447 has 3 picture references: [ '100711357', '100711358', '100711359' ]
+   📸 Found picture 100711357 with URL: null
+   📸 Found picture 100711358 with URL: null
+   📸 Found picture 100711359 with URL: null
+🖼️ Animal 21396447: 0 valid pictures found
+🔍 Animal 17040468 has 5 picture references: [ '93194847', '93194848', '93194849', '93194850', '93194851' ]
+   📸 Found picture 93194847 with URL: null
+   📸 Found picture 93194848 with URL: null
+   📸 Found picture 93194849 with URL: null
+   📸 Found picture 93194850 with URL: null
+   📸 Found picture 93194851 with URL: null
+🖼️ Animal 17040468: 0 valid pictures found
+🔍 Animal 20283364 has 1 picture references: [ '97927825' ]
+   📸 Found picture 97927825 with URL: null
+🖼️ Animal 20283364: 0 valid pictures found
+🔍 Animal 21794412 has 2 picture references: [ '101602735', '101602736' ]
+   📸 Found picture 101602735 with URL: null
+   📸 Found picture 101602736 with URL: null
+🖼️ Animal 21794412: 0 valid pictures found
+🔍 Animal 21785119 has 1 picture references: [ '101580952' ]
+   📸 Found picture 101580952 with URL: null
+🖼️ Animal 21785119: 0 valid pictures found
+🔍 Animal 21806744 has 1 picture references: [ '101631650' ]
+   📸 Found picture 101631650 with URL: null
+🖼️ Animal 21806744: 0 valid pictures found
+🔍 Animal 21388100 has 4 picture references: [ '100691721', '100691722', '100691723', '100691724' ]
+   📸 Found picture 100691721 with URL: null
+   📸 Found picture 100691722 with URL: null
+   📸 Found picture 100691723 with URL: null
+   📸 Found picture 100691724 with URL: null
+🖼️ Animal 21388100: 0 valid pictures found
+🔍 Animal 21654865 has 1 picture references: [ '101510782' ]
+   📸 Found picture 101510782 with URL: null
+🖼️ Animal 21654865: 0 valid pictures found
+🔍 Animal 21804871 has 1 picture references: [ '101627990' ]
+   📸 Found picture 101627990 with URL: null
+🖼️ Animal 21804871: 0 valid pictures found
+🔍 Animal 21798844 has 4 picture references: [ '101613321', '101613322', '101613323', '101613324' ]
+   📸 Found picture 101613321 with URL: null
+   📸 Found picture 101613322 with URL: null
+   📸 Found picture 101613323 with URL: null
+   📸 Found picture 101613324 with URL: null
+🖼️ Animal 21798844: 0 valid pictures found
+🔍 Animal 21600943 has 1 picture references: [ '101199931' ]
+   📸 Found picture 101199931 with URL: null
+🖼️ Animal 21600943: 0 valid pictures found
+🔍 Animal 21801512 has 1 picture references: [ '101619159' ]
+   📸 Found picture 101619159 with URL: null
+🖼️ Animal 21801512: 0 valid pictures found
+🔍 Animal 21402348 has 4 picture references: [ '101621231', '101621232', '101621233', '101621234' ]
+   📸 Found picture 101621231 with URL: null
+   📸 Found picture 101621232 with URL: null
+   📸 Found picture 101621233 with URL: null
+   📸 Found picture 101621234 with URL: null
+🖼️ Animal 21402348: 0 valid pictures found
+🔍 Animal 21781691 has 2 picture references: [ '101600509', '101600510' ]
+   📸 Found picture 101600509 with URL: null
+   📸 Found picture 101600510 with URL: null
+🖼️ Animal 21781691: 0 valid pictures found
+🔍 Animal 21351081 has 6 picture references: [
+  '101487933',
+  '101487939',
+  '101487942',
+  '101487945',
+  '101487947',
+  '101487949'
+]
+   📸 Found picture 101487933 with URL: null
+   📸 Found picture 101487939 with URL: null
+   📸 Found picture 101487942 with URL: null
+   📸 Found picture 101487945 with URL: null
+   📸 Found picture 101487947 with URL: null
+   📸 Found picture 101487949 with URL: null
+🖼️ Animal 21351081: 0 valid pictures found
+🔍 Animal 21511773 has 10 picture references: [
+  '101521416', '101521413',
+  '101521414', '101521431',
+  '101521432', '101521415',
+  '101414468', '101414467',
+  '101015549', '101015550'
+]
+   📸 Found picture 101521416 with URL: null
+   📸 Found picture 101521413 with URL: null
+   📸 Found picture 101521414 with URL: null
+   📸 Found picture 101521431 with URL: null
+   📸 Found picture 101521432 with URL: null
+   📸 Found picture 101521415 with URL: null
+   📸 Found picture 101414468 with URL: null
+   📸 Found picture 101414467 with URL: null
+   📸 Found picture 101015549 with URL: null
+   📸 Found picture 101015550 with URL: null
+🖼️ Animal 21511773: 0 valid pictures found
+🔍 Animal 21808060 has 1 picture references: [ '101634924' ]
+   📸 Found picture 101634924 with URL: null
+🖼️ Animal 21808060: 0 valid pictures found
+🔍 Animal 20192194 has 5 picture references: [ '97696890', '100045706', '100045708', '100045709', '100045710' ]
+   📸 Found picture 97696890 with URL: null
+   📸 Found picture 100045706 with URL: null
+   📸 Found picture 100045708 with URL: null
+   📸 Found picture 100045709 with URL: null
+   📸 Found picture 100045710 with URL: null
+🖼️ Animal 20192194: 0 valid pictures found
+🔍 Animal 21786412 has 1 picture references: [ '101584202' ]
+   📸 Found picture 101584202 with URL: null
+🖼️ Animal 21786412: 0 valid pictures found
+🔍 Animal 21745226 has 1 picture references: [ '101488707' ]
+   📸 Found picture 101488707 with URL: null
+🖼️ Animal 21745226: 0 valid pictures found
+🔍 Animal 21691510 has 1 picture references: [ '101362581' ]
+   📸 Found picture 101362581 with URL: null
+🖼️ Animal 21691510: 0 valid pictures found
+🔍 Animal 21737244 has 1 picture references: [ '101471166' ]
+   📸 Found picture 101471166 with URL: null
+🖼️ Animal 21737244: 0 valid pictures found
+🔍 Animal 21783862 has 1 picture references: [ '101578710' ]
+   📸 Found picture 101578710 with URL: null
+🖼️ Animal 21783862: 0 valid pictures found
+🔍 Animal 21056523 has 3 picture references: [ '100190267', '100190273', '99918207' ]
+   📸 Found picture 100190267 with URL: null
+   📸 Found picture 100190273 with URL: null
+   📸 Found picture 99918207 with URL: null
+🖼️ Animal 21056523: 0 valid pictures found
+🔍 Animal 21710055 has 1 picture references: [ '101408001' ]
+   📸 Found picture 101408001 with URL: null
+🖼️ Animal 21710055: 0 valid pictures found
+🔍 Animal 21736676 has 1 picture references: [ '101470414' ]
+   📸 Found picture 101470414 with URL: null
+🖼️ Animal 21736676: 0 valid pictures found
+🔍 Animal 21805728 has 1 picture references: [ '101629471' ]
+   📸 Found picture 101629471 with URL: null
+🖼️ Animal 21805728: 0 valid pictures found
+🔍 Animal 21561028 has 4 picture references: [ '101077479', '101077459', '101077460', '101077467' ]
+   📸 Found picture 101077479 with URL: null
+   📸 Found picture 101077459 with URL: null
+   📸 Found picture 101077460 with URL: null
+   📸 Found picture 101077467 with URL: null
+🖼️ Animal 21561028: 0 valid pictures found
+🔍 Animal 21598724 has 3 picture references: [ '101157237', '101157238', '101157239' ]
+   📸 Found picture 101157237 with URL: null
+   📸 Found picture 101157238 with URL: null
+   📸 Found picture 101157239 with URL: null
+🖼️ Animal 21598724: 0 valid pictures found
+🔍 Animal 21525207 has 3 picture references: [ '101170952', '101170953', '101170954' ]
+   📸 Found picture 101170952 with URL: null
+   📸 Found picture 101170953 with URL: null
+   📸 Found picture 101170954 with URL: null
+🖼️ Animal 21525207: 0 valid pictures found
+🔍 Animal 19205322 has 1 picture references: [ '94398439' ]
+   📸 Found picture 94398439 with URL: null
+🖼️ Animal 19205322: 0 valid pictures found
+🔍 Animal 21754894 has 1 picture references: [ '101512397' ]
+   📸 Found picture 101512397 with URL: null
+🖼️ Animal 21754894: 0 valid pictures found
+🔍 Animal 21794626 has 3 picture references: [ '101603213', '101603214', '101603215' ]
+   📸 Found picture 101603213 with URL: null
+   📸 Found picture 101603214 with URL: null
+   📸 Found picture 101603215 with URL: null
+🖼️ Animal 21794626: 0 valid pictures found
+🔍 Animal 20070973 has 4 picture references: [ '97439884', '97457507', '97457509', '97457512' ]
+   📸 Found picture 97439884 with URL: null
+   📸 Found picture 97457507 with URL: null
+   📸 Found picture 97457509 with URL: null
+   📸 Found picture 97457512 with URL: null
+🖼️ Animal 20070973: 0 valid pictures found
+🔍 Animal 21360426 has 8 picture references: [
+  '100630114',
+  '100630104',
+  '100630105',
+  '100630107',
+  '100630106',
+  '100630111',
+  '100630112',
+  '100630113'
+]
+   📸 Found picture 100630114 with URL: null
+   📸 Found picture 100630104 with URL: null
+   📸 Found picture 100630105 with URL: null
+   📸 Found picture 100630107 with URL: null
+   📸 Found picture 100630106 with URL: null
+   📸 Found picture 100630111 with URL: null
+   📸 Found picture 100630112 with URL: null
+   📸 Found picture 100630113 with URL: null
+🖼️ Animal 21360426: 0 valid pictures found
+🔍 Animal 21250888 has 1 picture references: [ '100369885' ]
+   📸 Found picture 100369885 with URL: null
+🖼️ Animal 21250888: 0 valid pictures found
+🔍 Animal 21745656 has 1 picture references: [ '101489145' ]
+   📸 Found picture 101489145 with URL: null
+🖼️ Animal 21745656: 0 valid pictures found
+🔍 Animal 21597579 has 4 picture references: [ '101260212', '101260213', '101260214', '101260215' ]
+   📸 Found picture 101260212 with URL: null
+   📸 Found picture 101260213 with URL: null
+   📸 Found picture 101260214 with URL: null
+   📸 Found picture 101260215 with URL: null
+🖼️ Animal 21597579: 0 valid pictures found
+🔍 Animal 21788502 has 6 picture references: [
+  '101589602',
+  '101589603',
+  '101589604',
+  '101589607',
+  '101589609',
+  '101589610'
+]
+   📸 Found picture 101589602 with URL: null
+   📸 Found picture 101589603 with URL: null
+   📸 Found picture 101589604 with URL: null
+   📸 Found picture 101589607 with URL: null
+   📸 Found picture 101589609 with URL: null
+   📸 Found picture 101589610 with URL: null
+🖼️ Animal 21788502: 0 valid pictures found
+🔍 Animal 17996015 has 7 picture references: [
+  '98609234',
+  '100133400',
+  '98163091',
+  '97982777',
+  '97303123',
+  '87694676',
+  '87841139'
+]
+   📸 Found picture 98609234 with URL: null
+   📸 Found picture 100133400 with URL: null
+   📸 Found picture 98163091 with URL: null
+   📸 Found picture 97982777 with URL: null
+   📸 Found picture 97303123 with URL: null
+   📸 Found picture 87694676 with URL: null
+   📸 Found picture 87841139 with URL: null
+🖼️ Animal 17996015: 0 valid pictures found
+🔍 Animal 21780424 has 1 picture references: [ '101571117' ]
+   📸 Found picture 101571117 with URL: null
+🖼️ Animal 21780424: 0 valid pictures found
+🖼️ No picture references found for animal 21767104
+🔍 Animal 21796912 has 1 picture references: [ '101608629' ]
+   📸 Found picture 101608629 with URL: null
+🖼️ Animal 21796912: 0 valid pictures found
+🔍 Animal 21536380 has 1 picture references: [ '101120600' ]
+   📸 Found picture 101120600 with URL: null
+🖼️ Animal 21536380: 0 valid pictures found
+🔍 Animal 21749740 has 1 picture references: [ '101557746' ]
+   📸 Found picture 101557746 with URL: null
+🖼️ Animal 21749740: 0 valid pictures found
+🔍 Animal 19448700 has 4 picture references: [ '100412186', '100412187', '100412188', '100412189' ]
+   📸 Found picture 100412186 with URL: null
+   📸 Found picture 100412187 with URL: null
+   📸 Found picture 100412188 with URL: null
+   📸 Found picture 100412189 with URL: null
+🖼️ Animal 19448700: 0 valid pictures found
+🔍 Animal 21589065 has 4 picture references: [ '101402107', '101402108', '101402110', '101402111' ]
+   📸 Found picture 101402107 with URL: null
+   📸 Found picture 101402108 with URL: null
+   📸 Found picture 101402110 with URL: null
+   📸 Found picture 101402111 with URL: null
+🖼️ Animal 21589065: 0 valid pictures found
+🔍 Animal 21534587 has 4 picture references: [ '101432226', '101432227', '101432228', '101432229' ]
+   📸 Found picture 101432226 with URL: null
+   📸 Found picture 101432227 with URL: null
+   📸 Found picture 101432228 with URL: null
+   📸 Found picture 101432229 with URL: null
+🖼️ Animal 21534587: 0 valid pictures found
+🖼️ No picture references found for animal 21641187
+🔍 Animal 19505948 has 1 picture references: [ '95113699' ]
+   📸 Found picture 95113699 with URL: null
+🖼️ Animal 19505948: 0 valid pictures found
+🔍 Animal 20670422 has 4 picture references: [ '99264334', '99264335', '99264336', '99264337' ]
+   📸 Found picture 99264334 with URL: null
+   📸 Found picture 99264335 with URL: null
+   📸 Found picture 99264336 with URL: null
+   📸 Found picture 99264337 with URL: null
+🖼️ Animal 20670422: 0 valid pictures found
+🔍 Animal 21666343 has 1 picture references: [ '101489548' ]
+   📸 Found picture 101489548 with URL: null
+🖼️ Animal 21666343: 0 valid pictures found
+🔍 Animal 12033288 has 1 picture references: [ '49483217' ]
+   📸 Found picture 49483217 with URL: null
+🖼️ Animal 12033288: 0 valid pictures found
+🔍 Animal 20670523 has 4 picture references: [ '98892170', '98892171', '98892173', '98892175' ]
+   📸 Found picture 98892170 with URL: null
+   📸 Found picture 98892171 with URL: null
+   📸 Found picture 98892173 with URL: null
+   📸 Found picture 98892175 with URL: null
+🖼️ Animal 20670523: 0 valid pictures found
+🔍 Animal 21211339 has 1 picture references: [ '100300063' ]
+   📸 Found picture 100300063 with URL: null
+🖼️ Animal 21211339: 0 valid pictures found
+🔍 Animal 21134442 has 11 picture references: [
+  '101246661', '101201468',
+  '101201467', '101201466',
+  '101201469', '100975167',
+  '100119306', '100119312',
+  '100975169', '100975171',
+  '101114649'
+]
+   📸 Found picture 101246661 with URL: null
+   📸 Found picture 101201468 with URL: null
+   📸 Found picture 101201467 with URL: null
+   📸 Found picture 101201466 with URL: null
+   📸 Found picture 101201469 with URL: null
+   📸 Found picture 100975167 with URL: null
+   📸 Found picture 100119306 with URL: null
+   📸 Found picture 100119312 with URL: null
+   📸 Found picture 100975169 with URL: null
+   📸 Found picture 100975171 with URL: null
+   📸 Found picture 101114649 with URL: null
+🖼️ Animal 21134442: 0 valid pictures found
+🔍 Animal 21737301 has 2 picture references: [ '101590088', '101471312' ]
+   📸 Found picture 101590088 with URL: null
+   📸 Found picture 101471312 with URL: null
+🖼️ Animal 21737301: 0 valid pictures found
+🔍 Animal 21690539 has 1 picture references: [ '101359002' ]
+   📸 Found picture 101359002 with URL: null
+🖼️ Animal 21690539: 0 valid pictures found
+🔍 Animal 19432915 has 1 picture references: [ '94819767' ]
+   📸 Found picture 94819767 with URL: null
+🖼️ Animal 19432915: 0 valid pictures found
+🔍 Animal 21800470 has 1 picture references: [ '101617305' ]
+   📸 Found picture 101617305 with URL: null
+🖼️ Animal 21800470: 0 valid pictures found
+🔍 Animal 21681194 has 3 picture references: [ '101336978', '101564720', '101564733' ]
+   📸 Found picture 101336978 with URL: null
+   📸 Found picture 101564720 with URL: null
+   📸 Found picture 101564733 with URL: null
+🖼️ Animal 21681194: 0 valid pictures found
+🔍 Animal 21802517 has 1 picture references: [ '101625837' ]
+   📸 Found picture 101625837 with URL: null
+🖼️ Animal 21802517: 0 valid pictures found
+🔍 Animal 21782335 has 1 picture references: [ '101575124' ]
+   📸 Found picture 101575124 with URL: null
+🖼️ Animal 21782335: 0 valid pictures found
+🔍 Animal 21724909 has 5 picture references: [ '101478686', '101440268', '101478683', '101478687', '101478689' ]
+   📸 Found picture 101478686 with URL: null
+   📸 Found picture 101440268 with URL: null
+   📸 Found picture 101478683 with URL: null
+   📸 Found picture 101478687 with URL: null
+   📸 Found picture 101478689 with URL: null
+🖼️ Animal 21724909: 0 valid pictures found
+🔍 Animal 21644711 has 1 picture references: [ '101258306' ]
+   📸 Found picture 101258306 with URL: null
+🖼️ Animal 21644711: 0 valid pictures found
+🔍 Animal 21789601 has 6 picture references: [
+  '101591843',
+  '101591844',
+  '101591845',
+  '101591846',
+  '101591847',
+  '101591848'
+]
+   📸 Found picture 101591843 with URL: null
+   📸 Found picture 101591844 with URL: null
+   📸 Found picture 101591845 with URL: null
+   📸 Found picture 101591846 with URL: null
+   📸 Found picture 101591847 with URL: null
+   📸 Found picture 101591848 with URL: null
+🖼️ Animal 21789601: 0 valid pictures found
+🔍 Animal 21773499 has 5 picture references: [ '101557377', '101557380', '101557382', '101557385', '101557388' ]
+   📸 Found picture 101557377 with URL: null
+   📸 Found picture 101557380 with URL: null
+   📸 Found picture 101557382 with URL: null
+   📸 Found picture 101557385 with URL: null
+   📸 Found picture 101557388 with URL: null
+🖼️ Animal 21773499: 0 valid pictures found
+🔍 Animal 21575637 has 1 picture references: [ '101280890' ]
+   📸 Found picture 101280890 with URL: null
+🖼️ Animal 21575637: 0 valid pictures found
+🔍 Animal 21760739 has 3 picture references: [ '101578620', '101578621', '101525274' ]
+   📸 Found picture 101578620 with URL: null
+   📸 Found picture 101578621 with URL: null
+   📸 Found picture 101525274 with URL: null
+🖼️ Animal 21760739: 0 valid pictures found
+🔍 Animal 21123194 has 2 picture references: [ '100073223', '100073224' ]
+   📸 Found picture 100073223 with URL: null
+   📸 Found picture 100073224 with URL: null
+🖼️ Animal 21123194: 0 valid pictures found
+🔍 Animal 18476011 has 7 picture references: [
+  '101280621',
+  '101280622',
+  '101280623',
+  '101280624',
+  '101280625',
+  '101280626',
+  '101280627'
+]
+   📸 Found picture 101280621 with URL: null
+   📸 Found picture 101280622 with URL: null
+   📸 Found picture 101280623 with URL: null
+   📸 Found picture 101280624 with URL: null
+   📸 Found picture 101280625 with URL: null
+   📸 Found picture 101280626 with URL: null
+   📸 Found picture 101280627 with URL: null
+🖼️ Animal 18476011: 0 valid pictures found
+🔍 Animal 21669470 has 1 picture references: [ '101310937' ]
+   📸 Found picture 101310937 with URL: null
+🖼️ Animal 21669470: 0 valid pictures found
+🔍 Animal 21682831 has 4 picture references: [ '101512891', '101512896', '101512900', '101512902' ]
+   📸 Found picture 101512891 with URL: null
+   📸 Found picture 101512896 with URL: null
+   📸 Found picture 101512900 with URL: null
+   📸 Found picture 101512902 with URL: null
+🖼️ Animal 21682831: 0 valid pictures found
+🔍 Animal 21773244 has 2 picture references: [ '101556881', '101556883' ]
+   📸 Found picture 101556881 with URL: null
+   📸 Found picture 101556883 with URL: null
+🖼️ Animal 21773244: 0 valid pictures found
+🔍 Animal 19263790 has 1 picture references: [ '94191670' ]
+   📸 Found picture 94191670 with URL: null
+🖼️ Animal 19263790: 0 valid pictures found
+🔍 Animal 21684056 has 1 picture references: [ '101343819' ]
+   📸 Found picture 101343819 with URL: null
+🖼️ Animal 21684056: 0 valid pictures found
+🔍 Animal 19907106 has 25 picture references: [
+  '99429087', '99699713', '99313061',
+  '97876330', '99313126', '99429097',
+  '99429091', '99313127', '99313121',
+  '99429110', '99313078', '99429109',
+  '99313111', '98348396', '99313115',
+  '99313124', '98348405', '98348414',
+  '98348418', '96908412', '99313118',
+  '97882702', '99313107', '97903514',
+  '97903511'
+]
+   📸 Found picture 99429087 with URL: null
+   📸 Found picture 99699713 with URL: null
+   📸 Found picture 99313061 with URL: null
+   📸 Found picture 97876330 with URL: null
+   📸 Found picture 99313126 with URL: null
+   📸 Found picture 99429097 with URL: null
+   📸 Found picture 99429091 with URL: null
+   📸 Found picture 99313127 with URL: null
+   📸 Found picture 99313121 with URL: null
+   📸 Found picture 99429110 with URL: null
+   📸 Found picture 99313078 with URL: null
+   📸 Found picture 99429109 with URL: null
+   📸 Found picture 99313111 with URL: null
+   📸 Found picture 98348396 with URL: null
+   📸 Found picture 99313115 with URL: null
+   📸 Found picture 99313124 with URL: null
+   📸 Found picture 98348405 with URL: null
+   📸 Found picture 98348414 with URL: null
+   📸 Found picture 98348418 with URL: null
+   📸 Found picture 96908412 with URL: null
+   📸 Found picture 99313118 with URL: null
+   📸 Found picture 97882702 with URL: null
+   📸 Found picture 99313107 with URL: null
+   📸 Found picture 97903514 with URL: null
+   📸 Found picture 97903511 with URL: null
+🖼️ Animal 19907106: 0 valid pictures found
+🔍 Animal 21745169 has 1 picture references: [ '101488652' ]
+   📸 Found picture 101488652 with URL: null
+🖼️ Animal 21745169: 0 valid pictures found
+🔍 Animal 17783950 has 1 picture references: [ '86566192' ]
+   📸 Found picture 86566192 with URL: null
+🖼️ Animal 17783950: 0 valid pictures found
+🔍 Animal 21609035 has 3 picture references: [ '101180033', '101180034', '101180035' ]
+   📸 Found picture 101180033 with URL: null
+   📸 Found picture 101180034 with URL: null
+   📸 Found picture 101180035 with URL: null
+🖼️ Animal 21609035: 0 valid pictures found
+🔍 Animal 21545206 has 17 picture references: [
+  '101602323', '101570585',
+  '101602329', '101602370',
+  '101570584', '101570583',
+  '101345100', '101339324',
+  '101345098', '101339561',
+  '101345099', '101345101',
+  '101339322', '101205601',
+  '101104544', '101104536',
+  '101104537'
+]
+   📸 Found picture 101602323 with URL: null
+   📸 Found picture 101570585 with URL: null
+   📸 Found picture 101602329 with URL: null
+   📸 Found picture 101602370 with URL: null
+   📸 Found picture 101570584 with URL: null
+   📸 Found picture 101570583 with URL: null
+   📸 Found picture 101345100 with URL: null
+   📸 Found picture 101339324 with URL: null
+   📸 Found picture 101345098 with URL: null
+   📸 Found picture 101339561 with URL: null
+   📸 Found picture 101345099 with URL: null
+   📸 Found picture 101345101 with URL: null
+   📸 Found picture 101339322 with URL: null
+   📸 Found picture 101205601 with URL: null
+   📸 Found picture 101104544 with URL: null
+   📸 Found picture 101104536 with URL: null
+   📸 Found picture 101104537 with URL: null
+🖼️ Animal 21545206: 0 valid pictures found
+🔍 Animal 21621571 has 1 picture references: [ '101207456' ]
+   📸 Found picture 101207456 with URL: null
+🖼️ Animal 21621571: 0 valid pictures found
+
+🏆 DATA QUALITY ANALYSIS:
+   Dogs with photos: 0/398 (0.0%)
+   Dogs with descriptions: 400/398 (100.5%)
+
+🔧 FIELD VERIFICATION:
+   📋 Available attribute keys: id, name, ageGroup, sizeGroup, breedPrimary, isBreedMixed, descriptionHtml, descriptionText, createdDate, updatedDate, sex, isAdoptionPending
+   ✅ ageGroup: Adult
+   ✅ sizeGroup: Medium
+   ✅ specialNeeds: N/A
+   ✅ breedPrimary: Black Mouth Cur
+   ✅ isBreedMixed: true
+   ✅ descriptionText: Available
+   ✅ descriptionHtml: Available
+   🔍 Sample raw animal structure: {
+  "type": "animals",
+  "id": "21140074",
+  "attributes": {
+    "id": "21140074",
+    "name": "CARMELA",
+    "ageGroup": "Adult",
+    "sizeGroup": "Medium",
+    "breedPrimary": "Black Mouth Cur",
+    "isBreedMixed": true,
+    "descriptionHtml": "Meet Carmela, a spunky, toy loving, treat motivated little ham! Carmela is not just adorable, she's also a quick learner and knows `sit pretty`, fetch and return, and a variety of other commands. She would thrive in a home interested in agility or obedience classes. Carmela loves water and splashing in the kiddie pools, and enjoys her leash walks as well. While Carmela loves playtime she is medium energy- after bursts of fun she is ready for a nap and to lounge with (or on) her humans. She is also house trained, and while she does not like to shar
+
+✅ SUCCESS: RescueGroups API test completed successfully!
+🎯 The corrected field names are working properly
+🦮 Ready for production sync with enhanced diversity filters
+
+🗄️ TESTING DATABASE INTEGRATION
+✅ Database connection successful
+
+🎉 All tests completed!
