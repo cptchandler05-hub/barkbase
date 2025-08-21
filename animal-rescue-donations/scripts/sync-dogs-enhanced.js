@@ -196,6 +196,20 @@ function transformRescueGroupsAnimal(animal, included = []) {
     return null;
   };
 
+  // Get organization contact info from included data
+  let orgContactInfo = { email: null, phone: null };
+  if (animal.relationships?.orgs?.data?.[0] && included.length > 0) {
+    const orgData = included.find((item) =>
+      item.type === 'orgs' && item.id === animal.relationships.orgs.data[0].id
+    );
+    if (orgData?.attributes) {
+      orgContactInfo = {
+        email: orgData.attributes.email || orgData.attributes.publicEmail || orgData.attributes.contactEmail || null,
+        phone: orgData.attributes.phone || orgData.attributes.phoneNumber || orgData.attributes.contactPhone || null
+      };
+    }
+  }
+
   return {
     rescuegroups_id: animal.id,
     api_source: 'rescuegroups',
@@ -219,10 +233,14 @@ function transformRescueGroupsAnimal(animal, included = []) {
     good_with_children: mapBoolean(attrs.goodWithChildren),
     good_with_dogs: mapBoolean(attrs.goodWithDogs),
     good_with_cats: mapBoolean(attrs.goodWithCats),
-    description: attrs.descriptionText || null,
+    description: attrs.descriptionText || null, // Store full description
     photos: photos, // Will be populated with included data
     tags: [],
     contact_info: {},
+    // Store contact info in individual fields for easy access
+    email: orgContactInfo.email,
+    phone: orgContactInfo.phone,
+    address1: null, // Not typically available in RescueGroups
     city: city,
     state: state,
     postcode: null,
@@ -298,10 +316,14 @@ function transformPetfinderAnimal(dog) {
     good_with_children: dog.environment?.children || null,
     good_with_dogs: dog.environment?.dogs || null,
     good_with_cats: dog.environment?.cats || null,
-    description: dog.description || null,
+    description: dog.description || null, // Store full description
     photos: dog.photos || [],
     tags: dog.tags || [],
     contact_info: dog.contact || {},
+    // Store contact info in individual fields for easy access
+    email: dog.contact?.email || null,
+    phone: dog.contact?.phone || null,
+    address1: dog.contact?.address?.address1 || null,
     city: dog.contact?.address?.city || 'Unknown',
     state: dog.contact?.address?.state || 'Unknown',
     postcode: dog.contact?.address?.postcode || null,
