@@ -12,7 +12,7 @@ export function findBestMatchingBreed(userInput: string, breedList: string[]): s
   return results.length > 0 ? results[0].item : null;
 }
 
-// Fallback breed list for when API is unavailable
+// Fallback breed list for when API is unavailable - using Petfinder-compatible breeds
 const COMMON_BREEDS = [
   'Affenpinscher', 'Afghan Hound', 'Airedale Terrier', 'Akita', 'American Bulldog',
   'American Eskimo Dog', 'American Staffordshire Terrier', 'Australian Cattle Dog',
@@ -21,7 +21,7 @@ const COMMON_BREEDS = [
   'Bull Terrier', 'Cairn Terrier', 'Cavalier King Charles Spaniel', 'Chihuahua',
   'Chinese Crested', 'Chow Chow', 'Cocker Spaniel', 'Collie', 'Dachshund', 'Dalmatian',
   'Doberman Pinscher', 'English Springer Spaniel', 'Fox Terrier', 'French Bulldog',
-  'German Shepherd Dog', 'Golden Retriever', 'Great Dane', 'Greyhound', 'Havanese',
+  'German Shepherd Dog', 'Golden Retriever', 'Great Dane', 'Hound', 'Havanese',
   'Husky', 'Irish Setter', 'Jack Russell Terrier', 'Japanese Chin', 'Labrador Retriever',
   'Maltese', 'Mastiff', 'Miniature Pinscher', 'Newfoundland', 'Papillon', 'Pekingese',
   'Pit Bull Terrier', 'Pointer', 'Poodle', 'Pug', 'Rottweiler', 'Saint Bernard',
