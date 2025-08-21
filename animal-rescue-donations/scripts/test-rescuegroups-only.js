@@ -4,7 +4,7 @@ require('dotenv').config({ path: './.env.local' });
 // Test script for RescueGroups API integration
 // This tests the same logic used in the main sync but focused only on RescueGroups
 
-// Helper function to extract photos from included data - FIXED using ChatGPT's forward relationship approach
+// Helper function to extract photos from batch-fetched included data
 function getPicturesForAnimal(animal, included) {
   const pictureRefs = animal.relationships?.pictures?.data || [];
 
@@ -18,25 +18,28 @@ function getPicturesForAnimal(animal, included) {
   const pictures = pictureRefs.map(ref => {
     const pic = included.find(item => item.type === 'pictures' && item.id === ref.id);
     if (!pic) {
-      console.warn(`⚠️ Picture ID ${ref.id} not found in included for animal ${animal.id}`);
+      console.warn(`⚠️ Picture ID ${ref.id} not found in batch-fetched data for animal ${animal.id}`);
       return null;
     }
+    
     const attrs = pic.attributes || {};
-    console.log(`   📸 Found picture ${pic.id} with URL:`, attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url);
-    // Try multiple possible URL field names - expanded to include secure URLs
-    const possibleUrl = attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
-                       attrs.urlSecureFullsize || attrs.urlSecureLarge || attrs.urlSecureOriginal ||
-                       attrs.url_large || attrs.url_original || attrs.url_small || 
-                       attrs.large || attrs.original || attrs.small ||
-                       attrs.imageUrl || attrs.image_url || attrs.src;
+    const bestUrl = attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall;
+    
+    console.log(`   📸 Batch-fetched picture ${pic.id} with URL:`, bestUrl || 'null');
+    
+    if (!bestUrl) {
+      console.warn(`   ⚠️ Picture ${pic.id} has no URL in batch fetch - attributes:`, Object.keys(attrs));
+      return null;
+    }
+
     return {
-      url: possibleUrl || null,
-      thumbnail: attrs.urlSmall || attrs.url_small || null,
+      url: bestUrl,
+      thumbnail: attrs.urlSmall || bestUrl,
       order: attrs.order || 0
     };
   }).filter(p => p && p.url);
 
-  console.log(`🖼️ Animal ${animal.id}: ${pictures.length} valid pictures found`);
+  console.log(`🖼️ Animal ${animal.id}: ${pictures.length} valid pictures found from batch fetch`);
   return pictures.sort((a, b) => a.order - b.order);
 }
 
@@ -172,21 +175,19 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       console.log('No pictures found in included data');
     }
 
-    // WORKAROUND: Batch fetch pictures if they don't have URLs
-    const pictureIds = new Set();
-    animals.forEach(animal => {
-      const pictureRefs = animal.relationships?.pictures?.data || [];
-      pictureRefs.forEach(ref => pictureIds.add(ref.id));
-    });
+    // IMPROVED BATCH PICTURE FETCH: Get all picture IDs and fetch them explicitly
+    const allPicIds = Array.from(new Set(
+      animals.flatMap(animal => (animal.relationships?.pictures?.data || []).map(ref => ref.id))
+    ));
 
-    const pictureIdList = [...pictureIds];
-    if (pictureIdList.length > 0) {
-      console.log(`\n📸 Batch fetching ${pictureIdList.length} picture objects...`);
+    let batchPictures = [];
+    if (allPicIds.length > 0) {
+      console.log(`\n📸 Batch fetching ${allPicIds.length} picture objects with dedicated API call...`);
       
       try {
         const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
-        picUrl.searchParams.append('filter[id][in]', pictureIdList.slice(0, 100).join(','));
-        picUrl.searchParams.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+        picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
+        picUrl.searchParams.set('fields[pictures]', 'id,urlLarge,urlOriginal,urlSmall,order');
         
         const pictureResponse = await fetch(picUrl.toString(), {
           method: 'GET',
@@ -199,16 +200,16 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
 
         if (pictureResponse.ok) {
           const picResult = await pictureResponse.json();
-          const fullPictures = picResult.data || [];
+          batchPictures = picResult.data || [];
           
-          console.log(`📸 Loaded ${fullPictures.length} picture objects from batch fetch`);
+          console.log(`✨ Batch fetched ${batchPictures.length} pictures with URLs`);
           console.log('🔎 Sample batch-fetched picture:');
-          if (fullPictures[0]) {
-            console.dir(fullPictures[0], { depth: null });
+          if (batchPictures[0]) {
+            console.dir(batchPictures[0], { depth: null });
           }
           
-          // Replace included pictures with batch-fetched ones that have URLs
-          included = included.filter(item => item.type !== 'pictures').concat(fullPictures);
+          // Replace included pictures with batch-fetched ones
+          included = included.filter(item => item.type !== 'pictures').concat(batchPictures);
         } else {
           console.warn('⚠️ Batch picture fetch failed:', pictureResponse.status);
         }

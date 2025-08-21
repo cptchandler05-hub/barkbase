@@ -243,22 +243,19 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
     console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
 
-    // WORKAROUND: Batch fetch pictures if they don't have URLs in included data
+    // IMPROVED BATCH PICTURE FETCH: Get all picture IDs and fetch them explicitly
     if (animals.length > 0) {
-      const pictureIds = new Set();
-      animals.forEach(animal => {
-        const pictureRefs = animal.relationships?.pictures?.data || [];
-        pictureRefs.forEach(ref => pictureIds.add(ref.id));
-      });
+      const allPicIds = Array.from(new Set(
+        animals.flatMap(animal => (animal.relationships?.pictures?.data || []).map(ref => ref.id))
+      ));
 
-      const pictureIdList = [...pictureIds];
-      if (pictureIdList.length > 0) {
-        console.log(`📸 Batch fetching ${pictureIdList.length} picture objects for ${diversityFilter}...`);
+      if (allPicIds.length > 0) {
+        console.log(`📸 Batch fetching ${allPicIds.length} picture objects for ${diversityFilter}...`);
         
         try {
           const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
-          picUrl.searchParams.append('filter[id][in]', pictureIdList.slice(0, 100).join(','));
-          picUrl.searchParams.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+          picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
+          picUrl.searchParams.set('fields[pictures]', 'id,urlLarge,urlOriginal,urlSmall,order');
           
           const pictureResponse = await fetch(picUrl.toString(), {
             method: 'GET',
@@ -271,12 +268,12 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
           if (pictureResponse.ok) {
             const picResult = await pictureResponse.json();
-            const fullPictures = picResult.data || [];
+            const batchPictures = picResult.data || [];
             
-            console.log(`📸 Loaded ${fullPictures.length} picture objects from batch fetch`);
+            console.log(`✨ Batch fetched ${batchPictures.length} pictures with URLs for ${diversityFilter}`);
             
-            // Replace included pictures with batch-fetched ones that have URLs
-            included = included.filter(item => item.type !== 'pictures').concat(fullPictures);
+            // Replace included pictures with batch-fetched ones
+            included = included.filter(item => item.type !== 'pictures').concat(batchPictures);
           } else {
             console.warn(`⚠️ Batch picture fetch failed for ${diversityFilter}:`, pictureResponse.status);
           }
@@ -299,16 +296,17 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   }
 }
 
-// Helper function to extract photos from included data
-function getPicturesForAnimal(animalId, included) {
+// Helper function to extract photos from batch-fetched included data
+function getPicturesForAnimal(animal, included) {
+  const pictureRefs = animal.relationships?.pictures?.data || [];
+  if (!pictureRefs.length) return [];
+  
+  const pictureIds = pictureRefs.map(ref => ref.id);
   return included
-    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id?.toString() === animalId.toString())
+    .filter(item => item.type === 'pictures' && pictureIds.includes(item.id))
     .map(pic => {
       const attrs = pic.attributes || {};
-      // Prioritize camelCase fields from corrected API request, include secure URLs, fallback to snake_case
-      return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
-             attrs.urlSecureFullsize || attrs.urlSecureLarge || attrs.urlSecureOriginal ||
-             attrs.url_large || attrs.url_original || attrs.url_small || null;
+      return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null;
     })
     .filter(url => url !== null);
 }
@@ -337,7 +335,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
   }
 
   // Get photos from included data using proper mapping
-  const photos = getPicturesForAnimal(animal.id, included);
+  const photos = getPicturesForAnimal(animal, included);
 
   const mapBoolean = (value) => {
     if (!value) return null;
