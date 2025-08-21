@@ -546,13 +546,13 @@ async function main() {
 
     // Mark old dogs as removed
     console.log('🧹 Marking old dogs as removed...');
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     await supabase
       .from('dogs')
       .update({ status: 'removed' })
-      .lt('last_updated_at', threeDaysAgo.toISOString())
+      .lt('last_updated_at', thirtyDaysAgo.toISOString())
       .eq('status', 'adoptable');
 
     console.log('✅ Enhanced dog sync completed successfully!');
