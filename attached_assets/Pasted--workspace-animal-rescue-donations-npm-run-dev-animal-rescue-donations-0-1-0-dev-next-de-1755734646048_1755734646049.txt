@@ -1,0 +1,77 @@
+
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.7s
+ ○ Compiling / ...
+ ✓ Compiled / in 15.8s (8586 modules)
+ GET / 200 in 16583ms
+ ✓ Compiled in 1227ms (4186 modules)
+ HEAD / 200 in 86ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 1737ms (4637 modules)
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[🧼 Final Cleaned Location] Novelty, OH
+[📍 Normalized Location] Novelty, OH
+[🐾 Barkr Memory] {
+  location: 'Novelty, OH',
+  breed: 'Hound',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Novelty, OH', breed: 'Hound' }
+[🧠 Breed Normalization] Input: Hound → Singular: hound → Cleaned: Hound
+[✅ Fallback Breed Match] "Hound" → "Greyhound"
+[✅ Breed Match Success] Matched to: Greyhound
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Greyhound
+[🗄️ Database] Filtering by location: Novelty, OH
+[🗄️ Database] Filtering by state: OH
+[🔍 Petfinder] Database returned only 0 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 610ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Novelty, OH',
+  breed: 'Greyhound',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] { location: 'Novelty, OH', breed: 'Greyhound', limit: 25, radius: 100 }
+[💾 Database] Searching database first...
+Searching for dogs with location: Novelty, OH, breed: Greyhound, limit: 50
+Found 0 dogs matching search criteria
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 0 dogs found so far, need 25 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Greyhound" → "Greyhound"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=25&location=Novelty%2C+OH&distance=100&breed=Greyhound
+[⚠️ Petfinder] API response failed: {
+  status: 400,
+  statusText: 'Bad Request',
+  error: '{"type":"https:\\/\\/www.petfinder.com\\/developers\\/v2\\/docs\\/errors\\/ERR-00002\\/","status":400,"title":"Invalid Request","detail":"The request contains invalid parameters.","invalid-params":[{"in":"que'
+}
+[✅ Search Complete] Found 0 total dogs from sources: 
+[📊 Source Breakdown] 
+ POST /api/petfinder/search 200 in 1976ms
+[⚠️ Chat Search] No dogs found via Petfinder API.
+ POST /api/chat 200 in 6080ms
