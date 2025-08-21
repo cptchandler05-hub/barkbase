@@ -1,0 +1,89 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 85609 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 85609 (limit: 5)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=85609&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=5&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 5 RescueGroups dogs from 85609 with 82 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🔍 First dog location relationships: [ { type: 'locations', id: '1000000956' } ]
+🌍 First dog location: Rockaway, NJ
+📊 RescueGroups raw results: 5 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 5 unique RescueGroups dogs (0 duplicates removed)
+📝 Syncing 5 rescuegroups dogs to database...
+⚠️ Failed to insert Hannah Steele: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Doli: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Cylana: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Zeke: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Diamond Beaufort: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+✅ rescuegroups sync completed: 0 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+⚠️ Failed to insert Zork: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Queeny: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Mongolia: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Moon: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Stormy Sky: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+✅ petfinder sync completed: 0 added, 0 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
