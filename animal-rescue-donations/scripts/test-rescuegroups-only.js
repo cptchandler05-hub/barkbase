@@ -127,6 +127,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
         console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
         console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalMixed ? 'true' : 'false'}`);
         console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 5).join(', ')}`);
       });
     }
 
@@ -201,11 +202,13 @@ async function testRescueGroupsSync() {
     const sampleDog = allDogs[0];
     if (sampleDog?.attributes) {
       const attrs = sampleDog.attributes;
+      console.log(`   📋 Available attribute keys: ${Object.keys(attrs).join(', ')}`);
       console.log(`   ✅ animalGeneralAge: ${attrs.animalGeneralAge || 'N/A'}`);
       console.log(`   ✅ animalSizes: ${attrs.animalSizes || 'N/A'}`);
       console.log(`   ✅ animalSpecialneeds: ${attrs.animalSpecialneeds || 'N/A'}`);
       console.log(`   ✅ animalBreedPrimary: ${attrs.animalBreedPrimary || 'N/A'}`);
       console.log(`   ✅ animalMixed: ${attrs.animalMixed || 'N/A'}`);
+      console.log(`   🔍 Sample raw animal structure:`, JSON.stringify(sampleDog, null, 2).slice(0, 500));
     }
 
     if (uniqueDogIds.length > 0) {
