@@ -1,0 +1,44 @@
+~/workspace/animal-rescue-donations$ node scripts/test-field-names.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🔍 TESTING RESCUEGROUPS FIELD NAMES
+
+1️⃣ Testing without field specification:
+   ✅ Fields returned: activityLevel, adoptedDate, adoptionFeeString, isAdoptionPending, adultSexesOk, ageGroup, ageString, birthDate, isBirthDateExact, breedString, breedPrimary, breedPrimaryId, breedSecondary, breedSecondaryId, isBreedMixed, coatLength, isCourtesyListing, descriptionHtml, descriptionText, isDogsOk, energyLevel, exerciseNeeds, fenceNeeds, isNeedingFoster, isFound, priority, isHousetrained, killReason, name, newPeopleReaction, obedienceTraining, pictureCount, pictureThumbnailUrl, qualities, rescueId, searchString, sex, sizeCurrent, sizeGroup, sizeUOM, slug, isSponsorable, trackerimageUrl, url, videoCount, videoUrlCount, vocalLevel, isYardRequired, createdDate, updatedDate
+   📋 Sample values: {
+  "activityLevel": "Moderately Active",
+  "adoptedDate": "2016-06-10T00:00:00Z",
+  "adoptionFeeString": "$350.00 CASH",
+  "isAdoptionPending": false,
+  "adultSexesOk": "All",
+  "ageGroup": "Senior",
+
+2️⃣ Testing fields: id,name,age,size,breed
+   ✅ Fields returned: id, name
+   📋 Sample values: {
+  "id": "10072481",
+  "name": "Hannah Steele"
+}
+
+3️⃣ Testing fields: id,name,ageGroup,sizeGroup,breedPrimary
+   ✅ Fields returned: id, name, ageGroup, sizeGroup, breedPrimary
+   📋 Sample values: {
+  "id": "10072481",
+  "name": "Hannah Steele",
+  "ageGroup": "Senior",
+  "sizeGroup": "Medium",
+  "breedPrimary": "Labrador Retriever"
+}
+
+4️⃣ Testing fields: id,name,generalAge,sizes,breedPrimary
+   ✅ Fields returned: id, name, breedPrimary
+   📋 Sample values: {
+  "id": "10072481",
+  "name": "Hannah Steele",
+  "breedPrimary": "Labrador Retriever"
+}
+
+5️⃣ Testing fields: id,name,animalAge,animalSize,animalBreed
+   ✅ Fields returned: id, name
+   📋 Sample values: {
+  "id": "10072481",
+  "name": "Hannah Steele"
