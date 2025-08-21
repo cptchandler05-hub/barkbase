@@ -1,0 +1,69 @@
+Claude is partially correct but ultimately wrong in his conclusion.
+
+Here’s a clear answer, based on official RescueGroups v5 API behavior and current real-world usage:
+
+✅ RescueGroups DOES Support Location Filtering — But Not in the Way You’re Doing It
+You can absolutely filter by geographic location, but it must be done using the locationDistance filter — and it only works if you also specify a valid location filter (like a ZIP code or Location ID).
+
+You cannot filter directly with filter[lat], filter[lng], or filter[distance] — those parameters are invalid for the RescueGroups v5 API and are being ignored.
+
+✅ Official Correct Way:
+To perform a distance-based search, you must:
+
+Provide a starting location, e.g. ZIP or City/State (as filter[location])
+
+Include filter[locationDistance] with the desired radius (in miles)
+
+✅ Example:
+json
+Copy
+Edit
+POST https://api.rescuegroups.org/v5/public/animals/search
+
+{
+  "data": {
+    "filter": {
+      "location": "03824",                  // Start point
+      "locationDistance": "100",            // Radius in miles
+      "species": "Dog",
+      "status": "Available"
+    },
+    "fields": ["name", "breedPrimary", "descriptionText", "animalLocationCity", "animalLocationState"],
+    "sort": "random",
+    "limit": 25
+  }
+}
+That will return adoptable dogs within 100 miles of ZIP code 03824.
+
+🟥 What Claude Got Wrong
+❌ “Location filtering must be done client-side” → Incorrect
+RescueGroups does support server-side geographic filtering.
+
+You do not need to fetch hundreds of dogs and filter on your end.
+
+❌ “filter[lat] / filter[longitude] / filter[distance]” → Invalid parameters
+These are not part of RescueGroups v5 spec
+
+So yes, if you're using them, they’re being ignored, hence identical results for every ZIP.
+
+✅ What You Should Do
+Update your RescueGroups API call to use:
+
+filter[location]: ZIP code or location string (e.g. "03824" or "Keene, NH")
+
+filter[locationDistance]: in miles
+
+Optional: filter[species], filter[breed], etc.
+
+🛠 If you're currently using coordinates (lat/lng):
+That’s fine — but you need to geocode them to a ZIP or city/state before sending to RescueGroups.
+
+They do not accept raw lat/lng in filters.
+
+✅ In Summary
+Feature	RescueGroups Support?	Notes
+filter[lat], filter[lng]	❌ No	Invalid parameters
+filter[location] + locationDistance	✅ Yes	This is the correct way
+Client-side distance filtering	⚠️ Possible but suboptimal	Not needed unless doing advanced logic
+ZIP code-based searches	✅ Yes	Recommended
+Radius filtering	✅ Yes (via locationDistance)	Works perfectly
