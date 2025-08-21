@@ -140,7 +140,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             phone: dbDog.phone || null,
             email: dbDog.email || null
           },
-          description: dbDog.description, // Full description, no truncation
+          description: dbDog.description || dbDog.full_description, // Use full description
           url: dbDog.url,
           attributes: {
             special_needs: dbDog.special_needs,

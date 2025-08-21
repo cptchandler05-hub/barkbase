@@ -54,6 +54,7 @@ export default function DogProfilePage() {
   const [loading, setLoading] = useState(true);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   useEffect(() => {
     if (dogIdParam) {
@@ -408,6 +409,31 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
     window.open(url, '_blank');
   };
 
+  const nextPhoto = () => {
+    if (photos && photos.length > 1) {
+      setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
+    }
+  };
+
+  const prevPhoto = () => {
+    if (photos && photos.length > 1) {
+      setCurrentPhotoIndex((prev) => (prev - 1 + photos.length) % photos.length);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (showPhotoModal) {
+      if (e.key === 'ArrowRight') nextPhoto();
+      if (e.key === 'ArrowLeft') prevPhoto();
+      if (e.key === 'Escape') setShowPhotoModal(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showPhotoModal]);
+
   if (loading) {
     return (
       <div 
@@ -512,11 +538,11 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Photo Gallery */}
             <div className="space-y-4">
-              <div className="relative overflow-hidden rounded-xl">
+              <div className="relative overflow-hidden rounded-xl cursor-pointer" onClick={() => setShowPhotoModal(true)}>
                 <img
                   src={photos?.[currentPhotoIndex]?.large || photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
-                  className="w-full h-80 object-contain bg-gray-100 shadow-lg"
+                  className="w-full h-80 object-contain bg-gray-100 shadow-lg hover:opacity-90 transition-opacity"
                 />
                 <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   Score: {dog.visibilityScore || 0}
@@ -524,6 +550,11 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-semibold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   {getVisibilityLabel(dog.visibilityScore || 0)}
                 </div>
+                {photos && photos.length > 1 && (
+                  <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
+                    📸 Click to view all {photos.length} photos
+                  </div>
+                )}
               </div>
 
               {/* Photo Thumbnails */}
@@ -818,6 +849,49 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
               )}
             </div>
           </div>
+
+          {/* Photo Modal */}
+          {showPhotoModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+              <div className="relative max-w-4xl max-h-full">
+                <button
+                  onClick={() => setShowPhotoModal(false)}
+                  className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 z-10"
+                >
+                  ✕
+                </button>
+                
+                {photos && photos.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevPhoto}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-70 z-10"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={nextPhoto}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-70 z-10"
+                    >
+                      →
+                    </button>
+                  </>
+                )}
+
+                <img
+                  src={photos?.[currentPhotoIndex]?.large || photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
+                  alt={`${dog.name} photo ${currentPhotoIndex + 1}`}
+                  className="max-w-full max-h-full object-contain"
+                />
+
+                {photos && photos.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-full">
+                    {currentPhotoIndex + 1} of {photos.length}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
           <footer className="text-sm text-center text-gray-500 mt-12 relative">

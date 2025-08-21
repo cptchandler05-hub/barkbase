@@ -142,16 +142,13 @@ export async function POST(req: Request) {
               const formattedPfDogs = data.animals.map(DogFormatter.formatPetfinderDog);
 
               // Deduplicate against existing dogs
-              const newPfDogs = formattedPfDogs.filter(pfDog => {
-                return !allDogs.some(existingDog => {
-                  const nameMatch = existingDog.name.toLowerCase().trim() === pfDog.name.toLowerCase().trim();
-                  const breedMatch = existingDog.breeds.primary === pfDog.breeds.primary;
-                  return nameMatch && breedMatch;
-                });
-              });
+              const newDogs = formattedPfDogs.filter(dog => 
+                dog && dog.id && dog.breeds && 
+                !allDogs.some(existingDog => existingDog.id === dog.id)
+              );
 
-              console.log(`[🔄 Deduplication] ${formattedPfDogs.length - newPfDogs.length} duplicates removed from Petfinder`);
-              allDogs = allDogs.concat(newPfDogs);
+              console.log(`[🔄 Deduplication] ${formattedPfDogs.length - newDogs.length} duplicates removed from Petfinder`);
+              allDogs = allDogs.concat(newDogs);
               sources.push('petfinder');
             }
           } else {

@@ -445,7 +445,7 @@ export default function AdoptPage() {
               <h2 className="text-2xl font-bold text-blue-900 mb-2">
                 {hasSearched 
                   ? `Found ${dogs.length} dogs matching your search` 
-                  : `${dogs.length} most overlooked dogs nationwide`
+                  : `${dogs.length} Dogs in the Most Urgent Need`
                 }
               </h2>
               <p className="text-gray-600">
