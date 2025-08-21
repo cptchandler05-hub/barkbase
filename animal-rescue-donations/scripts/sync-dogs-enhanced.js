@@ -80,9 +80,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Core filters
-  params.append('filter[species]', 'Dog');
-  params.append('filter[status]', 'Available');
+  // Core filters - FIXED: Use correct API v5 schema field names
+  params.append('filter[animalSpecies]', 'Dog');
+  params.append('filter[animalStatus]', 'Available');
 
   // Apply diversity filters to get different segments of dogs
   switch (diversityFilter) {
@@ -90,7 +90,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       // Recently updated (last month)
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      params.append('filter[updated]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'older':
@@ -99,28 +99,28 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       const twoMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-      params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
-      params.append('filter[updated]', `<${twoMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `<${twoMonthsAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'large_dogs':
       // Focus on large dogs (often harder to place)
-      params.append('filter[sizeGroup]', 'Large');
+      params.append('filter[animalSizes]', 'Large');
       break;
 
     case 'small_dogs':
       // Focus on small dogs
-      params.append('filter[sizeGroup]', 'Small');
+      params.append('filter[animalSizes]', 'Small');
       break;
 
     case 'seniors':
       // Senior dogs (often overlooked)
-      params.append('filter[ageGroup]', 'Senior');
+      params.append('filter[animalGeneralAge]', 'Senior');
       break;
 
     case 'special_needs':
       // Special needs dogs (invisible dogs priority)
-      params.append('filter[specialNeeds]', 'true');
+      params.append('filter[animalSpecialneeds]', 'true');
       break;
 
     case 'very_old':
@@ -129,69 +129,69 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       const olderSixMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
       olderSixMonthsAgo.setMonth(olderSixMonthsAgo.getMonth() - 6);
-      params.append('filter[updated]', `>${twelveMonthsAgo.toISOString().split('T')[0]}`);
-      params.append('filter[updated]', `<${olderSixMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${twelveMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `<${olderSixMonthsAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'medium_dogs':
-      params.append('filter[sizeGroup]', 'Medium');
+      params.append('filter[animalSizes]', 'Medium');
       break;
 
     case 'extra_large_dogs':
-      params.append('filter[sizeGroup]', 'Extra Large');
+      params.append('filter[animalSizes]', 'Extra Large');
       break;
 
     case 'adults':
-      params.append('filter[ageGroup]', 'Adult');
+      params.append('filter[animalGeneralAge]', 'Adult');
       break;
 
     case 'young_adults':
-      params.append('filter[ageGroup]', 'Young Adult');
+      params.append('filter[animalGeneralAge]', 'Young Adult');
       break;
 
     case 'puppies':
-      params.append('filter[ageGroup]', 'Baby');
+      params.append('filter[animalGeneralAge]', 'Baby');
       break;
 
     case 'house_trained':
-      params.append('filter[houseTrained]', 'true');
+      params.append('filter[animalAttributes]', 'house_trained');
       break;
 
     case 'good_with_kids':
-      params.append('filter[goodWithChildren]', 'true');
+      params.append('filter[animalAttributes]', 'good_with_children');
       break;
 
     case 'good_with_dogs':
-      params.append('filter[goodWithDogs]', 'true');
+      params.append('filter[animalAttributes]', 'good_with_dogs');
       break;
 
     case 'good_with_cats':
-      params.append('filter[goodWithCats]', 'true');
+      params.append('filter[animalAttributes]', 'good_with_cats');
       break;
 
     case 'mixed_breeds':
-      params.append('filter[breedMixed]', 'true');
+      params.append('filter[animalMixed]', 'true');
       break;
 
     case 'purebreds':
-      params.append('filter[breedMixed]', 'false');
+      params.append('filter[animalMixed]', 'false');
       break;
 
     case 'high_energy':
       // Filter for active dogs that may be harder to place
-      params.append('filter[energyLevel]', 'High');
+      params.append('filter[animalActivityLevel]', 'High');
       break;
 
     case 'low_energy':
       // Calmer dogs
-      params.append('filter[energyLevel]', 'Low');
+      params.append('filter[animalActivityLevel]', 'Low');
       break;
 
     default:
       // Default: just recently updated in last 3 months
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      params.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
       break;
   }
 
@@ -203,13 +203,12 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
     params.append('start', offset.toString());
   }
 
-  // Specify fields to return
+  // Specify fields to return - FIXED: Use correct API v5 field names
   const fields = [
-    'id', 'name', 'status', 'species',
-    'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
-    'breedMixed', 'descriptionText', 'specialNeeds', 'houseTrained',
-    'goodWithChildren', 'goodWithDogs', 'goodWithCats',
-    'pictures', 'thumbnailUrl', 'url', 'distance', 'updated', 'created'
+    'id', 'name', 'animalStatus', 'animalSpecies',
+    'animalGeneralAge', 'animalSex', 'animalSizes', 'animalBreedPrimary', 'animalBreedSecondary',
+    'animalMixed', 'animalDescription', 'animalSpecialneeds', 'animalAttributes',
+    'animalPictures', 'animalThumbnailUrl', 'animalUrl', 'animalDistance', 'animalUpdatedDate', 'animalCreatedDate'
   ];
   params.append('fields[animals]', fields.join(','));
 
