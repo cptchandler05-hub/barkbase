@@ -1,0 +1,254 @@
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-only.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+🐕 RESCUEGROUPS API TEST SUITE
+📋 Testing with corrected API v5 field names and enhanced filters
+
+🧪 TESTING RESCUEGROUPS API WITH CORRECTED FIELD NAMES
+🎯 This uses the same corrected logic as the main sync script
+
+
+🎯 Testing filter: default
+🦮 Testing RescueGroups filter: default
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalUpdatedDate%5D=%3E2025-05-21&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with default filter (341 included items)
+🔍 Sample dogs from default:
+   1. HANSON (ID: 21690794)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. ELVIS (ID: 21617537)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. Marrying Sam (ID: 18033232)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "default": 50 dogs, 341 included items
+
+🎯 Testing filter: recent
+🦮 Testing RescueGroups filter: recent
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalUpdatedDate%5D=%3E2025-07-21&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with recent filter (258 included items)
+🔍 Sample dogs from recent:
+   1. Bailey Ray (ID: 21703470)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. TOBY (ID: 19909595)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. DIEZEL (ID: 21806448)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "recent": 50 dogs, 258 included items
+
+🎯 Testing filter: large_dogs
+🦮 Testing RescueGroups filter: large_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSizes%5D=Large&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with large_dogs filter (271 included items)
+🔍 Sample dogs from large_dogs:
+   1. DAISEY (ID: 21477903)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. Lucy (ID: 21556379)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. Jenny (ID: 21785044)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "large_dogs": 50 dogs, 271 included items
+
+🎯 Testing filter: small_dogs
+🦮 Testing RescueGroups filter: small_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSizes%5D=Small&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with small_dogs filter (281 included items)
+🔍 Sample dogs from small_dogs:
+   1. *LOTUS (ID: 21781460)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. Bryan (ID: 21688494)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. Celly (ID: 16093209)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "small_dogs": 50 dogs, 281 included items
+
+🎯 Testing filter: seniors
+🦮 Testing RescueGroups filter: seniors
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalGeneralAge%5D=Senior&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with seniors filter (305 included items)
+🔍 Sample dogs from seniors:
+   1. ZCL-D- River (ID: 21250457)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. Butch (ID: 21209557)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. Gustavo (ID: 21628021)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "seniors": 50 dogs, 305 included items
+
+🎯 Testing filter: special_needs
+🦮 Testing RescueGroups filter: special_needs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalSpecialneeds%5D=true&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with special_needs filter (291 included items)
+🔍 Sample dogs from special_needs:
+   1. Newhart (ID: 19815091)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. Charm (ID: 21272413)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. FERN (ID: 21624359)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "special_needs": 50 dogs, 291 included items
+
+🎯 Testing filter: puppies
+🦮 Testing RescueGroups filter: puppies
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalGeneralAge%5D=Baby&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with puppies filter (287 included items)
+🔍 Sample dogs from puppies:
+   1. PITA (ID: 21666385)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. Mac (ID: 21712964)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. DUKE (ID: 21694213)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "puppies": 50 dogs, 287 included items
+
+🎯 Testing filter: mixed_breeds
+🦮 Testing RescueGroups filter: mixed_breeds
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BanimalBreedMixed%5D=true&limit=50&sort=random&fields%5Banimals%5D=id%2Cname%2CanimalGeneralAge%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalBreedMixed%2CanimalDescriptionHtml%2CanimalDescriptionText%2CanimalEnergyLevel%2CanimalActivityLevel%2CanimalPictureCount%2CanimalThumbnailUrl%2CanimalUrl%2CanimalCreatedDate%2CanimalUpdatedDate%2CanimalSex%2CanimalHousetrained%2CanimalSpecialneeds%2CanimalAdoptionFee%2CanimalAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with mixed_breeds filter (288 included items)
+🔍 Sample dogs from mixed_breeds:
+   1. AIZEN (ID: 21353484)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   2. DOMINO (ID: 21773125)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+   3. KISSES (ID: 21789979)
+      Size: Unknown, Age: Unknown
+      Special Needs: false, Mixed: false
+      Breed: Unknown, Updated: undefined
+      Raw attrs keys: id, name
+✅ Filter "mixed_breeds": 50 dogs, 288 included items
+
+📊 RESCUEGROUPS TEST RESULTS:
+   API requests made: 8
+   Total dog instances: 400
+   Unique dogs: 397
+   Duplicates removed: 3
+   Duplication rate: 0.8%
+
+🏆 DATA QUALITY ANALYSIS:
+   Dogs with photos: 0/397 (0.0%)
+   Dogs with descriptions: 0/397 (0.0%)
+
+🔧 FIELD VERIFICATION:
+   📋 Available attribute keys: id, name
+   ✅ animalGeneralAge: N/A
+   ✅ animalSizes: N/A
+   ✅ animalSpecialneeds: N/A
+   ✅ animalBreedPrimary: N/A
+   ✅ animalBreedMixed: N/A
+   🔍 Sample raw animal structure: {
+  "type": "animals",
+  "id": "21690794",
+  "attributes": {
+    "id": "21690794",
+    "name": "HANSON"
+  },
+  "relationships": {
+    "orgs": {
+      "data": [
+        {
+          "type": "orgs",
+          "id": "5741"
+        }
+      ]
+    },
+    "locations": {
+      "data": [
+        {
+          "type": "locations",
+          "id": "1000005741"
+        }
+      ]
+    },
+    "breeds": {
+      "data": [
+        {
+          "type": "breeds",
+          "id": "179"
+        }
+      ]
+    },
+    "pictures": {
+      "data": [
+        {
+          "type": "pictures",
+          "id": "101438722"
+        }
+      ]
+    }
+  }
+}
+
+✅ SUCCESS: RescueGroups API test completed successfully!
+🎯 The corrected field names are working properly
+🦮 Ready for production sync with enhanced diversity filters
+
+🗄️ TESTING DATABASE INTEGRATION
+✅ Database connection successful
+
+🎉 All tests completed!
