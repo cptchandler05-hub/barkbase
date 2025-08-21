@@ -72,7 +72,7 @@ async function rateLimitedDelay(apiType = 'petfinder') {
 }
 
 // RescueGroups API functions - Volume-based approach
-async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode = false, limit = 100) {
+async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode = false, limit = 100, offset = 0) {
   await rateLimitedDelay('rescuegroups');
 
   console.log(`🦮 Fetching RescueGroups dogs with filter: ${diversityFilter} (limit: ${limit})`);
@@ -123,6 +123,70 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       params.append('filter[specialNeeds]', 'true');
       break;
       
+    case 'very_old':
+      // Very old listings (6+ months) - truly invisible dogs
+      const twelveMonthsAgo = new Date();
+      const sixMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      params.append('filter[updated]', `>${twelveMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[updated]', `<${sixMonthsAgo.toISOString().split('T')[0]}`);
+      break;
+      
+    case 'medium_dogs':
+      params.append('filter[sizeGroup]', 'Medium');
+      break;
+      
+    case 'extra_large_dogs':
+      params.append('filter[sizeGroup]', 'Extra Large');
+      break;
+      
+    case 'adults':
+      params.append('filter[ageGroup]', 'Adult');
+      break;
+      
+    case 'young_adults':
+      params.append('filter[ageGroup]', 'Young Adult');
+      break;
+      
+    case 'puppies':
+      params.append('filter[ageGroup]', 'Baby');
+      break;
+      
+    case 'house_trained':
+      params.append('filter[houseTrained]', 'true');
+      break;
+      
+    case 'good_with_kids':
+      params.append('filter[goodWithChildren]', 'true');
+      break;
+      
+    case 'good_with_dogs':
+      params.append('filter[goodWithDogs]', 'true');
+      break;
+      
+    case 'good_with_cats':
+      params.append('filter[goodWithCats]', 'true');
+      break;
+      
+    case 'mixed_breeds':
+      params.append('filter[breedMixed]', 'true');
+      break;
+      
+    case 'purebreds':
+      params.append('filter[breedMixed]', 'false');
+      break;
+      
+    case 'high_energy':
+      // Filter for active dogs that may be harder to place
+      params.append('filter[energyLevel]', 'High');
+      break;
+      
+    case 'low_energy':
+      // Calmer dogs
+      params.append('filter[energyLevel]', 'Low');
+      break;
+      
     default:
       // Default: just recently updated in last 3 months
       const threeMonthsAgo = new Date();
@@ -133,6 +197,11 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
   // Limit results to maximum allowed
   params.append('limit', Math.min(limit, 100).toString());
+  
+  // Add offset for pagination
+  if (offset > 0) {
+    params.append('start', offset.toString());
+  }
 
   // Specify fields to return
   const fields = [
@@ -474,24 +543,49 @@ async function main() {
     // Define diversity filters to maximize different types of dogs
     const diversityFilters = testMode ? 
       ['recent', 'large_dogs'] : // Test with 2 filters
-      ['default', 'recent', 'older', 'large_dogs', 'small_dogs', 'seniors', 'special_needs']; // Production with 7 filters
+      [
+        'default', 'recent', 'older', 'very_old',
+        'large_dogs', 'small_dogs', 'medium_dogs', 'extra_large_dogs',
+        'seniors', 'adults', 'young_adults', 'puppies',
+        'special_needs', 'house_trained', 'good_with_kids', 'good_with_dogs', 'good_with_cats',
+        'mixed_breeds', 'purebreds', 'high_energy', 'low_energy'
+      ]; // Production with 20+ filters
 
-    const maxPerFilter = testMode ? 10 : 100; // Limit per filter call
+    const maxPerRequest = 100; // RescueGroups max per request
+    const pagesPerFilter = testMode ? 1 : 5; // Multiple pages per filter for volume
+    const maxPerFilter = maxPerRequest * pagesPerFilter; // 500 dogs per filter in production
     
     for (const filter of diversityFilters) {
       try {
-        console.log(`🎯 Fetching ${filter} dogs from RescueGroups...`);
-        const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerFilter);
-        const dogs = result.data || [];
-        const included = result.included || [];
+        console.log(`🎯 Fetching ${filter} dogs from RescueGroups (${maxPerFilter} target)...`);
+        let filterDogs = [];
+        let filterIncluded = [];
+        
+        // Paginate through multiple requests per filter
+        for (let page = 0; page < pagesPerFilter; page++) {
+          const offset = page * maxPerRequest;
+          const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerRequest, offset);
+          const dogs = result.data || [];
+          const included = result.included || [];
+          
+          if (dogs.length === 0) {
+            console.log(`📄 No more ${filter} dogs at page ${page + 1}, stopping pagination`);
+            break; // No more results for this filter
+          }
+          
+          filterDogs = filterDogs.concat(dogs);
+          filterIncluded = filterIncluded.concat(included);
+          
+          console.log(`📄 Page ${page + 1}: Got ${dogs.length} ${filter} dogs (total: ${filterDogs.length})`);
+          
+          // Respect rate limit (10 req/sec = 100ms between requests)
+          await new Promise(resolve => setTimeout(resolve, 120));
+        }
 
-        const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
+        const transformedDogs = filterDogs.map(dog => transformRescueGroupsAnimal(dog, filterIncluded));
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
 
-        console.log(`✅ Got ${dogs.length} dogs from ${filter} filter`);
-
-        // Minimal delay for RescueGroups (they allow 10 req/sec)
-        await new Promise(resolve => setTimeout(resolve, 120));
+        console.log(`✅ Total ${filter} dogs: ${filterDogs.length}`);
       } catch (error) {
         console.warn(`⚠️ RescueGroups failed for ${filter} filter:`, error.message);
       }
