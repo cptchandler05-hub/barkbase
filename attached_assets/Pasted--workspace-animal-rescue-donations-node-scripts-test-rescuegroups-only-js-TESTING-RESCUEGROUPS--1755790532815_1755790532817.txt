@@ -1,0 +1,93 @@
+/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-only.js
+🧪 TESTING RESCUEGROUPS LOCATION FILTERING ONLY
+📍 This will test 5 different rural ZIP codes to verify geographic diversity
+
+🦮 Testing RescueGroups API for location: 87002
+📍 Using coordinates: 35.2828, -106.6614 for ZIP 87002
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation.latitude%5D=35.2828&filter%5Blocation.longitude%5D=-106.6614&filter%5Blocation.distance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 10 RescueGroups dogs from 87002
+🔍 Sample dogs from 87002:
+   1. Hannah Steele (ID: 10072481)
+      Breed: Labrador Retriever
+      Age: Senior
+   2. Doli (ID: 10131543)
+      Breed: Husky
+      Age: Senior
+   3. Cylana (ID: 10138270)
+      Breed: Shar Pei
+      Age: Senior
+✅ Location 87002: 10 dogs found
+
+🦮 Testing RescueGroups API for location: 71655
+📍 Using coordinates: 33.8734, -91.2068 for ZIP 71655
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation.latitude%5D=33.8734&filter%5Blocation.longitude%5D=-91.2068&filter%5Blocation.distance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 10 RescueGroups dogs from 71655
+🔍 Sample dogs from 71655:
+   1. Hannah Steele (ID: 10072481)
+      Breed: Labrador Retriever
+      Age: Senior
+   2. Doli (ID: 10131543)
+      Breed: Husky
+      Age: Senior
+   3. Cylana (ID: 10138270)
+      Breed: Shar Pei
+      Age: Senior
+✅ Location 71655: 10 dogs found
+
+🦮 Testing RescueGroups API for location: 59718
+📍 Using coordinates: 45.677, -111.043 for ZIP 59718
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation.latitude%5D=45.677&filter%5Blocation.longitude%5D=-111.043&filter%5Blocation.distance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 10 RescueGroups dogs from 59718
+🔍 Sample dogs from 59718:
+   1. Hannah Steele (ID: 10072481)
+      Breed: Labrador Retriever
+      Age: Senior
+   2. Doli (ID: 10131543)
+      Breed: Husky
+      Age: Senior
+   3. Cylana (ID: 10138270)
+      Breed: Shar Pei
+      Age: Senior
+✅ Location 59718: 10 dogs found
+
+🦮 Testing RescueGroups API for location: 62471
+📍 Using coordinates: 39.7817, -88.9584 for ZIP 62471
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation.latitude%5D=39.7817&filter%5Blocation.longitude%5D=-88.9584&filter%5Blocation.distance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 10 RescueGroups dogs from 62471
+🔍 Sample dogs from 62471:
+   1. Hannah Steele (ID: 10072481)
+      Breed: Labrador Retriever
+      Age: Senior
+   2. Doli (ID: 10131543)
+      Breed: Husky
+      Age: Senior
+   3. Cylana (ID: 10138270)
+      Breed: Shar Pei
+      Age: Senior
+✅ Location 62471: 10 dogs found
+
+🦮 Testing RescueGroups API for location: 50158
+📍 Using coordinates: 41.5803, -93.1938 for ZIP 50158
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation.latitude%5D=41.5803&filter%5Blocation.longitude%5D=-93.1938&filter%5Blocation.distance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 10 RescueGroups dogs from 50158
+🔍 Sample dogs from 50158:
+   1. Hannah Steele (ID: 10072481)
+      Breed: Labrador Retriever
+      Age: Senior
+   2. Doli (ID: 10131543)
+      Breed: Husky
+      Age: Senior
+   3. Cylana (ID: 10138270)
+      Breed: Shar Pei
+      Age: Senior
+✅ Location 50158: 10 dogs found
+
+📊 RESULTS SUMMARY:
+   Total API calls: 5
+   Total dogs found: 50
+   Unique dogs: 10
+   Duplicates: 40
+❌ FAILED: Too many duplicates - location filtering may not be working
+
+🎯 Test completed successfully!
+~/workspace/animal-rescue-donations$ 
