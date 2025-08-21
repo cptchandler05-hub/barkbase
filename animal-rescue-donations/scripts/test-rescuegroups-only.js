@@ -90,26 +90,26 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   // Add random sorting to reduce repeated results
   params.append('sort', 'random');
 
-  // Specify fields to return - CORRECTED: Remove invalid fields that don't exist
+  // Specify fields to return - FIXED: Use unprefixed camelCase field names
   const fields = [
     'id',
     'name',
-    'animalGeneralAge',
-    'animalSizes',
-    'animalBreedPrimary',
-    'animalBreedSecondary',
-    'animalBreedMixed',
-    'animalDescriptionHtml',
-    'animalDescriptionText',
-    'animalEnergyLevel',
-    'animalActivityLevel',
-    'animalCreatedDate',
-    'animalUpdatedDate',
-    'animalSex',
-    'animalHousetrained',
-    'animalSpecialneeds',
-    'animalAdoptionFee',
-    'animalAdoptionPending'
+    'ageGroup',
+    'sizeGroup',
+    'breedPrimary',
+    'breedSecondary',
+    'isBreedMixed',
+    'descriptionHtml',
+    'descriptionText',
+    'energyLevel',
+    'activityLevel',
+    'createdDate',
+    'updatedDate',
+    'sex',
+    'isHousetrained',
+    'specialNeeds',
+    'adoptionFeeString',
+    'isAdoptionPending'
   ];
   params.append('fields[animals]', fields.join(','));
 
