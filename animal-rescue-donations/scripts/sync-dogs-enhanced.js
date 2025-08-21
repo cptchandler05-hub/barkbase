@@ -213,8 +213,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   ];
   params.append('fields[animals]', fields.join(','));
   
-  // Add picture fields with correct camelCase names for API requests
-  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+  // Add picture fields with correct camelCase names for API requests - EXPANDED: Include all possible URL fields
+  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
   
   // CRITICAL FIX: Tell API to include picture attributes in included section
   params.append('fields[included]', 'pictures');
@@ -265,8 +265,9 @@ function getPicturesForAnimal(animalId, included) {
     .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id?.toString() === animalId.toString())
     .map(pic => {
       const attrs = pic.attributes || {};
-      // Prioritize camelCase fields from corrected API request, fallback to snake_case
+      // Prioritize camelCase fields from corrected API request, include secure URLs, fallback to snake_case
       return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
+             attrs.urlSecureFullsize || attrs.urlSecureLarge || attrs.urlSecureOriginal ||
              attrs.url_large || attrs.url_original || attrs.url_small || null;
     })
     .filter(url => url !== null);

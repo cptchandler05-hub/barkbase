@@ -22,9 +22,10 @@ function getPicturesForAnimal(animal, included) {
       return null;
     }
     const attrs = pic.attributes || {};
-    console.log(`   📸 Found picture ${pic.id} with URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
-    // Try multiple possible URL field names - prioritize the ones we should get with corrected API request
+    console.log(`   📸 Found picture ${pic.id} with URL:`, attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url);
+    // Try multiple possible URL field names - expanded to include secure URLs
     const possibleUrl = attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
+                       attrs.urlSecureFullsize || attrs.urlSecureLarge || attrs.urlSecureOriginal ||
                        attrs.url_large || attrs.url_original || attrs.url_small || 
                        attrs.large || attrs.original || attrs.small ||
                        attrs.imageUrl || attrs.image_url || attrs.src;
@@ -132,8 +133,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   ];
   params.append('fields[animals]', fields.join(','));
 
-  // Add picture fields separately to ensure photos are included - FIXED: Use camelCase field names
-  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+  // Add picture fields separately to ensure photos are included - EXPANDED: Include all possible URL fields
+  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
   
   // CRITICAL FIX: Tell API to include picture attributes in included section
   params.append('fields[included]', 'pictures');
