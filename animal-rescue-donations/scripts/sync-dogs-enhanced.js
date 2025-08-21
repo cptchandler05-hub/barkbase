@@ -203,12 +203,13 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
     params.append('start', offset.toString());
   }
 
-  // Specify fields to return - FIXED: Use correct API v5 field names
+  // Specify fields to return - CORRECTED: Remove invalid fields that don't exist
   const fields = [
     'id', 'name', 'animalStatus', 'animalSpecies',
     'animalGeneralAge', 'animalSex', 'animalSizes', 'animalBreedPrimary', 'animalBreedSecondary',
-    'animalMixed', 'animalDescription', 'animalSpecialneeds', 'animalAttributes',
-    'animalPictures', 'animalThumbnailUrl', 'animalUrl', 'animalDistance', 'animalUpdatedDate', 'animalCreatedDate'
+    'animalBreedMixed', 'animalDescriptionHtml', 'animalDescriptionText', 'animalSpecialneeds',
+    'animalHousetrained', 'animalGoodWithChildren', 'animalGoodWithDogs', 'animalGoodWithCats',
+    'animalUpdatedDate', 'animalCreatedDate'
   ];
   params.append('fields[animals]', fields.join(','));
 
@@ -252,6 +253,17 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   }
 }
 
+// Helper function to extract photos from included data
+function getPicturesForAnimal(animalId, included) {
+  return included
+    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id === animalId)
+    .map(pic => {
+      const attrs = pic.attributes || {};
+      return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null;
+    })
+    .filter(url => url !== null);
+}
+
 // Transform RescueGroups animal to database format
 function transformRescueGroupsAnimal(animal, included = []) {
   const attrs = animal.attributes || {};
@@ -275,7 +287,8 @@ function transformRescueGroupsAnimal(animal, included = []) {
     }
   }
 
-  const photos = [];
+  // Get photos from included data using proper mapping
+  const photos = getPicturesForAnimal(animal.id, included);
 
   const mapBoolean = (value) => {
     if (!value) return null;
@@ -304,7 +317,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
     api_source: 'rescuegroups',
     api_source_priority: 1, // Higher priority than Petfinder
     organization_id: animal.relationships?.orgs?.data?.[0]?.id || '',
-    url: attrs.url || '',
+    url: `https://www.rescuegroups.org/animals/detail?AnimalID=${animal.id}`,
     name: attrs.name || 'Unknown',
     type: 'Dog',
     species: 'Dog',
@@ -322,7 +335,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
     good_with_children: mapBoolean(attrs.animalGoodWithChildren),
     good_with_dogs: mapBoolean(attrs.animalGoodWithDogs),
     good_with_cats: mapBoolean(attrs.animalGoodWithCats),
-    description: attrs.animalDescription || null,
+    description: attrs.animalDescriptionText || attrs.animalDescriptionHtml || null,
     photos: photos,
     tags: [],
     contact_info: orgContactInfo,

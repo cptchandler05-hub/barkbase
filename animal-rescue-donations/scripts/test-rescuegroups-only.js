@@ -5,6 +5,26 @@ require('dotenv').config({ path: './.env.local' });
 // Test script for RescueGroups API integration
 // This tests the same logic used in the main sync but focused only on RescueGroups
 
+// Helper function to extract photos from included data
+function getPicturesForAnimal(animalId, included) {
+  return included
+    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id === animalId)
+    .map(pic => {
+      const attrs = pic.attributes || {};
+      return {
+        url: attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null,
+        thumbnail: attrs.urlSmall || null,
+        order: attrs.order || 0
+      };
+    })
+    .sort((a, b) => a.order - b.order); // Sort by order
+}
+
+// Helper function to construct RescueGroups profile URL
+function constructDogUrl(animalId) {
+  return `https://www.rescuegroups.org/animals/detail?AnimalID=${animalId}`;
+}
+
 async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50, offset = 0) {
   console.log(`🦮 Testing RescueGroups filter: ${diversityFilter}`);
 
@@ -70,7 +90,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   // Add random sorting to reduce repeated results
   params.append('sort', 'random');
 
-  // Specify fields to return - FIXED: Use correct API v5 animal-prefixed field names
+  // Specify fields to return - CORRECTED: Remove invalid fields that don't exist
   const fields = [
     'id',
     'name',
@@ -83,9 +103,6 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     'animalDescriptionText',
     'animalEnergyLevel',
     'animalActivityLevel',
-    'animalPictureCount',
-    'animalThumbnailUrl',
-    'animalUrl',
     'animalCreatedDate',
     'animalUpdatedDate',
     'animalSex',
@@ -128,10 +145,19 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       console.log(`🔍 Sample dogs from ${diversityFilter}:`);
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
+        const pictures = getPicturesForAnimal(animal.id, included);
+        const dogUrl = constructDogUrl(animal.id);
+        
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
         console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
         console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalBreedMixed ? 'true' : 'false'}`);
         console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      📸 Pictures: ${pictures.length} found`);
+        if (pictures.length > 0) {
+          console.log(`         First photo: ${pictures[0].url ? 'Available' : 'No URL'}`);
+        }
+        console.log(`      🔗 Profile URL: ${dogUrl}`);
+        console.log(`      📝 Description: ${attrs.animalDescriptionText ? 'Available' : 'None'} (HTML: ${attrs.animalDescriptionHtml ? 'Available' : 'None'})`);
         console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 10).join(', ')}`);
       });
     }
@@ -152,6 +178,7 @@ async function testRescueGroupsSync() {
     const testFilters = ['default', 'recent', 'large_dogs', 'small_dogs', 'seniors', 'special_needs', 'puppies', 'mixed_breeds'];
     const allDogs = [];
     const allDogIds = [];
+    const allIncluded = [];
     let totalAPIRequests = 0;
 
     for (const filter of testFilters) {
@@ -161,6 +188,7 @@ async function testRescueGroupsSync() {
         
         totalAPIRequests++;
         allDogs.push(...animals);
+        allIncluded.push(...included);
         
         // Track IDs for deduplication analysis
         animals.forEach(animal => {
@@ -187,10 +215,10 @@ async function testRescueGroupsSync() {
     console.log(`   Duplicates removed: ${duplicateCount}`);
     console.log(`   Duplication rate: ${((duplicateCount / allDogIds.length) * 100).toFixed(1)}%`);
 
-    // Test data quality
+    // Test data quality using proper photo mapping
     const dogsWithPhotos = allDogs.filter(dog => {
-      const attrs = dog.attributes || {};
-      return attrs.animalPictureCount > 0 || attrs.animalThumbnailUrl;
+      const pictures = getPicturesForAnimal(dog.id, allIncluded);
+      return pictures.length > 0;
     });
 
     const dogsWithDescriptions = allDogs.filter(dog => {
