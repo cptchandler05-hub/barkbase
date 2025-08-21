@@ -15,47 +15,47 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // Apply diversity filters - FIXED: Use correct API v5 schema field names
+  // Apply diversity filters - FIXED: Use correct API v5 animal-prefixed field names
   switch (diversityFilter) {
     case 'recent':
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      params.append('filter[updatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'large_dogs':
-      params.append('filter[sizeGroup]', 'Large');
+      params.append('filter[animalSizes]', 'Large');
       break;
 
     case 'small_dogs':
-      params.append('filter[sizeGroup]', 'Small');
+      params.append('filter[animalSizes]', 'Small');
       break;
 
     case 'seniors':
-      params.append('filter[ageGroup]', 'Senior');
+      params.append('filter[animalGeneralAge]', 'Senior');
       break;
 
     case 'special_needs':
-      params.append('filter[qualities]', 'specialNeeds');
+      params.append('filter[animalSpecialneeds]', 'true');
       break;
 
     case 'puppies':
-      params.append('filter[ageGroup]', 'Baby');
+      params.append('filter[animalGeneralAge]', 'Baby');
       break;
 
     case 'mixed_breeds':
-      params.append('filter[isBreedMixed]', 'true');
+      params.append('filter[animalBreedMixed]', 'true');
       break;
 
     case 'purebreds':
-      params.append('filter[isBreedMixed]', 'false');
+      params.append('filter[animalBreedMixed]', 'false');
       break;
 
     default:
       // Default: recently updated in last 3 months
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      params.append('filter[updatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
       break;
   }
 
@@ -67,29 +67,32 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     params.append('start', offset.toString());
   }
 
-  // Specify fields to return - FIXED: Use correct API v5 field names (from diagnostic test)
+  // Add random sorting to reduce repeated results
+  params.append('sort', 'random');
+
+  // Specify fields to return - FIXED: Use correct API v5 animal-prefixed field names
   const fields = [
     'id',
     'name',
-    'ageGroup',
-    'sizeGroup',
-    'breedPrimary',
-    'breedSecondary',
-    'isBreedMixed',
-    'descriptionText',
-    'descriptionHtml',
-    'energyLevel',
-    'activityLevel',
-    'pictureCount',
-    'pictureThumbnailUrl',
-    'url',
-    'createdDate',
-    'updatedDate',
-    'sex',
-    'isHousetrained',
-    'qualities',
-    'adoptionFeeString',
-    'isAdoptionPending'
+    'animalGeneralAge',
+    'animalSizes',
+    'animalBreedPrimary',
+    'animalBreedSecondary',
+    'animalBreedMixed',
+    'animalDescriptionHtml',
+    'animalDescriptionText',
+    'animalEnergyLevel',
+    'animalActivityLevel',
+    'animalPictureCount',
+    'animalThumbnailUrl',
+    'animalUrl',
+    'animalCreatedDate',
+    'animalUpdatedDate',
+    'animalSex',
+    'animalHousetrained',
+    'animalSpecialneeds',
+    'animalAdoptionFee',
+    'animalAdoptionPending'
   ];
   params.append('fields[animals]', fields.join(','));
 
@@ -126,10 +129,10 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
-        console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
-        console.log(`      Special Needs: ${attrs.qualities?.includes('specialNeeds') ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
-        console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
-        console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 5).join(', ')}`);
+        console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+        console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalBreedMixed ? 'true' : 'false'}`);
+        console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 10).join(', ')}`);
       });
     }
 
@@ -187,12 +190,13 @@ async function testRescueGroupsSync() {
     // Test data quality
     const dogsWithPhotos = allDogs.filter(dog => {
       const attrs = dog.attributes || {};
-      return attrs.animalPictures || attrs.animalThumbnailUrl;
+      return attrs.animalPictureCount > 0 || attrs.animalThumbnailUrl;
     });
 
     const dogsWithDescriptions = allDogs.filter(dog => {
       const attrs = dog.attributes || {};
-      return attrs.animalDescription && attrs.animalDescription.length > 50;
+      return (attrs.animalDescriptionText && attrs.animalDescriptionText.length > 50) || 
+             (attrs.animalDescriptionHtml && attrs.animalDescriptionHtml.length > 50);
     });
 
     console.log('\n🏆 DATA QUALITY ANALYSIS:');
@@ -205,12 +209,12 @@ async function testRescueGroupsSync() {
     if (sampleDog?.attributes) {
       const attrs = sampleDog.attributes;
       console.log(`   📋 Available attribute keys: ${Object.keys(attrs).join(', ')}`);
-      console.log(`   ✅ ageGroup: ${attrs.ageGroup || 'N/A'}`);
-      console.log(`   ✅ sizeGroup: ${attrs.sizeGroup || 'N/A'}`);
-      console.log(`   ✅ qualities: ${attrs.qualities || 'N/A'}`);
-      console.log(`   ✅ breedPrimary: ${attrs.breedPrimary || 'N/A'}`);
-      console.log(`   ✅ isBreedMixed: ${attrs.isBreedMixed || 'N/A'}`);
-      console.log(`   🔍 Sample raw animal structure:`, JSON.stringify(sampleDog, null, 2).slice(0, 500));
+      console.log(`   ✅ animalGeneralAge: ${attrs.animalGeneralAge || 'N/A'}`);
+      console.log(`   ✅ animalSizes: ${attrs.animalSizes || 'N/A'}`);
+      console.log(`   ✅ animalSpecialneeds: ${attrs.animalSpecialneeds || 'N/A'}`);
+      console.log(`   ✅ animalBreedPrimary: ${attrs.animalBreedPrimary || 'N/A'}`);
+      console.log(`   ✅ animalBreedMixed: ${attrs.animalBreedMixed || 'N/A'}`);
+      console.log(`   🔍 Sample raw animal structure:`, JSON.stringify(sampleDog, null, 2).slice(0, 800));
     }
 
     if (uniqueDogIds.length > 0) {
