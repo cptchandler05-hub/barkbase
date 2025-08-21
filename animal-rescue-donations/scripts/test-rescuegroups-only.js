@@ -7,18 +7,34 @@ require('dotenv').config({ path: './.env.local' });
 
 // Helper function to extract photos from included data
 function getPicturesForAnimal(animalId, included) {
+  const animalIdStr = animalId.toString();
+  
   const allPictures = included.filter(item => item.type === 'pictures');
-  const animalPictures = allPictures.filter(item => 
-    item.relationships?.animal?.data?.id?.toString() === animalId.toString()
-  );
+  
+  // Debug: Log sample picture object structure
+  if (allPictures.length > 0) {
+    console.log("📦 Sample picture object:", JSON.stringify(allPictures[0], null, 2));
+  }
+  
+  const animalPictures = allPictures.filter(item => {
+    const relatedAnimalId = item.relationships?.animal?.data?.id?.toString();
+    if (!relatedAnimalId) {
+      console.log(`⚠️ Picture ${item.id} has no animal relationship ID`);
+      return false;
+    }
+
+    // Debug log: compare directly
+    console.log(`🔍 Comparing: animalId="${animalIdStr}" vs picture rel ID="${relatedAnimalId}"`);
+    return relatedAnimalId === animalIdStr;
+  });
   
   console.log(`🖼️ Photo debug for animal ${animalId}: found ${allPictures.length} total pictures, ${animalPictures.length} for this animal`);
   
   return animalPictures
     .map(pic => {
       const attrs = pic.attributes || {};
-      console.log(`   Photo attrs:`, Object.keys(attrs));
-      console.log(`🐶 Matched picture URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
+      console.log(`   📸 Photo attrs:`, Object.keys(attrs));
+      console.log(`   🐶 Matched picture URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
       return {
         url: attrs.url_large || attrs.url_original || attrs.url_small || attrs.url || null,
         thumbnail: attrs.url_small || null,
@@ -157,6 +173,10 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       console.log(`🔍 Sample dogs from ${diversityFilter}:`);
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
+        
+        // Debug animal ID details
+        console.log(`\n🆔 Animal ID Debug: ID="${animal.id}", Type: ${typeof animal.id}, Length: ${animal.id.toString().length}`);
+        
         const pictures = getPicturesForAnimal(animal.id, included);
         const dogUrl = constructDogUrl(animal.id);
         
