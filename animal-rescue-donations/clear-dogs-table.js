@@ -13,7 +13,7 @@ async function clearDogsTable() {
     const { error } = await supabase
       .from('dogs')
       .delete()
-      .neq('id', 0);
+      .gte('id', 0);
     
     if (error) {
       console.error('❌ Error wiping dogs table:', error);
