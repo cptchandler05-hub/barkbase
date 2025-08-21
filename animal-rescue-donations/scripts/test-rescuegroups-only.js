@@ -7,16 +7,24 @@ require('dotenv').config({ path: './.env.local' });
 
 // Helper function to extract photos from included data
 function getPicturesForAnimal(animalId, included) {
-  return included
-    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id === animalId)
+  const allPictures = included.filter(item => item.type === 'pictures');
+  const animalPictures = allPictures.filter(item => 
+    item.relationships?.animal?.data?.id?.toString() === animalId.toString()
+  );
+  
+  console.log(`🖼️ Photo debug for animal ${animalId}: found ${allPictures.length} total pictures, ${animalPictures.length} for this animal`);
+  
+  return animalPictures
     .map(pic => {
       const attrs = pic.attributes || {};
+      console.log(`   Photo attrs:`, Object.keys(attrs));
       return {
-        url: attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null,
+        url: attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url || null,
         thumbnail: attrs.urlSmall || null,
         order: attrs.order || 0
       };
     })
+    .filter(pic => pic.url) // Only keep pictures with valid URLs
     .sort((a, b) => a.order - b.order); // Sort by order
 }
 
@@ -112,6 +120,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     'isAdoptionPending'
   ];
   params.append('fields[animals]', fields.join(','));
+  
+  // Add picture fields separately to ensure photos are included
+  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
@@ -154,7 +165,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
         console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
         console.log(`      📸 Pictures: ${pictures.length} found`);
         if (pictures.length > 0) {
-          console.log(`         First photo: ${pictures[0].url ? 'Available' : 'No URL'}`);
+          console.log(`         First photo URL: ${pictures[0].url}`);
+        } else {
+          console.log(`         No photos found for ID ${animal.id}`);
         }
         console.log(`      🔗 Profile URL: ${dogUrl}`);
         console.log(`      📝 Description: ${attrs.descriptionText ? 'Available' : 'None'} (HTML: ${attrs.descriptionHtml ? 'Available' : 'None'})`);

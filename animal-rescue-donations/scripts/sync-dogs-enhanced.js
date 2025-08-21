@@ -256,7 +256,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 // Helper function to extract photos from included data
 function getPicturesForAnimal(animalId, included) {
   return included
-    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id === animalId)
+    .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id?.toString() === animalId.toString())
     .map(pic => {
       const attrs = pic.attributes || {};
       return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null;
