@@ -11,8 +11,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Core filters - FIXED: Use correct API v5 schema field names (no animal prefix needed)
-  params.append('filter[species.singular]', 'Dog');
+  // Core filters - FIXED: Use correct API v5 schema field names (no prefix needed)
+  params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
   // Apply diversity filters - FIXED: Use correct API v5 schema field names
@@ -20,7 +20,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     case 'recent':
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      params.append('filter[updatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'large_dogs':
@@ -55,7 +55,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       // Default: recently updated in last 3 months
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[updatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
       break;
   }
 
@@ -77,7 +77,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     'breedSecondary',
     'isBreedMixed',
     'descriptionText',
+    'descriptionHtml',
     'energyLevel',
+    'activityLevel',
     'pictureCount',
     'pictureThumbnailUrl',
     'url',
@@ -85,7 +87,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     'updatedDate',
     'sex',
     'isHousetrained',
-    'qualities'
+    'qualities',
+    'adoptionFeeString',
+    'isAdoptionPending'
   ];
   params.append('fields[animals]', fields.join(','));
 
