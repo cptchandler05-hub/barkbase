@@ -1,0 +1,42 @@
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will use volume-based diversity filters (no location calls)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (High-Volume Diverse Dog Rescue)
+🎯 Fetching recent dogs from RescueGroups (100 target)...
+🦮 Fetching RescueGroups dogs with filter: recent (limit: 100)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5BanimalSpecies%5D=Dog&filter%5BanimalStatus%5D=Available&filter%5BanimalUpdatedDate%5D=%3E2025-07-21&limit=100&fields%5Banimals%5D=id%2Cname%2CanimalStatus%2CanimalSpecies%2CanimalGeneralAge%2CanimalSex%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalMixed%2CanimalDescription%2CanimalSpecialneeds%2CanimalAttributes%2CanimalPictures%2CanimalThumbnailUrl%2CanimalUrl%2CanimalDistance%2CanimalUpdatedDate%2CanimalCreatedDate&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 100 RescueGroups dogs with recent filter (786 included items)
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 Filter type: recent
+📄 Page 1: Got 100 recent dogs (total: 100)
+✅ Total recent dogs: 100
+🎯 Fetching large_dogs dogs from RescueGroups (100 target)...
+🦮 Fetching RescueGroups dogs with filter: large_dogs (limit: 100)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5BanimalSpecies%5D=Dog&filter%5BanimalStatus%5D=Available&filter%5BanimalSizes%5D=Large&limit=100&fields%5Banimals%5D=id%2Cname%2CanimalStatus%2CanimalSpecies%2CanimalGeneralAge%2CanimalSex%2CanimalSizes%2CanimalBreedPrimary%2CanimalBreedSecondary%2CanimalMixed%2CanimalDescription%2CanimalSpecialneeds%2CanimalAttributes%2CanimalPictures%2CanimalThumbnailUrl%2CanimalUrl%2CanimalDistance%2CanimalUpdatedDate%2CanimalCreatedDate&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 100 RescueGroups dogs with large_dogs filter (786 included items)
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 Filter type: large_dogs
+📄 Page 1: Got 100 large_dogs dogs (total: 100)
+✅ Total large_dogs dogs: 100
+📊 RescueGroups Volume Results:
+   Raw dogs fetched: 200
+   Filters used: 2
+   Avg dogs per filter: 100
+🔍 Duplication analysis: 100 dogs appeared multiple times
+🎯 Final unique RescueGroups dogs: 100
+📝 Syncing 100 rescuegroups dogs to database...
+✅ rescuegroups sync completed: 0 added, 100 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+✅ petfinder sync completed: 1 added, 4 updated
+🧹 Marking old dogs as removed...
+🧹 Marked 0 old dogs as removed
+✅ Enhanced dog sync completed successfully!
