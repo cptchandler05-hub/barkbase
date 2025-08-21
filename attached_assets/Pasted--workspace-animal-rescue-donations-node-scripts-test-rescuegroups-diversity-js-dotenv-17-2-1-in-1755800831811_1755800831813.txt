@@ -1,0 +1,126 @@
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-diversity.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: ⚙️  suppress all logs with { quiet: true }
+🧪 TESTING RESCUEGROUPS DIVERSITY FILTERS
+🎯 This will test if filters are actually returning different dogs
+
+🦮 Testing RescueGroups filter: default
+📋 Filter "default" returned 20 dogs
+🔍 Sample dogs from default:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "default": 20 dogs
+
+🦮 Testing RescueGroups filter: recent
+📋 Filter "recent" returned 20 dogs
+🔍 Sample dogs from recent:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "recent": 20 dogs
+
+🦮 Testing RescueGroups filter: large_dogs
+📋 Filter "large_dogs" returned 20 dogs
+🔍 Sample dogs from large_dogs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "large_dogs": 20 dogs
+
+🦮 Testing RescueGroups filter: small_dogs
+📋 Filter "small_dogs" returned 20 dogs
+🔍 Sample dogs from small_dogs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "small_dogs": 20 dogs
+
+🦮 Testing RescueGroups filter: seniors
+📋 Filter "seniors" returned 20 dogs
+🔍 Sample dogs from seniors:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "seniors": 20 dogs
+
+🦮 Testing RescueGroups filter: special_needs
+📋 Filter "special_needs" returned 20 dogs
+🔍 Sample dogs from special_needs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Labrador Retriever
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Husky
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Updated: undefined
+      Breed: Shar Pei
+✅ Filter "special_needs": 20 dogs
+
+📊 OVERLAP ANALYSIS:
+🔗 recent vs large_dogs: 20 overlapping dogs out of 20/20
+🔗 large_dogs vs small_dogs: 20 overlapping dogs out of 20/20
+🔗 seniors vs special_needs: 20 overlapping dogs out of 20/20
+🔗 default vs recent: 20 overlapping dogs out of 20/20
+
+🎯 SUMMARY:
+   Total dog instances: 120
+   Unique dogs: 20
+   Duplication rate: 83.3%
+🚨 WARNING: Over 80% duplicates - filters may be returning same dogs!
+
+🏆 FILTER EFFECTIVENESS:
+   default: 20 dogs
+   recent: 20 dogs
+   large_dogs: 20 dogs
+   small_dogs: 20 dogs
+   seniors: 20 dogs
+   special_needs: 20 dogs
