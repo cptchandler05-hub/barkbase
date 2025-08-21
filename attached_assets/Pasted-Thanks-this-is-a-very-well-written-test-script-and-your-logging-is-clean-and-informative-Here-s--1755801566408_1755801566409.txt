@@ -1,0 +1,92 @@
+Thanks — this is a very well-written test script, and your logging is clean and informative. Here's a deep review, and it reveals the key reason your filters are being ignored, plus how to fix it fully.
+
+🔍 CRITICAL FINDING: You're requesting fields that do not match your filter fields
+In your query:
+
+js
+Copy
+Edit
+params.append('fields[animals]', 'id,name,sizeGroup,ageGroup,specialNeeds,updated,breedPrimary');
+But RescueGroups expects snake_case schema field names, and your filters use:
+
+animalGeneralAge ✅
+
+animalSpecialneeds ✅
+
+animalSizes ✅
+
+So you should be requesting:
+
+js
+Copy
+Edit
+params.append('fields[animals]', 'id,name,animalGeneralAge,animalSpecialneeds,animalSizes,animalUpdatedDate,animalBreedPrimary');
+Otherwise, you're applying filters on invisible fields. You’re not seeing (or validating) if the results actually match the filters because you're not requesting the correct data fields to inspect them!
+
+🧨 DEEPER ISSUE: You're still getting the same 20 dogs because the filters aren't actually applied
+Here’s what’s wrong and what to fix:
+
+1. ❌ You're using sizeGroup, ageGroup, specialNeeds in the requested fields — these are invalid
+RescueGroups returns those only in legacy or web UI formats — they're not schema field names. The API v5 schema is fully camelCase or snake_case with animal prefixes.
+
+💡 Remember: if you filter on filter[animalGeneralAge], you must request animalGeneralAge to verify it worked.
+
+✅ RECOMMENDED FIXES (in order)
+✅ 1. Fix your requested fields
+Update:
+
+js
+Copy
+Edit
+params.append(
+  'fields[animals]',
+  'id,name,animalGeneralAge,animalSpecialneeds,animalSizes,animalUpdatedDate,animalBreedPrimary'
+);
+✅ 2. Fix your output logging to match new field names:
+Replace this section:
+
+js
+Copy
+Edit
+console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.specialNeeds || 'false'}, Updated: ${attrs.updated}`);
+console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}`);
+With:
+
+js
+Copy
+Edit
+console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Updated: ${attrs.animalUpdatedDate}`);
+console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}`);
+✅ 3. Optionally add sort=random to diversify the results
+This ensures that even within a filter like Large, you get a rotating set:
+
+js
+Copy
+Edit
+params.append('sort', 'random');
+🧪 Validation Plan
+Once you've made those fixes:
+
+Rerun your test script
+
+Compare actual field values to each filter
+
+Confirm dogs match the requested traits
+
+For example:
+filter[animalGeneralAge]=Senior → all returned dogs should say Age: Senior
+
+filter[animalSizes]=Large → all dogs should say Size: Large
+
+filter[animalSpecialneeds]=true → all dogs should say Special Needs: true
+
+If a dog appears in multiple categories where it shouldn't, then the API is misbehaving — but if filters are working properly, this will reveal it.
+
+✅ Summary
+Problem	Fix
+Using invalid field names like sizeGroup, ageGroup	Use API schema fields: animalSizes, animalGeneralAge, etc.
+Requested fields don’t match filter fields	Add correct fields[animals] like animalSizes
+Filters silently ignored	Caused by using wrong filter and not requesting correct fields
+Logging is misleading	Change output to match true field names
