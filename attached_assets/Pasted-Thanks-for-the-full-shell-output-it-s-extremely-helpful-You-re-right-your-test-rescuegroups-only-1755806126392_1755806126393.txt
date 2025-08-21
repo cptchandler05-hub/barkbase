@@ -1,0 +1,106 @@
+Thanks for the full shell output — it's extremely helpful. You're right: your test-rescuegroups-only.js script is not mapping attributes like animalSizes, animalBreedPrimary, animalUpdatedDate, etc., correctly — even though you're requesting them in the fields[animals] parameter.
+
+🔍 Root Cause
+Despite this URL being correct:
+
+bash
+Copy
+Edit
+...&fields[animals]=id,name,animalGeneralAge,animalSizes,...
+Your shell output shows:
+
+bash
+Copy
+Edit
+Raw attrs keys: id, name
+That means the returned attributes object contains only id and name, nothing else.
+
+✅ Fix: Update the fields[animals] parameter to use unprefixed field names
+Unlike in the filtering step (filter[animalSizes]), the field names in fields[animals] should NOT be prefixed. That is:
+
+diff
+Copy
+Edit
+// ❌ Wrong
+fields[animals]=animalBreedPrimary,animalSizes,...
+
+// ✅ Correct
+fields[animals]=breedPrimary,sizeGroup,...
+🎯 Here's what you need to do in test-rescuegroups-only.js
+✅ Replace this:
+js
+Copy
+Edit
+const fields = [
+  'id',
+  'name',
+  'animalGeneralAge',
+  'animalSizes',
+  'animalBreedPrimary',
+  'animalBreedSecondary',
+  'animalBreedMixed',
+  'animalDescriptionHtml',
+  'animalDescriptionText',
+  'animalEnergyLevel',
+  'animalActivityLevel',
+  'animalCreatedDate',
+  'animalUpdatedDate',
+  'animalSex',
+  'animalHousetrained',
+  'animalSpecialneeds',
+  'animalAdoptionFee',
+  'animalAdoptionPending'
+];
+🚀 With this:
+js
+Copy
+Edit
+const fields = [
+  'id',
+  'name',
+  'ageGroup',
+  'sizeGroup',
+  'breedPrimary',
+  'breedSecondary',
+  'isBreedMixed',
+  'descriptionHtml',
+  'descriptionText',
+  'energyLevel',
+  'activityLevel',
+  'createdDate',
+  'updatedDate',
+  'sex',
+  'isHousetrained',
+  'specialNeeds',
+  'adoptionFeeString',
+  'isAdoptionPending'
+];
+These are the actual API v5 field names exposed in the schema for fields[animals]. They are camelCase and unprefixed, which is different from the filter[...] parameters that use snake_case and are prefixed (e.g., animalBreedMixed).
+
+📸 Also: Fix the Picture Mapping
+You are logging:
+
+yaml
+Copy
+Edit
+📸 Pictures: 0 found
+That’s because the code that logs pictures likely uses:
+
+js
+Copy
+Edit
+animal.attributes.animalPictureCount
+That field is deprecated. Instead, you should extract photos from the included array by filtering items with:
+
+js
+Copy
+Edit
+item.type === 'pictures' && item.relationships?.animal?.data?.id === animal.id
+Just like you do in dog-sync-enhanced.js.
+
+✅ Final Summary of Fixes Needed
+Issue	Fix
+Field mapping	Use unprefixed field names in fields[animals]
+Field names	Must be camelCase: breedPrimary, sizeGroup, updatedDate
+Picture count	Extract pictures from included[] using type === "pictures"
+Attribute values missing	All come back if field names are correct
