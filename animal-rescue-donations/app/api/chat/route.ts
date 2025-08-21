@@ -1057,9 +1057,9 @@ export async function POST(req: Request) {
               // Normalize breed input consistently
               let cleanBreed = fullBreed.toLowerCase().trim();
 
-              // Remove trailing 's' if present and longer than 3 characters to get singular form
+              // Remove trailing 's' if present and longer than 3 characters, but avoid breaking valid breed names
               let singularBreed = cleanBreed;
-              if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
+              if (cleanBreed.endsWith('s') && cleanBreed.length > 3 && !cleanBreed.endsWith('ss')) {
                 singularBreed = cleanBreed.slice(0, -1);
               }
 

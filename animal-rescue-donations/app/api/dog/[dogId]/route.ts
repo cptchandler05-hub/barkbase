@@ -179,10 +179,8 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         };
 
         console.log('[📞 Contact Debug] Formatted dog contact info:', formattedDog.contact);
-
-        console.log('[📞 Contact Debug] Formatted dog contact info:', formattedDog.contact);
           return NextResponse.json({
-            animal: DogFormatter.toLegacyFormat(formattedDog, false), // Don't truncate for individual dog pages
+            animal: formattedDog, // Return full formatted dog data
             source: 'database'
           });
         }
@@ -194,7 +192,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
       // Continue to external APIs
     }
 
-    // 🦮 PHASE 2: Petfinder API Search (RescueGroups API is only for sync)
+    // 🦮 PHASE 2: Petfinder API Search
     try {
       console.log('[🐾 Petfinder] Searching Petfinder API...');
       let accessToken = await getAccessToken();
