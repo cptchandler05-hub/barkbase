@@ -1,0 +1,106 @@
+Thanks for the thorough update — you're very close. The core issue now is a misunderstanding about the fields[included] parameter. This is not a valid API parameter in RescueGroups v5. That line is silently ignored by the API — which is why you're still getting:
+
+pgsql
+Copy
+Edit
+📸 Found picture 101254190 with URL: null
+✅ What's Wrong
+This line is invalid:
+
+js
+Copy
+Edit
+params.append('fields[included]', 'pictures'); // ❌ Not supported
+You're already including the correct fields via:
+
+js
+Copy
+Edit
+params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+BUT RescueGroups sometimes returns picture objects with only minimal data in included[], unless the picture itself is selected as a top-level resource or if it's properly referenced through a relationship that requests fields explicitly. So even though you specified fields, RescueGroups is not honoring them in the included[] block.
+
+✅ Solution
+✅ Step 1: Remove invalid param
+Remove this:
+
+js
+Copy
+Edit
+params.append('fields[included]', 'pictures'); // ❌ Delete this line
+✅ Step 2: Confirm correct camelCase fields
+The v5 API is camelCase, so this is correct and should stay:
+
+js
+Copy
+Edit
+params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+You already have this right — no changes needed here.
+
+✅ Step 3: Inspect the raw included[] data
+Add the following after the const result = await response.json(); line:
+
+js
+Copy
+Edit
+console.log('\n🔎 Sample picture data from included:');
+const firstPicture = result.included?.find(item => item.type === 'pictures');
+console.dir(firstPicture, { depth: null });
+This will show you exactly what RescueGroups is giving you for a picture. You may find that the attributes object is either:
+
+completely missing
+
+or present but lacks urlLarge, urlSmall, etc.
+
+If that's the case, we’ll know the API isn't populating those fields properly in included[].
+
+✅ Recommended workaround
+If RescueGroups doesn't send photo URLs in included[] even when fields are requested (a known quirk), then:
+
+You can solve this by:
+Making a second batch fetch of the actual pictures using the IDs you already have.
+
+Here’s how:
+
+js
+Copy
+Edit
+// Gather unique picture IDs from all animals
+const pictureIds = new Set();
+animals.forEach(animal => {
+  const pictureRefs = animal.relationships?.pictures?.data || [];
+  pictureRefs.forEach(ref => pictureIds.add(ref.id));
+});
+
+// Make a separate API call to fetch picture objects directly
+const pictureIdList = [...pictureIds];
+if (pictureIdList.length > 0) {
+  const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
+  picUrl.searchParams.append('filter[id][in]', pictureIdList.slice(0, 100).join(','));
+  picUrl.searchParams.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+  const pictureResponse = await fetch(picUrl.toString(), {
+    method: 'GET',
+    headers: {
+      'Authorization': process.env.RESCUEGROUPS_API_KEY,
+      'Content-Type': 'application/json',
+      'User-Agent': 'BarkBase/1.0'
+    }
+  });
+
+  const picResult = await pictureResponse.json();
+  const fullPictures = picResult.data || [];
+  
+  console.log(`📸 Loaded ${fullPictures.length} picture objects from separate API call`);
+
+  // Replace or augment your included pictures here
+  included.push(...fullPictures);
+}
+Then your current getPicturesForAnimal() logic will start working — because it’ll now see real picture objects that contain actual URLs.
+
+✅ Summary
+✅ Step	Action
+Remove invalid param	params.append('fields[included]', ...) — ❌ not supported
+Confirm fields used	You’re already using fields[pictures]=... correctly
+Inspect what's returned	Log a pictures object from included[]
+Fix via workaround	Make batch fetch for actual pictures using filter[id][in]=...
+
+Let me know if you'd like the batch fetch integrated directly into your script — I can paste the full snippet. Once this is working, you’ll get real photos per dog, finally unlocking the full sync.
