@@ -1,0 +1,144 @@
+Thanks for the full file — this is very well written and clearly structured, but you’re still experiencing the same issue: RescueGroups is ignoring your filters and returning the same ~20 default dogs.
+
+Here’s a deep diagnostic pass to identify exactly what’s going wrong — and how to fix it.
+
+🛑 CRITICAL ISSUES
+❌ 1. You are still using invalid or web UI field names in your filter logic
+Despite the comment // FIXED: Use correct API v5 schema field names, this line:
+
+js
+Copy
+Edit
+params.append('filter[sizeGroup]', 'Large');
+...is still wrong.
+
+sizeGroup, ageGroup, etc., are not valid filter fields in RescueGroups v5. You need to use:
+
+Filter Concept	✅ CORRECT field name	❌ Incorrect one you're using
+Age	animalGeneralAge	ageGroup
+Size	animalSizes	sizeGroup
+Mixed breed	animalBreedMixed	isBreedMixed
+Special needs	animalSpecialneeds	qualities
+Updated date	animalUpdatedDate	updatedDate
+Breed primary	animalBreedPrimary	breedPrimary
+
+✅ REQUIRED FIXES
+🔧 Replace all filter field names with correct API schema fields
+diff
+Copy
+Edit
+switch (diversityFilter) {
+  case 'recent':
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+-   params.append('filter[updatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
++   params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+    break;
+
+  case 'large_dogs':
+-   params.append('filter[sizeGroup]', 'Large');
++   params.append('filter[animalSizes]', 'Large');
+    break;
+
+  case 'small_dogs':
+-   params.append('filter[sizeGroup]', 'Small');
++   params.append('filter[animalSizes]', 'Small');
+    break;
+
+  case 'seniors':
+-   params.append('filter[ageGroup]', 'Senior');
++   params.append('filter[animalGeneralAge]', 'Senior');
+    break;
+
+  case 'special_needs':
+-   params.append('filter[qualities]', 'specialNeeds');
++   params.append('filter[animalSpecialneeds]', 'true');
+    break;
+
+  case 'puppies':
+-   params.append('filter[ageGroup]', 'Baby');
++   params.append('filter[animalGeneralAge]', 'Baby');
+    break;
+
+  case 'mixed_breeds':
+-   params.append('filter[isBreedMixed]', 'true');
++   params.append('filter[animalBreedMixed]', 'true');
+    break;
+
+  case 'purebreds':
+-   params.append('filter[isBreedMixed]', 'false');
++   params.append('filter[animalBreedMixed]', 'false');
+    break;
+
+  default:
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+-   params.append('filter[updatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
++   params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+    break;
+}
+🔧 Update fields[animals] to include the correct return values
+You're requesting:
+
+js
+Copy
+Edit
+const fields = [
+  'id',
+  'name',
+  'ageGroup',
+  'sizeGroup',
+  'breedPrimary',
+  'breedSecondary',
+  'isBreedMixed',
+  ...
+];
+Fix to:
+
+js
+Copy
+Edit
+const fields = [
+  'id',
+  'name',
+  'animalGeneralAge',
+  'animalSizes',
+  'animalBreedPrimary',
+  'animalBreedSecondary',
+  'animalBreedMixed',
+  'animalSpecialneeds',
+  'animalUpdatedDate',
+  ...
+];
+You may keep extra fields like descriptionText, url, createdDate, etc., but you must fix the field names to match schema names from this doc.
+
+🔧 Update log output for correct fields
+diff
+Copy
+Edit
+console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.qualities?.includes('specialNeeds') ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
+console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
+Should become:
+
+js
+Copy
+Edit
+console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalBreedMixed ? 'true' : 'false'}`);
+console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+🧪 BONUS: Add sort=random to reduce repeat results
+You can also do this:
+
+js
+Copy
+Edit
+params.append('sort', 'random');
+This will reduce repeat dogs on identical filters and give you more diversity per run.
+
+✅ Summary of What’s Wrong
+Issue	Fix
+Using invalid filter fields (sizeGroup, ageGroup, qualities, etc.)	Replace with correct ones (animalSizes, animalGeneralAge, etc.)
+Using legacy field names in fields[animals]	Use animalX schema field names
+Logging incorrect/invisible values	Update attrs.xxx to correct schema fields
+Filters not applied → same dogs for every query	Caused by invalid keys silently being ignored
