@@ -2,7 +2,7 @@
 
 // Import necessary modules
 const fetch = require('node-fetch');
-require('dotenv').config({ path: './animal-rescue-donations/.env.local' });
+require('dotenv').config({ path: './.env.local' });
 
 // Define ZIP code to coordinates mapping for testing
 const zipToCoordinates = {
