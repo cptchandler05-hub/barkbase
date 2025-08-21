@@ -1,48 +1,37 @@
-
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: './.env.local' });
 
 // Test script for RescueGroups API integration
 // This tests the same logic used in the main sync but focused only on RescueGroups
 
-// Helper function to extract photos from included data
-function getPicturesForAnimal(animalId, included) {
-  const animalIdStr = animalId.toString();
-  
-  const allPictures = included.filter(item => item.type === 'pictures');
-  
-  // Debug: Log sample picture object structure
-  if (allPictures.length > 0) {
-    console.log("📦 Sample picture object:", JSON.stringify(allPictures[0], null, 2));
-  }
-  
-  const animalPictures = allPictures.filter(item => {
-    const relatedAnimalId = item.relationships?.animal?.data?.id?.toString();
-    if (!relatedAnimalId) {
-      console.log(`⚠️ Picture ${item.id} has no animal relationship ID`);
-      return false;
-    }
+// Helper function to extract photos from included data - FIXED using ChatGPT's forward relationship approach
+function getPicturesForAnimal(animal, included) {
+  const pictureRefs = animal.relationships?.pictures?.data || [];
 
-    // Debug log: compare directly
-    console.log(`🔍 Comparing: animalId="${animalIdStr}" vs picture rel ID="${relatedAnimalId}"`);
-    return relatedAnimalId === animalIdStr;
-  });
-  
-  console.log(`🖼️ Photo debug for animal ${animalId}: found ${allPictures.length} total pictures, ${animalPictures.length} for this animal`);
-  
-  return animalPictures
-    .map(pic => {
-      const attrs = pic.attributes || {};
-      console.log(`   📸 Photo attrs:`, Object.keys(attrs));
-      console.log(`   🐶 Matched picture URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
-      return {
-        url: attrs.url_large || attrs.url_original || attrs.url_small || attrs.url || null,
-        thumbnail: attrs.url_small || null,
-        order: attrs.order || 0
-      };
-    })
-    .filter(pic => pic.url) // Only keep pictures with valid URLs
-    .sort((a, b) => a.order - b.order); // Sort by order
+  if (!pictureRefs.length) {
+    console.log(`🖼️ No picture references found for animal ${animal.id}`);
+    return [];
+  }
+
+  console.log(`🔍 Animal ${animal.id} has ${pictureRefs.length} picture references:`, pictureRefs.map(ref => ref.id));
+
+  const pictures = pictureRefs.map(ref => {
+    const pic = included.find(item => item.type === 'pictures' && item.id === ref.id);
+    if (!pic) {
+      console.warn(`⚠️ Picture ID ${ref.id} not found in included for animal ${animal.id}`);
+      return null;
+    }
+    const attrs = pic.attributes || {};
+    console.log(`   📸 Found picture ${pic.id} with URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
+    return {
+      url: attrs.url_large || attrs.url_original || attrs.url_small || attrs.url || null,
+      thumbnail: attrs.url_small || null,
+      order: attrs.order || 0
+    };
+  }).filter(p => p && p.url);
+
+  console.log(`🖼️ Animal ${animal.id}: ${pictures.length} valid pictures found`);
+  return pictures.sort((a, b) => a.order - b.order);
 }
 
 // Helper function to construct RescueGroups profile URL
@@ -137,7 +126,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     'isAdoptionPending'
   ];
   params.append('fields[animals]', fields.join(','));
-  
+
   // Add picture fields separately to ensure photos are included
   params.append('fields[pictures]', 'id,url,url_large,url_original,url_small,order');
 
@@ -167,19 +156,19 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     const included = result.included || [];
 
     console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
-    
+
     // Show sample data to verify filter effectiveness
     if (animals.length > 0) {
       console.log(`🔍 Sample dogs from ${diversityFilter}:`);
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
-        
+
         // Debug animal ID details
         console.log(`\n🆔 Animal ID Debug: ID="${animal.id}", Type: ${typeof animal.id}, Length: ${animal.id.toString().length}`);
-        
-        const pictures = getPicturesForAnimal(animal.id, included);
+
+        const pictures = getPicturesForAnimal(animal, included);
         const dogUrl = constructDogUrl(animal.id);
-        
+
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
         console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
         console.log(`      Special Needs: ${attrs.specialNeeds ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
@@ -219,11 +208,11 @@ async function testRescueGroupsSync() {
       try {
         console.log(`\n🎯 Testing filter: ${filter}`);
         const { animals, included } = await fetchDogsFromRescueGroups(filter, 50);
-        
+
         totalAPIRequests++;
         allDogs.push(...animals);
         allIncluded.push(...included);
-        
+
         // Track IDs for deduplication analysis
         animals.forEach(animal => {
           allDogIds.push(animal.id);
@@ -251,13 +240,13 @@ async function testRescueGroupsSync() {
 
     // Test data quality using proper photo mapping
     const dogsWithPhotos = allDogs.filter(dog => {
-      const pictures = getPicturesForAnimal(dog.id, allIncluded);
+      const pictures = getPicturesForAnimal(dog, allIncluded);
       return pictures.length > 0;
     });
 
     const dogsWithDescriptions = allDogs.filter(dog => {
       const attrs = dog.attributes || {};
-      return (attrs.descriptionText && attrs.descriptionText.length > 50) || 
+      return (attrs.descriptionText && attrs.descriptionText.length > 50) ||
              (attrs.descriptionHtml && attrs.descriptionHtml.length > 50);
     });
 
@@ -298,7 +287,7 @@ async function testRescueGroupsSync() {
 // Also test database integration if we have Supabase configured
 async function testDatabaseIntegration() {
   console.log('\n🗄️ TESTING DATABASE INTEGRATION');
-  
+
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     console.log('⚠️ Supabase not configured - skipping database test');
     return;
