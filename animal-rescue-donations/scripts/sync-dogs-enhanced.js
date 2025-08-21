@@ -213,8 +213,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   ];
   params.append('fields[animals]', fields.join(','));
   
-  // Add picture fields with correct snake_case names
-  params.append('fields[pictures]', 'id,url,url_large,url_original,url_small,order');
+  // Add picture fields with correct camelCase names for API requests
+  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
@@ -262,7 +262,9 @@ function getPicturesForAnimal(animalId, included) {
     .filter(item => item.type === 'pictures' && item.relationships?.animal?.data?.id?.toString() === animalId.toString())
     .map(pic => {
       const attrs = pic.attributes || {};
-      return attrs.url_large || attrs.url_original || attrs.url_small || null;
+      // Prioritize camelCase fields from corrected API request, fallback to snake_case
+      return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
+             attrs.url_large || attrs.url_original || attrs.url_small || null;
     })
     .filter(url => url !== null);
 }

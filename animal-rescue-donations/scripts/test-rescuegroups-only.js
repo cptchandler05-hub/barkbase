@@ -23,9 +23,14 @@ function getPicturesForAnimal(animal, included) {
     }
     const attrs = pic.attributes || {};
     console.log(`   📸 Found picture ${pic.id} with URL:`, attrs.url_large || attrs.url_original || attrs.url_small || attrs.url);
+    // Try multiple possible URL field names - prioritize the ones we should get with corrected API request
+    const possibleUrl = attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || attrs.url ||
+                       attrs.url_large || attrs.url_original || attrs.url_small || 
+                       attrs.large || attrs.original || attrs.small ||
+                       attrs.imageUrl || attrs.image_url || attrs.src;
     return {
-      url: attrs.url_large || attrs.url_original || attrs.url_small || attrs.url || null,
-      thumbnail: attrs.url_small || null,
+      url: possibleUrl || null,
+      thumbnail: attrs.urlSmall || attrs.url_small || null,
       order: attrs.order || 0
     };
   }).filter(p => p && p.url);
@@ -127,8 +132,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   ];
   params.append('fields[animals]', fields.join(','));
 
-  // Add picture fields separately to ensure photos are included
-  params.append('fields[pictures]', 'id,url,url_large,url_original,url_small,order');
+  // Add picture fields separately to ensure photos are included - FIXED: Use camelCase field names
+  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
