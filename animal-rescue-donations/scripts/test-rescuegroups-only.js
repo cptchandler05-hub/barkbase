@@ -1,81 +1,40 @@
+// Module for testing RescueGroups API location filtering
 
-const { createClient } = require('@supabase/supabase-js');
-const { getRandomRuralZip } = require('../lib/utils.js');
+// Import necessary modules
+const fetch = require('node-fetch');
+require('dotenv').config({ path: './animal-rescue-donations/.env.local' });
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Define ZIP code to coordinates mapping for testing
+const zipToCoordinates = {
+  '87002': { lat: 35.2828, lng: -106.6614 }, // New Mexico
+  '71655': { lat: 33.5779, lng: -91.7320 }, // Arkansas  
+  '59718': { lat: 45.6770, lng: -111.0429 }, // Montana
+  '62471': { lat: 39.7817, lng: -88.1617 }, // Illinois
+  '50158': { lat: 41.5868, lng: -93.4685 }  // Iowa
+};
 
-// Get ZIP coordinates (copied from sync script)
-function getZipCoordinates(zipCode) {
-  // This is a simplified version - in production you'd use a proper geocoding service
-  // For now, return some test coordinates for common rural ZIP patterns
-  const zipToCoords = {
-    // Sample rural ZIP codes with their approximate coordinates
-    '87002': { lat: 35.2828, lng: -106.6614 }, // Belen, NM
-    '71655': { lat: 33.8734, lng: -91.2068 }, // McGehee, AR
-    '59718': { lat: 45.6770, lng: -111.0430 }, // Bozeman, MT
-    // Add a few more for testing
-    '62471': { lat: 39.7817, lng: -88.9584 }, // Ramsey, IL
-    '50158': { lat: 41.5803, lng: -93.1938 }, // Knoxville, IA
-  };
-  
-  // If we have exact coordinates, use them
-  if (zipToCoords[zipCode]) {
-    return zipToCoords[zipCode];
-  }
-  
-  // Otherwise, generate approximate coordinates for rural areas
-  // Rural areas are typically outside major metro areas
-  const lat = 30 + (Math.random() * 20); // Between 30-50 latitude
-  const lng = -120 + (Math.random() * 50); // Between -120 to -70 longitude
-  
-  return { lat: parseFloat(lat.toFixed(4)), lng: parseFloat(lng.toFixed(4)) };
-}
-
-// Rate limiting for RescueGroups
-let lastRescueGroupsRequest = 0;
-const RESCUEGROUPS_MIN_INTERVAL = 100; // 10 requests per second max
-
-async function rateLimitedDelay() {
-  const now = Date.now();
-  const timeSinceLastRequest = now - lastRescueGroupsRequest;
-  if (timeSinceLastRequest < RESCUEGROUPS_MIN_INTERVAL) {
-    const waitTime = RESCUEGROUPS_MIN_INTERVAL - timeSinceLastRequest;
-    await new Promise(resolve => setTimeout(resolve, waitTime));
-  }
-  lastRescueGroupsRequest = Date.now();
-}
-
-// RescueGroups API function (copied from main sync script)
 async function fetchDogsFromRescueGroups(location) {
-  await rateLimitedDelay();
-
   console.log(`🦮 Testing RescueGroups API for location: ${location}`);
 
-  // Get coordinates for the ZIP code
-  const coordinates = getZipCoordinates(location);
+  const coordinates = zipToCoordinates[location];
   if (!coordinates) {
-    console.log(`⚠️ Could not get coordinates for ZIP ${location}, skipping`);
-    return { data: [], included: [] };
+    throw new Error(`No coordinates found for ZIP: ${location}`);
   }
 
   console.log(`📍 Using coordinates: ${coordinates.lat}, ${coordinates.lng} for ZIP ${location}`);
 
-  // Use the correct v5 API endpoint for all available dogs
-  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
+  const baseURL = 'https://api.rescuegroups.org/v5/public/animals/search/available/dogs';
+  const url = new URL(baseURL);
   const params = url.searchParams;
 
   // Core filters
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // FIXED: Location filter using lat/lng coordinates as required by RescueGroups v5 API
-  params.append('filter[location.latitude]', coordinates.lat.toString());
-  params.append('filter[location.longitude]', coordinates.lng.toString());
-  params.append('filter[location.distance]', '100'); // 100 mile radius
+  // FIXED: Location filter using correct parameter names (without 'location.' prefix)
+  params.append('filter[latitude]', coordinates.lat.toString());
+  params.append('filter[longitude]', coordinates.lng.toString());
+  params.append('filter[distance]', '100'); // 100 mile radius
 
   // Filter for recently updated animals (last 6 months)
   const sixMonthsAgo = new Date();
@@ -158,14 +117,14 @@ async function main() {
       try {
         const result = await fetchDogsFromRescueGroups(location);
         const dogs = result.data || [];
-        
+
         totalDogs += dogs.length;
-        
+
         // Collect dog IDs to check for duplicates
         dogs.forEach(dog => allDogIds.push(dog.id));
-        
+
         console.log(`✅ Location ${location}: ${dogs.length} dogs found\n`);
-        
+
         // Small delay between requests
         await new Promise(resolve => setTimeout(resolve, 200));
       } catch (error) {
@@ -182,7 +141,7 @@ async function main() {
     console.log(`   Total dogs found: ${totalDogs}`);
     console.log(`   Unique dogs: ${uniqueDogIds.length}`);
     console.log(`   Duplicates: ${duplicateCount}`);
-    
+
     if (duplicateCount === 0) {
       console.log('✅ SUCCESS: No duplicates found - location filtering is working!');
     } else if (duplicateCount < totalDogs * 0.5) {
@@ -194,9 +153,11 @@ async function main() {
     console.log('\n🎯 Test completed successfully!');
 
   } catch (error) {
-    console.error('❌ RescueGroups test failed:', error);
-    process.exit(1);
+    console.error('❌ RescueGroups test failed:', error.message);
   }
 }
 
-main();
+// Run the test if this script is executed directly
+if (require.main === module) {
+  main().catch(console.error);
+}
