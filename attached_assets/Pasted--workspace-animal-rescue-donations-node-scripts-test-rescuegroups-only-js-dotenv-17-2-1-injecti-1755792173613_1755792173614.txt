@@ -1,0 +1,43 @@
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-only.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+🧪 TESTING RESCUEGROUPS LOCATION FILTERING ONLY
+📍 This will test 5 different rural ZIP codes to verify geographic diversity
+
+🦮 Testing RescueGroups API for location: 87002
+📍 Using coordinates: 35.2828, -106.6614 for ZIP 87002
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blat%5D=35.2828&filter%5Blng%5D=-106.6614&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+⚠️ RescueGroups error for 87002: fetch is not a function
+✅ Location 87002: 0 dogs found
+
+🦮 Testing RescueGroups API for location: 71655
+📍 Using coordinates: 33.5779, -91.732 for ZIP 71655
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blat%5D=33.5779&filter%5Blng%5D=-91.732&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+⚠️ RescueGroups error for 71655: fetch is not a function
+✅ Location 71655: 0 dogs found
+
+🦮 Testing RescueGroups API for location: 59718
+📍 Using coordinates: 45.677, -111.0429 for ZIP 59718
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blat%5D=45.677&filter%5Blng%5D=-111.0429&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+⚠️ RescueGroups error for 59718: fetch is not a function
+✅ Location 59718: 0 dogs found
+
+🦮 Testing RescueGroups API for location: 62471
+📍 Using coordinates: 39.7817, -88.1617 for ZIP 62471
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blat%5D=39.7817&filter%5Blng%5D=-88.1617&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+⚠️ RescueGroups error for 62471: fetch is not a function
+✅ Location 62471: 0 dogs found
+
+🦮 Testing RescueGroups API for location: 50158
+📍 Using coordinates: 41.5868, -93.4685 for ZIP 50158
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blat%5D=41.5868&filter%5Blng%5D=-93.4685&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=10&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CdescriptionText%2Cpictures%2Curl%2Cdistance%2Cupdated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+⚠️ RescueGroups error for 50158: fetch is not a function
+✅ Location 50158: 0 dogs found
+
+📊 RESULTS SUMMARY:
+   Total API calls: 5
+   Total dogs found: 0
+   Unique dogs: 0
+   Duplicates: 0
+✅ SUCCESS: No duplicates found - location filtering is working!
+
+🎯 Test completed successfully!
