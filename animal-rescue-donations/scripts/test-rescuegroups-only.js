@@ -11,9 +11,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Core filters - FIXED: Use correct API v5 schema field names
-  params.append('filter[animalSpecies]', 'Dog');
-  params.append('filter[animalStatus]', 'Available');
+  // Core filters - FIXED: Use correct API v5 schema field names (no animal prefix needed)
+  params.append('filter[species.singular]', 'Dog');
+  params.append('filter[status]', 'Available');
 
   // Apply diversity filters - FIXED: Use correct API v5 schema field names
   switch (diversityFilter) {
@@ -24,31 +24,31 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       break;
 
     case 'large_dogs':
-      params.append('filter[animalSizes]', 'Large');
+      params.append('filter[sizeGroup]', 'Large');
       break;
 
     case 'small_dogs':
-      params.append('filter[animalSizes]', 'Small');
+      params.append('filter[sizeGroup]', 'Small');
       break;
 
     case 'seniors':
-      params.append('filter[animalGeneralAge]', 'Senior');
+      params.append('filter[ageGroup]', 'Senior');
       break;
 
     case 'special_needs':
-      params.append('filter[animalSpecialneeds]', 'true');
+      params.append('filter[qualities]', 'specialNeeds');
       break;
 
     case 'puppies':
-      params.append('filter[animalGeneralAge]', 'Baby');
+      params.append('filter[ageGroup]', 'Baby');
       break;
 
     case 'mixed_breeds':
-      params.append('filter[animalMixed]', 'true');
+      params.append('filter[isBreedMixed]', 'true');
       break;
 
     case 'purebreds':
-      params.append('filter[animalMixed]', 'false');
+      params.append('filter[isBreedMixed]', 'false');
       break;
 
     default:
@@ -67,27 +67,25 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
     params.append('start', offset.toString());
   }
 
-  // Specify fields to return - FIXED: Use correct API v5 field names
+  // Specify fields to return - FIXED: Use correct API v5 field names (from diagnostic test)
   const fields = [
     'id',
     'name',
-    'animalStatus',
-    'animalSpecies',
-    'animalGeneralAge',
-    'animalSex',
-    'animalSizes',
-    'animalBreedPrimary',
-    'animalBreedSecondary',
-    'animalMixed',
-    'animalDescription',
-    'animalSpecialneeds',
-    'animalAttributes',
-    'animalPictures',
-    'animalThumbnailUrl',
-    'animalUrl',
-    'animalDistance',
-    'animalUpdatedDate',
-    'animalCreatedDate'
+    'ageGroup',
+    'sizeGroup',
+    'breedPrimary',
+    'breedSecondary',
+    'isBreedMixed',
+    'descriptionText',
+    'energyLevel',
+    'pictureCount',
+    'pictureThumbnailUrl',
+    'url',
+    'createdDate',
+    'updatedDate',
+    'sex',
+    'isHousetrained',
+    'qualities'
   ];
   params.append('fields[animals]', fields.join(','));
 
@@ -124,9 +122,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
-        console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
-        console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalMixed ? 'true' : 'false'}`);
-        console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
+        console.log(`      Special Needs: ${attrs.qualities?.includes('specialNeeds') ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
+        console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
         console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 5).join(', ')}`);
       });
     }
@@ -203,11 +201,11 @@ async function testRescueGroupsSync() {
     if (sampleDog?.attributes) {
       const attrs = sampleDog.attributes;
       console.log(`   📋 Available attribute keys: ${Object.keys(attrs).join(', ')}`);
-      console.log(`   ✅ animalGeneralAge: ${attrs.animalGeneralAge || 'N/A'}`);
-      console.log(`   ✅ animalSizes: ${attrs.animalSizes || 'N/A'}`);
-      console.log(`   ✅ animalSpecialneeds: ${attrs.animalSpecialneeds || 'N/A'}`);
-      console.log(`   ✅ animalBreedPrimary: ${attrs.animalBreedPrimary || 'N/A'}`);
-      console.log(`   ✅ animalMixed: ${attrs.animalMixed || 'N/A'}`);
+      console.log(`   ✅ ageGroup: ${attrs.ageGroup || 'N/A'}`);
+      console.log(`   ✅ sizeGroup: ${attrs.sizeGroup || 'N/A'}`);
+      console.log(`   ✅ qualities: ${attrs.qualities || 'N/A'}`);
+      console.log(`   ✅ breedPrimary: ${attrs.breedPrimary || 'N/A'}`);
+      console.log(`   ✅ isBreedMixed: ${attrs.isBreedMixed || 'N/A'}`);
       console.log(`   🔍 Sample raw animal structure:`, JSON.stringify(sampleDog, null, 2).slice(0, 500));
     }
 
