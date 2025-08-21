@@ -1,0 +1,66 @@
+ChatGPT said:
+Yes — the problem is now clear. You're fetching the correct fields using the right names, but you're still trying to read them using the old (prefixed) names in the animal.attributes object.
+
+🔧 Here's what's wrong in your current test:
+In multiple places (especially in the logging/debugging section), you're referencing:
+
+js
+Copy
+Edit
+attrs.animalSizes
+attrs.animalGeneralAge
+attrs.animalBreedMixed
+attrs.animalBreedPrimary
+attrs.animalDescriptionText
+attrs.animalDescriptionHtml
+But you're now fetching these with the correct (unprefixed) names, so what you should use is:
+
+js
+Copy
+Edit
+attrs.sizeGroup
+attrs.ageGroup
+attrs.isBreedMixed
+attrs.breedPrimary
+attrs.descriptionText
+attrs.descriptionHtml
+✅ Fix: Update all legacy-prefixed field references in your log/debug code
+Replace this block:
+js
+Copy
+Edit
+console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalBreedMixed ? 'true' : 'false'}`);
+console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+...
+console.log(`      📝 Description: ${attrs.animalDescriptionText ? 'Available' : 'None'} (HTML: ${attrs.animalDescriptionHtml ? 'Available' : 'None'})`);
+With this:
+js
+Copy
+Edit
+console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
+console.log(`      Special Needs: ${attrs.specialNeeds ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
+console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
+...
+console.log(`      📝 Description: ${attrs.descriptionText ? 'Available' : 'None'} (HTML: ${attrs.descriptionHtml ? 'Available' : 'None'})`);
+🔁 Also fix in the description + photo data quality section:
+Replace:
+
+js
+Copy
+Edit
+return (attrs.animalDescriptionText && attrs.animalDescriptionText.length > 50) || 
+       (attrs.animalDescriptionHtml && attrs.animalDescriptionHtml.length > 50);
+With:
+
+js
+Copy
+Edit
+return (attrs.descriptionText && attrs.descriptionText.length > 50) || 
+       (attrs.descriptionHtml && attrs.descriptionHtml.length > 50);
+🎯 Recap
+✅ You're using correct API field names in fields[animals].
+
+❌ You're still reading the old prefixed names like animalBreedPrimary, which do not exist in the returned attributes.
+
+🔧 You need to update all references to match the camelCase field names you request from the API.
