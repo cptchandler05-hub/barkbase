@@ -328,6 +328,7 @@ async function syncDogsToDatabase(dogs, source = 'petfinder') {
         photos: dog.photos || [],
         tags: dog.tags || [],
         contact_info: dog.contact || {},
+        contact_info: dog.contact || {},
         city: dog.contact?.address?.city || 'Unknown',
         state: dog.contact?.address?.state || 'Unknown',
         postcode: dog.contact?.address?.postcode || null,

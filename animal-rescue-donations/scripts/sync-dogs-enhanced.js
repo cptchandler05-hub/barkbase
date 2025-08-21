@@ -237,9 +237,8 @@ function transformRescueGroupsAnimal(animal, included = []) {
     photos: photos, // Will be populated with included data
     tags: [],
     contact_info: {},
-    // Store contact info in individual fields for easy access
-    email: orgContactInfo.email,
-    phone: orgContactInfo.phone,
+    // Store contact info in JSON field as per database schema
+    contact_info: orgContactInfo,
     city: city,
     state: state,
     postcode: null,
@@ -319,9 +318,8 @@ function transformPetfinderAnimal(dog) {
     photos: dog.photos || [],
     tags: dog.tags || [],
     contact_info: dog.contact || {},
-    // Store contact info in individual fields for easy access
-    email: dog.contact?.email || null,
-    phone: dog.contact?.phone || null,
+    // Store contact info in JSON field as per database schema
+    contact_info: dog.contact || {},
     city: dog.contact?.address?.city || 'Unknown',
     state: dog.contact?.address?.state || 'Unknown',
     postcode: dog.contact?.address?.postcode || null,
