@@ -48,44 +48,49 @@ async function testRescueGroupsAPI() {
   console.log('🧪 TEST 2: Different location parameter formats');
   
   const locationTests = [
-    // Format 1: What we've been using
+    // Test 1: Standard location format with 50 mile radius
     {
-      name: 'Current format (filter[location.latitude])',
+      name: 'Standard format - 50 miles',
       params: {
-        'filter[location.latitude]': '35.2828',
-        'filter[location.longitude]': '-106.6614',
+        'filter[location.latitude]': '35.282800',
+        'filter[location.longitude]': '-106.661400',
         'filter[location.distance]': '50'
       }
     },
-    // Format 2: Alternative format
+    // Test 2: Standard location format with 100 mile radius
     {
-      name: 'Alternative format (filter[latitude])',
+      name: 'Standard format - 100 miles',
       params: {
-        'filter[latitude]': '35.2828',
-        'filter[longitude]': '-106.6614',
-        'filter[distance]': '50'
+        'filter[location.latitude]': '35.282800',
+        'filter[location.longitude]': '-106.661400',
+        'filter[location.distance]': '100'
       }
     },
-    // Format 3: Try location as a string
+    // Test 3: Standard location format with 250 mile radius
     {
-      name: 'Location string format',
+      name: 'Standard format - 250 miles',
       params: {
-        'filter[location]': '87002'
+        'filter[location.latitude]': '35.282800',
+        'filter[location.longitude]': '-106.661400',
+        'filter[location.distance]': '250'
       }
     },
-    // Format 4: Try postal code
+    // Test 4: Different location (Dallas, TX)
     {
-      name: 'Postal code format',
+      name: 'Different location - Dallas, TX - 100 miles',
       params: {
-        'filter[postalcode]': '87002'
+        'filter[location.latitude]': '32.776272',
+        'filter[location.longitude]': '-96.796856',
+        'filter[location.distance]': '100'
       }
     },
-    // Format 5: Try city/state
+    // Test 5: Different location (Seattle, WA)
     {
-      name: 'City/State format',
+      name: 'Different location - Seattle, WA - 100 miles',
       params: {
-        'filter[city]': 'Belen',
-        'filter[state]': 'NM'
+        'filter[location.latitude]': '47.608013',
+        'filter[location.longitude]': '-122.335167',
+        'filter[location.distance]': '100'
       }
     }
   ];

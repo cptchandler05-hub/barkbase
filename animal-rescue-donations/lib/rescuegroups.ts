@@ -174,21 +174,16 @@ class RescueGroupsAPI {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // FIXED: Location-based filtering - Try multiple parameter formats to find what works
+    // FIXED: Location-based filtering - Use single correct parameter format
     if (params.latitude && params.longitude) {
-      const radius = params.radius || 100;
+      const radius = params.radius || 250; // Increase default radius
 
-      // Try the most common RescueGroups v5 parameter formats
-      searchParams.append('filter[location.latitude]', params.latitude.toString());
-      searchParams.append('filter[location.longitude]', params.longitude.toString());
+      // Use only the correct RescueGroups v5 parameter format (don't duplicate)
+      searchParams.append('filter[location.latitude]', params.latitude.toFixed(6));
+      searchParams.append('filter[location.longitude]', params.longitude.toFixed(6));
       searchParams.append('filter[location.distance]', radius.toString());
 
-      // Also try alternative formats in case the above don't work
-      searchParams.append('filter[latitude]', params.latitude.toString());
-      searchParams.append('filter[longitude]', params.longitude.toString());
-      searchParams.append('filter[distance]', radius.toString());
-
-      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude}, ${params.longitude} with radius ${radius}mi`);
+      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude.toFixed(6)}, ${params.longitude.toFixed(6)} with radius ${radius}mi`);
     }
 
     // FIXED: Breed filtering using the correct API parameter as per ChatGPT feedback
