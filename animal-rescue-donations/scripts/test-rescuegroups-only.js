@@ -149,15 +149,15 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
         const dogUrl = constructDogUrl(animal.id);
         
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
-        console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
-        console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalBreedMixed ? 'true' : 'false'}`);
-        console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
+        console.log(`      Special Needs: ${attrs.specialNeeds ? 'true' : 'false'}, Mixed: ${attrs.isBreedMixed ? 'true' : 'false'}`);
+        console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}, Updated: ${attrs.updatedDate}`);
         console.log(`      📸 Pictures: ${pictures.length} found`);
         if (pictures.length > 0) {
           console.log(`         First photo: ${pictures[0].url ? 'Available' : 'No URL'}`);
         }
         console.log(`      🔗 Profile URL: ${dogUrl}`);
-        console.log(`      📝 Description: ${attrs.animalDescriptionText ? 'Available' : 'None'} (HTML: ${attrs.animalDescriptionHtml ? 'Available' : 'None'})`);
+        console.log(`      📝 Description: ${attrs.descriptionText ? 'Available' : 'None'} (HTML: ${attrs.descriptionHtml ? 'Available' : 'None'})`);
         console.log(`      Raw attrs keys: ${Object.keys(attrs).slice(0, 10).join(', ')}`);
       });
     }
@@ -223,8 +223,8 @@ async function testRescueGroupsSync() {
 
     const dogsWithDescriptions = allDogs.filter(dog => {
       const attrs = dog.attributes || {};
-      return (attrs.animalDescriptionText && attrs.animalDescriptionText.length > 50) || 
-             (attrs.animalDescriptionHtml && attrs.animalDescriptionHtml.length > 50);
+      return (attrs.descriptionText && attrs.descriptionText.length > 50) || 
+             (attrs.descriptionHtml && attrs.descriptionHtml.length > 50);
     });
 
     console.log('\n🏆 DATA QUALITY ANALYSIS:');
@@ -237,11 +237,13 @@ async function testRescueGroupsSync() {
     if (sampleDog?.attributes) {
       const attrs = sampleDog.attributes;
       console.log(`   📋 Available attribute keys: ${Object.keys(attrs).join(', ')}`);
-      console.log(`   ✅ animalGeneralAge: ${attrs.animalGeneralAge || 'N/A'}`);
-      console.log(`   ✅ animalSizes: ${attrs.animalSizes || 'N/A'}`);
-      console.log(`   ✅ animalSpecialneeds: ${attrs.animalSpecialneeds || 'N/A'}`);
-      console.log(`   ✅ animalBreedPrimary: ${attrs.animalBreedPrimary || 'N/A'}`);
-      console.log(`   ✅ animalBreedMixed: ${attrs.animalBreedMixed || 'N/A'}`);
+      console.log(`   ✅ ageGroup: ${attrs.ageGroup || 'N/A'}`);
+      console.log(`   ✅ sizeGroup: ${attrs.sizeGroup || 'N/A'}`);
+      console.log(`   ✅ specialNeeds: ${attrs.specialNeeds || 'N/A'}`);
+      console.log(`   ✅ breedPrimary: ${attrs.breedPrimary || 'N/A'}`);
+      console.log(`   ✅ isBreedMixed: ${attrs.isBreedMixed || 'N/A'}`);
+      console.log(`   ✅ descriptionText: ${attrs.descriptionText ? 'Available' : 'N/A'}`);
+      console.log(`   ✅ descriptionHtml: ${attrs.descriptionHtml ? 'Available' : 'N/A'}`);
       console.log(`   🔍 Sample raw animal structure:`, JSON.stringify(sampleDog, null, 2).slice(0, 800));
     }
 
