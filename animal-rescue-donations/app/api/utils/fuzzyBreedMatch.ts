@@ -56,7 +56,7 @@ export async function findBestBreedMatch(userInput: string): Promise<string | nu
     if (!res.ok) {
       const errorText = await res.text();
       console.error('[❌ Breed Match API Error]', res.status, errorText);
-      
+
       // If 401, try to refresh token once
       if (res.status === 401) {
         console.log('[🔄 Breed Match] Trying with fresh token...');
@@ -67,7 +67,7 @@ export async function findBestBreedMatch(userInput: string): Promise<string | nu
               Authorization: `Bearer ${freshToken}`,
             },
           });
-          
+
           if (retryRes.ok) {
             const retryData = await retryRes.json();
             const breedList: string[] = retryData.breeds.map((b: any) => b.name);
@@ -75,7 +75,7 @@ export async function findBestBreedMatch(userInput: string): Promise<string | nu
           }
         }
       }
-      
+
       return null;
     }
 
@@ -86,7 +86,7 @@ export async function findBestBreedMatch(userInput: string): Promise<string | nu
     if (apiMatch) {
       console.log(`[✅ API Breed Match] "${userInput}" → "${apiMatch}"`);
     }
-    
+
     return apiMatch;
   } catch (err) {
     console.error('[❌ Breed Match Fatal Error]', err);
