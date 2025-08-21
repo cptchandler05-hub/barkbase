@@ -23,7 +23,7 @@ function getPicturesForAnimal(animal, included) {
     }
     
     const attrs = pic.attributes || {};
-    const bestUrl = attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall;
+    const bestUrl = attrs.large?.url || attrs.original?.url || attrs.small?.url || attrs.url || null;
     
     console.log(`   📸 Batch-fetched picture ${pic.id} with URL:`, bestUrl || 'null');
     

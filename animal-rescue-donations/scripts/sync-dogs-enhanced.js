@@ -306,7 +306,7 @@ function getPicturesForAnimal(animal, included) {
     .filter(item => item.type === 'pictures' && pictureIds.includes(item.id))
     .map(pic => {
       const attrs = pic.attributes || {};
-      return attrs.urlLarge || attrs.urlOriginal || attrs.urlSmall || null;
+      return attrs.large?.url || attrs.original?.url || attrs.small?.url || attrs.url || null;
     })
     .filter(url => url !== null);
 }
