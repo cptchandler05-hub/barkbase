@@ -48,49 +48,49 @@ async function testRescueGroupsAPI() {
   console.log('🧪 TEST 2: Different location parameter formats');
   
   const locationTests = [
-    // Test 1: Standard location format with 50 mile radius
+    // Test 1: Correct API format with 50 mile radius
     {
-      name: 'Standard format - 50 miles',
+      name: 'Correct API format - 50 miles',
       params: {
-        'filter[location.latitude]': '35.282800',
-        'filter[location.longitude]': '-106.661400',
-        'filter[location.distance]': '50'
+        'filter[latitude]': '35.282800',
+        'filter[longitude]': '-106.661400',
+        'filter[distance]': '50'
       }
     },
-    // Test 2: Standard location format with 100 mile radius
+    // Test 2: Correct API format with 100 mile radius
     {
-      name: 'Standard format - 100 miles',
+      name: 'Correct API format - 100 miles',
       params: {
-        'filter[location.latitude]': '35.282800',
-        'filter[location.longitude]': '-106.661400',
-        'filter[location.distance]': '100'
+        'filter[latitude]': '35.282800',
+        'filter[longitude]': '-106.661400',
+        'filter[distance]': '100'
       }
     },
-    // Test 3: Standard location format with 250 mile radius
+    // Test 3: Correct API format with 250 mile radius
     {
-      name: 'Standard format - 250 miles',
+      name: 'Correct API format - 250 miles',
       params: {
-        'filter[location.latitude]': '35.282800',
-        'filter[location.longitude]': '-106.661400',
-        'filter[location.distance]': '250'
+        'filter[latitude]': '35.282800',
+        'filter[longitude]': '-106.661400',
+        'filter[distance]': '250'
       }
     },
     // Test 4: Different location (Dallas, TX)
     {
       name: 'Different location - Dallas, TX - 100 miles',
       params: {
-        'filter[location.latitude]': '32.776272',
-        'filter[location.longitude]': '-96.796856',
-        'filter[location.distance]': '100'
+        'filter[latitude]': '32.776272',
+        'filter[longitude]': '-96.796856',
+        'filter[distance]': '100'
       }
     },
     // Test 5: Different location (Seattle, WA)
     {
       name: 'Different location - Seattle, WA - 100 miles',
       params: {
-        'filter[location.latitude]': '47.608013',
-        'filter[location.longitude]': '-122.335167',
-        'filter[location.distance]': '100'
+        'filter[latitude]': '47.608013',
+        'filter[longitude]': '-122.335167',
+        'filter[distance]': '100'
       }
     }
   ];

@@ -174,14 +174,14 @@ class RescueGroupsAPI {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // FIXED: Location-based filtering - Use single correct parameter format
+    // FIXED: Location-based filtering - Use correct RescueGroups API parameters
     if (params.latitude && params.longitude) {
       const radius = params.radius || 250; // Increase default radius
 
-      // Use only the correct RescueGroups v5 parameter format (don't duplicate)
-      searchParams.append('filter[location.latitude]', params.latitude.toFixed(6));
-      searchParams.append('filter[location.longitude]', params.longitude.toFixed(6));
-      searchParams.append('filter[location.distance]', radius.toString());
+      // Use correct RescueGroups v5 location parameters (without 'filter[location.]' prefix)
+      searchParams.append('filter[latitude]', params.latitude.toFixed(6));
+      searchParams.append('filter[longitude]', params.longitude.toFixed(6));
+      searchParams.append('filter[distance]', radius.toString());
 
       console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude.toFixed(6)}, ${params.longitude.toFixed(6)} with radius ${radius}mi`);
     }
