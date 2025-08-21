@@ -240,7 +240,6 @@ function transformRescueGroupsAnimal(animal, included = []) {
     // Store contact info in individual fields for easy access
     email: orgContactInfo.email,
     phone: orgContactInfo.phone,
-    address1: null, // Not typically available in RescueGroups
     city: city,
     state: state,
     postcode: null,
@@ -323,7 +322,6 @@ function transformPetfinderAnimal(dog) {
     // Store contact info in individual fields for easy access
     email: dog.contact?.email || null,
     phone: dog.contact?.phone || null,
-    address1: dog.contact?.address?.address1 || null,
     city: dog.contact?.address?.city || 'Unknown',
     state: dog.contact?.address?.state || 'Unknown',
     postcode: dog.contact?.address?.postcode || null,
