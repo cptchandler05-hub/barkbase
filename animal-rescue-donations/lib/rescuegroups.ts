@@ -51,15 +51,13 @@ interface RescueGroupsAnimal {
 }
 
 interface RescueGroupsSearchParams {
-  location?: string;
+  location?: string; // ZIP code or "City, State"
   breed?: string;
   age?: string;
   size?: string;
   gender?: string;
   limit?: number;
   radius?: number;
-  latitude?: number;
-  longitude?: number;
 }
 
 class RescueGroupsAPI {
@@ -128,7 +126,7 @@ class RescueGroupsAPI {
     }
 
     // Attempt 3: Expand radius if location was provided
-    if (params.latitude && params.longitude && (params.radius || 100) < 250) {
+    if (params.location && (params.radius || 100) < 250) {
       console.log(`[🎯 RescueGroups] Attempt 3: Expanding radius to 250 miles`);
       const paramsWithLargerRadius = { ...params, breed: undefined, radius: 250 };
       result = await this.attemptSearch(paramsWithLargerRadius);
@@ -140,11 +138,10 @@ class RescueGroupsAPI {
     }
 
     // Attempt 4: Location-only search (no breed, no other filters except location)
-    if (params.latitude && params.longitude) {
+    if (params.location) {
       console.log(`[🎯 RescueGroups] Attempt 4: Location-only search (removing all non-location filters)`);
       const locationOnlyParams = {
-        latitude: params.latitude,
-        longitude: params.longitude,
+        location: params.location,
         radius: 250,
         limit: params.limit
       };
@@ -174,16 +171,15 @@ class RescueGroupsAPI {
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
-    // FIXED: Location-based filtering - Use correct RescueGroups API parameters
-    if (params.latitude && params.longitude) {
-      const radius = params.radius || 250; // Increase default radius
-
-      // Use correct RescueGroups v5 location parameters (without 'filter[location.]' prefix)
-      searchParams.append('filter[latitude]', params.latitude.toFixed(6));
-      searchParams.append('filter[longitude]', params.longitude.toFixed(6));
-      searchParams.append('filter[distance]', radius.toString());
-
-      console.log(`[🗺️ RescueGroups] Using coordinates: ${params.latitude.toFixed(6)}, ${params.longitude.toFixed(6)} with radius ${radius}mi`);
+    // FIXED: Use correct RescueGroups v5 location filtering
+    if (params.location) {
+      const radius = params.radius || 250;
+      
+      // Use correct API parameters as per ChatGPT feedback
+      searchParams.append('filter[location]', params.location);
+      searchParams.append('filter[locationDistance]', radius.toString());
+      
+      console.log(`[🗺️ RescueGroups] Using location: ${params.location} with radius ${radius}mi`);
     }
 
     // FIXED: Breed filtering using the correct API parameter as per ChatGPT feedback
@@ -286,19 +282,10 @@ class RescueGroupsAPI {
 
       console.log(`[📊 RescueGroups] Found ${animals.length} animals`);
 
-      // IMPORTANT: Check if results are geographically relevant
-      if (animals.length > 0 && params.latitude && params.longitude) {
-        const relevantAnimals = this.filterGeographicallyRelevant(animals, included, params.latitude, params.longitude, params.radius || 100);
-        console.log(`[🗺️ RescueGroups] Geographic filtering: ${animals.length} → ${relevantAnimals.length} relevant results`);
+      // Geographic filtering is handled by RescueGroups API itself
+      console.log(`[🗺️ RescueGroups] API-filtered results: ${animals.length} dogs`);
 
-        // If most results are irrelevant, treat as failed search
-        if (relevantAnimals.length < animals.length * 0.3) {
-          console.log(`[⚠️ RescueGroups] Too many irrelevant results (${relevantAnimals.length}/${animals.length}) - treating as failed search`);
-          return { animals: [], included: [] };
-        }
-
-        return { animals: relevantAnimals, included };
-      }
+      return { animals, included };
 
       return { animals, included };
     } catch (error) {

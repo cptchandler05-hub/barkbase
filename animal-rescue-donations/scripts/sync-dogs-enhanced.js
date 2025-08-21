@@ -96,10 +96,9 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // FIXED: Location filter using lat/lng coordinates as required by RescueGroups v5 API
-  params.append('filter[location.latitude]', coordinates.lat.toString());
-  params.append('filter[location.longitude]', coordinates.lng.toString());
-  params.append('filter[location.distance]', '100'); // 100 mile radius
+  // FIXED: Use correct RescueGroups v5 location filtering
+  params.append('filter[location]', location); // ZIP code
+  params.append('filter[locationDistance]', '100'); // 100 mile radius
 
   // Filter for recently updated animals (last 6 months)
   const sixMonthsAgo = new Date();

@@ -16,12 +16,7 @@ const zipToCoordinates = {
 async function fetchDogsFromRescueGroups(location) {
   console.log(`🦮 Testing RescueGroups API for location: ${location}`);
 
-  const coordinates = zipToCoordinates[location];
-  if (!coordinates) {
-    throw new Error(`No coordinates found for ZIP: ${location}`);
-  }
-
-  console.log(`📍 Using coordinates: ${coordinates.lat}, ${coordinates.lng} for ZIP ${location}`);
+  console.log(`📍 Using ZIP code: ${location} for location filtering`);
 
   const baseURL = 'https://api.rescuegroups.org/v5/public/animals/search/available/dogs';
   const url = new URL(baseURL);
@@ -31,10 +26,9 @@ async function fetchDogsFromRescueGroups(location) {
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // Location filters using RescueGroups v5 API format
-  params.append('filter[lat]', coordinates.lat.toString());
-  params.append('filter[lng]', coordinates.lng.toString());
-  params.append('filter[distance]', '100'); // 100 mile radius
+  // FIXED: Use correct RescueGroups v5 location filtering
+  params.append('filter[location]', location); // ZIP code
+  params.append('filter[locationDistance]', '100'); // 100 mile radius
 
   // Filter for recently updated animals (last 6 months)
   const sixMonthsAgo = new Date();
