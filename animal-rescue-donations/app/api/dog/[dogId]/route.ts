@@ -48,7 +48,9 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
           console.log('[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...');
           let { data, error } = await supabase
             .from('dogs')
-            .select('*')
+            .select(`
+              *
+            `)
             .eq('rescuegroups_id', dogId)
             .single();
 
@@ -56,17 +58,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             console.log('[💾 Database] Trying petfinder_id as number...');
             const result = await supabase
               .from('dogs')
-              .select(`
-                *,
-                phone,
-                email,
-                address1,
-                address2,
-                city,
-                state,
-                postcode,
-                country
-              `)
+              .select(`*`)
               .eq('petfinder_id', Number(dogId))
               .eq('status', 'adoptable')
               .single();
@@ -78,17 +70,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             console.log('[💾 Database] Trying petfinder_id as integer string...');
             const result = await supabase
               .from('dogs')
-              .select(`
-                *,
-                phone,
-                email,
-                address1,
-                address2,
-                city,
-                state,
-                postcode,
-                country
-              `)
+              .select(`*`)
               .eq('petfinder_id', parseInt(dogId, 10))
               .eq('status', 'adoptable')
               .single();
@@ -98,17 +80,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             console.log('[💾 Database] Trying petfinder_id as string...');
             const result = await supabase
               .from('dogs')
-              .select(`
-                *,
-                phone,
-                email,
-                address1,
-                address2,
-                city,
-                state,
-                postcode,
-                country
-              `)
+              .select(`*`)
               .eq('petfinder_id', dogId.toString())
               .eq('status', 'adoptable')
               .single();
@@ -124,8 +96,16 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
         if (dbDog) {
           console.log('[✅ Database Hit] Found dog in database:', dbDog.name);
+          console.log('[📞 Database Contact Debug] Raw contact data:', {
+            phone: dbDog.phone,
+            email: dbDog.email,
+            address1: dbDog.address1,
+            city: dbDog.city,
+            state: dbDog.state
+          });
+          
           const formattedDog = {
-          id: dbDog.petfinder_id,
+          id: dbDog.petfinder_id || dbDog.rescuegroups_id || dbDog.id,
           name: dbDog.name,
           breeds: {
             primary: dbDog.primary_breed,
@@ -151,16 +131,16 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
           contact: {
             address: {
-              address1: dbDog.address1 || '',
+              address1: dbDog.address1 || null,
               city: dbDog.city || 'Unknown',
-              state: dbDog.state || 'Unknown',
-              postcode: dbDog.postcode || '',
+              state: dbDog.state || 'Unknown', 
+              postcode: dbDog.postcode || dbDog.zip || null,
               country: dbDog.country || 'US'
             },
             phone: dbDog.phone || null,
             email: dbDog.email || null
           },
-          description: dbDog.description,
+          description: dbDog.description, // Full description, no truncation
           url: dbDog.url,
           attributes: {
             special_needs: dbDog.special_needs,

@@ -524,9 +524,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: truncateDescription && dog.description
-        ? dog.description.substring(0, 150) + '...'
-        : dog.description,
+      description: dog.description, // Never truncate - let calling code decide
       photos: dog.photos.map(photo => ({
         medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
         large: photo.large || photo.medium || photo.small || '/images/barkr.png',
