@@ -215,9 +215,6 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
   
   // Add picture fields with correct camelCase names for API requests - EXPANDED: Include all possible URL fields
   params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
-  
-  // CRITICAL FIX: Tell API to include picture attributes in included section
-  params.append('fields[included]', 'pictures');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
@@ -242,9 +239,52 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
     const result = await response.json();
     const animals = result.data || [];
-    const included = result.included || [];
+    let included = result.included || [];
 
     console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
+
+    // WORKAROUND: Batch fetch pictures if they don't have URLs in included data
+    if (animals.length > 0) {
+      const pictureIds = new Set();
+      animals.forEach(animal => {
+        const pictureRefs = animal.relationships?.pictures?.data || [];
+        pictureRefs.forEach(ref => pictureIds.add(ref.id));
+      });
+
+      const pictureIdList = [...pictureIds];
+      if (pictureIdList.length > 0) {
+        console.log(`📸 Batch fetching ${pictureIdList.length} picture objects for ${diversityFilter}...`);
+        
+        try {
+          const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
+          picUrl.searchParams.append('filter[id][in]', pictureIdList.slice(0, 100).join(','));
+          picUrl.searchParams.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+          
+          const pictureResponse = await fetch(picUrl.toString(), {
+            method: 'GET',
+            headers: {
+              'Authorization': process.env.RESCUEGROUPS_API_KEY,
+              'Content-Type': 'application/json',
+              'User-Agent': 'BarkBase/1.0'
+            }
+          });
+
+          if (pictureResponse.ok) {
+            const picResult = await pictureResponse.json();
+            const fullPictures = picResult.data || [];
+            
+            console.log(`📸 Loaded ${fullPictures.length} picture objects from batch fetch`);
+            
+            // Replace included pictures with batch-fetched ones that have URLs
+            included = included.filter(item => item.type !== 'pictures').concat(fullPictures);
+          } else {
+            console.warn(`⚠️ Batch picture fetch failed for ${diversityFilter}:`, pictureResponse.status);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Batch picture fetch error for ${diversityFilter}:`, error.message);
+        }
+      }
+    }
 
     // Log first few animals for debugging
     if (animals.length > 0) {
