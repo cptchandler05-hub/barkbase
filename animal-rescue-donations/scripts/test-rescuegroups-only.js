@@ -23,9 +23,11 @@ function getPicturesForAnimal(animal, included) {
     }
     
     const attrs = pic.attributes || {};
-    const bestUrl = attrs.large?.url || attrs.original?.url || attrs.small?.url || attrs.url || null;
+    const urls = attrs.urls || {};
+
+    const bestUrl = urls.large || urls.original || urls.small || attrs.url || null;
     
-    console.log(`   📸 Batch-fetched picture ${pic.id} with URL:`, bestUrl || 'null');
+    console.log(`   📸 Picture ${pic.id} resolved URL:`, bestUrl || 'null');
     
     if (!bestUrl) {
       console.warn(`   ⚠️ Picture ${pic.id} has no URL in batch fetch - attributes:`, Object.keys(attrs));
@@ -34,7 +36,7 @@ function getPicturesForAnimal(animal, included) {
 
     return {
       url: bestUrl,
-      thumbnail: attrs.urlSmall || bestUrl,
+      thumbnail: urls.small || bestUrl,
       order: attrs.order || 0
     };
   }).filter(p => p && p.url);
@@ -187,7 +189,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       try {
         const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
         picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
-        picUrl.searchParams.set('fields[pictures]', 'id,urlLarge,urlOriginal,urlSmall,order');
+        picUrl.searchParams.set('fields[pictures]', 'id,url,urls,order');
         
         const pictureResponse = await fetch(picUrl.toString(), {
           method: 'GET',

@@ -255,7 +255,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
         try {
           const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
           picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
-          picUrl.searchParams.set('fields[pictures]', 'id,urlLarge,urlOriginal,urlSmall,order');
+          picUrl.searchParams.set('fields[pictures]', 'id,url,urls,order');
           
           const pictureResponse = await fetch(picUrl.toString(), {
             method: 'GET',
@@ -306,7 +306,8 @@ function getPicturesForAnimal(animal, included) {
     .filter(item => item.type === 'pictures' && pictureIds.includes(item.id))
     .map(pic => {
       const attrs = pic.attributes || {};
-      return attrs.large?.url || attrs.original?.url || attrs.small?.url || attrs.url || null;
+      const urls = attrs.urls || {};
+      return urls.large || urls.original || urls.small || attrs.url || null;
     })
     .filter(url => url !== null);
 }
