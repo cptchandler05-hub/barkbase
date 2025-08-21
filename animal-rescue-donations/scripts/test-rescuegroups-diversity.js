@@ -44,7 +44,8 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 20
   }
 
   params.append('limit', limit.toString());
-  params.append('fields[animals]', 'id,name,sizeGroup,ageGroup,specialNeeds,updated,breedPrimary');
+  params.append('sort', 'random');
+  params.append('fields[animals]', 'id,name,animalGeneralAge,animalSpecialneeds,animalSizes,animalUpdatedDate,animalBreedPrimary');
   params.append('include', 'orgs,locations');
 
   try {
@@ -74,9 +75,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 20
       animals.slice(0, 3).forEach((animal, index) => {
         const attrs = animal.attributes || {};
         console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
-        console.log(`      Size: ${attrs.sizeGroup || 'Unknown'}, Age: ${attrs.ageGroup || 'Unknown'}`);
-        console.log(`      Special Needs: ${attrs.specialNeeds || 'false'}, Updated: ${attrs.updated}`);
-        console.log(`      Breed: ${attrs.breedPrimary || 'Unknown'}`);
+        console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+        console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Updated: ${attrs.animalUpdatedDate}`);
+        console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}`);
       });
     }
 
