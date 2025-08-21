@@ -1,0 +1,1878 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 6.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.6s (8586 modules)
+ GET / 200 in 15454ms
+ ✓ Compiled in 1292ms (4186 modules)
+ HEAD / 200 in 26ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 2.4s (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: Good morning, Barkr!
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 6415ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] Keene, NH
+[🐾 Barkr Memory] {
+  location: 'Keene, NH',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Keene, NH', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Singular: chihuahua → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Keene, NH
+[🗄️ Database] Filtering by state: NH
+[✅ Database] Found 3 dogs in database
+[🔍 Petfinder] Database returned only 3 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1313ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Keene, NH',
+  breed: 'Chihuahua',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] { location: 'Keene, NH', breed: 'Chihuahua', limit: 25, radius: 100 }
+[💾 Database] Searching database first...
+Searching for dogs with location: Keene, NH, breed: Chihuahua, limit: 50
+Found 4 dogs matching search criteria
+[🗄️ DB Format] Processing: Kuzco (ID: 3014, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300
+[🔍 DB Debug] Kuzco - Final photos count: 4
+[🗄️ DB Format] Processing: Leonardo. (ID: 4124, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300
+[🔍 DB Debug] Leonardo. - Final photos count: 5
+[🗄️ DB Format] Processing: Mellie (ID: 502, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300
+[🔍 DB Debug] Mellie - Final photos count: 2
+[🗄️ DB Format] Processing: Chloe (ID: 6646, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300
+[🔍 DB Debug] Chloe - Final photos count: 2
+[✅ Database Hit] Found 4 dogs in database
+[🗄️ DB Format] Processing: Kuzco (ID: 77445805, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=100'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=100'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300
+[🔍 DB Debug] Kuzco - Final photos count: 4
+[🗄️ DB Format] Processing: Leonardo. (ID: 77441567, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=100'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=100'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=100'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300
+[🔍 DB Debug] Leonardo. - Final photos count: 5
+[🗄️ DB Format] Processing: Mellie (ID: 77462506, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300
+[🔍 DB Debug] Mellie - Final photos count: 2
+[🗄️ DB Format] Processing: Chloe (ID: 77598097, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300
+[🔍 DB Debug] Chloe - Final photos count: 2
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 4 dogs found so far, need 21 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=21&location=Keene%2C+NH&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 21 dogs from Petfinder
+[⚠️ Petfinder Fallback] Petfinder search failed: TypeError: Cannot read properties of undefined (reading 'primary')
+    at eval (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:126:75)
+    at Array.some (<anonymous>)
+    at eval (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:124:49)
+    at Array.filter (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:123:63)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+[✅ Search Complete] Found 4 total dogs from sources: database
+[📊 Source Breakdown] database: 4
+ POST /api/petfinder/search 200 in 4526ms
+[✅ Chat Search Success] Found 4 dogs for chihuahuas in Keene, NH from sources: database
+[✅ Petfinder Integration] Found 4 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 7 Showing: 7
+[✅ Search Complete] Total unique dogs: 7 Showing: 7
+[📊 Scores] Sample scores: [ 'Kuzco: 96', 'Mellie: 68', 'Mellie: 50' ]
+ POST /api/chat 200 in 9182ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 2.9s (8578 modules)
+ GET /adopt/db-77441567 200 in 3766ms
+ HEAD /adopt/db-77441567 200 in 54ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 869ms (4523 modules)
+[🔍 Dog Lookup] Starting search for dogId: db-77441567
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: db-77441567
+No dog found with petfinder_id: db-77441567
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as string...
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[🔄 Petfinder] Token expired, refreshing...
+🧹 Clearing token cache
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID db-77441567 not found in any source
+ GET /api/dog/db-77441567 404 in 3689ms
+[🔍 Dog Lookup] Starting search for dogId: db-77441567
+[💾 Database] Searching database first...
+Searching for dog with petfinder_id: db-77441567
+No dog found with petfinder_id: db-77441567
+[💾 Database] Not found by direct or legacy petfinder_id, trying rescuegroups_id...
+[💾 Database] Trying petfinder_id as string...
+[🐾 Petfinder] Searching Petfinder API...
+[🎫 Token Manager] Using cached token
+[🔄 Petfinder] Token expired, refreshing...
+🧹 Clearing token cache
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[⚠️ Petfinder API Error] 401 {"type":"https://httpstatus.es/401", "status":401, "title":"Unauthorized", "detail":"Access token invalid or expired"}
+[❌ Not Found] Dog with ID db-77441567 not found in any source
+ GET /api/dog/db-77441567 404 in 1521ms
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 3.3s (8826 modules)
+ GET /adopt 200 in 3759ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ○ Compiling /api/invisible-dogs ...
+ ✓ Compiled /api/invisible-dogs in 774ms (4590 modules)
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+ HEAD /adopt 200 in 1341ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 2213ms
+ GET /adopt 200 in 24ms
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+ HEAD /adopt 200 in 24ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 611ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 657ms
+ GET /adopt/77463084 200 in 58ms
+ HEAD /adopt/77463084 200 in 43ms
+[🔍 Dog Lookup] Starting search for dogId: 77463084
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Oso
+[🗄️ DB Format] Processing: Oso (ID: 495, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300
+[🔍 DB Debug] Oso - Final photos count: 3
+ GET /api/dog/77463084 200 in 425ms
+[🔍 Dog Lookup] Starting search for dogId: 77463084
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Oso
+[🗄️ DB Format] Processing: Oso (ID: 495, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300
+[🔍 DB Debug] Oso - Final photos count: 3
+ GET /api/dog/77463084 200 in 34ms
+ ✓ Compiled in 5.8s (8721 modules)
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 1507ms (4588 modules)
+[🔍 Dog Lookup] Starting search for dogId: 77463084
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Oso
+[🗄️ DB Format] Processing: Oso (ID: 495, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300
+[🔍 DB Debug] Oso - Final photos count: 3
+ GET /api/dog/77463084 200 in 1718ms
+[🔍 Dog Lookup] Starting search for dogId: 77463084
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Oso
+[🗄️ DB Format] Processing: Oso (ID: 495, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/1/?bust=1753435677&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/5/?bust=1753435677&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77463084/6/?bust=1753435676&width=300
+[🔍 DB Debug] Oso - Final photos count: 3
+ GET /api/dog/77463084 200 in 16ms
+ ○ Compiling /api/invisible-dogs ...
+ ✓ Compiled /api/invisible-dogs in 655ms (4590 modules)
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 1520ms
+ GET /adopt 200 in 341ms
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+ HEAD /adopt 200 in 14ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 526ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 562ms
+^C
+
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1771ms
+ ○ Compiling /adopt ...
+ ✓ Compiled /adopt in 9.3s (7727 modules)
+ GET /adopt 200 in 9913ms
+ ✓ Compiled in 847ms (3770 modules)
+ ○ Compiling /api/invisible-dogs ...
+ ✓ Compiled /api/invisible-dogs in 1176ms (4073 modules)
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+ HEAD /adopt 200 in 1295ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 2414ms
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 2448ms
+ ○ Compiling /adopt/[dogId] ...
+ ✓ Compiled /adopt/[dogId] in 2.4s (7835 modules)
+ GET /adopt/77611119 200 in 3107ms
+ HEAD /adopt/77611119 200 in 44ms
+ ○ Compiling /api/dog/[dogId] ...
+ ✓ Compiled /api/dog/[dogId] in 731ms (4082 modules)
+[🔍 Dog Lookup] Starting search for dogId: 77611119
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Jinu
+[🗄️ DB Format] Processing: Jinu (ID: 5530, Source: petfinder)
+[🔍 DB Debug] Jinu - Final photos count: 0
+ GET /api/dog/77611119 200 in 1473ms
+[🔍 Dog Lookup] Starting search for dogId: 77611119
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Jinu
+[🗄️ DB Format] Processing: Jinu (ID: 5530, Source: petfinder)
+[🔍 DB Debug] Jinu - Final photos count: 0
+ GET /api/dog/77611119 200 in 29ms
+[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...
+[📊 Query Result] Total dogs with scores in DB: 7454
+[📊 Query Result] Returned dogs: 100
+[✅ Invisible Dogs] Found 100 dogs from database
+[📊 Score Range] Highest: 111 Lowest: 95
+[📊 Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[✅ Final Result] Returning 100 formatted invisible dogs
+[📊 Final Top 10 Scores] [
+  'Whiticker: 111',
+  'Sassy: 105',
+  'Lilith: 105',
+  'Beauford: 104',
+  'ODIN: 101',
+  'Stringer: 101',
+  'Earl: 101',
+  'Polo Soxs: 101',
+  'Kim: 101',
+  'Chicken: 101'
+]
+[📊 Score Range] Returning dogs with scores from 111 to 95
+ GET /api/invisible-dogs 200 in 482ms
+ GET /adopt/77471284 200 in 155ms
+ HEAD /adopt/77471284 200 in 53ms
+[🔍 Dog Lookup] Starting search for dogId: 77471284
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Larry
+[🗄️ DB Format] Processing: Larry (ID: 242, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=300'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=300
+[🖼️ DB Photo 5] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=300'
+}
+[✅ DB Photo 5] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=300
+[🔍 DB Debug] Larry - Final photos count: 6
+ GET /api/dog/77471284 200 in 62ms
+[🔍 Dog Lookup] Starting search for dogId: 77471284
+[💾 Database] Searching database first...
+[✅ Database Hit] Found dog by direct ID search: Larry
+[🗄️ DB Format] Processing: Larry (ID: 242, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/1/?bust=1753452590&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/2/?bust=1753452587&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/3/?bust=1753452585&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/4/?bust=1753452589&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=300'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/5/?bust=1753452588&width=300
+[🖼️ DB Photo 5] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=300'
+}
+[✅ DB Photo 5] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77471284/6/?bust=1753452591&width=300
+[🔍 DB Debug] Larry - Final photos count: 6
+ GET /api/dog/77471284 200 in 10ms
+ ✓ Compiled in 1817ms (7733 modules)
+^C
+
+~/workspace/animal-rescue-donations$ node clear-dogs-table.js
+🗑️ Wiping dogs table...
+✅ Dogs table wiped successfully
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 71722 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 71722 (limit: 5)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71722&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=5&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 5 RescueGroups dogs from 71722 with 82 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🔍 First dog location relationships: [ { type: 'locations', id: '1000000956' } ]
+🌍 First dog location: Rockaway, NJ
+📊 RescueGroups raw results: 5 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 5 unique RescueGroups dogs (0 duplicates removed)
+📝 Syncing 5 rescuegroups dogs to database...
+⚠️ Failed to insert Hannah Steele: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Doli: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Cylana: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Zeke: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Diamond Beaufort: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+✅ rescuegroups sync completed: 0 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+⚠️ Failed to insert Queeny: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Mongolia: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Moon: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Stormy Sky: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Brisket: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'address1' column of 'dogs' in the schema cache"
+}
+✅ petfinder sync completed: 0 added, 0 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 85609 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 85609 (limit: 5)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=85609&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=5&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 5 RescueGroups dogs from 85609 with 82 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🔍 First dog location relationships: [ { type: 'locations', id: '1000000956' } ]
+🌍 First dog location: Rockaway, NJ
+📊 RescueGroups raw results: 5 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 5 unique RescueGroups dogs (0 duplicates removed)
+📝 Syncing 5 rescuegroups dogs to database...
+⚠️ Failed to insert Hannah Steele: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Doli: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Cylana: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Zeke: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Diamond Beaufort: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+✅ rescuegroups sync completed: 0 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+⚠️ Failed to insert Zork: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Queeny: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Mongolia: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Moon: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+⚠️ Failed to insert Stormy Sky: {
+  code: 'PGRST204',
+  details: null,
+  hint: null,
+  message: "Could not find the 'email' column of 'dogs' in the schema cache"
+}
+✅ petfinder sync completed: 0 added, 0 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
+~/workspace/animal-rescue-donations$ TEST_MODE=true node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🧪 RUNNING IN TEST MODE - Limited API calls
+🦮 RescueGroups will search: 46014 (rural)
+🔍 Petfinder will search: Austin, TX (urban)
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 46014 (limit: 5)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=46014&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=5&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 5 RescueGroups dogs from 46014 with 82 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🔍 First dog location relationships: [ { type: 'locations', id: '1000000956' } ]
+🌍 First dog location: Rockaway, NJ
+📊 RescueGroups raw results: 5 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 5 unique RescueGroups dogs (0 duplicates removed)
+📝 Syncing 5 rescuegroups dogs to database...
+✅ rescuegroups sync completed: 5 added, 0 updated
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🔍 Fetching Petfinder dogs from: Austin, TX (limit: 5)
+📋 Found 5 Petfinder dogs from Austin, TX
+🎯 Found 5 unique Petfinder dogs
+✅ After cross-API deduplication: 5 Petfinder dogs (0 duplicates removed)
+📝 Syncing 5 petfinder dogs to database...
+✅ petfinder sync completed: 5 added, 0 updated
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
+~/workspace/animal-rescue-donations$ node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...
+🏙️ Generating urban locations for Petfinder...
+📍 Geographic Distribution:
+   RescueGroups: 150 rural areas (prioritizing invisible dogs)
+   Petfinder: 24 metropolitan areas (urban supplement)
+   State Coverage: 44 rural states, 18 urban states
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+📊 RescueGroups raw results: 0 total dogs fetched
+📋 Duplication analysis: 0 dogs appeared multiple times
+🎯 Found 0 unique RescueGroups dogs (0 duplicates removed)
+🔍 Phase 2: Petfinder Sync (Metropolitan Urban Rescue)
+🔑 Fetching new Petfinder access token...
+✅ Got new Petfinder token
+🎯 Found 0 unique Petfinder dogs
+✅ After cross-API deduplication: 0 Petfinder dogs (0 duplicates removed)
+🧹 Marking old dogs as removed...
+✅ Enhanced dog sync completed successfully!
+~/workspace/animal-rescue-donations$ node scripts/sync-dogs-enhanced.js
+🐕 Starting enhanced dog sync with RescueGroups + Petfinder...
+🏞️ Generating rural locations for RescueGroups (invisible dog rescue priority)...
+🏙️ Generating urban locations for Petfinder...
+📍 Geographic Distribution:
+   RescueGroups: 150 rural areas (prioritizing invisible dogs)
+   Petfinder: 24 metropolitan areas (urban supplement)
+   State Coverage: 48 rural states, 18 urban states
+🦮 Phase 1: RescueGroups Sync (Rural Invisible Dog Rescue)
+🦮 Fetching RescueGroups dogs from: 87002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=87002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 87002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71655 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71655&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71655 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 46014 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=46014&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 46014 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 01002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=01002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 01002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 87009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=87009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 87009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30180 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30180&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30180 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38625 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38625&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38625 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 53005 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=53005&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 53005 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 46001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=46001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 46001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 19707 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=19707&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 19707 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40027 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40027&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40027 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 15005 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=15005&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 15005 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 87005 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=87005&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 87005 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 70001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=70001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 70001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30182 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30182&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30182 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30216 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30216&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30216 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30176 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30176&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30176 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 83205 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=83205&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 83205 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 22033 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=22033&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 22033 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38611 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38611&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38611 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 83211 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=83211&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 83211 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71656 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71656&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71656 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 83201 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=83201&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 83201 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 20607 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=20607&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 20607 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30140 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30140&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30140 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 20611 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=20611&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 20611 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 06001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=06001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 06001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37055 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37055&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37055 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40048 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40048&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40048 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38627 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38627&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38627 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 63011 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=63011&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 63011 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38641 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38641&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38641 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 83210 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=83210&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 83210 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71742 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71742&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71742 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40077 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40077&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40077 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 15003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=15003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 15003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 66006 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=66006&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 66006 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 46012 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=46012&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 46012 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 46012 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=46012&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 46012 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 02801 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=02801&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 02801 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 01009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=01009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 01009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 05001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=05001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 05001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 32013 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=32013&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 32013 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 01012 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=01012&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 01012 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30132 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30132&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30132 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37077 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37077&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37077 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30105 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30105&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30105 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71766 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71766&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71766 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37043 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37043&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37043 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 96703 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=96703&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 96703 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30108 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30108&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30108 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 93203 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=93203&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 93203 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 66007 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=66007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 66007 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 93203 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=93203&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 93203 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 35013 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=35013&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 35013 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 04013 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=04013&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 04013 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 24725 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=24725&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 24725 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 06016 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=06016&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 06016 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40014 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40014&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40014 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 98003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=98003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 98003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 06024 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=06024&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 06024 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37030 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37030&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37030 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 29002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=29002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 29002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 22035 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=22035&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 22035 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71642 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71642&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71642 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 57003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=57003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 57003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40022 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40022&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40022 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 43009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=43009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 43009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30210 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30210&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30210 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 66002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=66002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 66002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40119 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40119&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40119 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37061 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37061&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37061 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 73006 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=73006&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 73006 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 10510 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=10510&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 10510 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 93208 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=93208&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 93208 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 58002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=58002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 58002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 20611 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=20611&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 20611 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37067 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37067&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37067 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 75001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=75001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 75001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 48010 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=48010&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 48010 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 48014 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=48014&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 48014 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71648 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71648&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71648 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40056 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40056&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40056 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 82002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=82002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 82002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40023 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40023&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40023 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 89007 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=89007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 89007 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40059 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40059&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40059 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 87009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=87009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 87009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38626 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38626&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38626 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 84008 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=84008&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 84008 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 20609 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=20609&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 20609 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37079 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37079&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37079 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 10510 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=10510&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 10510 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37026 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37026&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37026 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40045 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40045&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40045 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 48003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=48003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 48003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 85602 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=85602&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 85602 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71635 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71635&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71635 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 55007 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=55007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 55007 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40036 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40036&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40036 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37068 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37068&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37068 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 68002 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=68002&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 68002 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37071 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37071&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37071 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 04013 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=04013&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 04013 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40045 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40045&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40045 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30133 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30133&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30133 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 50011 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=50011&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 50011 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 59007 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=59007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 59007 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37030 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37030&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37030 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 29006 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=29006&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 29006 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 03036 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=03036&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 03036 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 58005 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=58005&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 58005 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 80424 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=80424&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 80424 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 87009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=87009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 87009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30121 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30121&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30121 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37066 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37066&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37066 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 07010 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=07010&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 07010 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 82001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=82001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 82001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40006 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40006&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40006 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 82001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=82001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 82001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 15005 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=15005&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 15005 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 80425 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=80425&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 80425 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30140 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30140&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30140 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 99503 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=99503&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 99503 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 50003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=50003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 50003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37034 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37034&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37034 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71638 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71638&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71638 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40055 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40055&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40055 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 99501 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=99501&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 99501 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30214 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30214&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30214 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 68009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=68009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 68009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 85192 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=85192&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 85192 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 30145 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=30145&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 30145 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 40056 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=40056&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 40056 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 24714 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=24714&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 24714 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 71731 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=71731&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 71731 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37066 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37066&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37066 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37029 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37029&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37029 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 50007 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=50007&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 50007 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 73009 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=73009&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 73009 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 24716 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=24716&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 24716 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 04001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=04001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 04001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 84001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=84001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 84001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 05003 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=05003&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 05003 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 15006 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=15006&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 15006 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 53001 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=53001&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 53001 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 02808 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=02808&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 02808 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 38642 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=38642&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 38642 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 37059 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=37059&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 37059 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+🦮 Fetching RescueGroups dogs from: 39038 (limit: 50)
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Blocation%5D=39038&filter%5Bdistance%5D=100&filter%5Bupdated%5D=%3E2025-02-21&limit=50&fields%5Banimals%5D=id%2Cname%2Cstatus%2Cspecies%2CageGroup%2Csex%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CbreedMixed%2CdescriptionText%2CspecialNeeds%2ChouseTrained%2CgoodWithChildren%2CgoodWithCats%2CgoodWithDogs%2Cpictures%2CthumbnailUrl%2Curl%2Cdistance%2Cupdated%2Ccreated&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs from 39038 with 479 included items
+🔍 First dog: Hannah Steele (ID: 10072481)
+🔍 First dog breed: Labrador Retriever
+📊 RescueGroups raw results: 7500 total dogs fetched
+🔍 Duplication analysis: 7450 dogs appeared multiple times
+🎯 Found 50 unique RescueGroups dogs (7450 duplicates removed)
+📝 Syncing 50 rescuegroups dogs to database...
+✅ rescuegroups sync completed: 45 added, 5 updated
