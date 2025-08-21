@@ -134,6 +134,9 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
 
   // Add picture fields separately to ensure photos are included - FIXED: Use camelCase field names
   params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+  
+  // CRITICAL FIX: Tell API to include picture attributes in included section
+  params.append('fields[included]', 'pictures');
 
   // Include related data
   params.append('include', 'orgs,locations,breeds,pictures');
