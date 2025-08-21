@@ -1,4 +1,3 @@
-
 const { createClient } = require('@supabase/supabase-js');
 const { getRandomRuralZip } = require('../lib/utils.js');
 const { calculateVisibilityScore } = require('../lib/scoreVisibility.js');
@@ -73,11 +72,10 @@ async function rateLimitedDelay(apiType = 'petfinder') {
 }
 
 // RescueGroups API functions
-async function fetchDogsFromRescueGroups(location, isTestMode = false) {
+async function fetchDogsFromRescueGroups(sampleType = 'national', testMode = false, limit = 50) {
   await rateLimitedDelay('rescuegroups');
 
-  const limit = isTestMode ? 5 : 50;
-  console.log(`🦮 Fetching RescueGroups dogs from: ${location} (limit: ${limit})`);
+  console.log(`🦮 Fetching RescueGroups ${sampleType} dog sample...`);
 
   // Get coordinates for the ZIP code
   const coordinates = getZipCoordinates(location);
@@ -96,9 +94,9 @@ async function fetchDogsFromRescueGroups(location, isTestMode = false) {
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // FIXED: Use correct RescueGroups v5 location filtering
-  params.append('filter[location]', location); // ZIP code
-  params.append('filter[locationDistance]', '100'); // 100 mile radius
+  // Skip location filtering since it doesn't work - get a national diverse sample instead
+  // params.append('filter[location]', location); // ZIP code
+  // params.append('filter[locationDistance]', '100'); // 100 mile radius
 
   // Filter for recently updated animals (last 6 months)
   const sixMonthsAgo = new Date();
@@ -167,7 +165,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
   let state = 'Unknown';
   let latitude = null;
   let longitude = null;
-  
+
   if (animal.relationships?.locations?.data?.[0] && included.length > 0) {
     const locationData = included.find(item => 
       item.type === 'locations' && item.id === animal.relationships.locations.data[0].id
@@ -182,7 +180,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
   }
 
   const photos = [];
-  
+
   const mapBoolean = (value) => {
     if (!value) return null;
     const normalized = value.toString().toLowerCase();
@@ -457,7 +455,7 @@ async function main() {
         const result = await fetchDogsFromRescueGroups(location, testMode);
         const dogs = result.data || [];
         const included = result.included || [];
-        
+
         const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
         allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
 

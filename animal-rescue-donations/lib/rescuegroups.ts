@@ -102,59 +102,31 @@ class RescueGroupsAPI {
   }
 
   async searchAnimals(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
-    console.log(`[🦮 RescueGroups] Starting smart fallback search with params:`, params);
+    console.log(`[🦮 RescueGroups] Fetching national dog sample (location filters don't work reliably)`);
 
-    // Attempt 1: Full filters
-    console.log(`[🎯 RescueGroups] Attempt 1: Full filters`);
-    let result = await this.attemptSearch(params);
+    // Simplified approach: Get dogs without location filtering since the API ignores it anyway
+    const simplifiedParams = {
+      breed: params.breed,
+      age: params.age,
+      size: params.size,
+      gender: params.gender,
+      limit: params.limit || 50
+    };
+
+    console.log(`[🎯 RescueGroups] Requesting diverse national sample with non-location filters`);
+    const result = await this.attemptSearch(simplifiedParams);
 
     if (result.animals.length > 0) {
-      console.log(`[✅ RescueGroups] Success with full filters: ${result.animals.length} dogs`);
+      console.log(`[✅ RescueGroups] Got ${result.animals.length} dogs from national sample`);
       return result;
     }
 
-    // Attempt 2: Remove breed filter if it was used
-    if (params.breed) {
-      console.log(`[🎯 RescueGroups] Attempt 2: Removing strict breed filter "${params.breed}"`);
-      const paramsWithoutBreed = { ...params, breed: undefined };
-      result = await this.attemptSearch(paramsWithoutBreed);
+    // Fallback: Ultra-basic request if any filters fail
+    console.log(`[🎯 RescueGroups] Fallback: Basic request with no filters`);
+    const basicResult = await this.attemptSearch({ limit: params.limit || 50 });
 
-      if (result.animals.length > 0) {
-        console.log(`[✅ RescueGroups] Success without breed filter: ${result.animals.length} dogs`);
-        return result;
-      }
-    }
-
-    // Attempt 3: Expand radius if location was provided
-    if (params.location && (params.radius || 100) < 250) {
-      console.log(`[🎯 RescueGroups] Attempt 3: Expanding radius to 250 miles`);
-      const paramsWithLargerRadius = { ...params, breed: undefined, radius: 250 };
-      result = await this.attemptSearch(paramsWithLargerRadius);
-
-      if (result.animals.length > 0) {
-        console.log(`[✅ RescueGroups] Success with expanded radius: ${result.animals.length} dogs`);
-        return result;
-      }
-    }
-
-    // Attempt 4: Location-only search (no breed, no other filters except location)
-    if (params.location) {
-      console.log(`[🎯 RescueGroups] Attempt 4: Location-only search (removing all non-location filters)`);
-      const locationOnlyParams = {
-        location: params.location,
-        radius: 250,
-        limit: params.limit
-      };
-      result = await this.attemptSearch(locationOnlyParams);
-
-      if (result.animals.length > 0) {
-        console.log(`[✅ RescueGroups] Success with location-only search: ${result.animals.length} dogs`);
-        return result;
-      }
-    }
-
-    console.log(`[❌ RescueGroups] All attempts failed - returning empty results to trigger Petfinder fallback`);
-    return { animals: [], included: [] };
+    console.log(`[📊 RescueGroups] Final result: ${basicResult.animals.length} dogs`);
+    return basicResult;
   }
 
   private async attemptSearch(params: RescueGroupsSearchParams): Promise<{ animals: RescueGroupsAnimal[], included: any[] }> {
