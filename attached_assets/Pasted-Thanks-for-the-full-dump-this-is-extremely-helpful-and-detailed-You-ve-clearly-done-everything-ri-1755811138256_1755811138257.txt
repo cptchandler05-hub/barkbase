@@ -1,0 +1,76 @@
+Thanks for the full dump — this is extremely helpful and detailed. You've clearly done everything right on your end in terms of:
+
+correct API field names ✅
+
+correct picture relationship resolution ✅
+
+good logging ✅
+
+proper filter usage and URL debugging ✅
+
+So, why are all photo URLs returning null, even though the IDs match and the relationships are intact?
+
+🧨 Root Cause: The pictures include is ignored unless you also explicitly request picture attributes via fields[included]
+This is a known quirk of the RescueGroups API v5:
+When using the include=pictures parameter, you must also specify the fields for pictures using fields[pictures]=.... However, this only works reliably if you also add fields[included]=pictures — otherwise the picture entries show up but the attributes block is empty (or partially null).
+
+✅ Fix: Add fields[included]=pictures to your query
+In your current code, you're doing:
+
+js
+Copy
+Edit
+params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+That’s good but not enough.
+
+You now need to add:
+
+js
+Copy
+Edit
+params.append('fields[included]', 'pictures');
+This tells the API: “Yes, I included pictures in the response — and I also want to include their fields.” Otherwise the included items return as:
+
+json
+Copy
+Edit
+{
+  "type": "pictures",
+  "id": "101573965",
+  "attributes": {}
+}
+Hence, url, urlOriginal, etc. = null.
+
+🔧 Where to Add It
+In your file:
+
+js
+Copy
+Edit
+// Add picture fields separately to ensure photos are included - FIXED: Use camelCase field names
+params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+Update this to:
+
+js
+Copy
+Edit
+params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,order');
+params.append('fields[included]', 'pictures'); // <-- THIS IS THE KEY FIX
+✅ Bonus: Confirm the fix
+Once you run it again, you'll see logs like:
+
+pgsql
+Copy
+Edit
+📸 Found picture 101573965 with URL: https://photos.rescuegroups.org/101573965.jpg
+🖼️ Animal 21781934: 3 valid pictures found
+🧠 Side Note: What RescueGroups Docs Should Say
+The include=pictures parameter will add related photos to the response, but you must explicitly tell the API to return picture attributes via fields[pictures] and fields[included]=pictures.
+
+It's counterintuitive and undocumented in their v5 examples.
+
+✅ TL;DR
+Problem	Fix
+All picture URLs = null despite correct references	Add params.append('fields[included]', 'pictures')
+
+Let me know when you test it — this should finally get you 100% working images from RescueGroups! 🐾
