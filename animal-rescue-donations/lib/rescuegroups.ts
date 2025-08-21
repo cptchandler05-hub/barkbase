@@ -135,13 +135,14 @@ class RescueGroupsAPI {
     const url = new URL(endpoint);
     const searchParams = url.searchParams;
 
-    // CRITICAL: Force dogs only - use the correct field name
-    searchParams.append('filter[species]', 'dog'); // lowercase as per API docs
+    // CRITICAL: Force dogs only - use the correct API v5 schema field name
+    searchParams.append('filter[animalSpecies]', 'Dog');
+    searchParams.append('filter[animalStatus]', 'Available');
 
     // Filter for recently updated animals (last 3 months to get more relevant results)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-    searchParams.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+    searchParams.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
 
     // FIXED: Use correct RescueGroups v5 location filtering
     if (params.location) {
@@ -186,24 +187,23 @@ class RescueGroupsAPI {
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' ');
 
-      // Try multiple breed filter parameter formats
-      searchParams.append('filter[breedPrimary]', apiBreed);
-      searchParams.append('filter[animalBreed]', apiBreed);
+      // Use correct API v5 breed filtering
+      searchParams.append('filter[animalBreeds]', apiBreed);
 
       console.log(`[🔍 RescueGroups] Applying breed filter: ${apiBreed} (from: ${breedName})`);
     }
 
-    // Other filters
+    // Other filters - FIXED: Use correct API v5 schema field names
     if (params.age) {
-      searchParams.append('filter[ageGroup]', params.age);
+      searchParams.append('filter[animalGeneralAge]', params.age);
     }
 
     if (params.size) {
-      searchParams.append('filter[sizeGroup]', params.size);
+      searchParams.append('filter[animalSizes]', params.size);
     }
 
     if (params.gender) {
-      searchParams.append('filter[sex]', params.gender);
+      searchParams.append('filter[animalSex]', params.gender);
     }
 
     // Set limit

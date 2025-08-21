@@ -8,38 +8,38 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 20
   const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Core filters
-  params.append('filter[species]', 'Dog');
-  params.append('filter[status]', 'Available');
+  // Core filters - FIXED: Use correct API v5 schema field names
+  params.append('filter[animalSpecies]', 'Dog');
+  params.append('filter[animalStatus]', 'Available');
 
-  // Apply diversity filters
+  // Apply diversity filters - FIXED: Use correct API v5 schema field names
   switch (diversityFilter) {
     case 'recent':
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      params.append('filter[updated]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
       break;
 
     case 'large_dogs':
-      params.append('filter[sizeGroup]', 'Large');
+      params.append('filter[animalSizes]', 'Large');
       break;
 
     case 'small_dogs':
-      params.append('filter[sizeGroup]', 'Small');
+      params.append('filter[animalSizes]', 'Small');
       break;
 
     case 'seniors':
-      params.append('filter[ageGroup]', 'Senior');
+      params.append('filter[animalGeneralAge]', 'Senior');
       break;
 
     case 'special_needs':
-      params.append('filter[specialNeeds]', 'true');
+      params.append('filter[animalSpecialneeds]', 'true');
       break;
 
     default:
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-      params.append('filter[updated]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
       break;
   }
 
