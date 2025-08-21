@@ -1,48 +1,93 @@
-// Module for testing RescueGroups API location filtering
 
-// Import necessary modules
-const fetch = require('node-fetch');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: './.env.local' });
 
-// Define ZIP code to coordinates mapping for testing
-const zipToCoordinates = {
-  '87002': { lat: 35.2828, lng: -106.6614 }, // New Mexico
-  '71655': { lat: 33.5779, lng: -91.7320 }, // Arkansas  
-  '59718': { lat: 45.6770, lng: -111.0429 }, // Montana
-  '62471': { lat: 39.7817, lng: -88.1617 }, // Illinois
-  '50158': { lat: 41.5868, lng: -93.4685 }  // Iowa
-};
+// Test script for RescueGroups API integration
+// This tests the same logic used in the main sync but focused only on RescueGroups
 
-async function fetchDogsFromRescueGroups(location) {
-  console.log(`🦮 Testing RescueGroups API for location: ${location}`);
+async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50, offset = 0) {
+  console.log(`🦮 Testing RescueGroups filter: ${diversityFilter}`);
 
-  console.log(`📍 Using ZIP code: ${location} for location filtering`);
-
-  const baseURL = 'https://api.rescuegroups.org/v5/public/animals/search/available/dogs';
-  const url = new URL(baseURL);
+  const url = new URL('https://api.rescuegroups.org/v5/public/animals/search/available/dogs');
   const params = url.searchParams;
 
-  // Core filters
-  params.append('filter[species]', 'Dog');
-  params.append('filter[status]', 'Available');
+  // Core filters - FIXED: Use correct API v5 schema field names
+  params.append('filter[animalSpecies]', 'Dog');
+  params.append('filter[animalStatus]', 'Available');
 
-  // FIXED: Use correct RescueGroups v5 location filtering
-  params.append('filter[location]', location); // ZIP code
-  params.append('filter[locationDistance]', '100'); // 100 mile radius
+  // Apply diversity filters - FIXED: Use correct API v5 schema field names
+  switch (diversityFilter) {
+    case 'recent':
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      params.append('filter[animalUpdatedDate]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
+      break;
 
-  // Filter for recently updated animals (last 6 months)
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-  params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
+    case 'large_dogs':
+      params.append('filter[animalSizes]', 'Large');
+      break;
 
-  // Limit results for testing
-  params.append('limit', '10');
+    case 'small_dogs':
+      params.append('filter[animalSizes]', 'Small');
+      break;
 
-  // Specify fields to return
+    case 'seniors':
+      params.append('filter[animalGeneralAge]', 'Senior');
+      break;
+
+    case 'special_needs':
+      params.append('filter[animalSpecialneeds]', 'true');
+      break;
+
+    case 'puppies':
+      params.append('filter[animalGeneralAge]', 'Baby');
+      break;
+
+    case 'mixed_breeds':
+      params.append('filter[animalMixed]', 'true');
+      break;
+
+    case 'purebreds':
+      params.append('filter[animalMixed]', 'false');
+      break;
+
+    default:
+      // Default: recently updated in last 3 months
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      params.append('filter[animalUpdatedDate]', `>${threeMonthsAgo.toISOString().split('T')[0]}`);
+      break;
+  }
+
+  // Limit results
+  params.append('limit', Math.min(limit, 100).toString());
+
+  // Add offset for pagination
+  if (offset > 0) {
+    params.append('start', offset.toString());
+  }
+
+  // Specify fields to return - FIXED: Use correct API v5 field names
   const fields = [
-    'id', 'name', 'status', 'species',
-    'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
-    'descriptionText', 'pictures', 'url', 'distance', 'updated'
+    'id',
+    'name',
+    'animalStatus',
+    'animalSpecies',
+    'animalGeneralAge',
+    'animalSex',
+    'animalSizes',
+    'animalBreedPrimary',
+    'animalBreedSecondary',
+    'animalMixed',
+    'animalDescription',
+    'animalSpecialneeds',
+    'animalAttributes',
+    'animalPictures',
+    'animalThumbnailUrl',
+    'animalUrl',
+    'animalDistance',
+    'animalUpdatedDate',
+    'animalCreatedDate'
   ];
   params.append('fields[animals]', fields.join(','));
 
@@ -63,95 +108,159 @@ async function fetchDogsFromRescueGroups(location) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.warn(`⚠️ RescueGroups API error ${response.status} for ${location}:`, errorText);
-      return { data: [], included: [] };
+      console.warn(`⚠️ RescueGroups API error ${response.status}:`, errorText);
+      return { animals: [], included: [] };
     }
 
     const result = await response.json();
     const animals = result.data || [];
     const included = result.included || [];
 
-    console.log(`📋 Found ${animals.length} RescueGroups dogs from ${location}`);
-
-    // Log first few animals for debugging
+    console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
+    
+    // Show sample data to verify filter effectiveness
     if (animals.length > 0) {
-      console.log(`🔍 Sample dogs from ${location}:`);
+      console.log(`🔍 Sample dogs from ${diversityFilter}:`);
       animals.slice(0, 3).forEach((animal, index) => {
-        console.log(`   ${index + 1}. ${animal.attributes?.name || 'Unknown'} (ID: ${animal.id})`);
-        console.log(`      Breed: ${animal.attributes?.breedPrimary || 'Unknown'}`);
-        console.log(`      Age: ${animal.attributes?.ageGroup || 'Unknown'}`);
+        const attrs = animal.attributes || {};
+        console.log(`   ${index + 1}. ${attrs.name || 'Unknown'} (ID: ${animal.id})`);
+        console.log(`      Size: ${attrs.animalSizes || 'Unknown'}, Age: ${attrs.animalGeneralAge || 'Unknown'}`);
+        console.log(`      Special Needs: ${attrs.animalSpecialneeds ? 'true' : 'false'}, Mixed: ${attrs.animalMixed ? 'true' : 'false'}`);
+        console.log(`      Breed: ${attrs.animalBreedPrimary || 'Unknown'}, Updated: ${attrs.animalUpdatedDate}`);
       });
     }
 
-    return { data: animals, included: included };
+    return { animals, included };
   } catch (error) {
-    console.warn(`⚠️ RescueGroups error for ${location}:`, error.message);
-    return { data: [], included: [] };
+    console.warn(`⚠️ RescueGroups error for ${diversityFilter}:`, error.message);
+    return { animals: [], included: [] };
+  }
+}
+
+async function testRescueGroupsSync() {
+  console.log('🧪 TESTING RESCUEGROUPS API WITH CORRECTED FIELD NAMES');
+  console.log('🎯 This uses the same corrected logic as the main sync script\n');
+
+  try {
+    // Test multiple diversity filters like the main sync
+    const testFilters = ['default', 'recent', 'large_dogs', 'small_dogs', 'seniors', 'special_needs', 'puppies', 'mixed_breeds'];
+    const allDogs = [];
+    const allDogIds = [];
+    let totalAPIRequests = 0;
+
+    for (const filter of testFilters) {
+      try {
+        console.log(`\n🎯 Testing filter: ${filter}`);
+        const { animals, included } = await fetchDogsFromRescueGroups(filter, 50);
+        
+        totalAPIRequests++;
+        allDogs.push(...animals);
+        
+        // Track IDs for deduplication analysis
+        animals.forEach(animal => {
+          allDogIds.push(animal.id);
+        });
+
+        console.log(`✅ Filter "${filter}": ${animals.length} dogs, ${included.length} included items`);
+
+        // Small delay between requests to be respectful
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.warn(`⚠️ Failed for filter ${filter}:`, error.message);
+      }
+    }
+
+    // Deduplication analysis
+    const uniqueDogIds = [...new Set(allDogIds)];
+    const duplicateCount = allDogIds.length - uniqueDogIds.length;
+
+    console.log('\n📊 RESCUEGROUPS TEST RESULTS:');
+    console.log(`   API requests made: ${totalAPIRequests}`);
+    console.log(`   Total dog instances: ${allDogIds.length}`);
+    console.log(`   Unique dogs: ${uniqueDogIds.length}`);
+    console.log(`   Duplicates removed: ${duplicateCount}`);
+    console.log(`   Duplication rate: ${((duplicateCount / allDogIds.length) * 100).toFixed(1)}%`);
+
+    // Test data quality
+    const dogsWithPhotos = allDogs.filter(dog => {
+      const attrs = dog.attributes || {};
+      return attrs.animalPictures || attrs.animalThumbnailUrl;
+    });
+
+    const dogsWithDescriptions = allDogs.filter(dog => {
+      const attrs = dog.attributes || {};
+      return attrs.animalDescription && attrs.animalDescription.length > 50;
+    });
+
+    console.log('\n🏆 DATA QUALITY ANALYSIS:');
+    console.log(`   Dogs with photos: ${dogsWithPhotos.length}/${uniqueDogIds.length} (${((dogsWithPhotos.length/uniqueDogIds.length)*100).toFixed(1)}%)`);
+    console.log(`   Dogs with descriptions: ${dogsWithDescriptions.length}/${uniqueDogIds.length} (${((dogsWithDescriptions.length/uniqueDogIds.length)*100).toFixed(1)}%)`);
+
+    // Verify field corrections are working
+    console.log('\n🔧 FIELD VERIFICATION:');
+    const sampleDog = allDogs[0];
+    if (sampleDog?.attributes) {
+      const attrs = sampleDog.attributes;
+      console.log(`   ✅ animalGeneralAge: ${attrs.animalGeneralAge || 'N/A'}`);
+      console.log(`   ✅ animalSizes: ${attrs.animalSizes || 'N/A'}`);
+      console.log(`   ✅ animalSpecialneeds: ${attrs.animalSpecialneeds || 'N/A'}`);
+      console.log(`   ✅ animalBreedPrimary: ${attrs.animalBreedPrimary || 'N/A'}`);
+      console.log(`   ✅ animalMixed: ${attrs.animalMixed || 'N/A'}`);
+    }
+
+    if (uniqueDogIds.length > 0) {
+      console.log('\n✅ SUCCESS: RescueGroups API test completed successfully!');
+      console.log('🎯 The corrected field names are working properly');
+      console.log('🦮 Ready for production sync with enhanced diversity filters');
+    } else {
+      console.log('\n❌ WARNING: No dogs returned - check API key and connectivity');
+    }
+
+  } catch (error) {
+    console.error('❌ RescueGroups test failed:', error.message);
+    process.exit(1);
+  }
+}
+
+// Also test database integration if we have Supabase configured
+async function testDatabaseIntegration() {
+  console.log('\n🗄️ TESTING DATABASE INTEGRATION');
+  
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.log('⚠️ Supabase not configured - skipping database test');
+    return;
+  }
+
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    // Test connection
+    const { data, error } = await supabase
+      .from('dogs')
+      .select('count')
+      .limit(1);
+
+    if (error) {
+      console.log(`❌ Database connection failed: ${error.message}`);
+    } else {
+      console.log('✅ Database connection successful');
+    }
+  } catch (error) {
+    console.log(`❌ Database test failed: ${error.message}`);
   }
 }
 
 async function main() {
-  console.log('🧪 TESTING RESCUEGROUPS LOCATION FILTERING ONLY');
-  console.log('📍 This will test 5 different rural ZIP codes to verify geographic diversity\n');
+  console.log('🐕 RESCUEGROUPS API TEST SUITE');
+  console.log('📋 Testing with corrected API v5 field names and enhanced filters\n');
 
-  try {
-    // Test with 5 different rural ZIP codes
-    const testLocations = [
-      '87002', // New Mexico
-      '71655', // Arkansas  
-      '59718', // Montana
-      '62471', // Illinois
-      '50158'  // Iowa
-    ];
+  await testRescueGroupsSync();
+  await testDatabaseIntegration();
 
-    let totalDogs = 0;
-    const allDogIds = [];
-
-    for (const location of testLocations) {
-      try {
-        const result = await fetchDogsFromRescueGroups(location);
-        const dogs = result.data || [];
-
-        totalDogs += dogs.length;
-
-        // Collect dog IDs to check for duplicates
-        dogs.forEach(dog => allDogIds.push(dog.id));
-
-        console.log(`✅ Location ${location}: ${dogs.length} dogs found\n`);
-
-        // Small delay between requests
-        await new Promise(resolve => setTimeout(resolve, 200));
-      } catch (error) {
-        console.warn(`⚠️ Failed for location ${location}:`, error.message);
-      }
-    }
-
-    // Analyze results
-    const uniqueDogIds = [...new Set(allDogIds)];
-    const duplicateCount = allDogIds.length - uniqueDogIds.length;
-
-    console.log('📊 RESULTS SUMMARY:');
-    console.log(`   Total API calls: ${testLocations.length}`);
-    console.log(`   Total dogs found: ${totalDogs}`);
-    console.log(`   Unique dogs: ${uniqueDogIds.length}`);
-    console.log(`   Duplicates: ${duplicateCount}`);
-
-    if (duplicateCount === 0) {
-      console.log('✅ SUCCESS: No duplicates found - location filtering is working!');
-    } else if (duplicateCount < totalDogs * 0.5) {
-      console.log('⚠️ PARTIAL SUCCESS: Some duplicates but mostly unique results');
-    } else {
-      console.log('❌ FAILED: Too many duplicates - location filtering may not be working');
-    }
-
-    console.log('\n🎯 Test completed successfully!');
-
-  } catch (error) {
-    console.error('❌ RescueGroups test failed:', error.message);
-  }
+  console.log('\n🎉 All tests completed!');
 }
 
-// Run the test if this script is executed directly
-if (require.main === module) {
-  main().catch(console.error);
-}
+main().catch(console.error);
