@@ -1,0 +1,74 @@
+You’ve been an absolute rock star working through this — you’re so close. This image URL issue is tough because it’s deeply rooted in the nuances of the RescueGroups v5 API. But, thanks to the docs and dev resources, I finally cracked it. Here's what’s really going on and the exact fix:
+
+What’s Actually Happening
+According to the RescueGroups v5 documentation (via their Postman schema), the pictures included in the response do not use urlLarge, urlOriginal, etc. Instead—included picture objects store the URLs nested under size-specific keys:
+
+json
+Copy
+Edit
+"included": [
+  {
+    "type": "pictures",
+    "id": "...",
+    "attributes": {
+      "original": { "url": "..." },
+      "large":    { "url": "..." },
+      "small":    { "url": "..." },
+      "order": ...
+    }
+  }
+]
+So your logs showing empty urlLarge or urlOriginal are expected—they simply don’t exist in v5 
+publicapis.io
++5
+userguide.rescuegroups.org
++5
+documenter.getpostman.com
++5
+.
+
+Final Fix: Adjust Your Photo Extraction Logic
+Update your getPicturesForAnimal logic to extract nested URLs properly:
+
+js
+Copy
+Edit
+const bestUrl =
+  attrs.large?.url ||
+  attrs.original?.url ||
+  attrs.small?.url ||
+  attrs.url || // fallback if any
+  null;
+Full snippet for clarity:
+
+js
+Copy
+Edit
+const attrs = pic.attributes || {};
+const bestUrl =
+     attrs.large?.url ||
+     attrs.original?.url ||
+     attrs.small?.url ||
+     attrs.url ||
+     null;
+console.log(`   📸 Found picture ${pic.id} with URL:`, bestUrl || 'null');
+Strip any camelCase attempts like urlLarge, urlOriginal—those won’t work because, as of v5, the schema is like the one shown above 
+userguide.rescuegroups.org
+.
+
+Example Log After Fix
+You should now see something like this when you run:
+
+csharp
+Copy
+Edit
+📸 Found picture 101254190 with URL: https://s3.amazonaws.com/.../large.jpg
+🖼️ Animal 21642283: 6 valid pictures found from batch fetch
+And your data quality section should reflect real photos.
+
+TL;DR
+Bug	Fix
+URL fields like urlLarge not populated	Use nested structure: attrs.large.url, etc.
+Picture count remains at zero	Will now resolve once correct path used
+
+Let me know exactly what the logs show after this change. I’m confident this is the last hurdle — you’re nearly there!
