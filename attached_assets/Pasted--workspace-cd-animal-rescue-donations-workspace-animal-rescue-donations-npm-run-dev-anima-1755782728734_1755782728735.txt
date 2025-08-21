@@ -1,0 +1,295 @@
+~/workspace$ cd animal-rescue-donations
+~/workspace/animal-rescue-donations$ npm run dev
+
+> animal-rescue-donations@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 6.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.6s (8586 modules)
+ GET / 200 in 15454ms
+ ✓ Compiled in 1292ms (4186 modules)
+ HEAD / 200 in 26ms
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 2.4s (4637 modules)
+[🧠 AI Intent] AI detected general question, switching modes
+[🧠 Barkr] Final context: general
+[🧠 GPT Parser] No clear breed or location found in: Good morning, Barkr!
+[⚠️ Barkr] Invalid breed in memory, wiping: null
+[⚠️ Barkr] Invalid location in memory, wiping: null
+[🧠 Final Decision] aiIntent: general, context: general, isAdoptionMode: false
+ POST /api/chat 200 in 6415ms
+[🧠 AI Intent] AI detected adoption intent, staying in adoption mode
+[🧠 Barkr] Final context: adoption
+[🔷 Barkr] New breed provided, wiping previous: null
+[🧠 Final Decision] aiIntent: adoption, context: adoption, isAdoptionMode: true
+[📍 Normalized Location] Keene, NH
+[🐾 Barkr Memory] {
+  location: 'Keene, NH',
+  breed: 'chihuahuas',
+  hasSeenResults: false,
+  seenDogIds: [],
+  cachedDogs: [],
+  isAdoptionMode: true,
+  isInvisibleDogsSearch: false
+}
+[🔍 Petfinder Params] { location: 'Keene, NH', breed: 'chihuahuas' }
+[🧠 Breed Normalization] Input: chihuahuas → Singular: chihuahua → Cleaned: Chihuahua
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[✅ Breed Match Success] Matched to: Chihuahua
+[🗄️ Database] Searching database first...
+[🗄️ Database] Filtering by breed: Chihuahua
+[🗄️ Database] Filtering by location: Keene, NH
+[🗄️ Database] Filtering by state: NH
+[✅ Database] Found 3 dogs in database
+[🔍 Petfinder] Database returned only 3 dogs, searching Petfinder for additional...
+ ○ Compiling /api/petfinder/search ...
+ ✓ Compiled /api/petfinder/search in 1313ms (4642 modules)
+[🔍 Enhanced Search] Starting Database → Petfinder search waterfall
+[📋 Raw Input] {
+  location: 'Keene, NH',
+  breed: 'Chihuahua',
+  age: null,
+  size: null,
+  gender: null,
+  limit: 25,
+  isChat: true
+}
+[🎯 Context] Chat search - limit: 25
+[🧼 Normalized Params] { location: 'Keene, NH', breed: 'Chihuahua', limit: 25, radius: 100 }
+[💾 Database] Searching database first...
+Searching for dogs with location: Keene, NH, breed: Chihuahua, limit: 50
+Found 4 dogs matching search criteria
+[🗄️ DB Format] Processing: Kuzco (ID: 3014, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300
+[🔍 DB Debug] Kuzco - Final photos count: 4
+[🗄️ DB Format] Processing: Leonardo. (ID: 4124, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300
+[🔍 DB Debug] Leonardo. - Final photos count: 5
+[🗄️ DB Format] Processing: Mellie (ID: 502, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=100',
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300
+[🔍 DB Debug] Mellie - Final photos count: 2
+[🗄️ DB Format] Processing: Chloe (ID: 6646, Source: petfinder)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  full: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=100',
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300
+[🔍 DB Debug] Chloe - Final photos count: 2
+[✅ Database Hit] Found 4 dogs in database
+[🗄️ DB Format] Processing: Kuzco (ID: 77445805, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/1/?bust=1753346016&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/2/?bust=1753346016&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=100'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/3/?bust=1753346015&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=100'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77445805/4/?bust=1753346016&width=300
+[🔍 DB Debug] Kuzco - Final photos count: 4
+[🗄️ DB Format] Processing: Leonardo. (ID: 77441567, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/27dc9759-1b9d-4b8a-b9a5-a71a47fc1c99.jpg?versionId=poJ38tRiXLep58o.RSJqz3hZqQXQkqkC&bust=1753356574&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/1c4e7aed-ea33-470b-97fb-a4e03ec0935d.jpg?versionId=lKXZySgIpgUUh7fqsXao9SoEaSeWge3s&bust=1753356573&width=300
+[🖼️ DB Photo 2] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=100'
+}
+[✅ DB Photo 2] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/664efe24-0594-41ca-9c98-00c2283a9f32.jpg?versionId=4QGwYcDAr3CUwsTe4g.gkL_Z53LKl9Ns&bust=1753356573&width=300
+[🖼️ DB Photo 3] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=100'
+}
+[✅ DB Photo 3] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/ae5f2651-44f9-492b-a977-5d14c2b2504f.jpg?versionId=5HtHlqaS2f4w0by_QOqU27JKbxpS02vt&bust=1753356574&width=300
+[🖼️ DB Photo 4] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=100'
+}
+[✅ DB Photo 4] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/e377220b-f95a-4e40-abde-4949ba50d6ee/image/52a70ca2-df0f-435c-bd53-446914853e71.jpg?versionId=qV6KMUYqEDOxxptmn8nvCjdvDCO.ihPg&bust=1753356574&width=300
+[🔍 DB Debug] Leonardo. - Final photos count: 5
+[🗄️ DB Format] Processing: Mellie (ID: 77462506, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/1/?bust=1753434983&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300',
+  large: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=600',
+  small: 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/77462506/2/?bust=1753434983&width=300
+[🔍 DB Debug] Mellie - Final photos count: 2
+[🗄️ DB Format] Processing: Chloe (ID: 77598097, Source: undefined)
+[🖼️ DB Photo 0] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=100'
+}
+[✅ DB Photo 0] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/97e5f52f-960e-4735-8c11-05e3a605fc0f.jpg?versionId=TCIZfSi.a1Xj7_GyjIzSeR1sg.xENlPo&bust=1754151337&width=300
+[🖼️ DB Photo 1] Raw photo data type: object {
+  medium: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300',
+  large: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=600',
+  small: 'https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=100'
+}
+[✅ DB Photo 1] RescueGroups object format: https://dbw3zep4prcju.cloudfront.net/animal/7431a634-b6d4-48bf-9198-edfe4e9917a0/image/953282ae-8c77-4f13-b618-77a248605ac3.jpg?versionId=FTSql4cz.oQxGEUXxnPka.maABDQ3KP0&bust=1754151336&width=300
+[🔍 DB Debug] Chloe - Final photos count: 2
+[🐾 Petfinder] Falling back to Petfinder API...
+[📊 Current Results] 4 dogs found so far, need 21 more
+[🔄 Rate Limit] Reset rate limit window
+[🎫 Token Manager] Fetching new Petfinder access token...
+[✅ Token Manager] Got new Petfinder token, expires in 3600 seconds
+[✅ Fallback Breed Match] "Chihuahua" → "Chihuahua"
+[📡 Petfinder] Fetching: https://api.petfinder.com/v2/animals?type=dog&status=adoptable&limit=21&location=Keene%2C+NH&distance=100&breed=Chihuahua
+[✅ Petfinder Hit] Found 21 dogs from Petfinder
+[⚠️ Petfinder Fallback] Petfinder search failed: TypeError: Cannot read properties of undefined (reading 'primary')
+    at eval (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:126:75)
+    at Array.some (<anonymous>)
+    at eval (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:124:49)
+    at Array.filter (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./app/api/petfinder/search/route.ts:123:63)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/home/runner/workspace/animal-rescue-donations/node_modules/next/dist/server/lib/start-server.js:141:13)
+[✅ Search Complete] Found 4 total dogs from sources: database
+[📊 Source Breakdown] database: 4
+ POST /api/petfinder/search 200 in 4526ms
+[✅ Chat Search Success] Found 4 dogs for chihuahuas in Keene, NH from sources: database
+[✅ Petfinder Integration] Found 4 Petfinder dogs, 0 were duplicates of database dogs
+[✅ Search Complete] Total unique dogs: 7 Showing: 7
+[✅ Search Complete] Total unique dogs: 7 Showing: 7
+[📊 Scores] Sample scores: [ 'Kuzco: 96', 'Mellie: 68', 'Mellie: 50' ]
+ POST /api/chat 200 in 9182ms
