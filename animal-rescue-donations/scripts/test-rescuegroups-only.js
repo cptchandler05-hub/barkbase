@@ -31,9 +31,9 @@ async function fetchDogsFromRescueGroups(location) {
   params.append('filter[species]', 'Dog');
   params.append('filter[status]', 'Available');
 
-  // FIXED: Location filter using correct parameter names (without 'location.' prefix)
-  params.append('filter[latitude]', coordinates.lat.toString());
-  params.append('filter[longitude]', coordinates.lng.toString());
+  // Location filters using RescueGroups v5 API format
+  params.append('filter[lat]', coordinates.lat.toString());
+  params.append('filter[lng]', coordinates.lng.toString());
   params.append('filter[distance]', '100'); // 100 mile radius
 
   // Filter for recently updated animals (last 6 months)
