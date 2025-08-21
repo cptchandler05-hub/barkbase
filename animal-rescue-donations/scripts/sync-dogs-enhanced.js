@@ -92,7 +92,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
       params.append('filter[updated]', `>${oneMonthAgo.toISOString().split('T')[0]}`);
       break;
-      
+
     case 'older':
       // Older listings (2-6 months ago) - these are often "invisible" dogs
       const sixMonthsAgo = new Date();
@@ -102,91 +102,91 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       params.append('filter[updated]', `>${sixMonthsAgo.toISOString().split('T')[0]}`);
       params.append('filter[updated]', `<${twoMonthsAgo.toISOString().split('T')[0]}`);
       break;
-      
+
     case 'large_dogs':
       // Focus on large dogs (often harder to place)
       params.append('filter[sizeGroup]', 'Large');
       break;
-      
+
     case 'small_dogs':
       // Focus on small dogs
       params.append('filter[sizeGroup]', 'Small');
       break;
-      
+
     case 'seniors':
       // Senior dogs (often overlooked)
       params.append('filter[ageGroup]', 'Senior');
       break;
-      
+
     case 'special_needs':
       // Special needs dogs (invisible dogs priority)
       params.append('filter[specialNeeds]', 'true');
       break;
-      
+
     case 'very_old':
       // Very old listings (6+ months) - truly invisible dogs
       const twelveMonthsAgo = new Date();
-      const sixMonthsAgo = new Date();
+      const olderSixMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      olderSixMonthsAgo.setMonth(olderSixMonthsAgo.getMonth() - 6);
       params.append('filter[updated]', `>${twelveMonthsAgo.toISOString().split('T')[0]}`);
-      params.append('filter[updated]', `<${sixMonthsAgo.toISOString().split('T')[0]}`);
+      params.append('filter[updated]', `<${olderSixMonthsAgo.toISOString().split('T')[0]}`);
       break;
-      
+
     case 'medium_dogs':
       params.append('filter[sizeGroup]', 'Medium');
       break;
-      
+
     case 'extra_large_dogs':
       params.append('filter[sizeGroup]', 'Extra Large');
       break;
-      
+
     case 'adults':
       params.append('filter[ageGroup]', 'Adult');
       break;
-      
+
     case 'young_adults':
       params.append('filter[ageGroup]', 'Young Adult');
       break;
-      
+
     case 'puppies':
       params.append('filter[ageGroup]', 'Baby');
       break;
-      
+
     case 'house_trained':
       params.append('filter[houseTrained]', 'true');
       break;
-      
+
     case 'good_with_kids':
       params.append('filter[goodWithChildren]', 'true');
       break;
-      
+
     case 'good_with_dogs':
       params.append('filter[goodWithDogs]', 'true');
       break;
-      
+
     case 'good_with_cats':
       params.append('filter[goodWithCats]', 'true');
       break;
-      
+
     case 'mixed_breeds':
       params.append('filter[breedMixed]', 'true');
       break;
-      
+
     case 'purebreds':
       params.append('filter[breedMixed]', 'false');
       break;
-      
+
     case 'high_energy':
       // Filter for active dogs that may be harder to place
       params.append('filter[energyLevel]', 'High');
       break;
-      
+
     case 'low_energy':
       // Calmer dogs
       params.append('filter[energyLevel]', 'Low');
       break;
-      
+
     default:
       // Default: just recently updated in last 3 months
       const threeMonthsAgo = new Date();
@@ -197,7 +197,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
   // Limit results to maximum allowed
   params.append('limit', Math.min(limit, 100).toString());
-  
+
   // Add offset for pagination
   if (offset > 0) {
     params.append('start', offset.toString());
@@ -208,7 +208,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
     'id', 'name', 'status', 'species',
     'ageGroup', 'sex', 'sizeGroup', 'breedPrimary', 'breedSecondary',
     'breedMixed', 'descriptionText', 'specialNeeds', 'houseTrained',
-    'goodWithChildren', 'goodWithCats', 'goodWithDogs',
+    'goodWithChildren', 'goodWithDogs', 'goodWithCats',
     'pictures', 'thumbnailUrl', 'url', 'distance', 'updated', 'created'
   ];
   params.append('fields[animals]', fields.join(','));
@@ -554,30 +554,30 @@ async function main() {
     const maxPerRequest = 100; // RescueGroups max per request
     const pagesPerFilter = testMode ? 1 : 5; // Multiple pages per filter for volume
     const maxPerFilter = maxPerRequest * pagesPerFilter; // 500 dogs per filter in production
-    
+
     for (const filter of diversityFilters) {
       try {
         console.log(`🎯 Fetching ${filter} dogs from RescueGroups (${maxPerFilter} target)...`);
         let filterDogs = [];
         let filterIncluded = [];
-        
+
         // Paginate through multiple requests per filter
         for (let page = 0; page < pagesPerFilter; page++) {
           const offset = page * maxPerRequest;
           const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerRequest, offset);
           const dogs = result.data || [];
           const included = result.included || [];
-          
+
           if (dogs.length === 0) {
             console.log(`📄 No more ${filter} dogs at page ${page + 1}, stopping pagination`);
             break; // No more results for this filter
           }
-          
+
           filterDogs = filterDogs.concat(dogs);
           filterIncluded = filterIncluded.concat(included);
-          
+
           console.log(`📄 Page ${page + 1}: Got ${dogs.length} ${filter} dogs (total: ${filterDogs.length})`);
-          
+
           // Respect rate limit (10 req/sec = 100ms between requests)
           await new Promise(resolve => setTimeout(resolve, 120));
         }
