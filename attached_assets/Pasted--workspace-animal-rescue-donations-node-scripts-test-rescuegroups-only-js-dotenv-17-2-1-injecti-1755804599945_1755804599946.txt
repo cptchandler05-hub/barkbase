@@ -1,0 +1,224 @@
+~/workspace/animal-rescue-donations$ node scripts/test-rescuegroups-only.js
+[dotenv@17.2.1] injecting env (0) from .env.local -- tip: ⚙️  override existing env vars with { override: true }
+🐕 RESCUEGROUPS API TEST SUITE
+📋 Testing with corrected API v5 field names and enhanced filters
+
+🧪 TESTING RESCUEGROUPS API WITH CORRECTED FIELD NAMES
+🎯 This uses the same corrected logic as the main sync script
+
+
+🎯 Testing filter: default
+🦮 Testing RescueGroups filter: default
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BupdatedDate%5D=%3E2025-05-21&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with default filter (479 included items)
+🔍 Sample dogs from default:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "default": 50 dogs, 479 included items
+
+🎯 Testing filter: recent
+🦮 Testing RescueGroups filter: recent
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BupdatedDate%5D=%3E2025-07-21&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with recent filter (479 included items)
+🔍 Sample dogs from recent:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "recent": 50 dogs, 479 included items
+
+🎯 Testing filter: large_dogs
+🦮 Testing RescueGroups filter: large_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BsizeGroup%5D=Large&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with large_dogs filter (479 included items)
+🔍 Sample dogs from large_dogs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "large_dogs": 50 dogs, 479 included items
+
+🎯 Testing filter: small_dogs
+🦮 Testing RescueGroups filter: small_dogs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BsizeGroup%5D=Small&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with small_dogs filter (479 included items)
+🔍 Sample dogs from small_dogs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "small_dogs": 50 dogs, 479 included items
+
+🎯 Testing filter: seniors
+🦮 Testing RescueGroups filter: seniors
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BageGroup%5D=Senior&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with seniors filter (479 included items)
+🔍 Sample dogs from seniors:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "seniors": 50 dogs, 479 included items
+
+🎯 Testing filter: special_needs
+🦮 Testing RescueGroups filter: special_needs
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5Bqualities%5D=specialNeeds&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with special_needs filter (479 included items)
+🔍 Sample dogs from special_needs:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "special_needs": 50 dogs, 479 included items
+
+🎯 Testing filter: puppies
+🦮 Testing RescueGroups filter: puppies
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BageGroup%5D=Baby&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with puppies filter (479 included items)
+🔍 Sample dogs from puppies:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "puppies": 50 dogs, 479 included items
+
+🎯 Testing filter: mixed_breeds
+🦮 Testing RescueGroups filter: mixed_breeds
+🔗 RescueGroups API URL: https://api.rescuegroups.org/v5/public/animals/search/available/dogs?filter%5Bspecies%5D=Dog&filter%5Bstatus%5D=Available&filter%5BisBreedMixed%5D=true&limit=50&fields%5Banimals%5D=id%2Cname%2CageGroup%2CsizeGroup%2CbreedPrimary%2CbreedSecondary%2CisBreedMixed%2CdescriptionText%2CdescriptionHtml%2CenergyLevel%2CactivityLevel%2CpictureCount%2CpictureThumbnailUrl%2Curl%2CcreatedDate%2CupdatedDate%2Csex%2CisHousetrained%2Cqualities%2CadoptionFeeString%2CisAdoptionPending&include=orgs%2Clocations%2Cbreeds%2Cpictures
+📋 Found 50 RescueGroups dogs with mixed_breeds filter (479 included items)
+🔍 Sample dogs from mixed_breeds:
+   1. Hannah Steele (ID: 10072481)
+      Size: Medium, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Labrador Retriever, Updated: 2025-01-23T00:46:15Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   2. Doli (ID: 10131543)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Husky, Updated: 2025-04-30T18:08:23Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+   3. Cylana (ID: 10138270)
+      Size: Large, Age: Senior
+      Special Needs: false, Mixed: true
+      Breed: Shar Pei, Updated: 2025-07-16T01:56:22Z
+      Raw attrs keys: id, name, ageGroup, sizeGroup, breedPrimary
+✅ Filter "mixed_breeds": 50 dogs, 479 included items
+
+📊 RESCUEGROUPS TEST RESULTS:
+   API requests made: 8
+   Total dog instances: 400
+   Unique dogs: 50
+   Duplicates removed: 350
+   Duplication rate: 87.5%
+
+🏆 DATA QUALITY ANALYSIS:
+   Dogs with photos: 0/50 (0.0%)
+   Dogs with descriptions: 0/50 (0.0%)
+
+🔧 FIELD VERIFICATION:
+   📋 Available attribute keys: id, name, ageGroup, sizeGroup, breedPrimary, breedSecondary, isBreedMixed, descriptionText, descriptionHtml, energyLevel, activityLevel, pictureCount, pictureThumbnailUrl, url, createdDate, updatedDate, sex, isHousetrained, qualities, adoptionFeeString, isAdoptionPending
+   ✅ ageGroup: Senior
+   ✅ sizeGroup: Medium
+   ✅ qualities: affectionate,cratetrained,eagerToPlease,gentle,goofy,lap,leashtrained,needsCompanionAnimal,olderKidsOnly,playful,playsToys,timid
+   ✅ breedPrimary: Labrador Retriever
+   ✅ isBreedMixed: true
+   🔍 Sample raw animal structure: {
+  "type": "animals",
+  "id": "10072481",
+  "attributes": {
+    "id": "10072481",
+    "name": "Hannah Steele",
+    "ageGroup": "Senior",
+    "sizeGroup": "Medium",
+    "breedPrimary": "Labrador Retriever",
+    "breedSecondary": "Hound",
+    "isBreedMixed": true,
+    "descriptionText": "After being on the run for 6&nbsp;months&nbsp;- Hannah was trapped by our wonderful Hound Hunter Team, and&nbsp;is now ready for a home of her own!&nbsp;\n\nShe is currently in a foster home learning&nbsp;what it
+
+✅ SUCCESS: RescueGroups API test completed successfully!
+🎯 The corrected field names are working properly
+🦮 Ready for production sync with enhanced diversity filters
+
+🗄️ TESTING DATABASE INTEGRATION
+✅ Database connection successful
+
+🎉 All tests completed!
