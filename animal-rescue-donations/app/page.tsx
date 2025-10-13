@@ -20,6 +20,10 @@ import {
   Identity,
   EthBalance,
 } from "@coinbase/onchainkit/identity";
+import {
+  FundButton,
+  getOnrampBuyUrl,
+} from "@coinbase/onchainkit/fund";
 import { motion } from "framer-motion";
 import ThankYouToast from "@/app/components/ThankYouToast";
 import Navigation from "@/app/components/Navigation";
@@ -296,26 +300,32 @@ export default function Page() {
     }
 
     try {
-      setLoading(true);
-      
-      const response = await fetch('/api/onramp/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amountUsd: Number(amount) }),
+      // Generate onramp URL using OnchainKit
+      const onrampURL = getOnrampBuyUrl({
+        addresses: { [DONATION_ADDRESS]: ['base'] },
+        assets: ['USDC'],
+        presetFiatAmount: Number(amount),
+        fiatCurrency: 'USD',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create onramp session');
+      // Open Coinbase onramp in popup
+      const onrampWindow = window.open(
+        onrampURL,
+        'Coinbase Onramp',
+        'width=500,height=700,scrollbars=yes'
+      );
+
+      if (!onrampWindow) {
+        alert("Please allow popups to use card payments.");
+        return;
       }
 
-      const { url } = await response.json();
-      
-      const onrampWindow = window.open(url, '_blank', 'width=500,height=700');
-      
+      // Monitor window close to show thank you
       const checkWindow = setInterval(() => {
-        if (onrampWindow?.closed) {
+        if (onrampWindow.closed) {
           clearInterval(checkWindow);
           
+          // Show thank you toast
           const shortWallet = 'onramp-user';
           const variant = Math.floor(Math.random() * 5);
           const thankYouUrl = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${amount}&variant=${variant}`;
@@ -326,8 +336,6 @@ export default function Page() {
     } catch (error) {
       console.error("Onramp donation error:", error);
       alert("Failed to open payment window. Please try again or use wallet option.");
-    } finally {
-      setLoading(false);
     }
   };
 
