@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
+    "jsonwebtoken": "^9.0.2",
     "next": "^15.2.3",
     "openai": "^4.97.0",
     "pg": "^8.16.3",

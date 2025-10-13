@@ -22,7 +22,6 @@ import {
 } from "@coinbase/onchainkit/identity";
 import {
   FundButton,
-  getOnrampBuyUrl,
 } from "@coinbase/onchainkit/fund";
 import { motion } from "framer-motion";
 import ThankYouToast from "@/app/components/ThankYouToast";
@@ -300,16 +299,35 @@ export default function Page() {
     }
 
     try {
-      // Generate onramp URL using OnchainKit
-      const onrampURL = getOnrampBuyUrl({
-        projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID!,
-        addresses: { [DONATION_ADDRESS]: ['base'] },
-        assets: ['USDC'],
-        presetFiatAmount: Number(amount),
-        fiatCurrency: 'USD',
+      setLoading(true);
+      
+      // Step 1: Get session token from our API
+      console.log('[🔐 Onramp] Requesting session token...');
+      const sessionResponse = await fetch('/api/coinbase/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          address: DONATION_ADDRESS,
+          assets: ['USDC'],
+        }),
       });
 
-      // Open Coinbase onramp in popup
+      if (!sessionResponse.ok) {
+        const error = await sessionResponse.json();
+        throw new Error(error.error || 'Failed to create session token');
+      }
+
+      const { token: sessionToken } = await sessionResponse.json();
+      console.log('[✅ Onramp] Session token received');
+
+      // Step 2: Generate Coinbase Onramp URL with session token
+      const onrampURL = `https://pay.coinbase.com/buy?sessionToken=${sessionToken}&defaultAsset=USDC&presetCryptoAmount=${Number(amount)}`;
+
+      console.log('[🚀 Onramp] Opening Coinbase payment window...');
+
+      // Step 3: Open Coinbase onramp in popup
       const onrampWindow = window.open(
         onrampURL,
         'Coinbase Onramp',
@@ -335,8 +353,10 @@ export default function Page() {
       }, 1000);
 
     } catch (error) {
-      console.error("Onramp donation error:", error);
-      alert("Failed to open payment window. Please try again or use wallet option.");
+      console.error("[❌ Onramp Error]", error);
+      alert(`Failed to open payment window: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again or use wallet option.`);
+    } finally {
+      setLoading(false);
     }
   };
 
