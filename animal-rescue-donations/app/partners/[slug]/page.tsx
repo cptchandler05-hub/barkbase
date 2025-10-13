@@ -44,7 +44,7 @@ export default async function PartnerProfilePage({
 
           <PartnerNeeds needs={needs} />
 
-          <section className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl shadow-lg p-8 border border-yellow-200">
+          <section className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Support This Rescue</h2>
               <p className="text-gray-700">
