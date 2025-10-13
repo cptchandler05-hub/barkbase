@@ -383,10 +383,10 @@ export default function Page() {
         // Fallback to chat API if no dogs found
         const invisibleDogsMessage = "Show me the most invisible dogs";
         setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
-        setInput('');
+        setInput(invisibleDogsMessage);
         setShouldScroll(true);
         setHasUserInteracted(true);
-        handleSend(invisibleDogsMessage);
+        handleSend();
         return;
       }
 
@@ -432,10 +432,10 @@ export default function Page() {
       // Fallback to regular chat message
       const invisibleDogsMessage = "Show me the most invisible dogs";
       setMessages(prev => [...prev, { role: 'user', content: invisibleDogsMessage }]);
-      setInput('');
+      setInput(invisibleDogsMessage);
       setShouldScroll(true);
       setHasUserInteracted(true);
-      handleSend(invisibleDogsMessage);
+      handleSend();
     } finally {
       setIsLoading(false);
     }
