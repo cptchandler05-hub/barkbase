@@ -18,6 +18,7 @@ export default function Navigation() {
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
     { href: "/adopt", label: "Adopt", icon: "🐕" },
+    { href: "/partners", label: "Partners", icon: "🤝" },
     { href: "/raffle", label: "Raffle", icon: "🎟️" },
   ];
 
