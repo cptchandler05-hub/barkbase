@@ -71,8 +71,8 @@ async function rateLimitedDelay(apiType = 'petfinder') {
   }
 }
 
-// RescueGroups API functions - Volume-based approach
-async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode = false, limit = 100, offset = 0) {
+// RescueGroups API functions - Pagination-based approach
+async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode = false, limit = 250, page = 1) {
   await rateLimitedDelay('rescuegroups');
 
   console.log(`🦮 Fetching RescueGroups dogs with filter: ${diversityFilter} (limit: ${limit})`);
@@ -195,13 +195,11 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
       break;
   }
 
-  // Limit results to maximum allowed
-  params.append('limit', Math.min(limit, 100).toString());
+  // Limit results to maximum allowed (RescueGroups v5 max is 250)
+  params.append('limit', Math.min(limit, 250).toString());
 
-  // Add offset for pagination
-  if (offset > 0) {
-    params.append('start', offset.toString());
-  }
+  // Add page number for pagination (page numbers start at 1)
+  params.append('page', page.toString());
 
   // Specify fields to return - FIXED: Use unprefixed camelCase field names
   const fields = [
@@ -243,45 +241,10 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', testMode =
 
     console.log(`📋 Found ${animals.length} RescueGroups dogs with ${diversityFilter} filter (${included.length} included items)`);
 
-    // IMPROVED BATCH PICTURE FETCH: Get all picture IDs and fetch them explicitly
-    if (animals.length > 0) {
-      const allPicIds = Array.from(new Set(
-        animals.flatMap(animal => (animal.relationships?.pictures?.data || []).map(ref => ref.id))
-      ));
-
-      if (allPicIds.length > 0) {
-        console.log(`📸 Batch fetching ${allPicIds.length} picture objects for ${diversityFilter}...`);
-        
-        try {
-          const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
-          picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
-          picUrl.searchParams.set('fields[pictures]', 'id,url,urls,order');
-          
-          const pictureResponse = await fetch(picUrl.toString(), {
-            method: 'GET',
-            headers: {
-              'Authorization': process.env.RESCUEGROUPS_API_KEY,
-              'Content-Type': 'application/json',
-              'User-Agent': 'BarkBase/1.0'
-            }
-          });
-
-          if (pictureResponse.ok) {
-            const picResult = await pictureResponse.json();
-            const batchPictures = picResult.data || [];
-            
-            console.log(`✨ Batch fetched ${batchPictures.length} pictures with URLs for ${diversityFilter}`);
-            
-            // Replace included pictures with batch-fetched ones
-            included = included.filter(item => item.type !== 'pictures').concat(batchPictures);
-          } else {
-            console.warn(`⚠️ Batch picture fetch failed for ${diversityFilter}:`, pictureResponse.status);
-          }
-        } catch (error) {
-          console.warn(`⚠️ Batch picture fetch error for ${diversityFilter}:`, error.message);
-        }
-      }
-    }
+    // Pictures are already included in the response via include=pictures parameter
+    // Count pictures for logging
+    const pictureCount = included.filter(item => item.type === 'pictures').length;
+    console.log(`📸 Found ${pictureCount} picture objects in included data for ${diversityFilter}`);
 
     // Log first few animals for debugging
     if (animals.length > 0) {
@@ -596,56 +559,71 @@ async function main() {
       console.log(`   Petfinder State Coverage: ${urbanStates.size} urban states`);
     }
 
-    // Phase 1: RescueGroups Sync (Volume-Based Approach)
-    console.log('🦮 Phase 1: RescueGroups Sync (High-Volume Diverse Dog Rescue)');
+    // Phase 1: RescueGroups Sync (Optimized Pagination + Targeted Filters)
+    console.log('🦮 Phase 1: RescueGroups Sync (Pagination + Invisible Dog Focus)');
     let allRescueGroupsDogs = [];
 
-    // Define diversity filters to maximize different types of dogs
-    const diversityFilters = testMode ? 
-      ['recent', 'large_dogs'] : // Test with 2 filters
-      [
-        'default', 'recent', 'older', 'very_old',
-        'large_dogs', 'small_dogs', 'medium_dogs', 'extra_large_dogs',
-        'seniors', 'adults', 'young_adults', 'puppies',
-        'special_needs', 'house_trained', 'good_with_kids', 'good_with_dogs', 'good_with_cats',
-        'mixed_breeds', 'purebreds', 'high_energy', 'low_energy'
-      ]; // Production with 20+ filters
-
-    const maxPerRequest = 100; // RescueGroups max per request
-    const pagesPerFilter = testMode ? 1 : 5; // Multiple pages per filter for volume
-    const maxPerFilter = maxPerRequest * pagesPerFilter; // 500 dogs per filter in production
-
-    for (const filter of diversityFilters) {
+    const maxPerRequest = 250; // RescueGroups v5 API max per request
+    
+    // Strategy 1: Bulk Pagination (Get maximum unique dogs without overlap)
+    // In test mode: 2 pages, Production: 20 pages for ~5,000 bulk dogs (250 * 20 = 5,000)
+    const bulkPaginationPages = testMode ? 2 : 20;
+    
+    console.log(`📄 Step 1: Bulk pagination (${bulkPaginationPages} pages of ${maxPerRequest} dogs each)`);
+    for (let pageNum = 1; pageNum <= bulkPaginationPages; pageNum++) {
       try {
-        console.log(`🎯 Fetching ${filter} dogs from RescueGroups (${maxPerFilter} target)...`);
-        let filterDogs = [];
-        let filterIncluded = [];
+        const result = await fetchDogsFromRescueGroups('default', testMode, maxPerRequest, pageNum);
+        const dogs = result.data || [];
+        const included = result.included || [];
 
-        // Paginate through multiple requests per filter
-        for (let page = 0; page < pagesPerFilter; page++) {
-          const offset = page * maxPerRequest;
-          const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerRequest, offset);
+        if (dogs.length === 0) {
+          console.log(`📄 No more dogs at page ${pageNum}, stopping bulk pagination`);
+          break;
+        }
+
+        const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
+        allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
+
+        console.log(`📄 Bulk page ${pageNum}: Got ${dogs.length} dogs (total: ${allRescueGroupsDogs.length})`);
+
+        // Respect rate limit (10 req/sec = 100ms between requests)
+        await new Promise(resolve => setTimeout(resolve, 120));
+      } catch (error) {
+        console.warn(`⚠️ Bulk pagination failed at page ${pageNum}:`, error.message);
+      }
+    }
+
+    // Strategy 2: Targeted "Invisible Dog" Filters (Mutually exclusive, high-priority)
+    // These catch dogs that might not appear in recent bulk pagination
+    const invisibleDogFilters = testMode ? 
+      ['special_needs'] : // Test with 1 targeted filter
+      ['special_needs', 'very_old', 'seniors']; // Production: truly invisible dogs only
+
+    console.log(`🎯 Step 2: Targeted invisible dog filters (${invisibleDogFilters.length} filters)`);
+    
+    for (const filter of invisibleDogFilters) {
+      try {
+        console.log(`🎯 Fetching ${filter} dogs from RescueGroups...`);
+        const pagesPerFilter = testMode ? 1 : 2; // 500 dogs per filter max in production (250 * 2)
+        
+        for (let pageNum = 1; pageNum <= pagesPerFilter; pageNum++) {
+          const result = await fetchDogsFromRescueGroups(filter, testMode, maxPerRequest, pageNum);
           const dogs = result.data || [];
           const included = result.included || [];
 
           if (dogs.length === 0) {
-            console.log(`📄 No more ${filter} dogs at page ${page + 1}, stopping pagination`);
-            break; // No more results for this filter
+            console.log(`📄 No more ${filter} dogs at page ${pageNum}`);
+            break;
           }
 
-          filterDogs = filterDogs.concat(dogs);
-          filterIncluded = filterIncluded.concat(included);
+          const transformedDogs = dogs.map(dog => transformRescueGroupsAnimal(dog, included));
+          allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
 
-          console.log(`📄 Page ${page + 1}: Got ${dogs.length} ${filter} dogs (total: ${filterDogs.length})`);
+          console.log(`📄 ${filter} page ${pageNum}: Got ${dogs.length} dogs (running total: ${allRescueGroupsDogs.length})`);
 
-          // Respect rate limit (10 req/sec = 100ms between requests)
+          // Respect rate limit
           await new Promise(resolve => setTimeout(resolve, 120));
         }
-
-        const transformedDogs = filterDogs.map(dog => transformRescueGroupsAnimal(dog, filterIncluded));
-        allRescueGroupsDogs = allRescueGroupsDogs.concat(transformedDogs);
-
-        console.log(`✅ Total ${filter} dogs: ${filterDogs.length}`);
       } catch (error) {
         console.warn(`⚠️ RescueGroups failed for ${filter} filter:`, error.message);
       }
@@ -656,11 +634,10 @@ async function main() {
       index === self.findIndex(d => d.rescuegroups_id === dog.rescuegroups_id)
     );
 
-    console.log(`📊 RescueGroups Volume Results:`);
-    console.log(`   Raw dogs fetched: ${allRescueGroupsDogs.length}`);
-    console.log(`   Filters used: ${diversityFilters.length}`);
-    console.log(`   Avg dogs per filter: ${Math.round(allRescueGroupsDogs.length / diversityFilters.length)}`);
-    console.log(`🔍 Duplication analysis: ${allRescueGroupsDogs.length - uniqueRescueGroupsDogs.length} dogs appeared multiple times`);
+    console.log(`📊 RescueGroups Sync Results:`);
+    console.log(`   Total dogs fetched: ${allRescueGroupsDogs.length}`);
+    console.log(`   Strategy: Bulk pagination + ${invisibleDogFilters.length} targeted filters`);
+    console.log(`🔍 Deduplication: ${allRescueGroupsDogs.length - uniqueRescueGroupsDogs.length} duplicates removed`);
     console.log(`🎯 Final unique RescueGroups dogs: ${uniqueRescueGroupsDogs.length}`);
 
     if (uniqueRescueGroupsDogs.length > 0) {
