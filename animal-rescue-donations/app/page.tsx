@@ -302,6 +302,7 @@ export default function Page() {
     try {
       // Generate onramp URL using OnchainKit
       const onrampURL = getOnrampBuyUrl({
+        projectId: process.env.NEXT_PUBLIC_CDP_PROJECT_ID!,
         addresses: { [DONATION_ADDRESS]: ['base'] },
         assets: ['USDC'],
         presetFiatAmount: Number(amount),
