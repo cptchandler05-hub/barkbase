@@ -35,6 +35,7 @@ Preferred communication style: Simple, everyday language.
 **API Routes** (Next.js API Routes):
 - `/api/chat` - Main AI conversation endpoint with Barkr
 - `/api/petfinder/search` - Petfinder API integration for dog searches
+- `/api/partners` - Rescue partners listing endpoint (PostgreSQL-backed)
 - Additional rescue API integrations for RescueGroups
 
 **AI Integration**:
@@ -60,7 +61,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Data Storage
 
-**Database**: Supabase (PostgreSQL)
+**Database**: Local PostgreSQL (via Replit Database)
 - `dogs` table with comprehensive dog profiles including:
   - Multi-source support (api_source: petfinder/rescuegroups)
   - Breed information (primary, secondary, mixed status)
@@ -73,10 +74,26 @@ Preferred communication style: Simple, everyday language.
   - Visibility scoring fields
   - Timestamps for tracking updates
 
+- `rescue_partners` table for rescue organization profiles:
+  - Basic information (name, slug, location, region)
+  - Mission statements (short and long)
+  - Contact details (email, phone, website, social media)
+  - Media (logo_url, banner_url)
+  - Categorization (tags, featured status, sort rank)
+  - Petfinder integration (petfinder_org_id)
+  - Active status and timestamps
+
+- `rescue_needs` table for tracking rescue organization needs:
+  - Associated rescue partner (rescue_id foreign key)
+  - Need details (title, description, priority, category)
+  - Fundraising info (current/goal amounts, donors count)
+  - Fulfillment status and timestamps
+
 **Data Models**:
 - Normalized dog records from Petfinder and RescueGroups APIs
 - JSONB fields for flexible nested data (photos, tags, contact info)
 - Geographic data for location-based searches
+- Rescue partner profiles with relational needs tracking
 
 ## External Dependencies
 
@@ -105,10 +122,11 @@ Preferred communication style: Simple, everyday language.
 - **Viem v2**: TypeScript Ethereum library
 - **Ethers.js v6**: Ethereum wallet and contract interactions
 
-**Supabase Services**:
-- PostgreSQL database hosting
-- Real-time subscriptions (potential use)
-- Service role key for admin operations
+**Database Connection**:
+- Node.js `pg` (PostgreSQL client) for database access
+- Connection pooling via pg.Pool
+- DATABASE_URL environment variable for connection string
+- Drizzle ORM for schema management and migrations
 
 **Utilities**:
 - `zipcodes` package for US ZIP code validation and rural area identification
