@@ -289,6 +289,48 @@ export default function Page() {
     }
   };
 
+  const handleOnrampDonate = async () => {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      const response = await fetch('/api/onramp/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amountUsd: Number(amount) }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create onramp session');
+      }
+
+      const { url } = await response.json();
+      
+      const onrampWindow = window.open(url, '_blank', 'width=500,height=700');
+      
+      const checkWindow = setInterval(() => {
+        if (onrampWindow?.closed) {
+          clearInterval(checkWindow);
+          
+          const shortWallet = 'onramp-user';
+          const variant = Math.floor(Math.random() * 5);
+          const thankYouUrl = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${amount}&variant=${variant}`;
+          setThankYouImageUrl(thankYouUrl);
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error("Onramp donation error:", error);
+      alert("Failed to open payment window. Please try again or use wallet option.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDownload = () => {
     const img = document.querySelector('img[alt="Thank you from BarkBase"]') as HTMLImageElement;
     if (!img) {
@@ -482,10 +524,25 @@ export default function Page() {
             <button
               onClick={handleDonate}
               disabled={loading}
-              className="w-full bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-500 transition disabled:opacity-50"
+              className="w-full bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-500 transition disabled:opacity-50 mb-3"
             >
-              {loading ? "Sending..." : `Donate Base ${amount || ""} ETH`}
+              {loading ? "Sending..." : `Pay from Wallet ${amount || ""} ETH`}
             </button>
+            
+            {process.env.NEXT_PUBLIC_ENABLE_ONRAMP === 'true' && (
+              <>
+                <button
+                  onClick={handleOnrampDonate}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition disabled:opacity-50 mb-2"
+                >
+                  {loading ? "Loading..." : "Pay with Card / Apple Pay (via Coinbase)"}
+                </button>
+                <p className="text-xs text-gray-500 text-center">
+                  Card & Apple Pay via Coinbase — funds arrive as USDC to our address on Base
+                </p>
+              </>
+            )}
           </div>
           <div className="max-w-4xl w-full">
             <div className="flex flex-col md:flex-row items-center gap-6 bg-white shadow-md rounded-xl p-6 border border-gray-100">
