@@ -238,9 +238,13 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         source = 'petfinder';
 
         if (freshApiData.animal) {
+          // Debug: Log raw Petfinder attributes
+          console.log('[🔍 Attributes Debug] Raw Petfinder attributes:', freshApiData.animal.attributes);
+          
           // Attempt to format with data from the fresh API call
           const formattedDogFromApi = DogFormatter.formatPetfinderDog(freshApiData.animal);
           console.log('[📞 Contact Debug] Petfinder contact info:', formattedDogFromApi.contact);
+          console.log('[📊 Formatted Attributes]:', formattedDogFromApi.attributes);
           return NextResponse.json({ animal: formattedDogFromApi, source: source });
         }
       } else if (response.status === 404) {

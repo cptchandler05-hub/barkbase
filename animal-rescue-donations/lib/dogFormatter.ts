@@ -435,21 +435,21 @@ class DogFormatter {
         }
       },
       characteristics: {
-        goodWithChildren: dog.attributes?.good_with_children !== undefined ? Boolean(dog.attributes.good_with_children) : null,
-        goodWithDogs: dog.attributes?.good_with_dogs !== undefined ? Boolean(dog.attributes.good_with_dogs) : null,
-        goodWithCats: dog.attributes?.good_with_cats !== undefined ? Boolean(dog.attributes.good_with_cats) : null,
-        houseTrained: dog.attributes?.house_trained !== undefined ? Boolean(dog.attributes.house_trained) : null,
-        specialNeeds: dog.attributes?.special_needs !== undefined ? Boolean(dog.attributes.special_needs) : null
+        goodWithChildren: dog.attributes?.good_with_children ?? null,
+        goodWithDogs: dog.attributes?.good_with_dogs ?? null,
+        goodWithCats: dog.attributes?.good_with_cats ?? null,
+        houseTrained: dog.attributes?.house_trained ?? null,
+        specialNeeds: dog.attributes?.special_needs ?? null
       },
       attributes: {
-        spayedNeutered: dog.attributes?.spayed_neutered !== undefined ? Boolean(dog.attributes.spayed_neutered) : null, // Added for completeness
-        houseTrained: dog.attributes?.house_trained !== undefined ? Boolean(dog.attributes.house_trained) : null,
-        declawed: dog.attributes?.declawed !== undefined ? Boolean(dog.attributes.declawed) : null, // Added for completeness
-        specialNeeds: dog.attributes?.special_needs !== undefined ? Boolean(dog.attributes.special_needs) : null,
-        shotsCurrent: dog.attributes?.shots_current !== undefined ? Boolean(dog.attributes.shots_current) : null, // Added for completeness
-        goodWithChildren: dog.attributes?.good_with_children !== undefined ? Boolean(dog.attributes.good_with_children) : null,
-        goodWithDogs: dog.attributes?.good_with_dogs !== undefined ? Boolean(dog.attributes.good_with_dogs) : null,
-        goodWithCats: dog.attributes?.good_with_cats !== undefined ? Boolean(dog.attributes.good_with_cats) : null
+        spayedNeutered: dog.attributes?.spayed_neutered ?? null,
+        houseTrained: dog.attributes?.house_trained ?? null,
+        declawed: dog.attributes?.declawed ?? null,
+        specialNeeds: dog.attributes?.special_needs ?? null,
+        shotsCurrent: dog.attributes?.shots_current ?? null,
+        goodWithChildren: dog.attributes?.good_with_children ?? null,
+        goodWithDogs: dog.attributes?.good_with_dogs ?? null,
+        goodWithCats: dog.attributes?.good_with_cats ?? null
       },
       url: dog.url,
       visibilityScore: dog.visibilityScore || 0, // Default to 0 if not provided
