@@ -5,6 +5,7 @@ import { PartnerHeader } from '../components/PartnerHeader';
 import { PartnerNeeds } from '../components/PartnerNeeds';
 import { PartnerAdoptables } from '../components/PartnerAdoptables';
 import { PartnerContact } from '../components/PartnerContact';
+import Navigation from '../../components/Navigation';
 
 export default async function PartnerProfilePage({
   params,
@@ -26,7 +27,8 @@ export default async function PartnerProfilePage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-yellow-50 pb-12">
+    <div className="min-h-screen pb-12">
+      <Navigation />
       <PartnerHeader partner={partner} />
 
       <div className="container mx-auto px-4 mt-12 max-w-6xl">

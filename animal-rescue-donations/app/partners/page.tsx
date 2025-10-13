@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { PartnerCard } from './components/PartnerCard';
+import Navigation from '../components/Navigation';
 import type { RescuePartner } from '@/types/partners';
 
 export default function PartnersPage() {
@@ -55,7 +56,8 @@ export default function PartnersPage() {
   const allTags = Array.from(new Set(partners.flatMap((p) => p.tags || [])));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-yellow-50">
+    <div className="min-h-screen">
+      <Navigation />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
