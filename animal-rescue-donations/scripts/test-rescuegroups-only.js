@@ -16,29 +16,37 @@ function getPicturesForAnimal(animal, included) {
   console.log(`🔍 Animal ${animal.id} has ${pictureRefs.length} picture references:`, pictureRefs.map(ref => ref.id));
 
   const pictures = pictureRefs.map(ref => {
-    const pic = included.find(item => item.type === 'pictures' && item.id === ref.id);
+    const pic = included.find(item => item.type === 'picture' && item.id === String(ref.id));
+
     if (!pic) {
       console.warn(`⚠️ Picture ID ${ref.id} not found in batch-fetched data for animal ${animal.id}`);
       return null;
     }
     
     const attrs = pic.attributes || {};
-    const urls = attrs.urls || {};
+    const bestUrl =
+      attrs.urlLarge ||
+      attrs.urlSecureLarge ||
+      attrs.urlOriginal ||
+      attrs.urlSecureOriginal ||
+      attrs.url ||
+      attrs.urlSmall ||
+      attrs.urlSecureFullsize ||
+      null;
 
-    const bestUrl = urls.large || urls.original || urls.small || attrs.url || null;
-    
     console.log(`   📸 Picture ${pic.id} resolved URL:`, bestUrl || 'null');
-    
+
     if (!bestUrl) {
-      console.warn(`   ⚠️ Picture ${pic.id} has no URL in batch fetch - attributes:`, Object.keys(attrs));
+      console.warn(`   ⚠️ Picture ${pic.id} has no usable URL - attributes:`, Object.keys(attrs));
       return null;
     }
 
     return {
       url: bestUrl,
-      thumbnail: urls.small || bestUrl,
+      thumbnail: attrs.urlSmall || attrs.urlSecureFullsize || bestUrl,
       order: attrs.order || 0
     };
+
   }).filter(p => p && p.url);
 
   console.log(`🖼️ Animal ${animal.id}: ${pictures.length} valid pictures found from batch fetch`);
@@ -189,7 +197,6 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', limit = 50
       try {
         const picUrl = new URL('https://api.rescuegroups.org/v5/public/pictures');
         picUrl.searchParams.set('filter[id][in]', allPicIds.slice(0, 100).join(','));
-        picUrl.searchParams.set('fields[pictures]', 'id,url,urls,order');
         
         const pictureResponse = await fetch(picUrl.toString(), {
           method: 'GET',
@@ -363,7 +370,7 @@ async function testDatabaseIntegration() {
     );
 
     // Test connection
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('dogs')
       .select('count')
       .limit(1);
