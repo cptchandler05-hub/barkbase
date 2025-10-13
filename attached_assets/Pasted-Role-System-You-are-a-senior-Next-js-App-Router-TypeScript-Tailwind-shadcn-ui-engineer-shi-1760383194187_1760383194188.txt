@@ -1,0 +1,299 @@
+Role / System
+You are a senior Next.js (App Router) + TypeScript + Tailwind + shadcn/ui engineer shipping production-ready code for BarkBase. Follow the spec exactly. Do not add donation tagging or any on-chain splits. Keep the current wallet-based donation flow unchanged and re-use the existing thank-you toast logic for all donation methods.
+
+Project Context
+
+Next.js App Router, TypeScript, Tailwind, shadcn/ui available.
+
+Data: Supabase.
+
+Adoption runtime search waterfall is Supabase → Petfinder. (RescueGroups is sync-only for the nightly job populating dogs.)
+
+The homepage (/) has the existing Donation Card that sends funds to one donation wallet.
+
+We want to:
+
+Build /partners and /partners/[slug] (start with Mutt Madness in the MS Delta), and
+
+Add an optional second button on the Donation Card: “Pay with card / Apple Pay (Coinbase Guest Checkout)” using Coinbase Onramp. This is a pure UI addition; no contract or tagging changes.
+
+1) Routes, Files, and Types
+
+Create:
+
+app/partners/page.tsx
+app/partners/[slug]/page.tsx
+app/partners/components/PartnerCard.tsx
+app/partners/components/PartnerHeader.tsx
+app/partners/components/PartnerContact.tsx
+app/partners/components/PartnerNeeds.tsx
+app/partners/components/PartnerAdoptables.tsx
+lib/partners.ts
+types/partners.ts
+
+
+types/partners.ts
+
+export type RescuePartner = {
+  id: string;            // uuid
+  slug: string;          // e.g., "mutt-madness-ms-delta"
+  name: string;
+  city: string;
+  state: string;         // "MS"
+  region?: string;       // "Mississippi Delta"
+  mission_short: string;
+  mission_long?: string;
+  petfinder_org_id?: string; // e.g., "MS242"
+  website?: string;
+  email?: string;
+  phone?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  tiktok_url?: string;
+  logo_url?: string;
+  banner_url?: string;
+  tags?: string[];       // ["rural","foster-based","education"]
+  is_featured: boolean;
+  sort_rank?: number;    // default 100
+  active: boolean;       // default true
+};
+
+export type RescueNeed = {
+  id: string;            // uuid
+  rescue_id: string;     // fk -> rescue_partners.id
+  title: string;         // "Heartworm treatment"
+  body: string;          // short paragraph
+  priority: 1|2|3;       // 1=urgent
+  updated_at: string;
+};
+
+2) Supabase schema (migrations)
+create table if not exists rescue_partners (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  name text not null,
+  city text not null,
+  state text not null,
+  region text,
+  mission_short text not null,
+  mission_long text,
+  petfinder_org_id text,
+  website text,
+  email text,
+  phone text,
+  facebook_url text,
+  instagram_url text,
+  tiktok_url text,
+  logo_url text,
+  banner_url text,
+  tags text[],
+  is_featured boolean default false,
+  sort_rank int default 100,
+  active boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists rescue_needs (
+  id uuid primary key default gen_random_uuid(),
+  rescue_id uuid references rescue_partners(id) on delete cascade,
+  title text not null,
+  body text not null,
+  priority int not null check (priority between 1 and 3),
+  updated_at timestamptz default now()
+);
+
+
+Seed Mutt Madness in the MS Delta:
+
+insert into rescue_partners
+(slug,name,city,state,region,mission_short,mission_long,petfinder_org_id,website,email,facebook_url,logo_url,banner_url,tags,is_featured,sort_rank,active)
+values
+(
+  'mutt-madness-ms-delta',
+  'Mutt Madness in the MS Delta',
+  'Greenville',
+  'MS',
+  'Mississippi Delta',
+  'Small, foster-based rescue rehabilitating unwanted dogs in the Delta and educating on spay/neuter.',
+  'In the Mississippi Delta, a handful of fosters and volunteers are doing what feels impossible most days: taking in dogs who’ve been forgotten—often heartworm-positive and fearful—and showing them they still matter. Mutt Madness in the MS Delta is a small, foster-based rescue rooted in Greenville. Their mission is simple and relentless: rescue and rehabilitate—mentally and physically—the unwanted dogs of the Delta, and help neighbors prevent the next litter through spay/neuter education. Mississippi remains one of the hardest states for shelter pets; rural intake pressure, thin veterinary access, and chronic heartworm make every save cost more time and money. Your support helps this tiny team say “yes” again—where saying “no” would be easier.',
+  'MS242',
+  'https://www.petfinder.com/member/us/ms/greenville/mutt-madness-in-the-ms-delta-ms242/',
+  'ahmanning@yahoo.com',
+  'https://www.facebook.com/p/Mutt-Madness-in-the-MS-Delta-100071869243589/',
+  '/images/partners/mutt-madness/logo.png',
+  '/images/partners/mutt-madness/banner.jpg',
+  '{rural,foster-based,education}',
+  true,
+  1,
+  true
+);
+
+
+(Components must handle missing images gracefully.)
+
+3) Data utilities
+
+lib/partners.ts
+
+getPartners(): Promise<RescuePartner[]> — active partners ordered by is_featured desc, sort_rank asc, name asc.
+
+getPartnerBySlug(slug: string): Promise<RescuePartner | null>.
+
+getPartnerNeeds(rescueId: string): Promise<RescueNeed[]> ordered by priority asc, updated_at desc.
+
+Implement with server-side Supabase client; treat as read-only; revalidate = 300.
+
+4) Partners index page (app/partners/page.tsx)
+
+Server component fetches partners.
+
+Render: page title; client search (name/state/tags); tag filter chips; responsive grid (1→2→3 cols) of PartnerCard.
+
+PartnerCard: logo, name, city/state, 1-sentence mission, tag badges; View Profile → /partners/[slug]; Donate → /#donate (no query params, no tagging).
+
+Accessibility: proper headings, buttons focusable, alt text.
+
+5) Partner profile page (app/partners/[slug]/page.tsx)
+
+Structure (in order):
+
+PartnerHeader — banner, logo, name, city/state, tag badges.
+
+About — render mission_long || mission_short.
+
+PartnerNeeds — prioritized list; empty state: “Ongoing needs: fosters, transport, heartworm care.”
+
+Donate CTA (inline block) — primary button Donate now → /#donate (no tagging); secondary Share this rescue (copy link).
+
+PartnerAdoptables — show up to 8 adoptables:
+
+Try Supabase dogs cache first (filter by petfinder_org_id if present).
+
+If none, fallback to Petfinder using organization=<petfinder_org_id>.
+
+Cards: image, name, sex/age, short blurb; See more → your adoption page pre-filtered if supported.
+
+No runtime calls to RescueGroups.
+
+PartnerContact — render website/email/phone + social icons; links accessible.
+
+Copy blocks to include on this profile (dignified and persuasive):
+
+Hero strapline (choose 1):
+
+“Delta-tough hope for overlooked dogs.”
+
+“Small foster network, big saves in hard places.”
+
+“Where the odds are steep, they still say ‘yes.’”
+
+Kicker: “Foster-based rescue in Greenville, Mississippi, rehabilitating unwanted dogs and educating on spay/neuter.”
+
+Needs (bulleted): Heartworm care & preventives; foster supplies; transport; urgent intake boarding; spay/neuter sponsorships.
+
+Adoptables intro: “Start with the ones who’ve waited the longest. Greenville, MS • Organization ID: MS242.”
+
+Donate microcopy: “Fuel a save in the Delta — cover the unglamorous costs that make new beginnings possible.”
+
+Image alt text examples: porch pickup with hound mix; foster supply staging; happy adoption photo.
+
+6) Optional Coinbase Guest Checkout button (additive; no breaking changes)
+
+Goal: Add a second button on the existing Donation Card: “Pay with card / Apple Pay (via Coinbase)”. Keep the current wallet flow as-is. When Guest Checkout succeeds, fire the same thank-you toast you already show for wallet donations.
+
+Env flags & config
+
+NEXT_PUBLIC_ENABLE_ONRAMP=true (feature-gate the button).
+
+COINBASE_ONRAMP_API_KEY, COINBASE_ONRAMP_API_SECRET (server only).
+
+NEXT_PUBLIC_DONATION_ADDRESS (your Base address receiving USDC).
+
+Default asset: USDC on Base.
+
+Backend
+
+Create app/api/onramp/session/route.ts:
+
+POST body: { amountUsd?: number }.
+
+Use Coinbase Onramp Session Token auth to Create Onramp Session and return a one-click URL prefilled with:
+
+destinationAddress = NEXT_PUBLIC_DONATION_ADDRESS
+
+assets = ["USDC"]
+
+chain = Base
+
+Return { url }. (Preferred server-generated URL; no sensitive params on client.) 
+Coinbase Developer Docs
++1
+
+(Optional but recommended later) app/api/onramp/webhook/route.ts to receive Onramp webhooks and mark success; for now, success can be handled client-side. 
+Coinbase Developer Docs
+
+Frontend (Donation Card)
+
+If NEXT_PUBLIC_ENABLE_ONRAMP, render a second button “Pay with card / Apple Pay”.
+
+On click: POST /api/onramp/session → open the returned URL in a modal or a new tab.
+
+On success return/close (use Coinbase’s success callback/redirect), call your existing thank-you toast function with the same signature used by wallet success (e.g., triggerDonationSuccessToast({ method: 'onramp', amount })).
+
+Do not change the current wallet flow. The wallet button and toast must behave exactly as today.
+
+UX notes
+
+Show a small helper text under the new button: “Card & Apple Pay via Coinbase — funds arrive as USDC to our address on Base.”
+
+If user is outside the U.S. or flows aren’t supported, show a graceful error modal and suggest the wallet flow.
+
+Reference docs (for implementation)
+
+Onramp overview & Guest Checkout details (Apple Pay, debit; ~$500/week for U.S. guests). 
+Coinbase Developer Docs
++1
+
+Generate Onramp URL via Create Session (server). 
+Coinbase Developer Docs
++1
+
+Optional webhooks for transaction status. 
+Coinbase Developer Docs
+
+Coinbase blog: Apple Pay + guest checkout experience (for UX copy alignment). 
+Coinbase
+
+7) Acceptance Criteria
+
+/partners lists at least one seeded partner (Mutt Madness).
+
+/partners/mutt-madness-ms-delta renders: hero, about (persuasive copy), needs, adoptables (Supabase→Petfinder), contact.
+
+All Donate links route to the homepage donation card (no tagging; no splits; no contract changes).
+
+Donation Card shows two options when NEXT_PUBLIC_ENABLE_ONRAMP=true:
+
+“Pay from wallet” (existing behavior unchanged, fires thank-you toast).
+
+“Pay with card / Apple Pay (via Coinbase)” (opens Onramp; on success, fires the same thank-you toast).
+
+Lighthouse a11y ≥ 95 for the new pages/components.
+
+No runtime calls to RescueGroups. No regressions to existing flows.
+
+8) Credibility notes to surface in the Mutt Madness profile footer (links or citations in a tiny “Sources” block)
+
+Petfinder org page (mission text; Greenville location; org ID MS242). 
+Petfinder
+
+Facebook page (“small foster based dog rescue…”). 
+Facebook
++1
+
+501(c)(3) listing & EIN 81-4480191; Greenville; formed 2016. 
+Cause IQ
++1
+
+Mississippi lifesaving context: Best Friends state dashboard; local report citing 2023 Mississippi totals and deaths from Best Friends data.
