@@ -486,19 +486,19 @@ export default function Page() {
               🐾 Our Mission
             </h2>
             <p className="text-gray-700 mb-4">
-              At BarkBase, we believe the smallest rescues carry the heaviest weight. In rural towns and overlooked corners, people fight every day to save dogs—with no spotlight, no sponsors, and no safety net. We built this platform to change that.
+              Small rescues carry the heaviest weight. In rural towns and overlooked corners, they save dogs with no spotlight or safety net. BarkBase exists to change that.
             </p>
             <p className="text-gray-700 mb-4">
-              BarkBase is the first donation and discovery platform built natively on web3—transparent, traceable, and unstoppable. Every ETH gift goes directly to helping real dogs and the underfunded rescues who stand by them.
+              We’re the first rescue donation & discovery platform native to web3—transparent, traceable, relentless. Your support lands onchain and fuels real dogs and the volunteer teams who fight for them.
             </p>
             <p className="text-gray-700 mb-4">
-              Powered by Barkr, our blockchain-based AI rescue mutt, we help users discover adoptable dogs, spotlight the most overlooked pups, and route support where it matters most. Whether you're searching for a dog or donating to save one, BarkBase connects you to impact you can feel.
+              I’m Barkr, the rescue mutt with a map to the invisible. I surface long-listed dogs, match adopters, and route attention—and help—where it actually saves lives.
             </p>
             <p className="text-gray-700 mb-4">
-              We prioritize rural rescues, long-listed dogs, and the places algorithms forgot. Because that’s where help is needed most—and that’s where lives hang in the balance.
+              Underdogs first. Rural rescues. Hard cases. If you can’t adopt, donate. If you can’t donate, share.
             </p>
             <p className="text-blue-700 font-bold text-lg mt-4">
-              We’re here to help the dogs no one saw<br />
+              For the dogs no one saw<br />
               and the people who never stopped looking.
             </p>
           </div>

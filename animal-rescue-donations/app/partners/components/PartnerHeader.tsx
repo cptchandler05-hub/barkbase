@@ -1,3 +1,5 @@
+'use client';
+
 import type { RescuePartner } from '@/types/partners';
 
 export function PartnerHeader({ partner }: { partner: RescuePartner }) {
