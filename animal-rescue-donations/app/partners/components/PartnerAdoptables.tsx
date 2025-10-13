@@ -95,8 +95,10 @@ export function PartnerAdoptables({ partner }: { partner: RescuePartner }) {
         </div>
       ) : (
         <div className="text-center py-8 text-gray-600">
-          <p className="mb-2">No dogs currently available from this rescue.</p>
-          <p className="text-sm">Check back soon or contact them directly for upcoming adoptables.</p>
+          <div className="text-5xl mb-4">🐾</div>
+          <p className="text-lg font-semibold mb-2">Adoptable Dogs Coming Soon</p>
+          <p className="text-sm">We're working on syncing this rescue's available dogs.</p>
+          <p className="text-sm mt-2">In the meantime, you can <a href={`mailto:${partner.email}`} className="text-blue-600 hover:underline">contact them directly</a> to learn about dogs available for adoption.</p>
         </div>
       )}
     </div>

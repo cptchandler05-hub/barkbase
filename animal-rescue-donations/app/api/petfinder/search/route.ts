@@ -219,9 +219,64 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
-  return NextResponse.json(
-    { error: 'GET method not supported. Use POST with body: { location, breed, age, size, gender }' },
-    { status: 405 }
-  );
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const organization = searchParams.get('organization');
+    const limit = parseInt(searchParams.get('limit') || '25');
+
+    if (organization) {
+      // Fetch dogs from a specific organization
+      console.log(`[🏢 Organization Search] Fetching dogs from org: ${organization}`);
+      
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        return NextResponse.json(
+          { error: 'Failed to authenticate with Petfinder' },
+          { status: 500 }
+        );
+      }
+
+      const params = new URLSearchParams({
+        type: 'dog',
+        status: 'adoptable',
+        organization: organization,
+        limit: limit.toString(),
+      });
+
+      const response = await fetch(`https://api.petfinder.com/v2/animals?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.error(`[❌ Petfinder Error] Status ${response.status}`);
+        return NextResponse.json(
+          { error: 'Failed to fetch dogs from Petfinder', animals: [] },
+          { status: response.status }
+        );
+      }
+
+      const data = await response.json();
+      console.log(`[✅ Organization Search] Found ${data.animals?.length || 0} dogs from ${organization}`);
+      
+      return NextResponse.json({
+        animals: data.animals || [],
+        pagination: data.pagination,
+      });
+    }
+
+    return NextResponse.json(
+      { error: 'GET method requires organization parameter. Example: /api/petfinder/search?organization=MS242&limit=8' },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error('[❌ GET Error]', error);
+    return NextResponse.json(
+      { error: 'Internal server error', animals: [] },
+      { status: 500 }
+    );
+  }
 }
