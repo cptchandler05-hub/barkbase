@@ -544,15 +544,15 @@ class DogFormatter {
       },
       // Map unified attributes to frontend expected format
       attributes: {
-        spayed_neutered: dog.attributes?.spayedNeutered || false,
-        house_trained: dog.attributes?.houseTrained || dog.characteristics?.houseTrained || false,
-        special_needs: dog.attributes?.specialNeeds || dog.characteristics?.specialNeeds || false,
-        shots_current: dog.attributes?.shotsCurrent || false,
+        spayed_neutered: dog.attributes?.spayedNeutered ?? null,
+        house_trained: dog.attributes?.houseTrained ?? dog.characteristics?.houseTrained ?? null,
+        special_needs: dog.attributes?.specialNeeds ?? dog.characteristics?.specialNeeds ?? null,
+        shots_current: dog.attributes?.shotsCurrent ?? null,
       },
       environment: {
-        children: dog.attributes?.goodWithChildren || dog.characteristics?.goodWithChildren || false,
-        dogs: dog.attributes?.goodWithDogs || dog.characteristics?.goodWithDogs || false,
-        cats: dog.attributes?.goodWithCats || dog.characteristics?.goodWithCats || false,
+        children: dog.attributes?.goodWithChildren ?? dog.characteristics?.goodWithChildren ?? null,
+        dogs: dog.attributes?.goodWithDogs ?? dog.characteristics?.goodWithDogs ?? null,
+        cats: dog.attributes?.goodWithCats ?? dog.characteristics?.goodWithCats ?? null,
       },
       url: dog.url,
       visibilityScore: dog.visibilityScore,
