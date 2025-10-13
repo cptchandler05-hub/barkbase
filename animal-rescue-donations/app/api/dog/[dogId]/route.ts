@@ -239,7 +239,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
         if (freshApiData.animal) {
           // Attempt to format with data from the fresh API call
-          const formattedDogFromApi = DogFormatter.formatPetfinderAnimal(freshApiData.animal);
+          const formattedDogFromApi = DogFormatter.formatPetfinderDog(freshApiData.animal);
           console.log('[📞 Contact Debug] Petfinder contact info:', formattedDogFromApi.contact);
           return NextResponse.json({ animal: formattedDogFromApi, source: source });
         }
