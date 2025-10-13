@@ -612,15 +612,21 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-blue-800 mb-2">Health & Care</h4>
                   <ul className="text-sm space-y-1">
-                    <li className={dog.attributes?.spayed_neutered ? "text-green-600" : "text-gray-500"}>
-                      {dog.attributes?.spayed_neutered ? "✅" : "❌"} Spayed/Neutered
-                    </li>
-                    <li className={dog.attributes?.shots_current ? "text-green-600" : "text-gray-500"}>
-                      {dog.attributes?.shots_current ? "✅" : "❌"} Up to Date Shots
-                    </li>
-                    <li className={dog.attributes?.house_trained ? "text-green-600" : "text-gray-500"}>
-                      {dog.attributes?.house_trained ? "✅" : "❌"} House Trained
-                    </li>
+                    {dog.attributes?.spayed_neutered !== null && dog.attributes?.spayed_neutered !== undefined && (
+                      <li className={dog.attributes.spayed_neutered === true ? "text-green-600" : "text-red-600"}>
+                        {dog.attributes.spayed_neutered === true ? "✅" : "❌"} Spayed/Neutered
+                      </li>
+                    )}
+                    {dog.attributes?.shots_current !== null && dog.attributes?.shots_current !== undefined && (
+                      <li className={dog.attributes.shots_current === true ? "text-green-600" : "text-red-600"}>
+                        {dog.attributes.shots_current === true ? "✅" : "❌"} Up to Date Shots
+                      </li>
+                    )}
+                    {dog.attributes?.house_trained !== null && dog.attributes?.house_trained !== undefined && (
+                      <li className={dog.attributes.house_trained === true ? "text-green-600" : "text-red-600"}>
+                        {dog.attributes.house_trained === true ? "✅" : "❌"} House Trained
+                      </li>
+                    )}
                     {dog.attributes?.special_needs && (
                       <li className="text-orange-600">⚠️ Special Needs</li>
                     )}
@@ -630,15 +636,21 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                 <div className="bg-green-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-green-800 mb-2">Good With</h4>
                   <ul className="text-sm space-y-1">
-                    <li className={dog.environment?.children ? "text-green-600" : "text-gray-500"}>
-                      {dog.environment?.children ? "✅" : "❌"} Children
-                    </li>
-                    <li className={dog.environment?.dogs ? "text-green-600" : "text-gray-500"}>
-                      {dog.environment?.dogs ? "✅" : "❌"} Other Dogs
-                    </li>
-                    <li className={dog.environment?.cats ? "text-green-600" : "text-gray-500"}>
-                      {dog.environment?.cats ? "✅" : "❌"} Cats
-                    </li>
+                    {dog.environment?.children !== null && dog.environment?.children !== undefined && (
+                      <li className={dog.environment.children === true ? "text-green-600" : "text-red-600"}>
+                        {dog.environment.children === true ? "✅" : "❌"} Children
+                      </li>
+                    )}
+                    {dog.environment?.dogs !== null && dog.environment?.dogs !== undefined && (
+                      <li className={dog.environment.dogs === true ? "text-green-600" : "text-red-600"}>
+                        {dog.environment.dogs === true ? "✅" : "❌"} Other Dogs
+                      </li>
+                    )}
+                    {dog.environment?.cats !== null && dog.environment?.cats !== undefined && (
+                      <li className={dog.environment.cats === true ? "text-green-600" : "text-red-600"}>
+                        {dog.environment.cats === true ? "✅" : "❌"} Cats
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>
