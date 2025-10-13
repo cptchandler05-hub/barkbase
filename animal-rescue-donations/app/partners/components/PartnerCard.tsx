@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import type { RescuePartner } from '@/types/partners';
 

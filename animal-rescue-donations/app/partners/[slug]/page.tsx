@@ -5,6 +5,7 @@ import { PartnerHeader } from '../components/PartnerHeader';
 import { PartnerNeeds } from '../components/PartnerNeeds';
 import { PartnerAdoptables } from '../components/PartnerAdoptables';
 import { PartnerContact } from '../components/PartnerContact';
+import { ShareButton } from '../components/ShareButton';
 import Navigation from '../../components/Navigation';
 
 export default async function PartnerProfilePage({
@@ -19,12 +20,6 @@ export default async function PartnerProfilePage({
   }
 
   const needs = await getPartnerNeeds(partner.id);
-
-  async function copyShareLink() {
-    'use client';
-    const url = window.location.href;
-    await navigator.clipboard.writeText(url);
-  }
 
   return (
     <div className="min-h-screen pb-12">
@@ -60,20 +55,7 @@ export default async function PartnerProfilePage({
                 <Heart className="w-5 h-5" />
                 Donate Now
               </a>
-              <button
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    alert('Link copied to clipboard!');
-                  } catch (err) {
-                    console.error('Failed to copy link:', err);
-                  }
-                }}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-semibold shadow-md"
-              >
-                <Share2 className="w-5 h-5" />
-                Share This Rescue
-              </button>
+              <ShareButton />
             </div>
           </section>
 
