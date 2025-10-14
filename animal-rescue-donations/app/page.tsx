@@ -53,7 +53,8 @@ export default function Page() {
   const [memory, setMemory] = useState<any | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [amount, setAmount] = useState("");
+  const [ethAmount, setEthAmount] = useState("");
+  const [usdAmount, setUsdAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -242,8 +243,8 @@ export default function Page() {
   };
 
   const handleDonate = async () => {
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      alert("Please enter a valid amount.");
+    if (!ethAmount || isNaN(Number(ethAmount)) || Number(ethAmount) <= 0) {
+      alert("Please enter a valid ETH amount.");
       return;
     }
 
@@ -265,7 +266,7 @@ export default function Page() {
       }
 
       const from = accounts[0];
-      const valueInWei = ethers.parseEther(amount).toString(); // ✅ safe and precise conversion
+      const valueInWei = ethers.parseEther(ethAmount).toString(); // ✅ safe and precise conversion
 
       const tx = await ethereum.request({
         method: "eth_sendTransaction",
@@ -280,7 +281,7 @@ export default function Page() {
 
       const shortWallet = `${from.slice(0, 6)}...${from.slice(-4)}`;
       const variant = Math.floor(Math.random() * 5);
-      const url = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${amount}&variant=${variant}`;
+      const url = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${ethAmount}&variant=${variant}`;
       setThankYouImageUrl(url);
 
       alert("Thank you for your donation! Transaction: " + tx);
@@ -293,8 +294,8 @@ export default function Page() {
   };
 
   const handleOnrampDonate = async () => {
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      alert("Please enter a valid amount.");
+    if (!usdAmount || isNaN(Number(usdAmount)) || Number(usdAmount) <= 0) {
+      alert("Please enter a valid USD amount.");
       return;
     }
 
@@ -323,7 +324,7 @@ export default function Page() {
       console.log('[✅ Onramp] Session token received');
 
       // Step 2: Generate Coinbase Onramp URL with session token
-      const onrampURL = `https://pay.coinbase.com/buy?sessionToken=${sessionToken}&defaultAsset=USDC&presetCryptoAmount=${Number(amount)}`;
+      const onrampURL = `https://pay.coinbase.com/buy?sessionToken=${sessionToken}&defaultAsset=USDC&presetCryptoAmount=${Number(usdAmount)}`;
 
       console.log('[🚀 Onramp] Opening Coinbase payment window...');
 
@@ -545,8 +546,8 @@ export default function Page() {
                   type="number"
                   step="0.001"
                   min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={ethAmount}
+                  onChange={(e) => setEthAmount(e.target.value)}
                   placeholder="0.01"
                   className="px-4 py-3 border-2 border-blue-400 rounded-lg w-full text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -556,7 +557,7 @@ export default function Page() {
                 disabled={loading}
                 className="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-md"
               >
-                {loading ? "Sending..." : `Send ${amount || "0.01"} ETH`}
+                {loading ? "Sending..." : `Send ${ethAmount || "0.01"} ETH`}
               </button>
               <p className="text-xs text-blue-700 mt-2 text-center">
                 Requires a crypto wallet (MetaMask, Coinbase Wallet, etc.)
@@ -589,8 +590,8 @@ export default function Page() {
                         type="number"
                         step="1"
                         min="0"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
+                        value={usdAmount}
+                        onChange={(e) => setUsdAmount(e.target.value)}
                         placeholder="20"
                         className="px-4 py-3 border-2 border-purple-400 rounded-lg flex-1 text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
@@ -601,7 +602,7 @@ export default function Page() {
                     disabled={loading}
                     className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition disabled:opacity-50 shadow-md"
                   >
-                    {loading ? "Loading..." : `Pay $${amount || "20"} via Coinbase`}
+                    {loading ? "Loading..." : `Pay $${usdAmount || "20"} via Coinbase`}
                   </button>
                   <p className="text-xs text-purple-700 mt-2 text-center">
                     No wallet needed • Coinbase converts USD to USDC

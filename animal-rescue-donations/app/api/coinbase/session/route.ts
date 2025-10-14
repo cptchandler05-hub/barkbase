@@ -3,12 +3,13 @@ import { sign } from 'jsonwebtoken';
 import crypto from 'crypto';
 
 // Generate JWT for CDP API authentication
-function generateJWT(apiKeyName: string, privateKey: string): string {
+function generateJWT(apiKeyName: string, privateKey: string, uri: string): string {
   const payload = {
-    iss: 'coinbase-cloud',
+    iss: 'cdp',
     nbf: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + 120, // 2 minutes
     sub: apiKeyName,
+    uri: uri,
   };
 
   return sign(payload, privateKey, {
@@ -63,10 +64,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generate JWT token
+    // Generate JWT token with proper URI
+    const requestMethod = 'POST';
+    const requestHost = 'api.developer.coinbase.com';
+    const requestPath = '/onramp/v1/token';
+    const uri = `${requestMethod} ${requestHost}${requestPath}`;
+    
     let jwtToken;
     try {
-      jwtToken = generateJWT(apiKeyName, privateKey);
+      jwtToken = generateJWT(apiKeyName, privateKey, uri);
       console.log('[✅ JWT] Successfully generated JWT token');
     } catch (jwtError) {
       console.error('[❌ JWT Error]', jwtError);
@@ -77,21 +83,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create session token request
+    // Create session token request with correct format
     const requestBody = {
-      addresses: {
-        [address]: ['base'], // Support Base network
-      },
+      addresses: [
+        {
+          address: address,
+          blockchains: ['base'], // Support Base network
+        }
+      ],
       assets,
     };
 
     console.log('[🔐 Session Token] Requesting session token from Coinbase...');
 
-    // Call Coinbase API to get session token
+    // Call Coinbase API to get session token (correct endpoint: /token not /session-token)
     const response = await fetch(
-      'https://api.developer.coinbase.com/onramp/v1/session-token',
+      `https://${requestHost}${requestPath}`,
       {
-        method: 'POST',
+        method: requestMethod,
         headers: {
           Authorization: `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
@@ -113,7 +122,7 @@ export async function POST(request: Request) {
     console.log('[✅ Session Token] Successfully created session token');
 
     return NextResponse.json({
-      token: data.token,
+      token: data.sessionToken,
     });
   } catch (error) {
     console.error('[❌ Session Token Error]', error);
