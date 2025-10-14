@@ -45,7 +45,23 @@ export async function POST(request: Request) {
 
     // Normalize the private key - convert escaped newlines to real newlines
     // Coinbase PEM keys in .env have \n that need to be converted to actual newlines
-    const privateKey = privateKeyRaw.replace(/\\n/g, '\n');
+    let privateKey = privateKeyRaw.replace(/\\n/g, '\n');
+    
+    // Debug: Check if key looks correct
+    const hasBeginMarker = privateKey.includes('-----BEGIN');
+    const hasEndMarker = privateKey.includes('-----END');
+    console.log('[🔍 Key Debug] Has BEGIN marker:', hasBeginMarker);
+    console.log('[🔍 Key Debug] Has END marker:', hasEndMarker);
+    console.log('[🔍 Key Debug] Key length:', privateKey.length);
+    console.log('[🔍 Key Debug] Key starts with:', privateKey.substring(0, 30));
+    
+    if (!hasBeginMarker || !hasEndMarker) {
+      console.error('[❌ Invalid Key] Private key is missing PEM markers');
+      return NextResponse.json(
+        { error: 'Invalid private key format - missing PEM markers. Please check your CDP_PRIVATE_KEY secret.' },
+        { status: 500 }
+      );
+    }
 
     // Generate JWT token
     let jwtToken;
@@ -54,8 +70,9 @@ export async function POST(request: Request) {
       console.log('[✅ JWT] Successfully generated JWT token');
     } catch (jwtError) {
       console.error('[❌ JWT Error]', jwtError);
+      console.error('[❌ JWT Error] Private key preview (first 100 chars):', privateKey.substring(0, 100));
       return NextResponse.json(
-        { error: 'Failed to generate JWT token', details: jwtError instanceof Error ? jwtError.message : 'Unknown JWT error' },
+        { error: 'Failed to generate JWT token. Please verify your CDP_PRIVATE_KEY is in proper PEM format.', details: jwtError instanceof Error ? jwtError.message : 'Unknown JWT error' },
         { status: 500 }
       );
     }

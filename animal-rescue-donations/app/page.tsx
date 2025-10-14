@@ -532,52 +532,81 @@ export default function Page() {
               we’re unleashing the power of blockchain to create a better world
               for our furry best friends!
             </p>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
-                Donation Amount:
-              </label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter amount..."
-                className="px-4 py-2 border border-gray-300 rounded-lg w-full text-center shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <p className="text-xs text-gray-500 mt-1 text-center">
-                For wallet: enter ETH amount (e.g., 0.01) • For card: enter USD amount (e.g., 20)
+            {/* Crypto Wallet Payment */}
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-5 mb-4">
+              <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+                <span>💎</span> Pay with Crypto Wallet
+              </h3>
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-blue-700 mb-2">
+                  Amount in ETH:
+                </label>
+                <input
+                  type="number"
+                  step="0.001"
+                  min="0"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.01"
+                  className="px-4 py-3 border-2 border-blue-400 rounded-lg w-full text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                onClick={handleDonate}
+                disabled={loading}
+                className="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-md"
+              >
+                {loading ? "Sending..." : `Send ${amount || "0.01"} ETH`}
+              </button>
+              <p className="text-xs text-blue-700 mt-2 text-center">
+                Requires a crypto wallet (MetaMask, Coinbase Wallet, etc.)
               </p>
             </div>
             
-            <button
-              onClick={handleDonate}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-500 transition disabled:opacity-50 mb-3"
-            >
-              {loading ? "Sending..." : `💳 Send ${amount || "___"} ETH from Wallet`}
-            </button>
-            
             {process.env.NEXT_PUBLIC_ENABLE_ONRAMP === 'true' && (
               <>
-                <div className="relative mb-2">
+                <div className="relative my-5">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300"></div>
+                    <div className="w-full border-t-2 border-gray-400"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">or</span>
+                    <span className="px-4 bg-white text-gray-700 font-bold">OR</span>
                   </div>
                 </div>
-                <button
-                  onClick={handleOnrampDonate}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition disabled:opacity-50 mb-2"
-                >
-                  {loading ? "Loading..." : `💰 Buy $${amount || "___"} USDC with Card/Apple Pay`}
-                </button>
-                <p className="text-xs text-gray-500 text-center">
-                  via Coinbase (converts USD → USDC on Base) • No wallet needed
-                </p>
+                
+                {/* Card/Apple Pay Payment */}
+                <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-5">
+                  <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
+                    <span>💳</span> Pay with Card / Apple Pay
+                  </h3>
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-purple-700 mb-2">
+                      Amount in USD:
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-purple-900">$</span>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="20"
+                        className="px-4 py-3 border-2 border-purple-400 rounded-lg flex-1 text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleOnrampDonate}
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition disabled:opacity-50 shadow-md"
+                  >
+                    {loading ? "Loading..." : `Pay $${amount || "20"} via Coinbase`}
+                  </button>
+                  <p className="text-xs text-purple-700 mt-2 text-center">
+                    No wallet needed • Coinbase converts USD to USDC
+                  </p>
+                </div>
               </>
             )}
           </div>
