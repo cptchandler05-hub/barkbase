@@ -120,9 +120,10 @@ export async function POST(request: Request) {
 
     const data = await response.json();
     console.log('[✅ Session Token] Successfully created session token');
+    console.log('[🔍 Response Data]', JSON.stringify(data, null, 2));
 
     return NextResponse.json({
-      token: data.sessionToken,
+      token: data.sessionToken || data.token,
     });
   } catch (error) {
     console.error('[❌ Session Token Error]', error);
