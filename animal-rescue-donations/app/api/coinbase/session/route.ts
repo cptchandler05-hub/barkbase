@@ -33,9 +33,9 @@ export async function POST(request: Request) {
 
     // Get CDP API credentials from environment
     const apiKeyName = process.env.CDP_API_KEY_NAME;
-    const privateKey = process.env.CDP_PRIVATE_KEY;
+    const privateKeyRaw = process.env.CDP_PRIVATE_KEY;
 
-    if (!apiKeyName || !privateKey) {
+    if (!apiKeyName || !privateKeyRaw) {
       console.error('[❌ CDP Auth] CDP_API_KEY_NAME or CDP_PRIVATE_KEY not set');
       return NextResponse.json(
         { error: 'CDP API credentials not configured' },
@@ -43,8 +43,22 @@ export async function POST(request: Request) {
       );
     }
 
+    // Normalize the private key - convert escaped newlines to real newlines
+    // Coinbase PEM keys in .env have \n that need to be converted to actual newlines
+    const privateKey = privateKeyRaw.replace(/\\n/g, '\n');
+
     // Generate JWT token
-    const jwtToken = generateJWT(apiKeyName, privateKey);
+    let jwtToken;
+    try {
+      jwtToken = generateJWT(apiKeyName, privateKey);
+      console.log('[✅ JWT] Successfully generated JWT token');
+    } catch (jwtError) {
+      console.error('[❌ JWT Error]', jwtError);
+      return NextResponse.json(
+        { error: 'Failed to generate JWT token', details: jwtError instanceof Error ? jwtError.message : 'Unknown JWT error' },
+        { status: 500 }
+      );
+    }
 
     // Create session token request
     const requestBody = {
