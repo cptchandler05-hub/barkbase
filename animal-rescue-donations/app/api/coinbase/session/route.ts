@@ -48,15 +48,8 @@ export async function POST(request: Request) {
     // Coinbase PEM keys in .env have \n that need to be converted to actual newlines
     let privateKey = privateKeyRaw.replace(/\\n/g, '\n');
     
-    // Debug: Check if key looks correct
-    const hasBeginMarker = privateKey.includes('-----BEGIN');
-    const hasEndMarker = privateKey.includes('-----END');
-    console.log('[🔍 Key Debug] Has BEGIN marker:', hasBeginMarker);
-    console.log('[🔍 Key Debug] Has END marker:', hasEndMarker);
-    console.log('[🔍 Key Debug] Key length:', privateKey.length);
-    console.log('[🔍 Key Debug] Key starts with:', privateKey.substring(0, 30));
-    
-    if (!hasBeginMarker || !hasEndMarker) {
+    // Validate PEM format
+    if (!privateKey.includes('-----BEGIN') || !privateKey.includes('-----END')) {
       console.error('[❌ Invalid Key] Private key is missing PEM markers');
       return NextResponse.json(
         { error: 'Invalid private key format - missing PEM markers. Please check your CDP_PRIVATE_KEY secret.' },
@@ -120,10 +113,9 @@ export async function POST(request: Request) {
 
     const data = await response.json();
     console.log('[✅ Session Token] Successfully created session token');
-    console.log('[🔍 Response Data]', JSON.stringify(data, null, 2));
 
     return NextResponse.json({
-      token: data.sessionToken || data.token,
+      token: data.token,
     });
   } catch (error) {
     console.error('[❌ Session Token Error]', error);
