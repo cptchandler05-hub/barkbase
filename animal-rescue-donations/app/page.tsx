@@ -26,6 +26,7 @@ import {
 import { motion } from "framer-motion";
 import ThankYouToast from "@/app/components/ThankYouToast";
 import Navigation from "@/app/components/Navigation";
+import Footer from "@/app/components/Footer";
 
 
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
@@ -808,10 +809,7 @@ export default function Page() {
           {/* closes max-w-4xl */}
         </main>
 
-        <footer className="text-sm text-center text-gray-500 mt-12">
-          © {new Date().getFullYear()} BarkBase | Powered by Base | Built with
-          ❤️ by Toad Gang
-        </footer>
+        <Footer />
       </div>
     </div>
   );

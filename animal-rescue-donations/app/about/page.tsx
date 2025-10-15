@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Navigation from '@/app/components/Navigation';
+import Footer from '@/app/components/Footer';
 import Image from 'next/image';
 
 export const metadata: Metadata = {
@@ -19,18 +20,24 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
+    <div className="min-h-screen bg-gray-50 relative">
+      {/* Background pawprints pattern */}
+      <div className="fixed inset-0 bg-[url('/images/pawprints.png')] bg-cover opacity-5 pointer-events-none z-0" />
       
-      <main className="max-w-3xl md:max-w-4xl mx-auto px-6 py-12 md:py-16">
-        {/* Logo */}
-        <div className="mb-8 flex justify-center">
-          <img
-            src="/logos/barkbase-logo.png"
-            alt="BarkBase Logo"
-            className="h-16 w-auto"
-          />
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <Navigation />
         </div>
+        
+        <main className="max-w-3xl md:max-w-4xl mx-auto px-6 py-12 md:py-16">
+          {/* Logo */}
+          <div className="mb-12 flex justify-center">
+            <img
+              src="/logos/barkbase-logo.png"
+              alt="BarkBase Logo"
+              className="h-24 md:h-32 w-auto"
+            />
+          </div>
 
         {/* Main Heading */}
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center leading-tight">
@@ -262,6 +269,9 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
+      
+      <Footer />
+      </div>
     </div>
   );
 }

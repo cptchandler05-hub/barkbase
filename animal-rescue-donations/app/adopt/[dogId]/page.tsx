@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { calculateVisibilityScore } from '@/lib/scoreVisibility';
 import Navigation from "@/app/components/Navigation";
+import Footer from "@/app/components/Footer";
 
 interface Dog {
   id: string;
@@ -905,13 +906,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
             </div>
           )}
 
-          {/* Footer */}
-          <footer className="text-sm text-center text-gray-500 mt-12 relative">
-            <div className="absolute inset-0 bg-[url('/images/pawprints.png')] bg-cover opacity-5" />
-            <div className="relative z-10">
-              © {new Date().getFullYear()} BarkBase | Powered by Base | Built with ❤️ by Toad Gang
-            </div>
-          </footer>
+          <Footer />
         </div>
       </div>
     </div>

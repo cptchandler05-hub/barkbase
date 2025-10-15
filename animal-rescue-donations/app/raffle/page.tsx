@@ -12,6 +12,7 @@ import { X } from "lucide-react";
 import { getWinners } from "@/lib/getWinners";
 import BarkrBackflip from "@/components/BarkrBackFlip";
 import Navigation from "@/app/components/Navigation";
+import Footer from "@/app/components/Footer";
 
 
 export default function RafflePage() {
@@ -396,11 +397,7 @@ export default function RafflePage() {
       </div> 
       </div>
 
-
-      <footer className="text-sm text-center text-gray-500 mt-12">
-      © {new Date().getFullYear()} BarkBase | Powered by Base | Built with ❤️ by Toad Gang
-
-      </footer>
+      <Footer />
           </div>
         );
       }
