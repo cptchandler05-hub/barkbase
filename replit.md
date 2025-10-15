@@ -2,7 +2,14 @@
 
 BarkBase is a web3-native animal rescue donation and discovery platform built with Next.js. The platform prioritizes visibility for overlooked and invisible dogs, particularly from rural shelters, through an AI-powered assistant named "Barkr." The mission is to showcase dogs that are most overlooked—not the most popular or newest—using a custom visibility scoring system.
 
-The application integrates multiple rescue APIs (Petfinder and RescueGroups), uses Supabase for data persistence, and leverages OpenAI for conversational AI interactions. It also incorporates blockchain features through Coinbase's OnchainKit for web3 donations.
+The application integrates multiple rescue APIs (Petfinder and RescueGroups), uses PostgreSQL for data persistence, and leverages OpenAI for conversational AI interactions. It also incorporates blockchain features through Coinbase's OnchainKit for web3 donations.
+
+## Key Pages
+- `/` - Home page with Barkr AI chat, donation options (crypto wallet & card/Apple Pay), and invisible dog discovery
+- `/adopt` - Dog adoption search and browsing
+- `/partners` - Rescue partner profiles and directory
+- `/about` - Mission, story, and ways to help (Barkr's origin story, impact data, partner benefits)
+- `/raffle` - Fundraising raffle features
 
 # User Preferences
 
@@ -116,11 +123,16 @@ Preferred communication style: Simple, everyday language.
 
 - **Mapbox Geocoding API** (optional): Location coordinate resolution for geographic searches
 
-**Blockchain/Web3**:
+**Blockchain/Web3 & Payments**:
 - **Coinbase OnchainKit**: Web3 wallet integration and onchain interactions
+- **Coinbase Developer Platform (CDP)**: Session token API for card/Apple Pay donations via Coinbase Pay
+  - ECDSA (ES256) key-based JWT authentication
+  - Secure session token generation for onramp payment flows
+  - `/api/coinbase/session` endpoint for generating payment session tokens
 - **Wagmi v2**: React hooks for Ethereum interactions
 - **Viem v2**: TypeScript Ethereum library
 - **Ethers.js v6**: Ethereum wallet and contract interactions
+- Dual donation system: ETH via crypto wallet + USD via Coinbase Pay (card/Apple Pay)
 
 **Database Connection**:
 - Node.js `pg` (PostgreSQL client) for database access

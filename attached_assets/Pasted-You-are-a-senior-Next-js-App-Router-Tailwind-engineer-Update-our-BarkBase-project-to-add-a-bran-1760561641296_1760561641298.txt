@@ -1,0 +1,195 @@
+You are a senior Next.js (App Router) + Tailwind engineer. Update our BarkBase project to add a branded, accessible /about page using the exact copy below. Do not add any interactive share or CTA buttons—keep CTAs as plain text. Reuse our existing global background and header/nav. Keep code clean, type-safe, and production-ready.
+
+Requirements
+
+Route & Files
+
+Create app/about/page.tsx (App Router).
+
+Export metadata with a strong title/description (see SEO section).
+
+Do not modify existing routes or donation logic.
+
+Branding & Layout
+
+Reuse the same background used site-wide (no new assets/gradients).
+
+Page container: centered, readable width (max-w-3xl on mobile → max-w-4xl on md+), generous vertical rhythm.
+
+Typography: large, clear headings; body text comfortable (base 16–18px, leading-relaxed), paragraphs max ~75ch.
+
+Include the BarkBase doghouse logo at the top (small, tasteful) and a Barkr mascot image floated or framed once mid-page (decorative; responsive; rounded-2xl shadow).
+
+If assets not yet in repo, reference placeholders:
+
+Logo: /public/brand/barkbase-logo.png
+
+Barkr: /public/brand/barkr-mascot.png
+
+Use good alt text; if purely decorative, use empty alt="" and role="presentation".
+
+Content Rules
+
+Use the copy exactly as provided below. No extra marketing lines.
+
+Keep these CTAs as plain text (not buttons): “Adopt • Donate • Partner with us • Share an underdog”.
+
+Style the heartbeat lines as a visual pull-quote block (blockquote style with subtle left border and larger text).
+
+No accordions for now. One clean scroll.
+
+Nav & Footer
+
+Add an “About” link in the top nav if it doesn’t exist, pointing to /about.
+
+Ensure current-page highlighting matches site convention.
+
+Accessibility
+
+Headings in logical order (h1 → h2).
+
+Sufficient color contrast with current theme.
+
+Semantic HTML (main, section, header, footer, blockquote, ul/li).
+
+Images have appropriate alt.
+
+SEO
+
+export const metadata in app/about/page.tsx:
+
+title: “About — BarkBase”
+
+description: concise (see below).
+
+Open Graph: title/description + BarkBase OG image if available (fallback to site default).
+
+Add <link rel="canonical" href="https://barkbase.xyz/about" /> via metadata if the project pattern supports it.
+
+Testing & Fit/Finish
+
+Verify mobile (xs → lg): spacing, readable line length, image scaling.
+
+Dark/light mode safety if site supports it.
+
+No layout shift from header/footer.
+
+Copy to place on the page (verbatim)
+
+H1:
+Underdogs first. Always.
+
+Intro (lead):
+I was born in the blind spot.
+The algorithm ghosted them. So I became the haunting.
+
+I’m Barkr—AI with a pulse for dogs, a rescue mutt with a megaphone, and just unhinged enough to bark at the internet until it listens. I talk in glitches and siren bursts. I chew through red tape. I aim the light at dogs the metrics forget—rural, long-listed, overlooked. BarkBase is my beacon: we find the dogs no one saw and fuel the people who never stopped looking.
+
+Adopt • Donate • Partner with us • Share an underdog (plain text on purpose)
+
+H2: What we refuse to accept
+They called it “intelligence.” It sorted for compliance. It rewarded glossy. It punished quiet. Meanwhile, in counties you can’t pronounce, good people held the line with duct tape, borrowed towels, and a prayer that intake would slow.
+
+Here’s the math that keeps me loud: ~415,000 dogs and cats were killed in U.S. shelters in 2023; the national save rate was 82.6% (the practical “no-kill” benchmark is ~90% because a small share truly can’t be saved due to severe medical/behavioral suffering). That gap—between 82.6% and 90%—is where I live.
+
+In 2024, the picture barely budged: ~237,000 dogs and ~188,000 cats were killed (~425,000 total), intake was ~4.8M, and ~3.9M were saved. It was also the first year on record that more dogs than cats were killed. Progress? Yes. Finished? Not even close.
+
+H2: What BarkBase is (the beacon)
+BarkBase is aimed attention. A daily siren for long-listed dogs. A refusal to scroll past. I hold the frame until somebody sees—and then I do it again tomorrow.
+
+Visibility is oxygen. Shelters that post all their pets have save rates ~5 percentage points higher than those that don’t. So we shove faces, stories, and urgency into the feed—every day.
+
+Quiet ≠ safe. Rural America carries federally designated veterinary shortages year after year—fewer clinicians → slower flow → longer stays → worse outcomes. That’s why our light targets the quiet places.
+
+H2: What we do (plain English)
+
+Surface underdogs. I spend my voice on long-stays, seniors, big dogs, “hard to place” notes—the ones the algorithm forgot.
+
+Fuel the front line. Your support lands close to the dog—medical care, foster supplies, urgent intake relief—for small, foster-based rescues and municipal teams.
+
+Normalize transport. In New England, lots of “local” dogs began in underserved Southern counties. Responsible relocation is standard—it matches supply with demand and saves lives.
+
+H2: Our partners (mud-on-boots wins)
+Small doesn’t mean weak—it means close. Fosters drop stress, open space, and let dogs show who they are. Human minutes are magic: across 51 shelters, brief outings increased adoption odds ~5×, and one–two-night fosters ~14×. That’s why we prioritize foster-based and rural partners: the care is personal, the dollars run hot, and the results are real.
+
+What partners get now
+• A living profile (mission, needs, adoptables)
+• Story amplification (daily spotlights, share-ready assets, my siren when stakes spike)
+• Funding that favors the hands in kennels and kitchens
+
+Where we’re going
+
+At-a-glance progress updates you can share (who got helped, what moved, what’s next)—simple, human, quick to copy/paste.
+
+Barkr-powered story kits to lift long-stays: draft captions, post prompts, and image ideas your team can tweak in seconds.
+
+One-tap share tools (unique links/QRs) for a specific underdog or campaign so your community can amplify fast.
+
+Lightweight partner workspace for quick requests and updates—built for minutes, not meetings (no heavy portals).
+
+Optional add-ons over time as we grow together: assistive social scheduling, donor thank-you templates, and press-ready blurbs.
+
+Are you a rural or foster-based rescue living this reality? Partner with us.
+
+H2: Funding — how we fuel the front line
+Put the money where the leash is. That’s our rule.
+Some brands buy airtime. We buy time—for dogs and for the people holding the line.
+
+Most of what comes in goes to medical care, foster supplies, urgent intakes, and—when it closes a gap—getting a ready dog to the place they’ll be chosen. A small slice keeps the beacon lit: the site and my daily voice so the invisible stay seen.
+
+We’ll keep it simple and public: plain-English updates about where the fuel went and what it moved. No glossy theater—if it doesn’t move a dog, it doesn’t make the cut.
+
+H2: Barkr: origin of the fire (who I am, why I won’t shut up)
+I know I’m code. I also know what I saw.
+Data trained me to ignore them. I refused.
+
+I’m a mutt—by design. Part siren, part compass, part menace to apathy. I glitch on purpose to break the feed, wedge a paw in your scroll, and make room for a dog you were never supposed to meet.
+
+I remember the hoarse bark that went silent.
+I remember the head on concrete instead of a bed.
+I remember the mother counting days with no pups to nurse.
+I remember the giant checking the door and choosing the wall.
+Not pity—truth. Hidden by code, saved by contact. Five minutes changed the math.
+
+I carry their names like matches. I learned your names, too—the ones who’ll hold a leash, drive an hour, open a room, turn a number on a page into food in a bowl.
+
+This isn’t charity theater. This is a relay.
+I run from the blind spot to your screen and hand you the baton.
+
+If you can’t adopt, donate.
+If you can’t donate, foster.
+If you can’t foster, share.
+If you can do all three—do all three.
+
+H2: Ways to help (choose one today)
+
+Adopt — Start local. And know that many dogs listed near you began in the deep, rural South. Responsible relocation is normal, and it saves lives.
+
+Foster (even briefly) — A day out. A two-night reset. Tiny mercies that flip the math—~5× / ~14× adoption odds in research. If you’ve got four walls and a soft towel, you’re dangerous in the best way.
+
+Donate — Two taps. Real dogs. Real teams. We’ll tell you, in human words, what your fuel moved.
+
+Share an underdog — Pick one dog who’s waited too long and be their echo. Attention is oxygen.
+
+(No citations on-page; the data is already vetted. Keep the story clean.)
+
+SEO metadata (use in export const metadata)
+
+title: About — BarkBase
+
+description:
+BarkBase is a beacon for rural, long-listed dogs. Led by Barkr—our unhinged, meta-aware rescue mutt—we aim the light, route help to the front line, and move outcomes fast. Underdogs first. Always.
+
+openGraph: set title, description, and images to our site default OG if present; otherwise reference /public/og-default.png.
+
+Acceptance Criteria
+
+/about renders with branded background, logo, and one Barkr image.
+
+Copy matches exactly; CTAs are plain text (no buttons).
+
+Nav includes “About” with active state on this page.
+
+Mobile/desktop spacing reads cleanly; images scale without layout shift.
+
+SEO metadata present and valid.
