@@ -64,3 +64,8 @@ waitForPort = 5000
 
 [agent]
 expertMode = true
+
+[userenv]
+
+[userenv.shared]
+NEXT_PUBLIC_ONCHAINKIT_API_KEY = "${CDP_CLIENT_API_KEY}"

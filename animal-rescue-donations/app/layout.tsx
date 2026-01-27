@@ -29,7 +29,8 @@ function Providers({ children }: { children: ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_CDP_PROJECT_ID}
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
+          projectId={process.env.NEXT_PUBLIC_CDP_PROJECT_ID}
           chain={base}
           config={{
             appearance: {
