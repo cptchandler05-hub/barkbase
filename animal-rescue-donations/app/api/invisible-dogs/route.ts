@@ -66,29 +66,53 @@ async function fetchInvisibleDogs() {
     // Format dogs for frontend consumption
     const formattedDogs = databaseDogs
       .filter(dog => dog && (dog.petfinder_id || dog.rescuegroups_id)) // Must have valid ID
-      .map((dog: any) => ({
-        id: dog.petfinder_id || dog.rescuegroups_id || dog.id,
-        name: dog.name || 'Unnamed',
-        breeds: { 
-          primary: dog.primary_breed || 'Mixed', 
-          secondary: dog.secondary_breed,
-          mixed: !!dog.secondary_breed
-        },
-        age: dog.age || 'Unknown',
-        size: dog.size || 'Unknown',
-        photos: dog.photos && dog.photos.length > 0 
-          ? dog.photos 
-          : [{ medium: '/images/barkr.png' }],
-        contact: { 
-          address: { 
-            city: dog.city || 'Unknown', 
-            state: dog.state || 'Unknown'
+      .map((dog: any) => {
+        // Parse photos - might be JSON string from database
+        let photos = dog.photos;
+        if (typeof photos === 'string') {
+          try {
+            photos = JSON.parse(photos);
+          } catch {
+            photos = [];
           }
-        },
-        description: dog.description,
-        url: dog.url,
-        visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
-      }))
+        }
+        
+        // Ensure photos is an array with proper format
+        const formattedPhotos = Array.isArray(photos) && photos.length > 0
+          ? photos.map((photo: any) => {
+              if (typeof photo === 'string') {
+                return { medium: photo, small: photo, large: photo };
+              }
+              return { 
+                medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+                small: photo.small || photo.medium || '/images/barkr.png',
+                large: photo.large || photo.medium || '/images/barkr.png'
+              };
+            })
+          : [{ medium: '/images/barkr.png', small: '/images/barkr.png', large: '/images/barkr.png' }];
+        
+        return {
+          id: dog.rescuegroups_id || dog.petfinder_id || dog.id,
+          name: dog.name || 'Unnamed',
+          breeds: { 
+            primary: dog.primary_breed || 'Mixed', 
+            secondary: dog.secondary_breed,
+            mixed: !!dog.secondary_breed
+          },
+          age: dog.age || 'Unknown',
+          size: dog.size || 'Unknown',
+          photos: formattedPhotos,
+          contact: { 
+            address: { 
+              city: dog.city || 'Unknown', 
+              state: dog.state || 'Unknown'
+            }
+          },
+          description: dog.description,
+          url: dog.url,
+          visibilityScore: dog.visibility_score || calculateVisibilityScore(dog)
+        };
+      })
       .sort((a: Dog, b: Dog) => (b.visibilityScore || 0) - (a.visibilityScore || 0)); // Ensure proper sorting
 
     console.log('[✅ Final Result] Returning', formattedDogs.length, 'formatted invisible dogs');

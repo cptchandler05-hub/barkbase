@@ -2,7 +2,7 @@
 
 BarkBase is a web3-native animal rescue donation and discovery platform built with Next.js. The platform prioritizes visibility for overlooked and invisible dogs, particularly from rural shelters, through an AI-powered assistant named "Barkr." The mission is to showcase dogs that are most overlooked—not the most popular or newest—using a custom visibility scoring system.
 
-The application integrates multiple rescue APIs (Petfinder and RescueGroups), uses PostgreSQL for data persistence, and leverages OpenAI for conversational AI interactions. It also incorporates blockchain features through Coinbase's OnchainKit for web3 donations.
+The application uses the RescueGroups API exclusively for dog data (Petfinder API was discontinued December 2, 2025), Supabase for data persistence, and OpenAI for conversational AI interactions. It also incorporates blockchain features through Coinbase's OnchainKit for web3 donations.
 
 ## Key Pages
 - `/` - Home page with Barkr AI chat, multi-token donation options (ETH wallet, USDC checkout, token swap), Invisible Dog Spotlight, and donor NFT minting
@@ -12,6 +12,11 @@ The application integrates multiple rescue APIs (Petfinder and RescueGroups), us
 - `/raffle` - Fundraising raffle features (currently hidden, preserved for future use)
 
 ## Recent Changes (January 2026)
+- **CRITICAL**: Migrated to RescueGroups API exclusively (Petfinder API discontinued Dec 2, 2025)
+- Created `scripts/sync-dogs-rescuegroups.js` - new RescueGroups-only sync script with diversity filters
+- Updated Barkr chat to use Supabase database only (no more Petfinder API calls)
+- Synced 1,250+ dogs from RescueGroups with visibility scoring
+- Added unique constraint on rescuegroups_id in Supabase
 - Added Invisible Dog Spotlight component on home page (rotates daily among top 10 most overlooked dogs)
 - Implemented USDC Checkout via Coinbase Commerce (no gas fees)
 - Added Token Swap widget for multi-token donation support
@@ -50,10 +55,10 @@ Preferred communication style: Simple, everyday language.
 ## Backend Architecture
 
 **API Routes** (Next.js API Routes):
-- `/api/chat` - Main AI conversation endpoint with Barkr
-- `/api/petfinder/search` - Petfinder API integration for dog searches
+- `/api/chat` - Main AI conversation endpoint with Barkr (uses Supabase/RescueGroups data)
+- `/api/invisible-dogs` - Returns most overlooked dogs from database
 - `/api/partners` - Rescue partners listing endpoint (PostgreSQL-backed)
-- Additional rescue API integrations for RescueGroups
+- `/api/coinbase/create-charge` - USDC checkout charge creation
 
 **AI Integration**:
 - OpenAI GPT-4 for conversational AI (Barkr assistant)
@@ -62,9 +67,10 @@ Preferred communication style: Simple, everyday language.
 - Memory system for tracking user preferences (location, breed, seen dogs)
 
 **Data Sync Architecture**:
-- Background scripts for syncing dog data from multiple APIs
-- Dual-source strategy: RescueGroups (rural/invisible dogs) + Petfinder (urban rescue)
-- Deduplication logic across API sources
+- RescueGroups API is the sole data source (Petfinder discontinued Dec 2, 2025)
+- Sync command: `cd animal-rescue-donations && node scripts/sync-dogs-rescuegroups.js`
+- Diversity filters to capture invisible dogs: seniors, special needs, large/small dogs, older listings
+- No rate limits on RescueGroups API (vs Petfinder's 1,000/day)
 - Visibility scoring algorithm to prioritize overlooked dogs
 
 **Visibility Scoring System**:

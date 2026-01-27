@@ -593,7 +593,7 @@ export async function POST(req: Request) {
               if (dbDogs && dbDogs.length > 0) {
                 console.log('[✅ Database] Found', dbDogs.length, 'dogs in database for more request');
                 const formattedDbDogs = dbDogs.map(dog => ({
-                  id: dog.petfinder_id,
+                  id: dog.rescuegroups_id || dog.petfinder_id || dog.id,
                   name: dog.name,
                   breeds: { 
                     primary: dog.primary_breed, 
@@ -631,69 +631,8 @@ export async function POST(req: Request) {
                 allDogs = allDogs.concat(formattedDbDogs);
               }
 
-              // If we need more dogs, fetch from Petfinder
-              if (allDogs.length < 20) {
-                console.log('[🔍 More Request] Fetching from Petfinder for additional dogs...');
-
-                let normalizedBreed = updatedMemory.breed;
-                if (updatedMemory.breed) {
-                  let cleanBreed = updatedMemory.breed.trim();
-                  if (cleanBreed.endsWith('s') && cleanBreed.length > 3) {
-                    cleanBreed = cleanBreed.slice(0, -1);
-                  }
-                  try {
-                    const matchedBreed = await findBestBreedMatch(cleanBreed);
-                    normalizedBreed = matchedBreed || cleanBreed;
-                  } catch (error) {
-                    console.error('[❌ Petfinder Breed Match Error]', error);
-                    normalizedBreed = cleanBreed;
-                  }
-                }
-
-                const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    location: updatedMemory.location || '',
-                    breed: normalizedBreed || '',
-                  }),
-                });
-
-                if (searchRes.ok) {
-                  const searchData = await searchRes.json();
-                  const petfinderDogs = searchData.animals || [];
-                  // Calculate visibility scores for Petfinder dogs if not present and ensure photos
-                  for (const dog of petfinderDogs) {
-                    if (!dog.visibilityScore) {
-                      dog.visibilityScore = calculateVisibilityScore(dog);
-                    }
-
-                    // Ensure photos are properly formatted or use Barkr fallback
-                    if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
-                      dog.photos = [{ medium: '/images/barkr.png' }];
-                    } else {
-                      // Ensure each photo has proper structure
-                      dog.photos = dog.photos.map(photo => {
-                        if (typeof photo === 'string') {
-                          return { medium: photo };
-                        } else if (photo && typeof photo === 'object') {
-                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                        }
-                        return { medium: '/images/barkr.png' };
-                      });
-                    }
-                  }
-
-                  // Deduplicate dogs by ID before combining
-                  const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
-                  const uniquePetfinderDogs = petfinderDogs.filter(dog => !existingIds.has(dog.id.toString()));
-                  const duplicatesFound = petfinderDogs.length - uniquePetfinderDogs.length;
-
-                  allDogs = allDogs.concat(uniquePetfinderDogs);
-                  console.log('[✅ Petfinder Integration] Found', petfinderDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
-                  console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
-                }
-              }
+              // Note: Petfinder API was discontinued Dec 2, 2025 - using RescueGroups data in database only
+              console.log('[✅ RescueGroups Database] Using', allDogs.length, 'dogs from database (RescueGroups data)');
 
               // Remove duplicates and sort by visibility score
               const uniqueDogs = allDogs.filter((dog, index, self) => 
@@ -845,7 +784,7 @@ export async function POST(req: Request) {
             console.log('[✅ Invisible Dogs] Found', dbDogs.length, 'dogs from database');
 
             const formattedDbDogs = dbDogs.map(dog => ({
-              id: dog.petfinder_id,
+              id: dog.rescuegroups_id || dog.petfinder_id || dog.id,
               name: dog.name,
               breeds: { 
                 primary: dog.primary_breed, 
@@ -1144,7 +1083,7 @@ export async function POST(req: Request) {
             if (dbDogs && dbDogs.length > 0) {
               console.log('[✅ Database] Found', dbDogs.length, 'dogs in database');
               const formattedDbDogs = dbDogs.map(dog => ({
-                id: dog.petfinder_id,
+                id: dog.rescuegroups_id || dog.petfinder_id || dog.id,
                 name: dog.name,
                 breeds: { 
                   primary: dog.primary_breed, 
@@ -1183,73 +1122,8 @@ export async function POST(req: Request) {
               allDogs = allDogs.concat(formattedDbDogs);
             }
 
-            // Only call Petfinder if database returned very few results (less than 10)
-            if (allDogs.length < 10) {
-              console.log('[🔍 Petfinder] Database returned only', allDogs.length, 'dogs, searching Petfinder for additional...');
-              // 🎯 Search using the priority waterfall search API (Database → RescueGroups → Petfinder)
-              const searchRes = await fetch(`${baseUrl}/api/petfinder/search`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  location: fullLocation ?? searchLocation ?? '',
-                  breed: normalizedBreed ?? '',
-                  age: null,
-                  size: null,
-                  gender: null,
-                  limit: 25, // This is the crucial change for the chat context
-                  isChat: true, // Add the flag to indicate this is a chat search
-                }),
-              });
-
-              if (searchRes.ok) {
-                const searchData = await searchRes.json();
-                // Update chat logging to show all sources
-                if (searchData.animals && searchData.animals.length > 0) {
-                  const sources = searchData.sources?.join(', ') || 'unknown';
-                  console.log(`[✅ Chat Search Success] Found ${searchData.animals.length} dogs for ${fullBreed} in ${fullLocation} from sources: ${sources}`);
-
-                  // Dogs are already sorted by visibility score from the search API
-                  const sortedDogs = searchData.animals;
-
-                  // Calculate visibility scores for Petfinder dogs and ensure photos
-                  for (const dog of sortedDogs) {
-                    if (!dog.visibilityScore) {
-                      dog.visibilityScore = calculateVisibilityScore(dog);
-                    }
-
-                    // Ensure photos are properly formatted or use Barkr fallback
-                    if (!dog.photos || !Array.isArray(dog.photos) || dog.photos.length === 0) {
-                      dog.photos = [{ medium: '/images/barkr.png' }];
-                    } else {
-                      // Ensure each photo has proper structure
-                      dog.photos = dog.photos.map(photo => {
-                        if (typeof photo === 'string') {
-                          return { medium: photo };
-                        } else if (photo && typeof photo === 'object') {
-                          return { medium: photo.medium || photo.large || photo.small || '/images/barkr.png' };
-                        }
-                        return { medium: '/images/barkr.png' };
-                      });
-                    }
-                  }
-
-                  // Deduplicate dogs by ID before combining (database dogs use petfinder_id, Petfinder dogs use id)
-                  const existingIds = new Set(allDogs.map(dog => dog.id.toString()));
-                  const uniquePetfinderDogs = sortedDogs.filter(dog => !existingIds.has(dog.id.toString()));
-                  const duplicatesFound = sortedDogs.length - uniquePetfinderDogs.length;
-
-                  allDogs = allDogs.concat(uniquePetfinderDogs);
-                  console.log('[✅ Petfinder Integration] Found', sortedDogs.length, 'Petfinder dogs,', duplicatesFound, 'were duplicates of database dogs');
-                  console.log('[✅ Search Complete] Total unique dogs:', allDogs.length, 'Showing:', Math.min(allDogs.length, 10));
-                } else {
-                  console.log('[⚠️ Chat Search] No dogs found via Petfinder API.');
-                }
-              } else {
-                console.error('[❌ Petfinder Error] API call failed, continuing with database results');
-              }
-            } else {
-              console.log('[✅ Database Sufficient] Database returned', allDogs.length, 'dogs, skipping Petfinder');
-            }
+            // Note: Petfinder API was discontinued Dec 2, 2025 - using RescueGroups data in database only
+            console.log('[✅ RescueGroups Database] Found', allDogs.length, 'dogs from database (RescueGroups data)');
 
             // Remove duplicates and sort by visibility score
             const uniqueDogs = allDogs.filter((dog, index, self) => 
