@@ -84,10 +84,10 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
       <h3 className="text-xl font-bold text-blue-800 mb-4 text-center">
-        Donate with USDC
+        Pay with Card or Crypto
       </h3>
       <p className="text-gray-600 text-sm text-center mb-4">
-        No gas fees - instant settlement on Base
+        Use credit/debit card or crypto - no gas fees
       </p>
       
       <div className="grid grid-cols-5 gap-2 mb-4">
@@ -110,26 +110,31 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-600 mb-1">Custom amount (USDC)</label>
-        <input
-          type="number"
-          min="1"
-          placeholder="Enter amount"
-          value={customAmount}
-          onChange={(e) => {
-            setCustomAmount(e.target.value);
-            setIsCustom(true);
-          }}
-          onFocus={() => setIsCustom(true)}
-          className={`w-full px-4 py-2 rounded-lg border ${
-            isCustom ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
-          } focus:outline-none`}
-        />
+        <label className="block text-sm text-gray-600 mb-1">Custom amount (USD)</label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+          <input
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*\.?[0-9]*"
+            placeholder="Enter amount"
+            value={customAmount}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9.]/g, '');
+              setCustomAmount(value);
+              setIsCustom(true);
+            }}
+            onFocus={() => setIsCustom(true)}
+            className={`w-full pl-8 pr-4 py-2 rounded-lg border ${
+              isCustom ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+            } focus:outline-none`}
+          />
+        </div>
       </div>
 
       <div className="text-center mb-4">
         <span className="text-2xl font-bold text-blue-700">
-          ${donationAmount || '0'} USDC
+          ${donationAmount || '0'}
         </span>
       </div>
 
@@ -145,7 +150,7 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
       >
         <CheckoutButton 
           coinbaseBranded 
-          text="Donate with USDC"
+          text="Pay Now"
           disabled={!donationAmount || parseFloat(donationAmount) <= 0}
           className="w-full"
         />

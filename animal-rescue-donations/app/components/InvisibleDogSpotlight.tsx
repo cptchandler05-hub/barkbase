@@ -68,7 +68,7 @@ export default function InvisibleDogSpotlight() {
     return null;
   }
 
-  const photoUrl = dog.photos?.[0] || '/images/dog-placeholder.png';
+  const photoUrl = dog.photos?.[0] || '/images/barkr.png';
   const breed = dog.secondary_breed 
     ? `${dog.primary_breed} & ${dog.secondary_breed} Mix`
     : dog.primary_breed;

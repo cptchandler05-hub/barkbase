@@ -33,9 +33,10 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [txCancelled, setTxCancelled] = useState(false);
 
-  const { sendTransaction, data: ethTxHash, isPending: isEthPending } = useSendTransaction();
-  const { writeContract, data: usdcTxHash, isPending: isUsdcPending } = useWriteContract();
+  const { sendTransaction, data: ethTxHash, isPending: isEthPending, error: ethError, reset: resetEth } = useSendTransaction();
+  const { writeContract, data: usdcTxHash, isPending: isUsdcPending, error: usdcError, reset: resetUsdc } = useWriteContract();
 
   const { isLoading: isEthConfirming, isSuccess: isEthSuccess } = useWaitForTransactionReceipt({
     hash: ethTxHash,
@@ -50,9 +51,26 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
   useEffect(() => {
     if ((isEthSuccess || isUsdcSuccess) && !successCallbackFired.current) {
       successCallbackFired.current = true;
+      setIsLoading(false);
       onSuccess?.(amount, selectedToken);
     }
   }, [isEthSuccess, isUsdcSuccess, amount, selectedToken, onSuccess]);
+
+  useEffect(() => {
+    if (ethError || usdcError) {
+      const err = ethError || usdcError;
+      const message = err?.message || 'Transaction failed';
+      const isUserRejection = message.toLowerCase().includes('rejected') || 
+                              message.toLowerCase().includes('denied') ||
+                              message.toLowerCase().includes('cancelled') ||
+                              message.toLowerCase().includes('user refused');
+      
+      setError(isUserRejection ? 'Transaction cancelled' : message);
+      setIsLoading(false);
+      setTxCancelled(true);
+      onError?.(err instanceof Error ? err : new Error(message));
+    }
+  }, [ethError, usdcError, onError]);
 
   const handleDonate = async () => {
     if (!isConnected || !amount || parseFloat(amount) <= 0) {
@@ -62,15 +80,19 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
 
     setError(null);
     setIsLoading(true);
+    setTxCancelled(false);
+    resetEth();
+    resetUsdc();
+    successCallbackFired.current = false;
 
     try {
       if (selectedToken === 'ETH') {
-        await sendTransaction({
+        sendTransaction({
           to: DONATION_ADDRESS,
           value: parseEther(amount),
         });
       } else {
-        await writeContract({
+        writeContract({
           address: USDC_ADDRESS,
           abi: USDC_ABI,
           functionName: 'transfer',
@@ -100,7 +122,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
     );
   }
 
-  const isPending = isEthPending || isUsdcPending || isEthConfirming || isUsdcConfirming || isLoading;
+  const isPending = !txCancelled && (isEthPending || isUsdcPending || isEthConfirming || isUsdcConfirming || isLoading);
 
   return (
     <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl">
