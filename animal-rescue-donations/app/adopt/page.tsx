@@ -143,6 +143,37 @@ export default function AdoptPage() {
     }
   };
 
+  const parseSearchTerms = (breedInput: string) => {
+    const input = breedInput.toLowerCase().trim();
+    const ageWords = ['puppy', 'baby', 'young', 'adult', 'senior'];
+    const sizeWords = ['small', 'medium', 'large', 'xlarge', 'extra large'];
+    const genericWords = ['dog', 'dogs', 'puppy', 'puppies', 'pup', 'pups'];
+    
+    let extractedAge = '';
+    let extractedSize = '';
+    let cleanedBreed = input;
+    
+    for (const age of ageWords) {
+      if (input.includes(age)) {
+        extractedAge = age;
+        cleanedBreed = cleanedBreed.replace(new RegExp(`\\b${age}\\b`, 'gi'), '').trim();
+      }
+    }
+    
+    for (const size of sizeWords) {
+      if (input.includes(size)) {
+        extractedSize = size;
+        cleanedBreed = cleanedBreed.replace(new RegExp(`\\b${size}\\b`, 'gi'), '').trim();
+      }
+    }
+    
+    for (const generic of genericWords) {
+      cleanedBreed = cleanedBreed.replace(new RegExp(`\\b${generic}\\b`, 'gi'), '').trim();
+    }
+    
+    return { extractedAge, extractedSize, cleanedBreed };
+  };
+
   const handleSearch = async () => {
     setLoading(true);
     setHasSearched(true);
@@ -150,74 +181,69 @@ export default function AdoptPage() {
 
     try {
       let effectiveLocation = searchLocation.trim();
+      
+      const { extractedAge, extractedSize, cleanedBreed } = parseSearchTerms(searchBreed);
+      const effectiveAge = searchAge || (extractedAge ? extractedAge.charAt(0).toUpperCase() + extractedAge.slice(1) : '');
+      const effectiveSize = searchSize || (extractedSize ? extractedSize.charAt(0).toUpperCase() + extractedSize.slice(1) : '');
+      const effectiveBreed = cleanedBreed;
+      
+      console.log("Parsed search terms:", { effectiveAge, effectiveSize, effectiveBreed, originalBreed: searchBreed });
 
-      // If no location provided, search database directly with size/age/breed filters
       if (!effectiveLocation) {
         console.log("No location provided, searching database with filters");
 
         try {
-          // Get a larger pool of dogs from database for filtering
-          let allDbDogs = await getAllDogs(500); // Get more dogs for better filtering
+          let allDbDogs = await getAllDogs(500);
           console.log("Fetched dogs from database for filtering:", allDbDogs?.length || 0);
 
           if (allDbDogs && allDbDogs.length > 0) {
-            // Filter out any dogs with null or invalid IDs first
             let filteredDogs = allDbDogs.filter(dog => 
               dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
             );
             console.log("After ID validation:", filteredDogs.length);
 
-            // Apply size filter - case-insensitive and handles variations
-            if (searchSize) {
-              const normalizedSearchSize = searchSize.toLowerCase().trim();
+            if (effectiveSize) {
+              const normalizedSearchSize = effectiveSize.toLowerCase().trim();
               filteredDogs = filteredDogs.filter((dog: Dog) => {
                 const dogSize = (dog.size || '').toLowerCase().trim();
-                // Handle "extra large" vs "xlarge" variations
                 if (normalizedSearchSize === 'extra large') {
                   return dogSize === 'extra large' || dogSize === 'xlarge' || dogSize === 'x-large';
                 }
                 return dogSize.includes(normalizedSearchSize) || normalizedSearchSize.includes(dogSize);
               });
-              console.log(`After size filter (${searchSize}):`, filteredDogs.length);
+              console.log(`After size filter (${effectiveSize}):`, filteredDogs.length);
             }
 
-            // Apply age filter - handle "Baby" mapping to "Puppy" and other variations
-            if (searchAge) {
-              const normalizedSearchAge = searchAge.toLowerCase().trim();
+            if (effectiveAge) {
+              const normalizedSearchAge = effectiveAge.toLowerCase().trim();
               filteredDogs = filteredDogs.filter((dog: Dog) => {
                 const dogAge = (dog.age || '').toLowerCase().trim();
-                // Handle puppy/baby mapping
                 if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
                   return dogAge === 'baby' || dogAge === 'puppy';
                 }
-                // Handle young
                 if (normalizedSearchAge === 'young') {
                   return dogAge === 'young';
                 }
-                // Handle adult
                 if (normalizedSearchAge === 'adult') {
                   return dogAge === 'adult';
                 }
-                // Handle senior
                 if (normalizedSearchAge === 'senior') {
                   return dogAge === 'senior';
                 }
                 return dogAge === normalizedSearchAge;
               });
-              console.log(`After age filter (${searchAge}):`, filteredDogs.length);
+              console.log(`After age filter (${effectiveAge}):`, filteredDogs.length);
             }
 
-            // Apply breed filter - improved to handle size searches that might be mistaken for breed
-            if (searchBreed) {
-              const normalizedBreed = searchBreed.toLowerCase();
-              // Don't filter by breed if the search term is actually a size
+            if (effectiveBreed) {
+              const normalizedBreed = effectiveBreed.toLowerCase();
               const sizes = ['small', 'medium', 'large', 'extra large'];
               if (!sizes.includes(normalizedBreed)) {
                 filteredDogs = filteredDogs.filter((dog: Dog) => 
                   dog.breeds?.primary?.toLowerCase().includes(normalizedBreed) ||
                   dog.breeds?.secondary?.toLowerCase().includes(normalizedBreed)
                 );
-                console.log(`After breed filter (${searchBreed}):`, filteredDogs.length);
+                console.log(`After breed filter (${effectiveBreed}):`, filteredDogs.length);
               }
             }
 
@@ -243,24 +269,21 @@ export default function AdoptPage() {
         age: searchAge
       });
 
-      // First try Supabase dogs table with location-based search
       if (effectiveLocation) {
         const dbDogs = await searchDogs(
           effectiveLocation, 
-          searchBreed.trim() || undefined, 
+          effectiveBreed || undefined, 
           100
         );
 
         if (dbDogs && dbDogs.length > 0) {
           console.log(`Found ${dbDogs.length} dogs in database for location search`);
-          // Filter out any dogs with null or invalid IDs first
           let formattedDogs = dbDogs.filter(dog => 
             dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
           );
 
-          // Apply additional filters - with improved matching
-          if (searchSize) {
-            const normalizedSearchSize = searchSize.toLowerCase().trim();
+          if (effectiveSize) {
+            const normalizedSearchSize = effectiveSize.toLowerCase().trim();
             formattedDogs = formattedDogs.filter((dog: Dog) => {
               const dogSize = (dog.size || '').toLowerCase().trim();
               if (normalizedSearchSize === 'extra large') {
@@ -270,8 +293,8 @@ export default function AdoptPage() {
             });
           }
 
-          if (searchAge) {
-            const normalizedSearchAge = searchAge.toLowerCase().trim();
+          if (effectiveAge) {
+            const normalizedSearchAge = effectiveAge.toLowerCase().trim();
             formattedDogs = formattedDogs.filter((dog: Dog) => {
               const dogAge = (dog.age || '').toLowerCase().trim();
               if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
@@ -287,7 +310,6 @@ export default function AdoptPage() {
         }
       }
 
-      // Fallback to Petfinder API if no dogs in database
       console.log("No dogs found in database, falling back to Petfinder API");
 
       const res = await fetch('/api/petfinder/search', {
@@ -295,21 +317,19 @@ export default function AdoptPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           location: effectiveLocation,
-          breed: searchBreed.trim() || null
+          breed: effectiveBreed || null
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
         if (data.animals) {
-          // Filter out any dogs with null or invalid IDs first
           let filteredDogs = data.animals.filter(dog => 
             dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
           );
 
-          // Filter by size and age if specified - with improved matching
-          if (searchSize) {
-            const normalizedSearchSize = searchSize.toLowerCase().trim();
+          if (effectiveSize) {
+            const normalizedSearchSize = effectiveSize.toLowerCase().trim();
             filteredDogs = filteredDogs.filter((dog: Dog) => {
               const dogSize = (dog.size || '').toLowerCase().trim();
               if (normalizedSearchSize === 'extra large') {
@@ -319,8 +339,8 @@ export default function AdoptPage() {
             });
           }
 
-          if (searchAge) {
-            const normalizedSearchAge = searchAge.toLowerCase().trim();
+          if (effectiveAge) {
+            const normalizedSearchAge = effectiveAge.toLowerCase().trim();
             filteredDogs = filteredDogs.filter((dog: Dog) => {
               const dogAge = (dog.age || '').toLowerCase().trim();
               if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {

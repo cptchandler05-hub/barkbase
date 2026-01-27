@@ -40,6 +40,103 @@ const USDCToken: Token = {
   chainId: 8453,
 };
 
+const DAIToken: Token = {
+  name: 'Dai Stablecoin',
+  address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
+  symbol: 'DAI',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/9956/small/4943.png',
+  chainId: 8453,
+};
+
+const WETHToken: Token = {
+  name: 'Wrapped Ether',
+  address: '0x4200000000000000000000000000000000000006',
+  symbol: 'WETH',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
+  chainId: 8453,
+};
+
+const cbBTCToken: Token = {
+  name: 'Coinbase Wrapped BTC',
+  address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+  symbol: 'cbBTC',
+  decimals: 8,
+  image: 'https://assets.coingecko.com/coins/images/40143/standard/cbbtc.webp',
+  chainId: 8453,
+};
+
+const cbETHToken: Token = {
+  name: 'Coinbase Wrapped Staked ETH',
+  address: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+  symbol: 'cbETH',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/27008/small/cbeth.png',
+  chainId: 8453,
+};
+
+const USDTToken: Token = {
+  name: 'Tether USD',
+  address: '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2',
+  symbol: 'USDT',
+  decimals: 6,
+  image: 'https://assets.coingecko.com/coins/images/325/small/Tether.png',
+  chainId: 8453,
+};
+
+const DEGENToken: Token = {
+  name: 'Degen',
+  address: '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed',
+  symbol: 'DEGEN',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/34515/small/degen.png',
+  chainId: 8453,
+};
+
+const BRETTToken: Token = {
+  name: 'Brett',
+  address: '0x532f27101965dd16442E59d40670FaF5eBB142E4',
+  symbol: 'BRETT',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/35529/small/brett.jpg',
+  chainId: 8453,
+};
+
+const TOSHIToken: Token = {
+  name: 'Toshi',
+  address: '0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4',
+  symbol: 'TOSHI',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/31126/small/toshi.png',
+  chainId: 8453,
+};
+
+const VIRTUALToken: Token = {
+  name: 'Virtual Protocol',
+  address: '0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b',
+  symbol: 'VIRTUAL',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/33857/small/VIRTUAL.png',
+  chainId: 8453,
+};
+
+const AEROToken: Token = {
+  name: 'Aerodrome Finance',
+  address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
+  symbol: 'AERO',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/31745/small/token.png',
+  chainId: 8453,
+};
+
+const swappableFromTokens: Token[] = [
+  ETHToken, USDCToken, DAIToken, WETHToken, cbBTCToken, cbETHToken, 
+  USDTToken, DEGENToken, BRETTToken, TOSHIToken, VIRTUALToken, AEROToken
+];
+
+const swappableToTokens: Token[] = [ETHToken, USDCToken];
+
 export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   const { address } = useAccount();
 
@@ -56,7 +153,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
     return (
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100 text-center">
         <h3 className="text-xl font-bold text-blue-800 mb-4">
-          Swap Any Token
+          Swap to Donate
         </h3>
         <p className="text-gray-600 mb-4">
           Connect your wallet to swap tokens
@@ -68,10 +165,10 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
       <h3 className="text-xl font-bold text-blue-800 mb-2 text-center">
-        Swap Any Token
+        Swap to Donate
       </h3>
       <p className="text-gray-600 text-sm text-center mb-4">
-        Click the token to search your wallet
+        Click token to select from popular Base tokens
       </p>
 
       <div className="swap-container">
@@ -89,6 +186,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You pay"
+            swappableTokens={swappableFromTokens}
             token={ETHToken}
             type="from"
           />
@@ -97,7 +195,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You receive"
-            swappableTokens={[ETHToken, USDCToken]}
+            swappableTokens={swappableToTokens}
             token={USDCToken}
             type="to"
           />

@@ -58,6 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BarkBase — Never Let a Dog Become Invisible</title>
         <meta name="description" content="BarkBase shines a light on overlooked rescue dogs from rural shelters. Discover invisible dogs, donate crypto, and help underdogs find homes." />
         
