@@ -242,15 +242,42 @@ function transformRescueGroupsAnimal(animal, included = []) {
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim();
 
-  const visibilityScore = calculateVisibilityScore({
-    daysListed: attrs.createdDate ? Math.floor((Date.now() - new Date(attrs.createdDate).getTime()) / (1000 * 60 * 60 * 24)) : 0,
-    isRural: true,
-    skipCount: 0,
-    specialNeeds: attrs.specialNeeds || false,
+  // Build a dog object that matches what calculateVisibilityScore expects
+  const dogForScoring = {
+    name: attrs.name,
+    description: description,
+    photos: photos.map(url => ({ medium: url })), // Score expects photo objects
+    breeds: {
+      primary: attrs.breedPrimary || 'Mixed Breed',
+      secondary: attrs.breedSecondary || null,
+      mixed: attrs.isBreedMixed !== false
+    },
     age: attrs.ageGroup || 'Adult',
+    gender: attrs.sex || 'Unknown',
     size: attrs.sizeGroup || 'Medium',
-    photoCount: photos.length
-  });
+    colors: {
+      primary: null, // RescueGroups doesn't provide color info in current query
+      secondary: null,
+      tertiary: null
+    },
+    attributes: {
+      special_needs: attrs.specialNeeds || false,
+      house_trained: attrs.isHousetrained || false,
+      shots_current: null,
+      spayed_neutered: null,
+      good_with_children: attrs.goodWithChildren,
+      good_with_dogs: attrs.goodWithDogs,
+      good_with_cats: attrs.goodWithCats
+    },
+    contact: {
+      address: {
+        city: city,
+        state: state
+      }
+    }
+  };
+
+  const visibilityScore = calculateVisibilityScore(dogForScoring);
 
   return {
     rescuegroups_id: animal.id,

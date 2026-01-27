@@ -167,22 +167,40 @@ export default function AdoptPage() {
             );
             console.log("After ID validation:", filteredDogs.length);
 
-            // Apply size filter
+            // Apply size filter - case-insensitive and handles variations
             if (searchSize) {
-              filteredDogs = filteredDogs.filter((dog: Dog) => 
-                dog.size?.toLowerCase() === searchSize.toLowerCase()
-              );
+              const normalizedSearchSize = searchSize.toLowerCase().trim();
+              filteredDogs = filteredDogs.filter((dog: Dog) => {
+                const dogSize = (dog.size || '').toLowerCase().trim();
+                // Handle "extra large" vs "xlarge" variations
+                if (normalizedSearchSize === 'extra large') {
+                  return dogSize === 'extra large' || dogSize === 'xlarge' || dogSize === 'x-large';
+                }
+                return dogSize.includes(normalizedSearchSize) || normalizedSearchSize.includes(dogSize);
+              });
               console.log(`After size filter (${searchSize}):`, filteredDogs.length);
             }
 
-            // Apply age filter - handle "Baby" mapping to "Puppy"
+            // Apply age filter - handle "Baby" mapping to "Puppy" and other variations
             if (searchAge) {
-              const normalizedSearchAge = searchAge.toLowerCase();
+              const normalizedSearchAge = searchAge.toLowerCase().trim();
               filteredDogs = filteredDogs.filter((dog: Dog) => {
-                const dogAge = dog.age?.toLowerCase();
+                const dogAge = (dog.age || '').toLowerCase().trim();
                 // Handle puppy/baby mapping
                 if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
-                  return dogAge === 'baby' || dogAge === 'puppy' || dogAge === 'young';
+                  return dogAge === 'baby' || dogAge === 'puppy';
+                }
+                // Handle young
+                if (normalizedSearchAge === 'young') {
+                  return dogAge === 'young';
+                }
+                // Handle adult
+                if (normalizedSearchAge === 'adult') {
+                  return dogAge === 'adult';
+                }
+                // Handle senior
+                if (normalizedSearchAge === 'senior') {
+                  return dogAge === 'senior';
                 }
                 return dogAge === normalizedSearchAge;
               });
@@ -240,17 +258,27 @@ export default function AdoptPage() {
             dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
           );
 
-          // Apply additional filters
+          // Apply additional filters - with improved matching
           if (searchSize) {
-            formattedDogs = formattedDogs.filter((dog: Dog) => 
-              dog.size?.toLowerCase() === searchSize.toLowerCase()
-            );
+            const normalizedSearchSize = searchSize.toLowerCase().trim();
+            formattedDogs = formattedDogs.filter((dog: Dog) => {
+              const dogSize = (dog.size || '').toLowerCase().trim();
+              if (normalizedSearchSize === 'extra large') {
+                return dogSize === 'extra large' || dogSize === 'xlarge' || dogSize === 'x-large';
+              }
+              return dogSize.includes(normalizedSearchSize) || normalizedSearchSize.includes(dogSize);
+            });
           }
 
           if (searchAge) {
-            formattedDogs = formattedDogs.filter((dog: Dog) => 
-              dog.age?.toLowerCase() === searchAge.toLowerCase()
-            );
+            const normalizedSearchAge = searchAge.toLowerCase().trim();
+            formattedDogs = formattedDogs.filter((dog: Dog) => {
+              const dogAge = (dog.age || '').toLowerCase().trim();
+              if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
+                return dogAge === 'baby' || dogAge === 'puppy';
+              }
+              return dogAge === normalizedSearchAge;
+            });
           }
 
           setDogs(formattedDogs);
@@ -279,17 +307,27 @@ export default function AdoptPage() {
             dog && dog.id && dog.id !== 'null' && dog.id !== 'undefined' && dog.id !== null
           );
 
-          // Filter by size and age if specified
+          // Filter by size and age if specified - with improved matching
           if (searchSize) {
-            filteredDogs = filteredDogs.filter((dog: Dog) => 
-              dog.size?.toLowerCase() === searchSize.toLowerCase()
-            );
+            const normalizedSearchSize = searchSize.toLowerCase().trim();
+            filteredDogs = filteredDogs.filter((dog: Dog) => {
+              const dogSize = (dog.size || '').toLowerCase().trim();
+              if (normalizedSearchSize === 'extra large') {
+                return dogSize === 'extra large' || dogSize === 'xlarge' || dogSize === 'x-large';
+              }
+              return dogSize.includes(normalizedSearchSize) || normalizedSearchSize.includes(dogSize);
+            });
           }
 
           if (searchAge) {
-            filteredDogs = filteredDogs.filter((dog: Dog) => 
-              dog.age?.toLowerCase() === searchAge.toLowerCase()
-            );
+            const normalizedSearchAge = searchAge.toLowerCase().trim();
+            filteredDogs = filteredDogs.filter((dog: Dog) => {
+              const dogAge = (dog.age || '').toLowerCase().trim();
+              if (normalizedSearchAge === 'baby' || normalizedSearchAge === 'puppy') {
+                return dogAge === 'baby' || dogAge === 'puppy';
+              }
+              return dogAge === normalizedSearchAge;
+            });
           }
 
           setDogs(filteredDogs);
