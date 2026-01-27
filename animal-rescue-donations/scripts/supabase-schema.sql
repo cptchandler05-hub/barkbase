@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS dogs (
   id SERIAL PRIMARY KEY,
   petfinder_id TEXT UNIQUE,
-  rescuegroups_id TEXT,
+  rescuegroups_id TEXT UNIQUE,
   api_source TEXT NOT NULL DEFAULT 'petfinder',
   api_source_priority INTEGER DEFAULT 1,
   organization_id TEXT,

@@ -1,0 +1,71 @@
+Custom Pet List Widget Transition Guide
+The Petfinder API ends December 2nd, 2025. Switch to the no-code Custom Pet List Widget after Dec. 3rd for updated pet listings, easy setup, and full compatibility with your site—no coding required.
+
+Oct 31, 2025Knowledge
+
+Content
+Custom Pet List Widget Transition Guide
+
+Support & FAQ's 
+
+Overview
+As part of Petfinder’s platform modernization, the Petfinder API decommission date is December 2, 2025. After this date, all API-based integrations will stop working.
+
+To ensure a smooth transition, we recommend switching to the Custom Pet List Widget, a no-code solution that allows you to display adoptable pets directly on your website.
+
+Note for Existing Pet List Widget Users
+If you are currently using a previous version of the Pet List Widget, you must follow the same transition steps outlined in this guide to ensure compatibility and proper functionality. This includes:
+
+Generating a new Pet List Widget script using the updated configuration process.
+Replacing your existing widget script with the newly generated one on your site or platform.
+This update is necessary to take advantage of the latest features, improvements, and support. Continuing to use the old script may result in display issues or loss of functionality.
+
+What’s Inside 
+Key Dates
+Why Use the Custom Pet List Widget
+How to Set Up the Widget
+Account Required
+Search Filters
+Display Options
+Final Steps
+Important Notes
+Questions
+
+Key Dates
+Prior to December 2, 2025: Continue using the public API.
+After December 3, 2025: Switch to the Custom Pet List Widget.
+Updated widget will be available soon—please wait to implement until final updates are released.
+Why Use the Custom Pet List Widget?
+No coding or programming required
+Easy setup via a web form
+Customizable filters (shelter/group, animal type, age)
+Automatically updated pet listings
+Embed-ready code for your website
+Widget will not expire
+Is compatible with WordPress Embed Block feature
+How to Set Up the Widget
+To get started, visit the Custom Pet List Widget Setup Page: Embeddable Custom Pet List | Free Widget | Petfinder
+
+Account Required
+To generate your widget code, you’ll need to log in with your Petfinder account. If you don’t have one, you can easily create a free account during the setup process. This ensures your widget is personalized and linked to you.
+
+Search Filters
+Shelter: Choose the organization(s) to feature on your widget.
+Animal type: Dog, Cat, Rabbit, etc.
+Age: Baby, Young, Adult, Senior
+Display Options
+Number of pets per page: Choose how many pets to show.
+Display breed of each pet: Checkbox to show/hide breed info.
+Pet list title (optional): Add a custom title for your widget.
+Final Steps
+Click Preview Pet List to see how it will look.
+Click Generate Pet List Code to get the embed code for your site.
+Note: You must be logged in to generate and access your widget code.
+
+Important Notes
+Do not switch to the widget before December 3, 2025, as final updates are still in progress.
+If you need a more advanced or custom solution, please contact the Member Success team at help@petfinder.com for direct integration options.
+Questions?
+Reach out to Petfinder Support at help@petfinder.com for help.
+
+Thank you for being part of the Petfinder community and helping pets find loving homes!
