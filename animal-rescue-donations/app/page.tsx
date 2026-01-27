@@ -517,103 +517,131 @@ export default function Page() {
             <InvisibleDogSpotlight />
           </div>
 
-          {/* Mission Section */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 max-w-2xl w-full text-center shadow-xl border border-blue-100">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4">
-              🐾 Our Mission
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Small rescues carry the heaviest weight. In rural towns and overlooked corners, they save dogs with no spotlight or safety net. BarkBase exists to change that.
-            </p>
-            <p className="text-gray-700 mb-4">
-              We’re the first rescue donation & discovery platform native to web3—transparent, traceable, relentless. Your support lands onchain and fuels real dogs and the volunteer teams who fight for them.
-            </p>
-            <p className="text-gray-700 mb-4">
-              I’m Barkr, the rescue mutt with a map to the invisible. I surface long-listed dogs, match adopters, and route attention—and help—where it actually saves lives.
-            </p>
-            <p className="text-gray-700 mb-4">
-              Underdogs first. Rural rescues. Hard cases. If you can’t adopt, donate. If you can’t donate, share.
-            </p>
-            <p className="text-blue-700 font-bold text-lg mt-4">
-              For the dogs no one saw<br />
-              and the people who never stopped looking.
-            </p>
-          </div>
-          {/* Donation Section */}
-          <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-3xl p-8 max-w-4xl w-full border border-blue-100">
-            <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">
-              Join the tail-wagging revolution! 🐺
-            </h1>
-            <p className="text-base text-gray-600 mb-6">
-              Your donation fuels rescue efforts & saves lives. Receive a custom
-              "Thank you" image to share or coin to spread the word. Together,
-              we’re unleashing the power of blockchain to create a better world
-              for our furry best friends!
-            </p>
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {/* ETH Wallet Payment */}
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-5">
-              <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <span>💎</span> Pay with Crypto Wallet
-              </h3>
-              <div className="mb-3">
-                <label className="block text-sm font-medium text-blue-700 mb-2">
-                  Amount in ETH:
-                </label>
-                <input
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  value={ethAmount}
-                  onChange={(e) => setEthAmount(e.target.value)}
-                  placeholder="0.01"
-                  className="px-4 py-3 border-2 border-blue-400 rounded-lg w-full text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+          {/* Mission Section - Compact & Engaging */}
+          <div className="card-gradient-blue p-8 md:p-10 max-w-3xl w-full relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-200/30 rounded-full blur-3xl"></div>
+            
+            <div className="relative z-10 text-center">
+              <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-6">
+                🐾 Our Mission
+              </span>
+              
+              <h2 className="section-title text-gradient-blue mb-4">
+                Underdogs First
+              </h2>
+              
+              <p className="text-lg text-gray-700 mb-6 max-w-xl mx-auto leading-relaxed">
+                Rural rescues. Overlooked dogs. Hard cases. We surface the invisible 
+                and route help where it actually saves lives.
+              </p>
+              
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-white/70 rounded-2xl p-4 shadow-md border border-blue-100 card-hover">
+                  <div className="text-2xl mb-1">🔗</div>
+                  <p className="text-sm font-bold text-gray-800">Transparent</p>
+                </div>
+                <div className="bg-white/70 rounded-2xl p-4 shadow-md border border-blue-100 card-hover">
+                  <div className="text-2xl mb-1">🐕</div>
+                  <p className="text-sm font-bold text-gray-800">Invisible Dogs</p>
+                </div>
+                <div className="bg-white/70 rounded-2xl p-4 shadow-md border border-blue-100 card-hover">
+                  <div className="text-2xl mb-1">💪</div>
+                  <p className="text-sm font-bold text-gray-800">Small Rescues</p>
+                </div>
               </div>
-              <button
-                onClick={handleDonate}
-                disabled={loading}
-                className="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-md"
-              >
-                {loading ? "Sending..." : `Send ${ethAmount || "0.01"} ETH`}
-              </button>
-              <p className="text-xs text-blue-700 mt-2 text-center">
-                Requires a crypto wallet (MetaMask, Coinbase Wallet, etc.)
+              
+              <p className="text-gradient-gold font-bold text-lg italic">
+                "For the dogs no one saw—and the people who never stopped looking."
               </p>
             </div>
+          </div>
+          {/* Donation Section - Streamlined */}
+          <div className="card-gradient-purple p-8 md:p-10 max-w-3xl w-full relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 -translate-x-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 translate-x-1/2"></div>
             
-            {/* USDC Checkout */}
-            <DonationCheckout 
-              onSuccess={(chargeId) => {
-                setShowNFTMint(true);
-              }}
-            />
-            </div>
-            
-            {/* Token Swap Section */}
-            <div className="mt-6">
-              <TokenSwap />
-            </div>
-            
-            {/* NFT Mint After Donation */}
-            {showNFTMint && (
-              <div className="mt-6">
-                <DonorNFTMint 
-                  donationAmount={lastDonationAmount}
-                  tokenType={lastDonationToken}
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                <span className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-bold mb-4">
+                  💖 Support the Mission
+                </span>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
+                  Every Donation Saves Lives
+                </h2>
+                <p className="text-white/80 text-lg max-w-lg mx-auto">
+                  100% goes to rescue partners. Choose your preferred way to give.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* ETH Wallet Payment */}
+                <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl card-hover">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl">💎</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-800">Send ETH</h3>
+                      <p className="text-xs text-gray-500">From your wallet</p>
+                    </div>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={ethAmount}
+                    onChange={(e) => setEthAmount(e.target.value)}
+                    placeholder="0.01"
+                    className="input-styled text-center text-xl font-bold mb-4"
+                  />
+                  <button
+                    onClick={handleDonate}
+                    disabled={loading}
+                    className="btn-primary w-full"
+                  >
+                    {loading ? "Sending..." : `Send ${ethAmount || "0.01"} ETH`}
+                  </button>
+                </div>
+                
+                {/* USDC Checkout */}
+                <DonationCheckout 
+                  onSuccess={(chargeId) => {
+                    setShowNFTMint(true);
+                  }}
                 />
               </div>
-            )}
+              
+              {/* Token Swap - Compact */}
+              <div className="mt-6 bg-white/10 backdrop-blur rounded-2xl p-4">
+                <p className="text-white/80 text-sm text-center mb-3">
+                  Have other tokens? Swap them to ETH and donate
+                </p>
+                <TokenSwap />
+              </div>
+              
+              {/* NFT Mint After Donation */}
+              {showNFTMint && (
+                <div className="mt-6">
+                  <DonorNFTMint 
+                    donationAmount={lastDonationAmount}
+                    tokenType={lastDonationToken}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <div className="max-w-4xl w-full">
-            <div className="flex flex-col md:flex-row items-center gap-6 bg-white shadow-md rounded-xl p-6 border border-gray-100">
-              {/* This is the wrapper for the Barkr AI content */}
-              <div className="w-full">
-                <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
+          {/* Barkr AI Chat Section */}
+          <div className="max-w-3xl w-full">
+            <div className="card-gradient-blue p-8 relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-200/30 rounded-full blur-3xl"></div>
+              
+              <div className="relative z-10">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
                   <motion.img
                     src="/images/barkr.png"
                     alt="Barkr mascot"
-                    className="w-28 h-auto"
+                    className="w-24 h-auto drop-shadow-lg"
                     initial={{ y: 0 }}
                     animate={{ y: [0, -4, 0] }}
                     transition={{
@@ -624,35 +652,36 @@ export default function Page() {
                     }}
                   />
 
-                  <div className="text-center md:text-left">
-                    <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+                  <div className="text-center md:text-left flex-1">
+                    <h2 className="text-2xl font-bold text-gradient-blue mb-2">
                       Meet Barkr AI 🧠
                     </h2>
-                    <p className="text-gray-600">
-                      Your smart rescue assistant. Ask about training,
-                      adoptions, breed info, or let Barkr help find you a dog.
+                    <p className="text-gray-600 mb-4">
+                      Your rescue matchmaker. Find dogs, get training tips, or explore invisible pups waiting for homes.
                     </p>
 
-                    <div className="mt-2 text-center space-x-3">
+                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                       <button
                         onClick={handleResetChat}
-                        className="inline-block px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition"
+                        className="btn-secondary text-sm py-2"
                       >
-                        🔄 Reset Chat
+                        🔄 Reset
                       </button>
                       <button
                         onClick={handleShowInvisibleDogs}
                         disabled={loading}
-                        className="inline-block px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition disabled:opacity-50"
+                        className="btn-gold text-sm py-2 disabled:opacity-50"
                       >
-                        👻 Most Invisible Dogs
+                        👻 Invisible Dogs
                       </button>
                     </div>
 
 
                   </div>
                 </div>
-                <div className="bg-white p-4 rounded-lg shadow-md h-96 flex flex-col justify-between border border-gray-200">
+                
+                {/* Chat Container */}
+                <div className="bg-white/90 backdrop-blur p-4 rounded-2xl shadow-lg h-96 flex flex-col justify-between border border-blue-100">
                   <div
                     className="overflow-y-auto space-y-2 text-sm text-gray-800 mb-2 pr-2 flex-1 min-h-0"
                     aria-live="polite"
