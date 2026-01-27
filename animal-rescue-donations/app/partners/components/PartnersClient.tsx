@@ -27,18 +27,24 @@ export function PartnersClient({ initialPartners }: { initialPartners: RescuePar
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
-            Rescue Partners
-          </h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            Meet the dedicated rescues saving lives in overlooked places. These small,
-            foster-based organizations are doing the impossible work of giving forgotten dogs
-            a second chance.
-          </p>
+        {/* Hero Section */}
+        <div className="card-gradient-gold p-8 md:p-12 mb-12 relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-yellow-200/30 rounded-full blur-3xl"></div>
+          <div className="relative z-10 text-center">
+            <span className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-4">
+              🤝 Our Heroes
+            </span>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-gradient-gold mb-4">
+              Rescue Partners
+            </h1>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              Meet the dedicated rescues saving lives in overlooked places. Small, foster-based organizations doing impossible work.
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
+        {/* Search Panel */}
+        <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 mb-8 border border-yellow-100">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -46,7 +52,7 @@ export function PartnersClient({ initialPartners }: { initialPartners: RescuePar
               placeholder="Search by name, location, or mission..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-styled pl-10"
             />
           </div>
 
@@ -54,9 +60,9 @@ export function PartnersClient({ initialPartners }: { initialPartners: RescuePar
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedTag(null)}
-                className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
                   selectedTag === null
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -66,9 +72,9 @@ export function PartnersClient({ initialPartners }: { initialPartners: RescuePar
                 <button
                   key={tag}
                   onClick={() => setSelectedTag(tag)}
-                  className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
                     selectedTag === tag
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >

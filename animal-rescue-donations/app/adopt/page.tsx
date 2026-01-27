@@ -351,55 +351,59 @@ export default function AdoptPage() {
           <Navigation />
 
           {/* Hero Section */}
-          <div className="text-center mb-12 relative">
+          <div className="card-gradient-blue p-8 md:p-12 mb-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('/images/pawprints.png')] bg-cover opacity-5" />
-            <div className="relative z-10 max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-6xl font-bold text-blue-900 mb-4">
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-200/30 rounded-full blur-3xl"></div>
+            <div className="relative z-10 max-w-4xl mx-auto text-center">
+              <span className="inline-flex items-center gap-2 bg-orange-400 text-orange-900 px-4 py-2 rounded-full text-sm font-bold mb-6">
+                👻 The Invisible Dogs
+              </span>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gradient-blue mb-4">
                 Every dog deserves to be seen.
               </h1>
-              <p className="text-xl md:text-2xl text-gray-700 mb-8">
-                Our visibility algorithm lifts up the dogs at greatest risk of being passed by. These are the most overlooked dogs nationwide, shown in order of urgent need.
+              <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                Our algorithm lifts up the dogs at greatest risk of being passed by. These are the most overlooked dogs nationwide.
               </p>
             </div>
           </div>
 
           {/* Search & Filter Panel */}
-          <div className="bg-white shadow-xl rounded-2xl p-6 mb-8 border border-gray-100">
+          <div className="bg-white/95 backdrop-blur shadow-xl rounded-2xl p-6 mb-8 border border-blue-100">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location *
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Location
                 </label>
                 <input
                   type="text"
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
                   placeholder="ZIP or City, State"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="input-styled"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Breed (Optional)
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Breed
                 </label>
                 <input
                   type="text"
                   value={searchBreed}
                   onChange={(e) => setSearchBreed(e.target.value)}
                   placeholder="Any breed"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="input-styled"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Size
                 </label>
                 <select
                   value={searchSize}
                   onChange={(e) => setSearchSize(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="input-styled"
                 >
                   <option value="">Any Size</option>
                   <option value="Small">Small</option>
@@ -410,13 +414,13 @@ export default function AdoptPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Age
                 </label>
                 <select
                   value={searchAge}
                   onChange={(e) => setSearchAge(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="input-styled"
                 >
                   <option value="">Any Age</option>
                   <option value="Baby">Puppy/Baby</option>
@@ -429,9 +433,9 @@ export default function AdoptPage() {
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition disabled:opacity-50"
+                className="btn-primary disabled:opacity-50"
               >
-                {loading ? "Searching..." : "Search"}
+                {loading ? "Searching..." : "Search Dogs"}
               </button>
             </div>
 

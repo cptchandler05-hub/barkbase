@@ -39,10 +39,18 @@ export default function AboutPage() {
           </div>
 
           {/* Hero Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center leading-tight">
-              Underdogs first. Always.
-            </h1>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10 relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"></div>
+            <div className="relative z-10">
+              <span className="flex justify-center mb-6">
+                <span className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
+                  🐕 Our Story
+                </span>
+              </span>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gradient-purple mb-8 text-center leading-tight">
+                Underdogs first. Always.
+              </h1>
+            </div>
 
             <div className="prose prose-lg max-w-none">
               <p className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-6 italic">
