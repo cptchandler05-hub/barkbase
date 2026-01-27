@@ -125,7 +125,7 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
               setIsCustom(true);
             }}
             onFocus={() => setIsCustom(true)}
-            className={`w-full pl-8 pr-4 py-2 rounded-lg border ${
+            className={`w-full pl-8 pr-4 py-2 rounded-lg border text-gray-800 bg-white ${
               isCustom ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
             } focus:outline-none`}
           />
@@ -145,6 +145,7 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
       )}
 
       <Checkout 
+        key={`checkout-${donationAmount}`}
         chargeHandler={chargeHandler}
         onStatus={handleStatus}
       >

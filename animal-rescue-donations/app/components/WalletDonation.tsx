@@ -161,13 +161,16 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
 
       <div className="relative mb-4">
         <input
-          type="number"
-          step={selectedToken === 'ETH' ? '0.001' : '1'}
-          min="0"
+          type="text"
+          inputMode="decimal"
+          pattern="[0-9]*\.?[0-9]*"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value.replace(/[^0-9.]/g, '');
+            setAmount(value);
+          }}
           placeholder={selectedToken === 'ETH' ? '0.01' : '25'}
-          className="w-full px-4 py-3 text-center text-xl font-bold border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
+          className="w-full px-4 py-3 text-center text-xl font-bold border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none text-gray-800 bg-white"
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
           {selectedToken}
