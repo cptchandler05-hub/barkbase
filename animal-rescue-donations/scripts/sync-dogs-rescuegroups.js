@@ -104,7 +104,7 @@ async function fetchDogsFromRescueGroups(diversityFilter = 'default', page = 1, 
     'updatedDate', 'createdDate'
   ];
   params.append('fields[animals]', fields.join(','));
-  params.append('fields[pictures]', 'id,url,urlLarge,urlOriginal,urlSmall,urlSecureFullsize,urlSecureLarge,urlSecureOriginal,order');
+  // Don't specify fields[pictures] - let API return default nested structure (original.url, large.url, small.url)
   params.append('include', 'orgs,locations,breeds,pictures');
 
   console.log(`🔗 RescueGroups API: ${diversityFilter} filter, page ${page}`);
@@ -144,10 +144,16 @@ function getPicturesForAnimal(animal, included) {
   const pictureIds = pictureRefs.map(ref => ref.id);
   return included
     .filter(item => item.type === 'pictures' && pictureIds.includes(item.id))
+    .sort((a, b) => (a.attributes?.order || 99) - (b.attributes?.order || 99))
     .map(pic => {
       const attrs = pic.attributes || {};
-      return attrs.urlSecureLarge || attrs.urlLarge || attrs.urlSecureOriginal || 
-             attrs.urlOriginal || attrs.urlSmall || attrs.url || null;
+      // RescueGroups uses nested structure: attrs.original.url, attrs.large.url, attrs.small.url
+      const originalUrl = attrs.original?.url || null;
+      const largeUrl = attrs.large?.url || null;
+      const smallUrl = attrs.small?.url || null;
+      
+      // Return the best available URL (prefer large for quality)
+      return largeUrl || originalUrl || smallUrl || null;
     })
     .filter(url => url !== null);
 }
@@ -193,7 +199,20 @@ function transformRescueGroupsAnimal(animal, included = []) {
 
   const photos = getPicturesForAnimal(animal, included);
 
-  const description = attrs.descriptionText || attrs.descriptionHtml || '';
+  // Clean description - remove HTML tags, tracking pixels, and odd characters
+  let rawDescription = attrs.descriptionText || attrs.descriptionHtml || '';
+  const description = rawDescription
+    .replace(/<img[^>]*>/gi, '') // Remove img tags (tracking pixels)
+    .replace(/<[^>]+>/g, ' ') // Remove other HTML tags
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
 
   const visibilityScore = calculateVisibilityScore({
     daysListed: attrs.createdDate ? Math.floor((Date.now() - new Date(attrs.createdDate).getTime()) / (1000 * 60 * 60 * 24)) : 0,

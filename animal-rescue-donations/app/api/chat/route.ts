@@ -399,8 +399,14 @@ export async function POST(req: Request) {
       console.warn('[⚠️ Barkr] Invalid breed parsed:', aiExtracted.breed);
     }
 
+    // Check both memory sources for breed - either passed memory or updated memory from this session
     if (!fullBreed && memory?.breed && isCleanMemoryValue(memory.breed)) {
       fullBreed = memory.breed;
+      console.log('[🧠 Breed Recovery] Restored breed from passed memory:', fullBreed);
+    }
+    if (!fullBreed && updatedMemory?.breed && isCleanMemoryValue(updatedMemory.breed)) {
+      fullBreed = updatedMemory.breed;
+      console.log('[🧠 Breed Recovery] Restored breed from updated memory:', fullBreed);
     }
 
     // 🚫 Final memory validation (more robust)
@@ -901,11 +907,22 @@ export async function POST(req: Request) {
         });
       }
 
+      // Final check: if we have location but no breed, try to recover breed from memory
       if (!fullBreed && fullLocation) {
-        return NextResponse.json({
-          content: `Looking near **${fullLocation}**, but I need a clue about what kind of dog you’re after. Drop a breed, size, or just say “any dog.” 🐶`,
-          memory: updatedMemory,
-        });
+        // One more attempt to get breed from memory
+        if (updatedMemory?.breed && isCleanMemoryValue(updatedMemory.breed)) {
+          fullBreed = updatedMemory.breed;
+          console.log('[🧠 Late Breed Recovery] Recovered breed from updated memory:', fullBreed);
+        } else if (memory?.breed && isCleanMemoryValue(memory.breed)) {
+          fullBreed = memory.breed;
+          updatedMemory.breed = memory.breed;
+          console.log('[🧠 Late Breed Recovery] Recovered breed from passed memory:', fullBreed);
+        } else {
+          return NextResponse.json({
+            content: `Looking near **${fullLocation}**, but I need a clue about what kind of dog you're after. Drop a breed, size, or just say "any dog." 🐶`,
+            memory: updatedMemory,
+          });
+        }
       }
 
 
@@ -1131,8 +1148,10 @@ export async function POST(req: Request) {
             );
 
             if (uniqueDogs.length === 0) {
+              // Safely pluralize breed name (avoid double-s)
+              const breedPlural = updatedMemory.breed?.endsWith('s') ? updatedMemory.breed : `${updatedMemory.breed}s`;
               return NextResponse.json({
-                content: `I searched near **${updatedMemory.location}** for **${updatedMemory.breed}s** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
+                content: `I searched near **${updatedMemory.location}** for **${breedPlural}** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
                 memory: updatedMemory,
               });
             }
@@ -1242,8 +1261,10 @@ ${dogList}
       updatedMemory.isAdoptionMode = true;
 
       if (dogs.length === 0) {
+        // Safely pluralize breed name (avoid double-s)
+        const breedPlural = updatedMemory.breed?.endsWith('s') ? updatedMemory.breed : `${updatedMemory.breed}s`;
         return NextResponse.json({
-          content: `I searched near **${updatedMemory.location}** for **${updatedMemory.breed}s** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
+          content: `I searched near **${updatedMemory.location}** for **${breedPlural}** but came up empty. 🐾\n\nShelters update daily — try again soon or tweak your search.`,
           memory: updatedMemory,
         });
       }
