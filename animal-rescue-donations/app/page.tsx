@@ -28,7 +28,6 @@ import ThankYouToast from "@/app/components/ThankYouToast";
 import Navigation from "@/app/components/Navigation";
 import Footer from "@/app/components/Footer";
 import InvisibleDogSpotlight from "@/app/components/InvisibleDogSpotlight";
-import DonationCheckout from "@/app/components/DonationCheckout";
 import TokenSwap from "@/app/components/TokenSwap";
 import DonorNFTMint from "@/app/components/DonorNFTMint";
 import WalletDonation from "@/app/components/WalletDonation";
@@ -576,7 +575,14 @@ export default function Page() {
               </div>
               
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Wallet Donation - ETH & USDC */}
+                {/* Token Swap - Swap any token to ETH/USDC */}
+                <TokenSwap 
+                  onSuccess={() => {
+                    setShowNFTMint(true);
+                  }}
+                />
+                
+                {/* Direct Send - ETH & USDC */}
                 <WalletDonation 
                   onSuccess={(amount, token) => {
                     setLastDonationAmount(amount);
@@ -584,21 +590,6 @@ export default function Page() {
                     setShowNFTMint(true);
                   }}
                 />
-                
-                {/* Credit/Debit via Coinbase */}
-                <DonationCheckout 
-                  onSuccess={(chargeId) => {
-                    setShowNFTMint(true);
-                  }}
-                />
-              </div>
-              
-              {/* Token Swap - Compact */}
-              <div className="mt-6 bg-white/10 backdrop-blur rounded-2xl p-4">
-                <p className="text-white/80 text-sm text-center mb-3">
-                  Have other tokens? Swap them to ETH and donate
-                </p>
-                <TokenSwap />
               </div>
               
               {/* NFT Mint After Donation */}

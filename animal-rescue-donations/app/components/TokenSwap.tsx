@@ -40,35 +40,6 @@ const USDCToken: Token = {
   chainId: 8453,
 };
 
-const DAIToken: Token = {
-  name: 'Dai Stablecoin',
-  address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
-  symbol: 'DAI',
-  decimals: 18,
-  image: 'https://assets.coingecko.com/coins/images/9956/small/4943.png',
-  chainId: 8453,
-};
-
-const WETHToken: Token = {
-  name: 'Wrapped Ether',
-  address: '0x4200000000000000000000000000000000000006',
-  symbol: 'WETH',
-  decimals: 18,
-  image: 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
-  chainId: 8453,
-};
-
-const cbBTCToken: Token = {
-  name: 'Coinbase Wrapped BTC',
-  address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
-  symbol: 'cbBTC',
-  decimals: 8,
-  image: 'https://assets.coingecko.com/coins/images/40143/standard/cbbtc.webp',
-  chainId: 8453,
-};
-
-const swappableTokens: Token[] = [ETHToken, USDCToken, DAIToken, WETHToken, cbBTCToken];
-
 export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   const { address } = useAccount();
 
@@ -85,7 +56,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
     return (
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100 text-center">
         <h3 className="text-xl font-bold text-blue-800 mb-4">
-          Swap Any Token to Donate
+          Swap Any Token
         </h3>
         <p className="text-gray-600 mb-4">
           Connect your wallet to swap tokens
@@ -96,11 +67,11 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
-      <h3 className="text-xl font-bold text-blue-800 mb-4 text-center">
-        Swap Tokens
+      <h3 className="text-xl font-bold text-blue-800 mb-2 text-center">
+        Swap Any Token
       </h3>
       <p className="text-gray-600 text-sm text-center mb-4">
-        Search for any token in your wallet to swap
+        Click the token to search your wallet
       </p>
 
       <div className="swap-container">
@@ -118,7 +89,6 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You pay"
-            swappableTokens={swappableTokens}
             token={ETHToken}
             type="from"
           />
@@ -127,7 +97,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You receive"
-            swappableTokens={swappableTokens}
+            swappableTokens={[ETHToken, USDCToken]}
             token={USDCToken}
             type="to"
           />
@@ -139,7 +109,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
       </div>
 
       <p className="text-xs text-gray-500 text-center mt-4">
-        Swap between ETH, USDC, DAI, WETH, and cbBTC on Base
+        Swap to ETH or USDC, then send below
       </p>
     </div>
   );

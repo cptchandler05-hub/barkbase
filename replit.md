@@ -27,12 +27,12 @@ The application uses the RescueGroups API exclusively for dog data (Petfinder AP
 - Standardized styling with frosted glass cards (bg-white/90 backdrop-blur-sm)
 - **Enhanced Sync Script**: Increased pagination to 50 pages (from 20) and diversity filters to 5 pages each (from 2) for maximum nationwide dog coverage
 - **Dog Detail Fallbacks**: Added "Contact rescue for details" fallback for Health & Care and Good With sections when RescueGroups data is unavailable
-- **OnchainKit Improvements**:
+- **Simplified Donation Flow**:
+  - Removed Coinbase Commerce checkout in favor of pure crypto-native UX
+  - Token Swap: Click token to search wallet, swap any token → ETH or USDC
+  - Direct Send: Send ETH or USDC directly to donation address
   - Auto-reconnect wallet on page load with `reconnectOnMount={true}`
-  - Wallet modal display mode for better UX
-  - Token Swap now supports 5 Base tokens: ETH, USDC, DAI, WETH, cbBTC
-  - Both "from" and "to" swap fields allow token selection
-  - Updated checkout messaging to clarify Apple Pay, Card, and Crypto support
+  - Wallet modal display mode for better connection UX
 - **Mission Section Fix**: Fixed icon overflow on "Underdogs First" card with `min-w-0` and `truncate` classes
 
 # User Preferences
