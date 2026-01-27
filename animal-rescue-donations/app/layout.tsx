@@ -26,7 +26,7 @@ const queryClient = new QueryClient();
 
 function Providers({ children }: { children: ReactNode }) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={config} reconnectOnMount={true}>
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider
           apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
@@ -36,6 +36,10 @@ function Providers({ children }: { children: ReactNode }) {
             appearance: {
               name: 'BarkBase',
               logo: 'https://barkbase.xyz/images/barkbase-logo.png',
+              mode: 'auto',
+            },
+            wallet: {
+              display: 'modal',
             },
           }}
         >

@@ -40,6 +40,35 @@ const USDCToken: Token = {
   chainId: 8453,
 };
 
+const DAIToken: Token = {
+  name: 'Dai Stablecoin',
+  address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
+  symbol: 'DAI',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/9956/small/4943.png',
+  chainId: 8453,
+};
+
+const WETHToken: Token = {
+  name: 'Wrapped Ether',
+  address: '0x4200000000000000000000000000000000000006',
+  symbol: 'WETH',
+  decimals: 18,
+  image: 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
+  chainId: 8453,
+};
+
+const cbBTCToken: Token = {
+  name: 'Coinbase Wrapped BTC',
+  address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+  symbol: 'cbBTC',
+  decimals: 8,
+  image: 'https://assets.coingecko.com/coins/images/40143/standard/cbbtc.webp',
+  chainId: 8453,
+};
+
+const swappableTokens: Token[] = [ETHToken, USDCToken, DAIToken, WETHToken, cbBTCToken];
+
 export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   const { address } = useAccount();
 
@@ -89,6 +118,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You pay"
+            swappableTokens={swappableTokens}
             token={ETHToken}
             type="from"
           />
@@ -97,8 +127,8 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You receive"
-            swappableTokens={[ETHToken, USDCToken]}
-            token={ETHToken}
+            swappableTokens={swappableTokens}
+            token={USDCToken}
             type="to"
           />
           
@@ -109,7 +139,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
       </div>
 
       <p className="text-xs text-gray-500 text-center mt-4">
-        Click token selector to search for any token, then swap to ETH or USDC
+        Swap between ETH, USDC, DAI, WETH, and cbBTC on Base
       </p>
     </div>
   );

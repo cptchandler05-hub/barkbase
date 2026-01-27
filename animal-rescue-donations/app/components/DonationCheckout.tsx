@@ -84,10 +84,10 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
       <h3 className="text-xl font-bold text-blue-800 mb-4 text-center">
-        Pay with Card or Crypto
+        Pay with Card, Apple Pay, or Crypto
       </h3>
       <p className="text-gray-600 text-sm text-center mb-4">
-        Use credit/debit card or crypto - no gas fees
+        Credit/debit, Apple Pay, or USDC - no wallet needed
       </p>
       
       <div className="grid grid-cols-5 gap-2 mb-4">
@@ -159,7 +159,7 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
       </Checkout>
 
       <p className="text-xs text-gray-500 text-center mt-3">
-        Powered by Coinbase
+        Powered by Coinbase Commerce - Apple Pay, Card, or Crypto
       </p>
     </div>
   );

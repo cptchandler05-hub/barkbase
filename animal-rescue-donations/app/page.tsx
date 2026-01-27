@@ -512,70 +512,70 @@ export default function Page() {
         </a>
         */}
 
-        <main className="flex flex-col items-center gap-6 md:gap-10 mt-4 md:mt-8 px-2 md:px-4">
+        <main className="flex flex-col items-center gap-10 mt-8 px-4">
           {/* Invisible Dog Spotlight */}
           <div className="w-full max-w-4xl">
             <InvisibleDogSpotlight />
           </div>
 
           {/* Mission Section - Compact & Engaging */}
-          <div className="card-gradient-blue p-4 md:p-10 max-w-3xl w-full relative overflow-hidden">
+          <div className="card-gradient-blue p-8 md:p-10 max-w-3xl w-full relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-200/30 rounded-full blur-3xl"></div>
             
             <div className="relative z-10 text-center">
-              <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold mb-4 md:mb-6">
+              <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-bold mb-6">
                 🐾 Our Mission
               </span>
               
-              <h2 className="text-xl md:text-3xl font-extrabold text-gradient-blue mb-3 md:mb-4">
+              <h2 className="section-title text-gradient-blue mb-4">
                 Underdogs First
               </h2>
               
-              <p className="text-sm md:text-lg text-gray-700 mb-4 md:mb-6 max-w-xl mx-auto leading-relaxed">
+              <p className="text-lg text-gray-700 mb-6 max-w-xl mx-auto leading-relaxed">
                 Rural rescues. Overlooked dogs. Hard cases. We surface the invisible 
                 and route help where it actually saves lives.
               </p>
               
-              <div className="grid grid-cols-3 gap-2 md:gap-4 mb-4 md:mb-6">
-                <div className="bg-white/70 rounded-xl md:rounded-2xl p-2 md:p-4 shadow-md border border-blue-100 card-hover">
-                  <div className="text-lg md:text-2xl mb-1">🔗</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800">Transparent</p>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
+                  <div className="text-2xl mb-1">🔗</div>
+                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Transparent</p>
                 </div>
-                <div className="bg-white/70 rounded-xl md:rounded-2xl p-2 md:p-4 shadow-md border border-blue-100 card-hover">
-                  <div className="text-lg md:text-2xl mb-1">🐕</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800">Invisible Dogs</p>
+                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
+                  <div className="text-2xl mb-1">🐕</div>
+                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Invisible Dogs</p>
                 </div>
-                <div className="bg-white/70 rounded-xl md:rounded-2xl p-2 md:p-4 shadow-md border border-blue-100 card-hover">
-                  <div className="text-lg md:text-2xl mb-1">💪</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800">Small Rescues</p>
+                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
+                  <div className="text-2xl mb-1">💪</div>
+                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Small Rescues</p>
                 </div>
               </div>
               
-              <p className="text-gradient-gold font-bold text-sm md:text-lg italic px-2">
+              <p className="text-gradient-gold font-bold text-lg italic">
                 "For the dogs no one saw—and the people who never stopped looking."
               </p>
             </div>
           </div>
           {/* Donation Section - Streamlined */}
-          <div className="card-gradient-purple p-4 md:p-10 max-w-3xl w-full relative overflow-hidden">
+          <div className="card-gradient-purple p-8 md:p-10 max-w-3xl w-full relative overflow-hidden">
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 -translate-x-1/2"></div>
             <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 translate-x-1/2"></div>
             
             <div className="relative z-10">
-              <div className="text-center mb-4 md:mb-8">
-                <span className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold mb-3 md:mb-4">
+              <div className="text-center mb-8">
+                <span className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-bold mb-4">
                   💖 Support the Mission
                 </span>
-                <h2 className="text-xl md:text-4xl font-extrabold text-white mb-2 md:mb-3">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
                   Every Donation Saves Lives
                 </h2>
-                <p className="text-white/80 text-sm md:text-lg max-w-lg mx-auto px-2">
+                <p className="text-white/80 text-lg max-w-lg mx-auto">
                   100% goes to rescue partners. Choose your preferred way to give.
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 {/* Wallet Donation - ETH & USDC */}
                 <WalletDonation 
                   onSuccess={(amount, token) => {
