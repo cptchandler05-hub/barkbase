@@ -4,7 +4,11 @@ import { supabase, isSupabaseAvailable } from '@/lib/supabase';
 export async function GET(req: NextRequest) {
   try {
     if (!isSupabaseAvailable()) {
-      return NextResponse.json({ dog: null }, { status: 200 });
+      console.warn('Spotlight: Supabase not configured - NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY missing');
+      return NextResponse.json({ 
+        dog: null, 
+        reason: 'database_not_configured' 
+      }, { status: 200 });
     }
 
     const { data, error } = await supabase!
@@ -16,12 +20,23 @@ export async function GET(req: NextRequest) {
       .limit(10);
 
     if (error) {
-      console.error('Spotlight dog fetch error:', error);
-      return NextResponse.json({ dog: null }, { status: 200 });
+      console.error('Spotlight dog fetch error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      return NextResponse.json({ 
+        dog: null, 
+        reason: 'database_error' 
+      }, { status: 200 });
     }
 
     if (!data || data.length === 0) {
-      return NextResponse.json({ dog: null }, { status: 200 });
+      return NextResponse.json({ 
+        dog: null, 
+        reason: 'no_dogs_available' 
+      }, { status: 200 });
     }
 
     const today = new Date();

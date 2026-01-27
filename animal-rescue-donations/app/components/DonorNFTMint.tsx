@@ -86,14 +86,18 @@ export default function DonorNFTMint({
 
   return (
     <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
-      <div className="flex items-center gap-3 mb-4">
-        <Sparkles className="w-6 h-6" />
-        <h3 className="text-xl font-bold">Claim Your Rescue Hero Badge</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <Sparkles className="w-6 h-6" />
+          <h3 className="text-xl font-bold">Rescue Hero Badge</h3>
+        </div>
+        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
+          Coming Soon
+        </span>
       </div>
       
       <p className="text-white/90 mb-4">
-        As a thank you for your donation, claim a free commemorative NFT badge on Base. 
-        Show the world you helped save rescue dogs!
+        Soon you'll be able to claim a free commemorative NFT badge on Base as a thank you for your donation!
       </p>
 
       <div className="bg-white/10 rounded-xl p-4 mb-4">
@@ -110,32 +114,15 @@ export default function DonorNFTMint({
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-500/20 border border-red-300 rounded-lg p-3 mb-4 text-sm">
-          {error}
-        </div>
-      )}
-
       <button
-        onClick={handleMintNFT}
-        disabled={minting}
-        className="w-full bg-white text-purple-600 font-semibold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled
+        className="w-full bg-white/50 text-purple-600 font-semibold py-3 px-6 rounded-full cursor-not-allowed opacity-70"
       >
-        {minting ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-            Minting...
-          </span>
-        ) : (
-          'Claim Free NFT Badge'
-        )}
+        NFT Minting Coming Soon
       </button>
 
       <p className="text-xs text-white/60 text-center mt-3">
-        Gas sponsored by BarkBase - completely free!
+        Gas will be sponsored by BarkBase - completely free!
       </p>
     </div>
   );
