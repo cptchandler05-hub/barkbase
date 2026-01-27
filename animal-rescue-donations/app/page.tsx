@@ -477,18 +477,16 @@ export default function Page() {
 
 
         <Navigation />
+        {/* Raffle banner removed - keeping code for future use
         <a
           href="/raffle"
           className="block group relative mx-auto mt-6 mb-10 w-full max-w-5xl rounded-2xl overflow-hidden shadow-lg border border-yellow-400 bg-yellow-100 hover:shadow-2xl transition-all duration-300"
         >
-          {/* Coins image background */}
           <img
             src="/images/Coins.png"
             alt="Gold coins"
             className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"
           />
-
-          {/* Overlay content */}
           <div className="relative z-10 p-6 md:p-10 flex flex-col items-center text-center">
             <h2 className="text-2xl md:text-3xl font-extrabold text-yellow-800 drop-shadow">
               🪙 Join Barkr’s 50/50 Rescue Raffle!
@@ -501,8 +499,9 @@ export default function Page() {
             </button>
           </div>
         </a>
+        */}
 
-        <main className="flex flex-col items-center gap-10">
+        <main className="flex flex-col items-center gap-10 mt-8">
           <div className="bg-white rounded-2xl p-8 max-w-2xl w-full text-center shadow-xl border border-gray-100">
             <h2 className="text-2xl font-bold text-blue-700 mb-4">
               🐾 Our Mission

@@ -20,7 +20,6 @@ export default function Navigation() {
     { href: "/adopt", label: "Adopt", icon: "🐕" },
     { href: "/partners", label: "Partners", icon: "🤝" },
     { href: "/about", label: "About", icon: "ℹ️" },
-    { href: "/raffle", label: "Raffle", icon: "🎟️" },
   ];
 
   const isActive = (href: string) => {
