@@ -71,7 +71,7 @@ const swappableFromTokens: Token[] = [
   ETHToken, USDCToken, cbETHToken, cbBTCToken, TOBYToken
 ];
 
-const swappableToTokens: Token[] = [ETHToken, USDCToken];
+const swappableToTokens: Token[] = [ETHToken, USDCToken, TOBYToken];
 
 export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   const { address } = useAccount();

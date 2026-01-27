@@ -12,7 +12,9 @@ interface WalletDonationProps {
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE" as Address;
 
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as Address;
-const USDC_ABI = [
+const TOBY_ADDRESS = "0xb8D98a102b0079B69FFbc760C8d857A31653e56e" as Address;
+
+const ERC20_ABI = [
   {
     name: 'transfer',
     type: 'function',
@@ -25,7 +27,7 @@ const USDC_ABI = [
   }
 ] as const;
 
-type TokenType = 'ETH' | 'USDC';
+type TokenType = 'ETH' | 'USDC' | 'TOBY';
 
 export default function WalletDonation({ onSuccess, onError }: WalletDonationProps) {
   const { address, isConnected } = useAccount();
@@ -91,12 +93,19 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
           to: DONATION_ADDRESS,
           value: parseEther(amount),
         });
-      } else {
+      } else if (selectedToken === 'USDC') {
         writeContract({
           address: USDC_ADDRESS,
-          abi: USDC_ABI,
+          abi: ERC20_ABI,
           functionName: 'transfer',
           args: [DONATION_ADDRESS, parseUnits(amount, 6)],
+        });
+      } else if (selectedToken === 'TOBY') {
+        writeContract({
+          address: TOBY_ADDRESS,
+          abi: ERC20_ABI,
+          functionName: 'transfer',
+          args: [DONATION_ADDRESS, parseUnits(amount, 18)],
         });
       }
     } catch (err) {
@@ -139,7 +148,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setSelectedToken('ETH')}
-          className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+          className={`flex-1 py-2 px-3 rounded-lg font-semibold transition-all text-sm ${
             selectedToken === 'ETH'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -149,13 +158,23 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
         </button>
         <button
           onClick={() => setSelectedToken('USDC')}
-          className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+          className={`flex-1 py-2 px-3 rounded-lg font-semibold transition-all text-sm ${
             selectedToken === 'USDC'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
           USDC
+        </button>
+        <button
+          onClick={() => setSelectedToken('TOBY')}
+          className={`flex-1 py-2 px-3 rounded-lg font-semibold transition-all text-sm ${
+            selectedToken === 'TOBY'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          TOBY
         </button>
       </div>
 
@@ -169,7 +188,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
             const value = e.target.value.replace(/[^0-9.]/g, '');
             setAmount(value);
           }}
-          placeholder={selectedToken === 'ETH' ? '0.01' : '25'}
+          placeholder={selectedToken === 'ETH' ? '0.01' : selectedToken === 'USDC' ? '25' : '1000'}
           className="w-full px-4 py-3 text-center text-xl font-bold border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none text-gray-800 bg-white"
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
@@ -206,7 +225,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
               {isEthConfirming || isUsdcConfirming ? 'Confirming...' : 'Sending...'}
             </span>
           ) : (
-            `Send ${amount || (selectedToken === 'ETH' ? '0.01' : '25')} ${selectedToken}`
+            `Send ${amount || (selectedToken === 'ETH' ? '0.01' : selectedToken === 'USDC' ? '25' : '1000')} ${selectedToken}`
           )}
         </button>
       )}
