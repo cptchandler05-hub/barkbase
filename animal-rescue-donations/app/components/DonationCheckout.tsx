@@ -1,12 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Checkout,
-  CheckoutButton,
-  CheckoutStatus,
-} from '@coinbase/onchainkit/checkout';
-import type { LifecycleStatus } from '@coinbase/onchainkit/checkout';
+import { CreditCard, Wallet } from 'lucide-react';
 
 interface DonationCheckoutProps {
   onSuccess?: (chargeId: string, transactionHash?: string) => void;
@@ -25,13 +20,20 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
   const [selectedAmount, setSelectedAmount] = useState('25');
   const [customAmount, setCustomAmount] = useState('');
   const [isCustom, setIsCustom] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const donationAmount = isCustom ? customAmount : selectedAmount;
 
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const handlePayWithCard = async () => {
+    if (!donationAmount || parseFloat(donationAmount) <= 0) {
+      setCheckoutError('Please enter a valid amount');
+      return;
+    }
 
-  const chargeHandler = async () => {
+    setIsLoading(true);
     setCheckoutError(null);
+
     try {
       const response = await fetch('/api/coinbase/create-charge', {
         method: 'POST',
@@ -41,53 +43,40 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
           metadata: {
             campaign: 'barkbase-rescue',
             type: 'donation',
+            paymentMethod: 'card',
           }
         })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.error || 'Failed to create checkout. Please try again.';
-        setCheckoutError(errorMessage);
-        throw new Error(errorMessage);
+        throw new Error(errorData.error || 'Failed to create checkout');
       }
+
+      const { hostedUrl } = await response.json();
       
-      const { chargeId } = await response.json();
-      return chargeId;
+      if (hostedUrl) {
+        window.open(hostedUrl, '_blank');
+      } else {
+        throw new Error('Checkout URL not available');
+      }
     } catch (error) {
-      console.error('Charge creation error:', error);
+      console.error('Checkout error:', error);
       const message = error instanceof Error ? error.message : 'Checkout failed';
       setCheckoutError(message);
-      throw error;
-    }
-  };
-
-  const handleStatus = (status: LifecycleStatus) => {
-    const { statusName, statusData } = status;
-    
-    switch (statusName) {
-      case 'success':
-        setCheckoutError(null);
-        onSuccess?.(
-          (statusData as any)?.chargeId || '',
-          (statusData as any)?.transactionReceipt?.transactionHash
-        );
-        break;
-      case 'error':
-        const errorMsg = (statusData as any)?.error?.message || 'Checkout failed. Please try again.';
-        setCheckoutError(errorMsg);
-        onError?.(new Error(errorMsg));
-        break;
+      onError?.(new Error(message));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
       <h3 className="text-xl font-bold text-blue-800 mb-4 text-center">
-        Pay with Card, Apple Pay, or Crypto
+        Pay with Card or Apple Pay
       </h3>
       <p className="text-gray-600 text-sm text-center mb-4">
-        Credit/debit, Apple Pay, or USDC - no wallet needed
+        Credit/debit cards, Apple Pay - no wallet needed
       </p>
       
       <div className="grid grid-cols-5 gap-2 mb-4">
@@ -144,22 +133,17 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
         </div>
       )}
 
-      <Checkout 
-        key={`checkout-${donationAmount}`}
-        chargeHandler={chargeHandler}
-        onStatus={handleStatus}
+      <button
+        onClick={handlePayWithCard}
+        disabled={isLoading || !donationAmount || parseFloat(donationAmount) <= 0}
+        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
       >
-        <CheckoutButton 
-          coinbaseBranded 
-          text="Pay Now"
-          disabled={!donationAmount || parseFloat(donationAmount) <= 0}
-          className="w-full"
-        />
-        <CheckoutStatus />
-      </Checkout>
+        <CreditCard className="w-5 h-5" />
+        {isLoading ? 'Creating checkout...' : 'Pay with Card / Apple Pay'}
+      </button>
 
       <p className="text-xs text-gray-500 text-center mt-3">
-        Powered by Coinbase Commerce - Apple Pay, Card, or Crypto
+        Opens Coinbase checkout - accepts cards, Apple Pay, and crypto
       </p>
     </div>
   );
