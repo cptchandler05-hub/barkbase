@@ -173,13 +173,21 @@ function transformRescueGroupsAnimal(animal, included = []) {
 
   let orgId = '';
   let orgUrl = '';
+  let orgName = 'Unknown Organization';
+  let orgEmail = null;
+  let orgPhone = null;
   const orgRefs = animal.relationships?.orgs?.data || [];
   if (orgRefs.length > 0) {
     const orgRefId = orgRefs[0].id;
     const org = included.find(item => item.type === 'orgs' && item.id === orgRefId);
     if (org) {
+      const orgAttrs = org.attributes || {};
       orgId = org.id;
-      orgUrl = org.attributes?.url || '';
+      orgUrl = orgAttrs.url || '';
+      orgName = orgAttrs.name || orgAttrs.orgName || 'Unknown Organization';
+      orgEmail = orgAttrs.email || orgAttrs.emailAddress || orgAttrs.publicEmail || orgAttrs.contactEmail || null;
+      orgPhone = orgAttrs.phone || orgAttrs.phoneNumber || orgAttrs.contactPhone || null;
+      console.log(`  📍 Org: ${orgName} | Email: ${orgEmail} | Phone: ${orgPhone}`);
     }
   }
 
@@ -229,7 +237,7 @@ function transformRescueGroupsAnimal(animal, included = []) {
     description: description,
     photos: JSON.stringify(photos.map(url => ({ small: url, medium: url, large: url, full: url }))),
     tags: JSON.stringify([]),
-    contact_info: JSON.stringify({}),
+    contact_info: JSON.stringify({ email: orgEmail, phone: orgPhone, organizationName: orgName }),
     city: city,
     state: state,
     postcode: postcode,
@@ -314,25 +322,34 @@ async function main() {
     let allDogs = [];
     let combinedIncluded = [];
 
-    console.log('🔍 Phase 1: Bulk pagination (pages 1-5)');
-    for (let page = 1; page <= 5; page++) {
+    console.log('🔍 Phase 1: Bulk pagination (pages 1-20) - Expanding nationwide coverage');
+    for (let page = 1; page <= 20; page++) {
       const { data, included } = await fetchDogsFromRescueGroups('default', page, 250);
-      if (data.length === 0) break;
+      if (data.length === 0) {
+        console.log(`📄 Page ${page}: No more dogs, stopping pagination`);
+        break;
+      }
       
       allDogs = allDogs.concat(data.map(animal => transformRescueGroupsAnimal(animal, included)));
       combinedIncluded = combinedIncluded.concat(included);
+      console.log(`📄 Page ${page}: Added ${data.length} dogs (Total: ${allDogs.length})`);
       
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 150));
     }
 
-    console.log(`\n🔍 Phase 2: Diversity filters for invisible dogs`);
+    console.log(`\n🔍 Phase 2: Diversity filters for invisible dogs (2 pages each)`);
     for (const filter of diversityFilters) {
-      const { data, included } = await fetchDogsFromRescueGroups(filter, 1, 100);
-      if (data.length > 0) {
-        allDogs = allDogs.concat(data.map(animal => transformRescueGroupsAnimal(animal, included)));
-        combinedIncluded = combinedIncluded.concat(included);
+      for (let page = 1; page <= 2; page++) {
+        const { data, included } = await fetchDogsFromRescueGroups(filter, page, 250);
+        if (data.length > 0) {
+          allDogs = allDogs.concat(data.map(animal => transformRescueGroupsAnimal(animal, included)));
+          combinedIncluded = combinedIncluded.concat(included);
+          console.log(`  ${filter} page ${page}: Added ${data.length} dogs`);
+        } else {
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 150));
       }
-      await new Promise(resolve => setTimeout(resolve, 200));
     }
 
     const uniqueDogs = allDogs.filter((dog, index, self) =>

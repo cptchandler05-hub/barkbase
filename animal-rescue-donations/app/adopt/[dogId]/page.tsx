@@ -659,7 +659,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
               {/* Action Buttons */}
               <div className="space-y-4">
                 {/* Contact Information - Check for phone, email, or contact object */}
-                {(dog.contact?.phone || dog.contact?.email || 
+                {(dog.contact?.phone || dog.contact?.email || dog.organization?.name ||
                   (typeof dog.contact === 'object' && dog.contact !== null && 
                    Object.values(dog.contact).some(val => val && val !== ''))) ? (
                   <div className="space-y-2">
@@ -667,6 +667,13 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                       ❤️ Contact About {dog.name}
                     </h3>
                     <div className="bg-blue-50 p-4 rounded-lg space-y-2">
+                      {/* Organization Name */}
+                      {dog.organization?.name && dog.organization.name !== 'Unknown Organization' && (
+                        <div className="text-center mb-3 pb-3 border-b border-blue-200">
+                          <p className="text-sm text-gray-500 mb-1">Rescue Organization</p>
+                          <p className="font-semibold text-blue-800">{dog.organization.name}</p>
+                        </div>
+                      )}
                       {dog.contact?.phone && (
                         <a
                           href={`tel:${dog.contact.phone.replace(/[^\d+()-]/g, '')}`}

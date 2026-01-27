@@ -140,8 +140,51 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
 
     if (dbDogData) {
       console.log('[✅ Database Hit] Found dog in database:', dbDogData.name);
+      
+      // Parse photos - handle JSON string or array
+      let parsedPhotos = [];
+      try {
+        if (typeof dbDogData.photos === 'string') {
+          parsedPhotos = JSON.parse(dbDogData.photos);
+        } else if (Array.isArray(dbDogData.photos)) {
+          parsedPhotos = dbDogData.photos;
+        }
+      } catch (e) {
+        console.warn('[⚠️ Photo Parsing] Failed to parse photos:', e);
+        parsedPhotos = [];
+      }
+      
+      // Parse contact_info - handle JSON string or object
+      let contactInfo: { email?: string; phone?: string; organizationName?: string } = {};
+      try {
+        if (typeof dbDogData.contact_info === 'string') {
+          contactInfo = JSON.parse(dbDogData.contact_info);
+        } else if (typeof dbDogData.contact_info === 'object' && dbDogData.contact_info !== null) {
+          contactInfo = dbDogData.contact_info;
+        }
+      } catch (e) {
+        console.warn('[⚠️ Contact Parsing] Failed to parse contact_info:', e);
+        contactInfo = {};
+      }
+      console.log('[📞 Contact Debug] Parsed contact_info:', contactInfo);
+      
+      const formattedPhotos = parsedPhotos && parsedPhotos.length > 0
+        ? parsedPhotos.map((photo: any) => {
+            if (typeof photo === 'string') {
+              return { medium: photo, large: photo, small: photo };
+            } else if (photo && typeof photo === 'object') {
+              return {
+                medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
+                large: photo.large || photo.medium || photo.small || '/images/barkr.png',
+                small: photo.small || photo.medium || photo.large || '/images/barkr.png'
+              };
+            }
+            return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
+          })
+        : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }];
+      
       const formattedDog = {
-        id: dbDogData.petfinder_id || dbDogData.rescuegroups_id || dbDogData.id,
+        id: dbDogData.rescuegroups_id || dbDogData.petfinder_id || dbDogData.id,
         name: dbDogData.name,
         breeds: {
           primary: dbDogData.primary_breed,
@@ -151,20 +194,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
         age: dbDogData.age,
         size: dbDogData.size,
         gender: dbDogData.gender,
-        photos: dbDogData.photos && Array.isArray(dbDogData.photos) && dbDogData.photos.length > 0
-          ? dbDogData.photos.map((photo: any) => {
-              if (typeof photo === 'string') {
-                return { medium: photo, large: photo, small: photo };
-              } else if (photo && typeof photo === 'object') {
-                return {
-                  medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
-                  large: photo.large || photo.medium || photo.small || '/images/barkr.png',
-                  small: photo.small || photo.medium || photo.large || '/images/barkr.png'
-                };
-              }
-              return { medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' };
-            })
-          : [{ medium: '/images/barkr.png', large: '/images/barkr.png', small: '/images/barkr.png' }],
+        photos: formattedPhotos,
         contact: {
           address: {
             address1: dbDogData.address1 || null,
@@ -173,10 +203,10 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
             postcode: dbDogData.postcode || dbDogData.zip || null,
             country: dbDogData.country || 'US'
           },
-          phone: dbDogData.phone || null,
-          email: dbDogData.email || null
+          phone: contactInfo.phone || dbDogData.phone || null,
+          email: contactInfo.email || dbDogData.email || null
         },
-        description: dbDogData.description || dbDogData.full_description || '', // Use full description if available
+        description: dbDogData.description || dbDogData.full_description || '',
         url: dbDogData.url,
         attributes: {
           special_needs: dbDogData.special_needs,
@@ -190,6 +220,7 @@ export async function GET(request: Request, { params }: { params: { dogId: strin
           cats: dbDogData.good_with_cats
         },
         organization_id: dbDogData.organization_id,
+        organization: { name: contactInfo.organizationName || 'Unknown Organization' },
         published_at: dbDogData.published_at,
         visibilityScore: dbDogData.visibility_score || 0
       };
