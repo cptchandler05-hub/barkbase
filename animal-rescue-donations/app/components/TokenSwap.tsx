@@ -151,11 +151,11 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
 
   if (!address) {
     return (
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100 text-center">
-        <h3 className="text-xl font-bold text-blue-800 mb-4">
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-blue-100 text-center">
+        <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-4">
           Swap to Donate
         </h3>
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 text-sm mb-4">
           Connect your wallet to swap tokens
         </p>
       </div>
@@ -163,15 +163,15 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   }
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-100">
-      <h3 className="text-xl font-bold text-blue-800 mb-2 text-center">
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-blue-100">
+      <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-2 text-center">
         Swap to Donate
       </h3>
-      <p className="text-gray-600 text-sm text-center mb-4">
-        Click token to select from popular Base tokens
+      <p className="text-gray-600 text-xs sm:text-sm text-center mb-4">
+        Tap token to select. Click "receive" token for ETH or USDC.
       </p>
 
-      <div className="swap-container">
+      <div className="swap-container [&_.ock-text-foreground]:!text-sm [&_input]:!text-base [&_.ock-font-semibold]:!text-sm">
         <Swap 
           onSuccess={handleSuccess}
           onError={handleError}
@@ -191,23 +191,23 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
             type="from"
           />
           
-          <SwapToggleButton className="my-2" />
+          <SwapToggleButton className="my-1 sm:my-2" />
           
           <SwapAmountInput
-            label="You receive"
+            label="You receive (tap to change)"
             swappableTokens={swappableToTokens}
-            token={USDCToken}
+            token={ETHToken}
             type="to"
           />
           
-          <SwapButton className="mt-4 w-full" />
+          <SwapButton className="mt-3 sm:mt-4 w-full" />
           <SwapMessage />
           <SwapToast />
         </Swap>
       </div>
 
-      <p className="text-xs text-gray-500 text-center mt-4">
-        Swap to ETH or USDC, then send below
+      <p className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
+        After swap, use Direct Send below
       </p>
     </div>
   );

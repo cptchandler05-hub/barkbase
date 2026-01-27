@@ -200,11 +200,16 @@ class DogFormatter {
       source: dog.api_source === 'rescuegroups' ? 'rescuegroups' : 'database',
       sourceId: finalId,
       organizationId: dog.organization_id || '',
-      organizationName: dog.organization_name || '', // Added for completeness
+      organizationName: dog.organization_name || '',
       name: dog.name || 'Unknown',
-      primaryBreed: dog.primary_breed || 'Mixed Breed', // Added for completeness
-      secondaryBreed: dog.secondary_breed || null, // Added for completeness
-      isMixed: !!dog.secondary_breed || dog.is_mixed, // Added for completeness
+      breeds: {
+        primary: dog.primary_breed || 'Mixed Breed',
+        secondary: dog.secondary_breed || undefined,
+        mixed: !!dog.secondary_breed || dog.is_mixed
+      },
+      primaryBreed: dog.primary_breed || 'Mixed Breed',
+      secondaryBreed: dog.secondary_breed || undefined,
+      isMixed: !!dog.secondary_breed || dog.is_mixed,
       age: dog.age || 'Unknown',
       gender: dog.gender || 'Unknown',
       size: dog.size || 'Unknown',
