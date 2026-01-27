@@ -5,11 +5,21 @@ BarkBase is a web3-native animal rescue donation and discovery platform built wi
 The application integrates multiple rescue APIs (Petfinder and RescueGroups), uses PostgreSQL for data persistence, and leverages OpenAI for conversational AI interactions. It also incorporates blockchain features through Coinbase's OnchainKit for web3 donations.
 
 ## Key Pages
-- `/` - Home page with Barkr AI chat, donation options (crypto wallet & card/Apple Pay), and invisible dog discovery
-- `/adopt` - Dog adoption search and browsing
+- `/` - Home page with Barkr AI chat, multi-token donation options (ETH wallet, USDC checkout, token swap), Invisible Dog Spotlight, and donor NFT minting
+- `/adopt` - Dog adoption search and browsing with visibility scoring
 - `/partners` - Rescue partner profiles and directory
 - `/about` - Mission, story, and ways to help (Barkr's origin story, impact data, partner benefits)
-- `/raffle` - Fundraising raffle features
+- `/raffle` - Fundraising raffle features (currently hidden, preserved for future use)
+
+## Recent Changes (January 2026)
+- Added Invisible Dog Spotlight component on home page (rotates daily among top 10 most overlooked dogs)
+- Implemented USDC Checkout via Coinbase Commerce (no gas fees)
+- Added Token Swap widget for multi-token donation support
+- Created Donor NFT minting for appreciation badges
+- Updated thank you toast images to support multiple token types (ETH, USDC, etc.)
+- Fixed OnchainKit configuration to use CDP_API_KEY_NAME/CDP_PRIVATE_KEY
+- Hidden raffle feature from navigation (code preserved)
+- Standardized styling with frosted glass cards (bg-white/90 backdrop-blur-sm)
 
 # User Preferences
 
@@ -124,15 +134,26 @@ Preferred communication style: Simple, everyday language.
 - **Mapbox Geocoding API** (optional): Location coordinate resolution for geographic searches
 
 **Blockchain/Web3 & Payments**:
-- **Coinbase OnchainKit**: Web3 wallet integration and onchain interactions
-- **Coinbase Developer Platform (CDP)**: Session token API for card/Apple Pay donations via Coinbase Pay
+- **Coinbase OnchainKit**: Comprehensive web3 toolkit including:
+  - ConnectWallet / Wallet components for wallet connection
+  - Identity components (Avatar, Name, Address, EthBalance) for donor display
+  - Checkout component for USDC donations via Coinbase Commerce
+  - Swap component for multi-token support (swap any token to ETH)
+  - FundButton for fiat-to-crypto onramping
+- **Coinbase Developer Platform (CDP)**: 
+  - Uses CDP_API_KEY_NAME and CDP_PRIVATE_KEY for authentication
   - ECDSA (ES256) key-based JWT authentication
-  - Secure session token generation for onramp payment flows
-  - `/api/coinbase/session` endpoint for generating payment session tokens
+  - `/api/coinbase/session` endpoint for session tokens
+  - `/api/coinbase/create-charge` endpoint for USDC checkout charges
 - **Wagmi v2**: React hooks for Ethereum interactions
 - **Viem v2**: TypeScript Ethereum library
 - **Ethers.js v6**: Ethereum wallet and contract interactions
-- Dual donation system: ETH via crypto wallet + USD via Coinbase Pay (card/Apple Pay)
+- Multi-token donation system: ETH wallet, USDC checkout (no gas), token swap
+
+**NFT Features** (Coming Soon):
+- Donor appreciation NFT badges on Base
+- `/api/nft/mint-donor-badge` endpoint for minting
+- DonorNFTMint component for claiming badges
 
 **Database Connection**:
 - Node.js `pg` (PostgreSQL client) for database access

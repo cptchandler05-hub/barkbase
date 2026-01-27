@@ -29,8 +29,14 @@ function Providers({ children }: { children: ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
+          apiKey={process.env.NEXT_PUBLIC_CDP_PROJECT_ID}
           chain={base}
+          config={{
+            appearance: {
+              name: 'BarkBase',
+              logo: 'https://barkbase.xyz/images/barkbase-logo.png',
+            },
+          }}
         >
           {children}
         </OnchainKitProvider>

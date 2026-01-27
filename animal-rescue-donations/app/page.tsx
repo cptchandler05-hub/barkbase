@@ -27,6 +27,10 @@ import { motion } from "framer-motion";
 import ThankYouToast from "@/app/components/ThankYouToast";
 import Navigation from "@/app/components/Navigation";
 import Footer from "@/app/components/Footer";
+import InvisibleDogSpotlight from "@/app/components/InvisibleDogSpotlight";
+import DonationCheckout from "@/app/components/DonationCheckout";
+import TokenSwap from "@/app/components/TokenSwap";
+import DonorNFTMint from "@/app/components/DonorNFTMint";
 
 
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
@@ -58,6 +62,9 @@ export default function Page() {
   const [usdAmount, setUsdAmount] = useState("");
   const [thankYouImageUrl, setThankYouImageUrl] = useState<string | null>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
+  const [lastDonationAmount, setLastDonationAmount] = useState<string>("");
+  const [lastDonationToken, setLastDonationToken] = useState<string>("ETH");
+  const [showNFTMint, setShowNFTMint] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const lastRequestRef = useRef<string>("");
 
@@ -282,8 +289,11 @@ export default function Page() {
 
       const shortWallet = `${from.slice(0, 6)}...${from.slice(-4)}`;
       const variant = Math.floor(Math.random() * 5);
-      const url = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${ethAmount}&variant=${variant}`;
+      const url = `/api/thank-you-image?wallet=${encodeURIComponent(shortWallet)}&amount=${ethAmount}&token=ETH&variant=${variant}`;
       setThankYouImageUrl(url);
+      setLastDonationAmount(ethAmount);
+      setLastDonationToken('ETH');
+      setShowNFTMint(true);
 
       alert("Thank you for your donation! Transaction: " + tx);
     } catch (error) {
@@ -501,8 +511,14 @@ export default function Page() {
         </a>
         */}
 
-        <main className="flex flex-col items-center gap-10 mt-8">
-          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full text-center shadow-xl border border-gray-100">
+        <main className="flex flex-col items-center gap-10 mt-8 px-4">
+          {/* Invisible Dog Spotlight */}
+          <div className="w-full max-w-4xl">
+            <InvisibleDogSpotlight />
+          </div>
+
+          {/* Mission Section */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 max-w-2xl w-full text-center shadow-xl border border-blue-100">
             <h2 className="text-2xl font-bold text-blue-700 mb-4">
               🐾 Our Mission
             </h2>
@@ -523,8 +539,9 @@ export default function Page() {
               and the people who never stopped looking.
             </p>
           </div>
-          <div className="bg-white shadow-xl rounded-2xl p-8 max-w-2xl w-full text-center border border-gray-100">
-            <h1 className="text-3xl font-bold text-blue-700 mb-4">
+          {/* Donation Section */}
+          <div className="bg-white/90 backdrop-blur-sm shadow-xl rounded-3xl p-8 max-w-4xl w-full border border-blue-100">
+            <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">
               Join the tail-wagging revolution! 🐺
             </h1>
             <p className="text-base text-gray-600 mb-6">
@@ -533,8 +550,9 @@ export default function Page() {
               we’re unleashing the power of blockchain to create a better world
               for our furry best friends!
             </p>
-            {/* Crypto Wallet Payment */}
-            <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-5 mb-4">
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* ETH Wallet Payment */}
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-5">
               <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
                 <span>💎</span> Pay with Crypto Wallet
               </h3>
@@ -564,51 +582,27 @@ export default function Page() {
               </p>
             </div>
             
-            {process.env.NEXT_PUBLIC_ENABLE_ONRAMP === 'true' && (
-              <>
-                <div className="relative my-5">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-gray-400"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-700 font-bold">OR</span>
-                  </div>
-                </div>
-                
-                {/* Card/Apple Pay Payment */}
-                <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-5">
-                  <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
-                    <span>💳</span> Pay with Card / Apple Pay
-                  </h3>
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-purple-700 mb-2">
-                      Amount in USD:
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-purple-900">$</span>
-                      <input
-                        type="number"
-                        step="1"
-                        min="0"
-                        value={usdAmount}
-                        onChange={(e) => setUsdAmount(e.target.value)}
-                        placeholder="20"
-                        className="px-4 py-3 border-2 border-purple-400 rounded-lg flex-1 text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleOnrampDonate}
-                    disabled={loading}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition disabled:opacity-50 shadow-md"
-                  >
-                    {loading ? "Loading..." : `Pay $${usdAmount || "20"} via Coinbase`}
-                  </button>
-                  <p className="text-xs text-purple-700 mt-2 text-center">
-                    No wallet needed • Coinbase converts USD to USDC
-                  </p>
-                </div>
-              </>
+            {/* USDC Checkout */}
+            <DonationCheckout 
+              onSuccess={(chargeId) => {
+                setShowNFTMint(true);
+              }}
+            />
+            </div>
+            
+            {/* Token Swap Section */}
+            <div className="mt-6">
+              <TokenSwap />
+            </div>
+            
+            {/* NFT Mint After Donation */}
+            {showNFTMint && (
+              <div className="mt-6">
+                <DonorNFTMint 
+                  donationAmount={lastDonationAmount}
+                  tokenType={lastDonationToken}
+                />
+              </div>
             )}
           </div>
           <div className="max-w-4xl w-full">

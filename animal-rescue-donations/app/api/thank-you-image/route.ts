@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
 
   const wallet = searchParams.get("wallet") || "anon";
   const amount = searchParams.get("amount") || "?";
+  const tokenType = searchParams.get("token") || "ETH";
 
   let barkrMessage = "Tail wags and vault snacks, hero!"; // fallback message
 
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
           },
           {
             role: "user",
-            content: `A donor just gave ${amount} ETH from wallet ${wallet}.`,
+            content: `A donor just gave ${amount} ${tokenType} from wallet ${wallet}.`,
           },
         ],
         temperature: 0.85,
@@ -109,7 +110,7 @@ export async function GET(req: NextRequest) {
             }),
             jsx("div", {
               style: { fontSize: 32 },
-              children: `Donation: ${amount} ETH`,
+              children: `Donation: ${amount} ${tokenType}`,
             }),
           ]
         }),
