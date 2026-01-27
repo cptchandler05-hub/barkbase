@@ -25,6 +25,14 @@ The application uses the RescueGroups API exclusively for dog data (Petfinder AP
 - Fixed OnchainKit configuration to use CDP_API_KEY_NAME/CDP_PRIVATE_KEY
 - Hidden raffle feature from navigation (code preserved)
 - Standardized styling with frosted glass cards (bg-white/90 backdrop-blur-sm)
+- **Mobile Responsiveness**: Comprehensive mobile optimization across all pages:
+  - Home page: Reduced padding/gaps, responsive text sizes, mobile-friendly grid layouts
+  - Adoption page: Mobile-optimized hero, 2-column filter grid on mobile, responsive search panel
+  - Dog detail page: Smaller image heights, responsive trait cards, fallback messages for missing data
+  - About page: Mobile-friendly card padding, responsive typography, smaller blockquotes
+  - Partners page: Responsive hero section, mobile-friendly containers
+- **Enhanced Sync Script**: Increased pagination to 50 pages (from 20) and diversity filters to 5 pages each (from 2) for maximum nationwide dog coverage
+- **Dog Detail Fallbacks**: Added "Contact rescue for details" fallback for Health & Care and Good With sections when RescueGroups data is unavailable
 
 # User Preferences
 

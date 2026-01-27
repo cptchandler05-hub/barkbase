@@ -396,8 +396,8 @@ async function main() {
     let allDogs = [];
     let combinedIncluded = [];
 
-    console.log('🔍 Phase 1: Bulk pagination (pages 1-20) - Expanding nationwide coverage');
-    for (let page = 1; page <= 20; page++) {
+    console.log('🔍 Phase 1: Bulk pagination (pages 1-50) - Maximum nationwide coverage');
+    for (let page = 1; page <= 50; page++) {
       const { data, included } = await fetchDogsFromRescueGroups('default', page, 250);
       if (data.length === 0) {
         console.log(`📄 Page ${page}: No more dogs, stopping pagination`);
@@ -411,9 +411,9 @@ async function main() {
       await new Promise(resolve => setTimeout(resolve, 150));
     }
 
-    console.log(`\n🔍 Phase 2: Diversity filters for invisible dogs (2 pages each)`);
+    console.log(`\n🔍 Phase 2: Diversity filters for invisible dogs (5 pages each)`);
     for (const filter of diversityFilters) {
-      for (let page = 1; page <= 2; page++) {
+      for (let page = 1; page <= 5; page++) {
         const { data, included } = await fetchDogsFromRescueGroups(filter, page, 250);
         if (data.length > 0) {
           allDogs = allDogs.concat(data.map(animal => transformRescueGroupsAnimal(animal, included)));

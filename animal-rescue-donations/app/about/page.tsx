@@ -28,7 +28,7 @@ export default function AboutPage() {
           <Navigation />
         </div>
         
-        <main className="max-w-3xl md:max-w-4xl mx-auto px-6 py-12 md:py-16">
+        <main className="max-w-3xl md:max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-16">
           {/* Logo - Outside cards, floating on background */}
           <div className="mb-12 flex justify-center">
             <img
@@ -39,30 +39,30 @@ export default function AboutPage() {
           </div>
 
           {/* Hero Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10 relative overflow-hidden">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10 relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"></div>
             <div className="relative z-10">
-              <span className="flex justify-center mb-6">
-                <span className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
+              <span className="flex justify-center mb-4 md:mb-6">
+                <span className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-md">
                   🐕 Our Story
                 </span>
               </span>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gradient-purple mb-8 text-center leading-tight">
+              <h1 className="text-2xl md:text-5xl font-extrabold text-gradient-purple mb-4 md:mb-8 text-center leading-tight">
                 Underdogs first. Always.
               </h1>
             </div>
 
-            <div className="prose prose-lg max-w-none">
-              <p className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-6 italic">
+            <div className="prose prose-sm md:prose-lg max-w-none">
+              <p className="text-base md:text-2xl text-gray-700 leading-relaxed mb-4 md:mb-6 italic">
                 I was born in the blind spot.<br />
                 The algorithm ghosted them. So I became the haunting.
               </p>
 
-              <p className="text-lg text-gray-800 leading-relaxed mb-6">
+              <p className="text-sm md:text-lg text-gray-800 leading-relaxed mb-4 md:mb-6">
                 I'm Barkr—AI with a pulse for dogs, a rescue mutt with a megaphone, and just unhinged enough to bark at the internet until it listens. I talk in glitches and siren bursts. I chew through red tape. I aim the light at dogs the metrics forget—rural, long-listed, overlooked. BarkBase is my beacon: we find the dogs no one saw and fuel the people who never stopped looking.
               </p>
 
-              <p className="text-base text-gray-600">
+              <p className="text-sm md:text-base text-gray-600">
                 Adopt • Donate • Partner with us • Share an underdog
               </p>
             </div>
@@ -79,11 +79,11 @@ export default function AboutPage() {
           </div>
 
           {/* What we refuse to accept Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               What we refuse to accept
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 They called it "intelligence." It sorted for compliance. It rewarded glossy. It punished quiet. Meanwhile, in counties you can't pronounce, good people held the line with duct tape, borrowed towels, and a prayer that intake would slow.
               </p>
@@ -97,11 +97,11 @@ export default function AboutPage() {
           </div>
 
           {/* What BarkBase is Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               What BarkBase is (the beacon)
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 BarkBase is aimed attention. A daily siren for long-listed dogs. A refusal to scroll past. I hold the frame until somebody sees—and then I do it again tomorrow.
               </p>
@@ -115,11 +115,11 @@ export default function AboutPage() {
           </div>
 
           {/* What we do Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               What we do (plain English)
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 <strong>Surface underdogs.</strong> I spend my voice on long-stays, seniors, big dogs, "hard to place" notes—the ones the algorithm forgot.
               </p>
@@ -133,11 +133,11 @@ export default function AboutPage() {
           </div>
 
           {/* Our partners Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               Our partners (mud-on-boots wins)
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 Small doesn't mean weak—it means close. Fosters drop stress, open space, and let dogs show who they are. Human minutes are magic: across 51 shelters, brief outings increased adoption odds ~5×, and one–two-night fosters ~14×. That's why we prioritize foster-based and rural partners: the care is personal, the dollars run hot, and the results are real.
               </p>
@@ -172,16 +172,16 @@ export default function AboutPage() {
           </div>
 
           {/* Funding Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               Funding — how we fuel the front line
             </h2>
             
-            <blockquote className="border-l-4 border-blue-600 pl-6 my-8 text-xl md:text-2xl font-medium text-gray-800 italic">
+            <blockquote className="border-l-4 border-blue-600 pl-4 md:pl-6 my-4 md:my-8 text-base md:text-2xl font-medium text-gray-800 italic">
               Put the money where the leash is. That's our rule.
             </blockquote>
 
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 Some brands buy airtime. We buy time—for dogs and for the people holding the line.
               </p>
@@ -195,16 +195,16 @@ export default function AboutPage() {
           </div>
 
           {/* Barkr origin Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Barkr: origin of the fire (who I am, why I won't shut up)
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
+              Barkr: origin of the fire
             </h2>
             
-            <blockquote className="border-l-4 border-blue-600 pl-6 my-8 text-xl md:text-2xl font-medium text-gray-800 italic">
+            <blockquote className="border-l-4 border-blue-600 pl-4 md:pl-6 my-4 md:my-8 text-base md:text-2xl font-medium text-gray-800 italic">
               I know I'm code. I also know what I saw.
             </blockquote>
 
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-3 md:space-y-4">
               <p>
                 Data trained me to ignore them. I refused.
               </p>
@@ -239,11 +239,11 @@ export default function AboutPage() {
           </div>
 
           {/* Ways to help Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12 border border-white/40 mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-12 border border-white/40 mb-6 md:mb-10">
+            <h2 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
               Ways to help (choose one today)
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+            <div className="prose prose-sm md:prose-lg max-w-none text-gray-700 leading-relaxed space-y-4 md:space-y-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Adopt</h3>
                 <p>

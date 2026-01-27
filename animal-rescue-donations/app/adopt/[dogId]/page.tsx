@@ -536,14 +536,14 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
             </nav>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8">
             {/* Photo Gallery */}
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="relative overflow-hidden rounded-xl cursor-pointer" onClick={() => setShowPhotoModal(true)}>
                 <img
                   src={photos?.[currentPhotoIndex]?.large || photos?.[currentPhotoIndex]?.medium || "/images/barkr.png"}
                   alt={dog.name}
-                  className="w-full h-80 object-contain bg-gray-100 shadow-lg hover:opacity-90 transition-opacity"
+                  className="w-full h-64 md:h-80 object-contain bg-gray-100 shadow-lg hover:opacity-90 transition-opacity"
                 />
                 <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${getVisibilityBadgeColor(dog.visibilityScore || 0)}`}>
                   Score: {dog.visibilityScore || 0}
@@ -586,16 +586,16 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
             </div>
 
             {/* Dog Information */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <h1 className="text-4xl font-bold text-blue-900 mb-2">{dog.name}</h1>
-                <p className="text-xl text-gray-700">
+                <h1 className="text-2xl md:text-4xl font-bold text-blue-900 mb-1 md:mb-2">{dog.name}</h1>
+                <p className="text-base md:text-xl text-gray-700">
                   {dog.breeds?.primary}{dog.breeds?.secondary ? ` / ${dog.breeds.secondary}` : ''} {dog.breeds?.mixed ? 'Mix' : ''}
                 </p>
-                <p className="text-lg text-gray-600">
+                <p className="text-sm md:text-lg text-gray-600">
                   {dog.age} • {dog.size} • {dog.gender}
                 </p>
-                <p className="text-gray-600">
+                <p className="text-sm md:text-base text-gray-600">
                   📍 {dog.contact?.address?.city}, {dog.contact?.address?.state}
                 </p>
               </div>
@@ -609,10 +609,10 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
               </div>
 
               {/* Key Traits */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-2">Health & Care</h4>
-                  <ul className="text-sm space-y-1">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div className="bg-blue-50 p-3 md:p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-800 mb-1 md:mb-2 text-sm md:text-base">Health & Care</h4>
+                  <ul className="text-xs md:text-sm space-y-1">
                     {dog.attributes?.spayed_neutered !== null && dog.attributes?.spayed_neutered !== undefined && (
                       <li className={dog.attributes.spayed_neutered === true ? "text-green-600" : "text-red-600"}>
                         {dog.attributes.spayed_neutered === true ? "✅" : "❌"} Spayed/Neutered
@@ -620,7 +620,7 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                     )}
                     {dog.attributes?.shots_current !== null && dog.attributes?.shots_current !== undefined && (
                       <li className={dog.attributes.shots_current === true ? "text-green-600" : "text-red-600"}>
-                        {dog.attributes.shots_current === true ? "✅" : "❌"} Up to Date Shots
+                        {dog.attributes.shots_current === true ? "✅" : "❌"} Shots Current
                       </li>
                     )}
                     {dog.attributes?.house_trained !== null && dog.attributes?.house_trained !== undefined && (
@@ -631,26 +631,32 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                     {dog.attributes?.special_needs && (
                       <li className="text-orange-600">⚠️ Special Needs</li>
                     )}
+                    {dog.attributes?.spayed_neutered == null && dog.attributes?.shots_current == null && dog.attributes?.house_trained == null && !dog.attributes?.special_needs && (
+                      <li className="text-gray-500 italic">Contact rescue for details</li>
+                    )}
                   </ul>
                 </div>
 
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-green-800 mb-2">Good With</h4>
-                  <ul className="text-sm space-y-1">
-                    {dog.environment?.children !== null && dog.environment?.children !== undefined && (
+                <div className="bg-green-50 p-3 md:p-4 rounded-lg">
+                  <h4 className="font-semibold text-green-800 mb-1 md:mb-2 text-sm md:text-base">Good With</h4>
+                  <ul className="text-xs md:text-sm space-y-1">
+                    {dog.environment?.children != null && (
                       <li className={dog.environment.children === true ? "text-green-600" : "text-red-600"}>
                         {dog.environment.children === true ? "✅" : "❌"} Children
                       </li>
                     )}
-                    {dog.environment?.dogs !== null && dog.environment?.dogs !== undefined && (
+                    {dog.environment?.dogs != null && (
                       <li className={dog.environment.dogs === true ? "text-green-600" : "text-red-600"}>
                         {dog.environment.dogs === true ? "✅" : "❌"} Other Dogs
                       </li>
                     )}
-                    {dog.environment?.cats !== null && dog.environment?.cats !== undefined && (
+                    {dog.environment?.cats != null && (
                       <li className={dog.environment.cats === true ? "text-green-600" : "text-red-600"}>
                         {dog.environment.cats === true ? "✅" : "❌"} Cats
                       </li>
+                    )}
+                    {dog.environment?.children == null && dog.environment?.dogs == null && dog.environment?.cats == null && (
+                      <li className="text-gray-500 italic">Contact rescue for details</li>
                     )}
                   </ul>
                 </div>
