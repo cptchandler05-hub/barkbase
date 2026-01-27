@@ -15,7 +15,7 @@ const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
-async function getAccessToken() {
+async function getAccessToken(retries = 3) {
   const now = Date.now();
   const buffer = 5 * 60 * 1000; // 5-minute buffer
 
@@ -26,26 +26,42 @@ async function getAccessToken() {
 
   console.log('🔑 Fetching new Petfinder access token...');
 
-  const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: process.env.PETFINDER_CLIENT_ID,
-      client_secret: process.env.PETFINDER_CLIENT_SECRET,
-    }),
-  });
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch('https://api.petfinder.com/v2/oauth2/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'client_credentials',
+          client_id: process.env.PETFINDER_CLIENT_ID,
+          client_secret: process.env.PETFINDER_CLIENT_SECRET,
+        }),
+      });
 
-  if (!res.ok) {
-    throw new Error(`Failed to get token: ${res.status}`);
+      if (res.ok) {
+        const data = await res.json();
+        cachedToken = data.access_token;
+        tokenExpiresAt = now + (data.expires_in * 1000);
+        console.log('✅ Got new Petfinder token');
+        return cachedToken;
+      }
+
+      // Handle retryable errors (5xx server errors)
+      if (res.status >= 500 && attempt < retries) {
+        const waitTime = attempt * 5000; // 5s, 10s, 15s
+        console.log(`⚠️ Petfinder API returned ${res.status}, retrying in ${waitTime/1000}s (attempt ${attempt}/${retries})...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+
+      throw new Error(`Failed to get token: ${res.status}`);
+    } catch (error) {
+      if (attempt === retries) throw error;
+      const waitTime = attempt * 5000;
+      console.log(`⚠️ Request failed: ${error.message}, retrying in ${waitTime/1000}s (attempt ${attempt}/${retries})...`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
   }
-
-  const data = await res.json();
-  cachedToken = data.access_token;
-  tokenExpiresAt = now + (data.expires_in * 1000);
-
-  console.log('✅ Got new Petfinder token');
-  return cachedToken;
 }
 
 async function rateLimitedDelay() {
