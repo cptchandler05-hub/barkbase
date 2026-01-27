@@ -153,7 +153,7 @@ export default function DonationCheckout({ onSuccess, onError }: DonationCheckou
       </Checkout>
 
       <p className="text-xs text-gray-500 text-center mt-3">
-        Powered by Coinbase Commerce
+        Powered by Coinbase
       </p>
     </div>
   );

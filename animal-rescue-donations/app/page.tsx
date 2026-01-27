@@ -31,6 +31,7 @@ import InvisibleDogSpotlight from "@/app/components/InvisibleDogSpotlight";
 import DonationCheckout from "@/app/components/DonationCheckout";
 import TokenSwap from "@/app/components/TokenSwap";
 import DonorNFTMint from "@/app/components/DonorNFTMint";
+import WalletDonation from "@/app/components/WalletDonation";
 
 
 const DONATION_ADDRESS = "0x18f6212B658b8a2A9D3a50360857F78ec50dC0eE";
@@ -575,36 +576,16 @@ export default function Page() {
               </div>
               
               <div className="grid md:grid-cols-2 gap-6">
-                {/* ETH Wallet Payment */}
-                <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl card-hover">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-                      <span className="text-xl">💎</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-800">Send ETH</h3>
-                      <p className="text-xs text-gray-500">From your wallet</p>
-                    </div>
-                  </div>
-                  <input
-                    type="number"
-                    step="0.001"
-                    min="0"
-                    value={ethAmount}
-                    onChange={(e) => setEthAmount(e.target.value)}
-                    placeholder="0.01"
-                    className="input-styled text-center text-xl font-bold mb-4"
-                  />
-                  <button
-                    onClick={handleDonate}
-                    disabled={loading}
-                    className="btn-primary w-full"
-                  >
-                    {loading ? "Sending..." : `Send ${ethAmount || "0.01"} ETH`}
-                  </button>
-                </div>
+                {/* Wallet Donation - ETH & USDC */}
+                <WalletDonation 
+                  onSuccess={(amount, token) => {
+                    setLastDonationAmount(amount);
+                    setLastDonationToken(token);
+                    setShowNFTMint(true);
+                  }}
+                />
                 
-                {/* USDC Checkout */}
+                {/* Credit/Debit via Coinbase */}
                 <DonationCheckout 
                   onSuccess={(chargeId) => {
                     setShowNFTMint(true);

@@ -1,5 +1,51 @@
 import { calculateVisibilityScore } from './scoreVisibility';
 
+// Clean description text - fix encoding issues, remove HTML, normalize text
+function cleanDescription(rawDescription: string | null | undefined): string {
+  if (!rawDescription) return '';
+  
+  return rawDescription
+    .replace(/<img[^>]*>/gi, '') // Remove img tags (tracking pixels)
+    .replace(/<[^>]+>/g, ' ') // Remove other HTML tags
+    // Fix Windows-1252 to UTF-8 encoding issues (common with apostrophes and quotes)
+    .replace(/â€™/g, "'")
+    .replace(/â€˜/g, "'")
+    .replace(/â€œ/g, '"')
+    .replace(/â€/g, '"')
+    .replace(/â€"/g, '-')
+    .replace(/â€"/g, '-')
+    .replace(/â€¦/g, '...')
+    .replace(/Ã¢â‚¬â„¢/g, "'")
+    .replace(/Ã¢â‚¬Å"/g, '"')
+    .replace(/Ã¢â‚¬/g, '"')
+    .replace(/â/g, "'") // Catch remaining encoding artifacts
+    .replace(/'/g, "'") // Curly single quote
+    .replace(/'/g, "'") // Another curly quote
+    .replace(/"/g, '"') // Curly double quote
+    .replace(/"/g, '"') // Another curly double quote
+    .replace(/—/g, '-') // Em dash
+    .replace(/–/g, '-') // En dash
+    .replace(/…/g, '...') // Ellipsis
+    // HTML entities
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&mdash;/g, '-')
+    .replace(/&ndash;/g, '-')
+    .replace(/&hellip;/g, '...')
+    .replace(/&#\d+;/g, '') // Remove numeric HTML entities we didn't handle
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
+}
+
 interface UnifiedDog {
   id: string;
   source: 'database' | 'rescuegroups' | 'petfinder';
@@ -162,7 +208,7 @@ class DogFormatter {
       age: dog.age || 'Unknown',
       gender: dog.gender || 'Unknown',
       size: dog.size || 'Unknown',
-      description: dog.description || '',
+      description: cleanDescription(dog.description),
       photos: photos,
       contact: {
         email: dog.email || null,
@@ -343,7 +389,7 @@ class DogFormatter {
       gender: attrs.sex || 'Unknown',
       size: attrs.sizeGroup || 'Unknown',
       photos: photos,
-      description: attrs.descriptionText || null,
+      description: cleanDescription(attrs.descriptionText),
       contact: {
         email: orgInfo.email || null,
         phone: orgInfo.phone || null,
@@ -420,7 +466,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: dog.description,
+      description: cleanDescription(dog.description),
       photos: photos,
       contact: dog.contact || {
         email: null, // Added for completeness
@@ -524,7 +570,7 @@ class DogFormatter {
       age: dog.age,
       gender: dog.gender,
       size: dog.size,
-      description: dog.description, // Never truncate - let calling code decide
+      description: cleanDescription(dog.description), // Clean encoding issues but never truncate
       photos: dog.photos.map(photo => ({
         medium: photo.medium || photo.large || photo.small || '/images/barkr.png',
         large: photo.large || photo.medium || photo.small || '/images/barkr.png',

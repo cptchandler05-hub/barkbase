@@ -199,17 +199,45 @@ function transformRescueGroupsAnimal(animal, included = []) {
 
   const photos = getPicturesForAnimal(animal, included);
 
-  // Clean description - remove HTML tags, tracking pixels, and odd characters
+  // Clean description - remove HTML tags, tracking pixels, and fix encoding issues
   let rawDescription = attrs.descriptionText || attrs.descriptionHtml || '';
   const description = rawDescription
     .replace(/<img[^>]*>/gi, '') // Remove img tags (tracking pixels)
     .replace(/<[^>]+>/g, ' ') // Remove other HTML tags
+    // Fix Windows-1252 to UTF-8 encoding issues (common with apostrophes and quotes)
+    .replace(/â€™/g, "'")
+    .replace(/â€˜/g, "'")
+    .replace(/â€œ/g, '"')
+    .replace(/â€/g, '"')
+    .replace(/â€"/g, '—')
+    .replace(/â€"/g, '–')
+    .replace(/â€¦/g, '...')
+    .replace(/Ã¢â‚¬â„¢/g, "'")
+    .replace(/Ã¢â‚¬Å"/g, '"')
+    .replace(/Ã¢â‚¬/g, '"')
+    .replace(/â/g, "'") // Catch remaining encoding artifacts
+    .replace(/'/g, "'") // Curly single quote
+    .replace(/'/g, "'") // Another curly quote
+    .replace(/"/g, '"') // Curly double quote
+    .replace(/"/g, '"') // Another curly double quote
+    .replace(/—/g, '-') // Em dash
+    .replace(/–/g, '-') // En dash
+    .replace(/…/g, '...') // Ellipsis
+    // HTML entities
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&mdash;/g, '-')
+    .replace(/&ndash;/g, '-')
+    .replace(/&hellip;/g, '...')
+    .replace(/&#\d+;/g, '') // Remove numeric HTML entities we didn't handle
     .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim();

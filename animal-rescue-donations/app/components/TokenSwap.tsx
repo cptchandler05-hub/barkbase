@@ -40,15 +40,6 @@ const USDCToken: Token = {
   chainId: 8453,
 };
 
-const DAIToken: Token = {
-  name: 'Dai Stablecoin',
-  address: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
-  symbol: 'DAI',
-  decimals: 18,
-  image: 'https://d3r81g40ycuhqg.cloudfront.net/wallet/wais/d0/d7/d0d7784975771dbbac9a22c8c0c12928cc6f658cbcf2bbbf7c909f0fa2426dec-NmU4ZWViMDItOTQyYy00Yjk5LTkzODUtNGJlZmJiMTA1YWQy',
-  chainId: 8453,
-};
-
 export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
   const { address } = useAccount();
 
@@ -98,7 +89,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You pay"
-            swappableTokens={[USDCToken, DAIToken, ETHToken]}
+            swappableTokens={[USDCToken, ETHToken]}
             token={USDCToken}
             type="from"
           />
@@ -107,7 +98,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
           
           <SwapAmountInput
             label="You receive"
-            swappableTokens={[ETHToken, USDCToken, DAIToken]}
+            swappableTokens={[ETHToken, USDCToken]}
             token={ETHToken}
             type="to"
           />
@@ -119,7 +110,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
       </div>
 
       <p className="text-xs text-gray-500 text-center mt-4">
-        After swapping, use the ETH Wallet Donation option above
+        Swap between ETH and USDC, then donate directly
       </p>
     </div>
   );
