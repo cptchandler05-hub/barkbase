@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAccount, useSendTransaction, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther, parseUnits, type Address } from 'viem';
 
@@ -45,6 +45,15 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
     hash: usdcTxHash,
   });
 
+  const successCallbackFired = useRef(false);
+  
+  useEffect(() => {
+    if ((isEthSuccess || isUsdcSuccess) && !successCallbackFired.current) {
+      successCallbackFired.current = true;
+      onSuccess?.(amount, selectedToken);
+    }
+  }, [isEthSuccess, isUsdcSuccess, amount, selectedToken, onSuccess]);
+
   const handleDonate = async () => {
     if (!isConnected || !amount || parseFloat(amount) <= 0) {
       setError('Please connect your wallet and enter an amount');
@@ -78,8 +87,6 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
   };
 
   if (isEthSuccess || isUsdcSuccess) {
-    const successAmount = amount;
-    onSuccess?.(successAmount, selectedToken);
     return (
       <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl text-center">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -87,7 +94,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
         </div>
         <h3 className="text-xl font-bold text-green-700 mb-2">Thank You!</h3>
         <p className="text-gray-600">
-          Your donation of {successAmount} {selectedToken} helps save dogs!
+          Your donation of {amount} {selectedToken} helps save dogs!
         </p>
       </div>
     );
