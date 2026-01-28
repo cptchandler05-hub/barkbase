@@ -121,11 +121,11 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
     return (
       <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl text-center">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <span className="text-3xl">✅</span>
+          <span className="text-3xl">🐶</span>
         </div>
-        <h3 className="text-xl font-bold text-green-700 mb-2">Thank You!</h3>
+        <h3 className="text-xl font-bold text-green-700 mb-2">Woof! Thank You! 🐾</h3>
         <p className="text-gray-600">
-          Your donation of {amount} {selectedToken} helps save dogs!
+          Your donation of {amount} {selectedToken} helps save pups! 🦴
         </p>
       </div>
     );
@@ -136,12 +136,12 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
   return (
     <div className="bg-white/95 backdrop-blur rounded-2xl p-6 shadow-xl">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-          <span className="text-xl">💎</span>
+        <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
+          <span className="text-xl">🐕</span>
         </div>
         <div>
-          <h3 className="font-bold text-gray-800">Send Crypto</h3>
-          <p className="text-xs text-gray-500">Direct wallet transfer</p>
+          <h3 className="font-bold text-gray-800">Send Crypto 🦴</h3>
+          <p className="text-xs text-gray-500">Direct wallet transfer to help pups</p>
         </div>
       </div>
 
@@ -231,7 +231,7 @@ export default function WalletDonation({ onSuccess, onError }: WalletDonationPro
       )}
 
       <p className="text-xs text-gray-400 text-center mt-3">
-        On Base network
+        🐾 On Base network 🐾
       </p>
     </div>
   );

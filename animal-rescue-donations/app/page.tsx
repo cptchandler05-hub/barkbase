@@ -575,18 +575,18 @@ export default function Page() {
               </div>
               
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Token Swap - Swap any token to ETH/USDC */}
-                <TokenSwap 
-                  onSuccess={() => {
-                    setShowNFTMint(true);
-                  }}
-                />
-                
-                {/* Direct Send - ETH & USDC */}
+                {/* Direct Send - ETH, USDC & TOBY */}
                 <WalletDonation 
                   onSuccess={(amount, token) => {
                     setLastDonationAmount(amount);
                     setLastDonationToken(token);
+                    setShowNFTMint(true);
+                  }}
+                />
+                
+                {/* Token Swap - Swap any token to ETH/USDC/TOBY */}
+                <TokenSwap 
+                  onSuccess={() => {
                     setShowNFTMint(true);
                   }}
                 />
