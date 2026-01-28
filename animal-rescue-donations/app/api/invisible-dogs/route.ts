@@ -15,7 +15,7 @@ type Dog = {
   visibilityScore?: number;
 };
 
-async function fetchInvisibleDogs() {
+async function fetchInvisibleDogs(limit: number = 100) {
   try {
     console.log('[🔍 Invisible Dogs API] Fetching highest scoring dogs from entire database...');
 
@@ -29,14 +29,13 @@ async function fetchInvisibleDogs() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
 
-    // Query database for top 100 dogs by visibility score (highest first)
-    // Include all dogs with visibility scores regardless of status
+    // Query database for top dogs by visibility score (highest first)
     const { data: databaseDogs, error: databaseError, count } = await supabase
       .from('dogs')
       .select('*', { count: 'exact' })
       .not('visibility_score', 'is', null)  // Must have visibility score
       .order('visibility_score', { ascending: false })
-      .limit(100); // Get top 100 most invisible dogs from entire database
+      .limit(limit); // Get most invisible dogs from database
 
     console.log('[📊 Query Result] Total dogs with scores in DB:', count);
     console.log('[📊 Query Result] Returned dogs:', databaseDogs?.length || 0);
@@ -143,7 +142,9 @@ async function fetchInvisibleDogs() {
 }
 
 export async function GET(req: Request) {
-  return fetchInvisibleDogs();
+  const url = new URL(req.url);
+  const limit = parseInt(url.searchParams.get('limit') || '100', 10);
+  return fetchInvisibleDogs(Math.min(limit, 1000)); // Cap at 1000
 }
 
 export async function POST(req: Request) {

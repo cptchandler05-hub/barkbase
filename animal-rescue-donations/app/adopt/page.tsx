@@ -193,8 +193,18 @@ export default function AdoptPage() {
         console.log("No location provided, searching database with filters");
 
         try {
-          let allDbDogs = await getAllDogs(500);
-          console.log("Fetched dogs from database for filtering:", allDbDogs?.length || 0);
+          // Use API endpoint which is more reliable
+          const response = await fetch('/api/invisible-dogs?limit=500', {
+            method: 'GET',
+            headers: { 'Cache-Control': 'no-cache' }
+          });
+          
+          let allDbDogs: Dog[] = [];
+          if (response.ok) {
+            const data = await response.json();
+            allDbDogs = data.dogs || [];
+          }
+          console.log("Fetched dogs from API for filtering:", allDbDogs?.length || 0);
 
           if (allDbDogs && allDbDogs.length > 0) {
             let filteredDogs = allDbDogs.filter(dog => 
