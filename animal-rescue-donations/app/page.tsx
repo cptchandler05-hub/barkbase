@@ -536,18 +536,18 @@ export default function Page() {
                 and route help where it actually saves lives.
               </p>
               
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
-                  <div className="text-2xl mb-1">🔗</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Transparent</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+                <div className="bg-white/70 rounded-2xl p-2 sm:p-4 shadow-md border border-blue-100 card-hover min-w-0 text-center">
+                  <div className="text-xl sm:text-2xl mb-1">🔗</div>
+                  <p className="text-[10px] sm:text-sm font-bold text-gray-800 leading-tight">Transparent</p>
                 </div>
-                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
-                  <div className="text-2xl mb-1">🐕</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Invisible Dogs</p>
+                <div className="bg-white/70 rounded-2xl p-2 sm:p-4 shadow-md border border-blue-100 card-hover min-w-0 text-center">
+                  <div className="text-xl sm:text-2xl mb-1">🐕</div>
+                  <p className="text-[10px] sm:text-sm font-bold text-gray-800 leading-tight">Invisible Dogs</p>
                 </div>
-                <div className="bg-white/70 rounded-2xl p-3 md:p-4 shadow-md border border-blue-100 card-hover min-w-0">
-                  <div className="text-2xl mb-1">💪</div>
-                  <p className="text-xs md:text-sm font-bold text-gray-800 truncate">Small Rescues</p>
+                <div className="bg-white/70 rounded-2xl p-2 sm:p-4 shadow-md border border-blue-100 card-hover min-w-0 text-center">
+                  <div className="text-xl sm:text-2xl mb-1">💪</div>
+                  <p className="text-[10px] sm:text-sm font-bold text-gray-800 leading-tight">Small Rescues</p>
                 </div>
               </div>
               
@@ -570,7 +570,7 @@ export default function Page() {
                   Every Donation Saves Lives
                 </h2>
                 <p className="text-white/80 text-lg max-w-lg mx-auto">
-                  100% goes to rescue partners. Choose your preferred way to give.
+                  Choose your preferred way to give.
                 </p>
               </div>
               

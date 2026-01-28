@@ -100,12 +100,9 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-blue-100">
-      <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-2 text-center">
+      <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-4 text-center">
         Swap to Donate
       </h3>
-      <p className="text-gray-600 text-xs sm:text-sm text-center mb-4">
-        Tap token to select. Click "receive" token for ETH or USDC.
-      </p>
 
       <div className="swap-container [&_.ock-text-foreground]:!text-sm [&_input]:!text-base [&_.ock-font-semibold]:!text-sm">
         <Swap 
@@ -143,7 +140,7 @@ export default function TokenSwap({ onSuccess, onError }: TokenSwapProps) {
       </div>
 
       <p className="text-xs text-gray-500 text-center mt-3 sm:mt-4">
-        After swap, use Direct Send below
+        After swap, use Direct Send above
       </p>
     </div>
   );

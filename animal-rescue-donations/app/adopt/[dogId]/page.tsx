@@ -618,14 +618,14 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
                         {dog.attributes.spayed_neutered === true ? "✅" : "❌"} Spayed/Neutered
                       </li>
                     )}
-                    {dog.attributes?.shots_current !== null && dog.attributes?.shots_current !== undefined && (
-                      <li className={dog.attributes.shots_current === true ? "text-green-600" : "text-red-600"}>
-                        {dog.attributes.shots_current === true ? "✅" : "❌"} Shots Current
+                    {dog.attributes?.shots_current === true && (
+                      <li className="text-green-600">
+                        ✅ Shots Current
                       </li>
                     )}
-                    {dog.attributes?.house_trained !== null && dog.attributes?.house_trained !== undefined && (
-                      <li className={dog.attributes.house_trained === true ? "text-green-600" : "text-red-600"}>
-                        {dog.attributes.house_trained === true ? "✅" : "❌"} House Trained
+                    {dog.attributes?.house_trained === true && (
+                      <li className="text-green-600">
+                        ✅ House Trained
                       </li>
                     )}
                     {dog.attributes?.special_needs && (
