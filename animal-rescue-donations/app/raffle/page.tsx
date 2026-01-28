@@ -98,7 +98,7 @@ export default function RafflePage() {
       await enterRaffle(referrer ?? undefined, entryCount);
       setHasEntered(true);
       if (address) {
-        setRefLink(`${window.location.origin}/raffle?ref=${address}`);
+        setRefLink(`https://barkbase.xyz/raffle?ref=${address}`);
       }
       setShowPaws(true);
       setPlayBackflip(true); // Trigger Barkr flip

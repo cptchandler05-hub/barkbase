@@ -150,7 +150,7 @@ export default function InvisibleDogSpotlight() {
                     navigator.share({
                       title: `Meet ${dog.name} - BarkBase`,
                       text: `${dog.name} has been waiting for a home. Help spread the word!`,
-                      url: `${window.location.origin}/adopt/${dog.id}`,
+                      url: `https://barkbase.xyz/adopt/${dog.id}`,
                     });
                   }
                 }}

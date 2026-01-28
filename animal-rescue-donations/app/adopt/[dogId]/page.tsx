@@ -387,26 +387,35 @@ This is ${name}. This is ${possessive} story. This is your moment to rewrite the
     return "Recently Listed";
   };
 
+  const getShareUrl = () => {
+    const productionBase = 'https://barkbase.xyz';
+    return `${productionBase}/adopt/${dogIdParam}`;
+  };
+
   const shareToX = () => {
+    const shareUrl = getShareUrl();
     const text = `${dog?.name} needs a home! This ${dog?.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
-    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(url, '_blank');
   };
 
   const shareToFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    const shareUrl = getShareUrl();
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
     window.open(url, '_blank');
   };
 
   const shareToTelegram = () => {
+    const shareUrl = getShareUrl();
     const text = `${dog?.name} needs a home! Help spread the word! 🐾`;
-    const url = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`;
+    const url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
   const shareToFarcaster = () => {
+    const shareUrl = getShareUrl();
     const text = `${dog?.name} needs a home! This ${dog?.breeds?.primary || 'dog'} has been waiting too long. Help spread the word! 🐾`;
-    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + window.location.href)}`;
+    const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(text + ' ' + shareUrl)}`;
     window.open(url, '_blank');
   };
 
